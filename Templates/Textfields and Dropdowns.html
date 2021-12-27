@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="../Assets/Stylesheets/Master.css" rel="stylesheet">
+    <link href="../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+</head>
+<body>
+
+<h1>Text Field</h1>
+<div class="mt-3 passwordSectionMobile passwordSectionNormal">
+    <div class="textField-label-content" id="studentPasswordDiv">
+        <input class="textField" type="password" placeholder=" " id="studentPassword"
+               name="studentPassword">
+        <label class="textField-label">Password</label>
+    </div>
+</div>
+
+<h1>Text Field with Error</h1>
+
+<div class="mt-3 passwordSectionMobile passwordSectionNormal">
+    <div class="textField-label-content textField-error-input">
+        <input class="textField" type="password" placeholder=" " name="studentPassword">
+        <label class="textField-label">Password</label>
+    </div>
+</div>
+
+
+
+<h1>Dropdown</h1>
+<div class="select-label-content" id="rollNoDiv">
+    <select class="select" name="rollNo" onclick="this.setAttribute('value', this.value);"
+            onchange="this.setAttribute('value', this.value);" value="" id="rollNo">
+        <option value="" hidden></option>
+        <option value="Alabama">Alabama</option>
+        <option value="Boston">Boston</option>
+        <option value="Ohaio">Ohaio</option>
+        <option value="New York">New York</option>
+        <option value="Washington">Washington</option>
+    </select>
+    <label class="select-label">Roll No</label>
+</div>
+
+
+
+<h1>Dropdown with Error</h1>
+<div class="select-label-content select-error-input">
+    <select class="select" name="rollNo" onclick="this.setAttribute('value', this.value);"
+            onchange="this.setAttribute('value', this.value);" value="">
+        <option value="" hidden></option>
+        <option value="Alabama">Alabama</option>
+        <option value="Boston">Boston</option>
+        <option value="Ohaio">Ohaio</option>
+        <option value="New York">New York</option>
+        <option value="Washington">Washington</option>
+    </select>
+    <label class="select-label">Roll No</label>
+</div>
+
+
+</body>
+</html>

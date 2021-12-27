@@ -1,0 +1,292 @@
+/*
+    - This is the master CSS Catalyst
+    - Only styles which would be used throughout the project should be placed here
+    - **************** DONT CHANGE ANYTHING HERE ****************
+    - If you want to use these classes but with some changes, then use these and override their styles in your
+      own custom classes in the CSS file in your module
+*/
+
+:root {
+    --authenticationTypeColor: #01409B;
+    --authenticationTypeColorHover: #D7F0FF;
+    --loginButton: #0084FD;
+    --error: #9d3b3b;
+    --headerTextColor: #01409B;
+    --sidePanelColor: #108BFE;
+}
+
+html, body{
+    height: 100%;
+}
+
+/*Header*/
+header {
+    font-family: "Poppins-Regular", serif;
+    color: var(--headerTextColor);
+    border: lightgrey 1px solid;
+}
+
+.profilePictureDiv {
+    position: absolute;
+    right: 0;
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.profilePictureDiv img {
+    border-radius: 50px;
+    border: lightslategray 1px solid;
+    padding: 2px
+}
+
+.profilePictureDiv a{
+    color: #4b5563;
+}
+
+/*A wrapper which holds the side panel and main content div*/
+.wrapper{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+/*Side Panel*/
+.wrapper .sidePanel{
+    font-family: "Poppins-Regular", serif;
+    background-color: var(--sidePanelColor);
+    margin-top: -58px;
+    height: 100%;
+    position: fixed;
+    margin-left: -1px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    font-size: small;
+}
+
+.navigationItem{
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    cursor: pointer;
+    border-radius: 5px
+}
+
+.navigationItem:hover{
+    color: var(--headerTextColor);
+    background-color: white;
+    /*border-radius: 5px;*/
+    /*margin-right: 0;*/
+    width: auto;
+}
+
+.navigationItemSelected{
+    color: var(--headerTextColor);
+    background-color: white;
+    margin-right: -0.5rem;
+    border-radius: 5px 0 0 5px;
+    width: auto;
+}
+
+/*For turning SVGs blue on hover*/
+.turnItBlue{
+    fill: var(--headerTextColor);
+}
+
+.turnItBlueForever{
+    fill: var(--headerTextColor);
+}
+
+/*For turning SVGs white on hovering out*/
+.turnItWhite{
+    fill: white;
+}
+
+.navigationItem label{
+    cursor: pointer;
+}
+
+.navigationItemDropdown{
+    align-items: center;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.navDropBox:hover{
+    color: var(--headerTextColor);
+    background-color: white;
+    border-radius: 5px;
+}
+
+.navigationItemDropdown label{
+    cursor: pointer;
+}
+
+.navigationItemDropdown svg{
+    transform: rotate(0.5turn);
+}
+
+.navigationItemDropdown .menu{
+    margin-left: 3rem;
+}
+
+.navigationItemDropdown .menu .menuItem{
+    display: block;
+    margin-top: 0.5rem;
+    width: 100%;
+    border-radius: 5px;
+    text-align: left;
+    padding-left: 0.5rem;
+}
+
+.navigationItemDropdown .menu .menuItem:hover{
+    color:var(--headerTextColor);
+    background-color: white;
+}
+
+.menuClosed{
+    display: none;
+}
+
+.menuOpened{
+    /*    -moz-transition: all .5s linear;
+        -webkit-transition: all .5s linear;
+        transition: all .5s linear;*/
+    /*transition: all 0.5s ease 0s, visibility 0s linear 0.3s, z-index 0s linear 0.01s;*/
+}
+
+.menuItemSelected{
+    color: var(--headerTextColor);
+    background-color: white;
+    width: auto !important;
+    margin-right: -0.5rem;
+    border-radius: 5px 0 0 5px !important;
+
+}
+
+
+.rotate {
+    -moz-transition: all .1s linear;
+    -webkit-transition: all .1s linear;
+    transition: all .1s linear;
+}
+.rotate.down {
+    -moz-transform:rotate(180deg);
+    -webkit-transform:rotate(180deg);
+    transform:rotate(180deg);
+}
+
+
+
+/*Main Content Div*/
+
+
+/*For text fields and dropdowns*/
+.textField-label-content, .select-label-content {
+    position: relative;
+    margin-bottom: 5px;
+    display: inline-flex;
+}
+
+.select {
+    cursor: pointer;
+}
+
+.select, .textField {
+    font-size: 12px;
+    display: block;
+    width: 100%;
+    height: 36px;
+    padding: 0 20px;
+    background: #ffffff;
+    color: #323840;
+    border: 1px solid #adb5bd;
+    border-radius: 10px;
+    box-sizing: border-box;
+    margin: 2%;
+}
+
+/*Outline*/
+.select:focus, .textField:focus {
+    outline: none;
+}
+
+/*arrow*/
+select.select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+
+.textField:not(:placeholder-shown) ~ .textField-label {    /*Selects every <tf-label> element that is preceded by a <textField> element*/
+    top: -8px;
+    font-size: 13px;
+}
+
+/*stopper*/
+
+
+.select:not([value=""]):valid ~ .select-label, .textField:focus ~ .textField-label {/*after it is selected*/
+    top: -8px;
+    font-size: 13px;
+}
+
+/*pause*/
+
+.select[value=""]:focus ~ .select-label { /*when it is focus /clicked */
+    /*top: 10px;*/
+    font-size: 13px;
+}
+/*.select-label{
+    top:-8px;
+}
+.select:not(:checked) {
+    color: #0078ff;
+}*/
+
+
+/*Arrow*/
+.select:not([multiple]):not([size]) {
+    /*background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cpath id='Path_1' data-name='Path 1' d='M371,294l4,6,4-6Z' transform='translate(-371 -294)' fill='%23003d71'/%3E%3C/svg%3E%0A");*/
+    background-image: url(../Images/dropdown-black.svg);
+    background-position: right 15px top 50%;
+    background-repeat: no-repeat;
+}
+
+
+/* For labels of text fields and dropdowns*/
+.textField-label, .select-label {
+    color: #1e4c82;
+    font-size: 13px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 15px;
+    /*top: 10px;*/
+    padding: 0 5px;
+    background: #fff;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+.textField-label {
+    top: 13px;
+}
+
+
+/* For errors of text fields and dropdowns*/
+
+
+.textField-error-input .textField, .select-error-input .select {
+    border: 2px solid var(--error);
+    color: var(--error);
+}
+
+.textField-error-input .textField-label, .select-error-input .select-label {
+    font-weight: 600;
+    color: var(--error);
+}

@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+
+.login-container-label{
+    @apply text-center pt-3 pb-3
+}
+
+.rollNumberSectionMobile, .passwordSectionMobile, .usernameSectionMobile {
+    /*@apply flex flex-col items-center;*/
+    @apply  flex flex-col flex-wrap content-center items-center;
+}
+
+.rollNumberSectionMobile div, .passwordSectionMobile div, .usernameSectionMobile div {
+    @apply w-2/3;
+}
+
+.rollNumberSectionMobile i, .passwordSectionMobile i, .usernameSectionMobile i{
+    @apply mb-3;
+}
+
+.rollNumberSectionNormal, .passwordSectionNormal, .usernameSectionNormal {
+    @apply sm:grid sm:grid-cols-7;
+}
+
+.rollNumberSectionNormal div, .passwordSectionNormal div, .usernameSectionNormal div{
+    @apply sm:w-full;
+}
+
+.rollNumberSelectorsNormal{
+    @apply sm:w-full sm:col-span-2;
+}
+
+.forgotPasswordNormal{
+    @apply md:inline-flex md:items-center md:justify-start md:absolute md:left-2/3 md:top-3;
+}
+
+.header-section , .footer-section{
+    @apply bg-palette_Catalyst-form_btn shadow-2xl max-h-full;
+}
+
+
+@tailwind utilities;

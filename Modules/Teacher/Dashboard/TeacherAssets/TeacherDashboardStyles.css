@@ -1,0 +1,28 @@
+.classSelector select{
+    background-color: transparent;
+    border-color: white;
+    height: 30px;
+    color: white;
+}
+
+/*Changing arrow of dropdown in side panel*/
+.classSelector .select:not([multiple]):not([size]) {
+    background-image: url(../../../../Assets/Images/dropdown-white.svg);
+    background-position: right 15px top 50%;
+    background-repeat: no-repeat;
+}
+
+.classSelector select option{
+    color: black;
+}
+
+.classSelector .select-label{
+    background-color: var(--sidePanelColor);
+    top: 8px;
+    color: white;
+}
+
+.select:not([value=""]):valid ~ .select-label{
+    top: -3px;
+    font-size: x-small;
+}

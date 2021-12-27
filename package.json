@@ -1,0 +1,30 @@
+{
+  "name": "catalyst",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-css": "tailwindcss build Assets/Frameworks/Tailwind/tailwind.css -o Assets/Stylesheets/Tailwind.css",
+    "watch-main": "tailwindcss build Assets/Frameworks/Tailwind/tailwind.css -o Assets/Stylesheets/Tailwind.css --watch",
+    "watch-authentication": "tailwindcss build Modules/Authentication/AuthenticationAssets/LoginInject.css -o Assets/Stylesheets/Tailwind.css --watch",
+    "watch-courseProfile": "tailwindcss build Modules/Teacher/CourseProfile/CourseProfileAssets/courseInject.css -o Assets/Stylesheets/Tailwind.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iabdulhannan/Catalyst.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iabdulhannan/Catalyst/issues"
+  },
+  "homepage": "https://github.com/iabdulhannan/Catalyst#readme",
+  "dependencies": {
+    "autoprefixer": "^10.3.7",
+    "jquery": "^3.6.0",
+    "postcss": "^8.3.11",
+    "postcss-import": "^14.0.2",
+    "tailwindcss": "^2.2.17"
+  }
+}

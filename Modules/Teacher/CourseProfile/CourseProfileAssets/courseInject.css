@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+
+
+.left-container , .right-container{
+    @apply flex flex-col flex-shrink-0 max-w-full;
+}
+
+.parent-container-box-border{
+    @apply border-solid border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 ;
+}
+
+.parent-container-header{
+    @apply  text-xl text-center my-2 font-bold;
+}
+
+.assessment-wrap{
+    @apply flex flex-row max-w-full items-center mt-2 mx-2;
+}
+
+.assessment-wrap > h3{
+    @apply w-56 font-bold;
+}
+
+.vertical-line{
+    @apply border-solid border-gray-400 border-l-2 mx-5 h-2/4;
+}
+
+@tailwind utilities;

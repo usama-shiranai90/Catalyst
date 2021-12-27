@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+
+/*Fonts being used in headers*/
+@font-face {
+    font-family: Poppins-Regular;
+    src: url(../../Fonts/Poppins/Poppins-Regular.ttf);
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url(../../Fonts/Poppins/Poppins-Bold.ttf);
+}
+@tailwind utilities;

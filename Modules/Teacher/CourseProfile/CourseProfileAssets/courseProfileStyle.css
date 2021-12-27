@@ -1,0 +1,39 @@
+:root{
+    --courseProfileHeaderTypeColor:#F4F8F9;
+    --sectionSecondaryHeader: #3B3E43;
+    --courseProfileTextFieldsBordersTypeColor:#9B9B9E;
+    --courseProfilePageSliderTypeColor: #5648C5;
+    --courseProfileCircularBox : #0259C2;
+
+    --background-catalyst-home :#F9F8FE;
+    --background-catalyst-instruments-weights :#0284FC;
+}
+
+@font-face {
+    font-family: Poppins-Regular;
+    src: url(../../../../Assets/Fonts/Poppins/Poppins-Regular.ttf);
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url(../../../../Assets/Fonts/Poppins/Poppins-Bold.ttf);
+}
+
+.home-main{
+    background-color: #F9F8FE;
+}
+
+.middleSectionLayout{
+    background-color: #F4FAFF;
+    display: inline-flex;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.left-container > div {
+    margin: 0.5em 0;
+}
