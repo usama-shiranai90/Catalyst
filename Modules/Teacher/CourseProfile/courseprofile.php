@@ -87,13 +87,14 @@
 
             <div class="max-w-full grid grid-rows-2 gap-3.5 grid-flow-row">
 
+                <!--       Course-Profile-Main-Heading         -->
                 <div class="middle-section-topic row-span-2 space-y-2">
                     <h3 class="text-2xl font-bold" id="subject-topic-ID">Course Profile Creation</h3>
                     <p class="text-sm">Following data needs to be completed before manipulating student data
                         course.</p>
                 </div>
 
-                <!--        parent-container-box color main-section  border-gray-200 border-solid border-2 mt-2-->
+                <!--        Course-Profile Container -->
                 <div class="parent-container-box-border text-black rounded-t-md rounded-b-md mt-2"
                      style="background-color: #F4F8F9">
 
@@ -318,13 +319,47 @@
 
                                 </div>
 
+                                <div class=" assessment-wrap flex-1 mt-10">
+                                    <div class="textField-label-content w-full" id="courseTitleDivId">
+                                        <label for="courseTitleID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="courseTitleID" name="courseTitle">
+                                        <label class="textField-label">Course Title</label>
+                                    </div>
+                                    <div class="textField-label-content w-full" id="courseTitleDivId">
+                                        <label for="courseTitleID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="courseTitleID" name="courseTitle">
+                                        <label class="textField-label">Course Title</label>
+                                    </div>
+                                    <div class="textField-label-content w-full" id="courseTitleDivId">
+                                        <label for="courseTitleID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="courseTitleID" name="courseTitle">
+                                        <label class="textField-label">Course Title</label>
+                                    </div>
+
+                                </div>
+
                             </div>
 
                         </div>
                     </form>
                 </div>
 
-
+                <div class="step-1" id="checkout-progress" data-current-step="1">
+                    <div class="progress-bar">
+                        <div class="step step-1 active"><span> 1</span>
+                            <div class="fa fa-check opaque"></div>
+                            <div class="step-label"> Course Essential</div>
+                        </div>
+                        <div class="step step-2"><span> 2</span>
+                            <div class="fa fa-check opaque"></div>
+                            <div class="step-label"> Course Detail</div>
+                        </div>
+                        <div class="step step-3"><span> 3</span>
+                            <div class="fa fa-check opaque"></div>
+                            <div class="step-label"> CLO Distribution</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
