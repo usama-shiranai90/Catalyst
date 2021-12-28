@@ -389,7 +389,7 @@
                     </div>-->
                 </div>
 
-                <!--                progress status-->
+                <!--                Course Profile Progress bar-->
                 <div class="my-4">
                     <div class="flex-center pb-3">
                         <div id="progressCircle-1" class="flex-grow-0 ">
