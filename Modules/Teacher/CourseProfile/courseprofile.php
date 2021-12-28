@@ -50,7 +50,7 @@
                                             focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white-->
                     <div class="flex flex-col relative">
                         <p class="text-sm  text-gray-800 text-center">2321321</p>
-                        <div class="w-full self-center border-t-2 border-gray-300 " ></div>
+                        <div class="w-full self-center border-t-2 border-gray-300 "></div>
                         <p class="text-sm text-gray-800 text-center">Student F18-BCSE-037</p>
                     </div>
 
@@ -59,30 +59,35 @@
             <!--            Mobile View-->
             <div class="-mr-2 flex md:hidden">
                 <!-- Mobile menu button -->
-                <button type="button" class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                <button type="button"
+                        class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                        aria-controls="mobile-menu" aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
                     <!--
                       Heroicon name: outline/menu
 
                       Menu open: "hidden", Menu closed: "block"
                     -->
-                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                     <!--
                       Heroicon name: outline/x
 
                       Menu open: "block", Menu closed: "hidden"
                     -->
-                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="container max-w-5xl mx-auto py-6 sm:px-6 lg:px-10">
+    <main class="container mx-auto py-3 sm:px-3 lg:px-5  max-w-7xl sm:max-w-xl md:max-w-3xl lg:max-w-7xl">
         <div class="px-4 py-6 sm:px-0">
 
             <div class="max-w-full grid grid-rows-2 gap-3.5 grid-flow-row">
@@ -95,28 +100,29 @@
                 </div>
 
                 <!--        Course-Profile Container -->
-                <div class="parent-container-box-border text-black rounded-t-md rounded-b-md mt-2"
+                <div class="parent-container-box-border text-black rounded-t-md rounded-b-md mt-2 h-full"
                      style="background-color: #F4F8F9">
 
                     <h2 class="parent-container-header" id="subject-topic-ID">Course Profile Creation</h2>
 
                     <form method="post">
-                        <div class="bg-white rounded-t-md  border-solid border-t-2 flex flex-row
-                                    px-5 pt-4 pb-4">
+                        <div class="bg-white rounded-t-md  border-solid border-t-2 flex flex-row px-5 pt-4 pb-4">
 
                             <div class="left-container w-1/4">
 
                                 <!--                        course title-->
                                 <div class="textField-label-content w-full" id="courseTitleDivId">
                                     <label for="courseTitleID"></label>
-                                    <input class="textField" type="text" placeholder=" " id="courseTitleID" name="courseTitle">
+                                    <input class="textField" type="text" placeholder=" " id="courseTitleID"
+                                           name="courseTitle">
                                     <label class="textField-label">Course Title</label>
                                 </div>
 
                                 <!--                        course Code-->
                                 <div class="textField-label-content w-full" id="courseCodeDivId">
                                     <label for="courseCode"></label>
-                                    <input class="textField" type="text"  placeholder=" " id="courseCode" name ="courseCode">
+                                    <input class="textField" type="text" placeholder=" " id="courseCode"
+                                           name="courseCode">
                                     <label class="textField-label">Course Code</label>
                                 </div>
 
@@ -125,7 +131,8 @@
                                     <label for="creditHourID"></label>
                                     <select class="select" name="creditHour"
                                             onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value="" id="creditHourID">
+                                            onchange="this.setAttribute('value', this.value);" value=""
+                                            id="creditHourID">
                                         <option value="" hidden></option>
                                         <option value="one">1</option>
                                         <option value="two">2</option>
@@ -139,7 +146,8 @@
                                     <label for="preRequisiteID"></label>
                                     <select class="select" name="preRequisite"
                                             onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value="" id="preRequisiteID">
+                                            onchange="this.setAttribute('value', this.value);" value=""
+                                            id="preRequisiteID">
                                         <option value="" hidden></option>
                                         <option value="one">Programming Fundamental</option>
                                     </select>
@@ -151,7 +159,8 @@
                                     <label for="semesterTermID"></label>
                                     <select class="select" name="semesterTerm"
                                             onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value="" id="semesterTermID">
+                                            onchange="this.setAttribute('value', this.value);" value=""
+                                            id="semesterTermID">
                                         <option value="" hidden></option>
                                         <option value="one">Programming Fundamental</option>
                                     </select>
@@ -162,7 +171,7 @@
                                 <!--                       Program level-->
                                 <div class="textField-label-content w-full" id="courseTitleDivId">
                                     <label for="ProgramLevelID"></label>
-                                    <input class="textField" type="text" id="ProgramLevelID" name ="ProgramLevel"
+                                    <input class="textField" type="text" id="ProgramLevelID" name="ProgramLevel"
                                            value="Undergraduate" readonly>
                                     <label class="textField-label">Program level</label>
                                 </div>
@@ -186,7 +195,8 @@
                                     <label for="courseEffective"></label>
                                     <select class="select" name="courseEffective"
                                             onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value="" id="courseEffectiveID">
+                                            onchange="this.setAttribute('value', this.value);" value=""
+                                            id="courseEffectiveID">
                                         <option value="" hidden></option>
                                         <option value="one">Fall-16 Batch Onwards</option>
                                         <option value="one">Fall-18 Batch Onwards</option>
@@ -196,14 +206,15 @@
 
                             </div>
 
-                            <div class="right-container flex-1 mx-5">
-
+                            <!--                            my right container-->
+                            <div class="right-container flex-1 mx-3 pb-5">
                                 <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
                                             border-b-2 border-solid" style="background-color: #0284FC">
 
-                                    <h2 class="text-center my-2 font-bold text-white">Assessment Instrument with Weights</h2>
+                                    <h2 class="text-center my-2 font-bold text-white">Assessment Instrument with
+                                        Weights</h2>
 
-                                    <div class="grid grid-rows-5 gap-3.5 bg-white -rounded-t-md  border-solid border-t-2">
+                                    <div class="grid grid-rows-5 bg-white -rounded-t-md  border-solid border-t-2">
 
                                         <div class="assessment-wrap">
                                             <h3>Quizzes</h3>
@@ -212,17 +223,20 @@
 
                                             <div class="textField-label-content w-full" id="quizDetailDivId">
                                                 <label for="quizDetailID"></label>
-                                                <textarea class="textField" type="tex" placeholder=" " id="quizDetailID" name="quizDetail"></textarea>
+                                                <textarea class="textarea-h textField" type="tex" placeholder=" "
+                                                          id="quizDetailID"
+                                                          name="quizDetail"></textarea>
                                                 <label class="textField-label">Detail</label>
                                             </div>
 
                                             <div class="textField-label-content w-full" id="quizWeightDivId">
                                                 <input type="text" placeholder=" " name="price" id="quizWeight"
-                                                       class="textField block w-full pl-12 pr-12" style="padding-left:2.3em ">
+                                                       class="textField block w-full pl-12 pr-12"
+                                                       style="padding-left:2.3em ">
                                                 <label class="textField-label ml-3">Weights</label>
 
                                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                                                        <span class="text-gray-500 sm:text-sm">%</span>
+                                                    <span class="text-gray-500 sm:text-sm">%</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -232,11 +246,14 @@
                                             <div class="vertical-line"></div>
                                             <div class="textField-label-content w-full" id="assignmentDetailDivId">
                                                 <label for="assignmentDetailID"></label>
-                                                <textarea class="textField" type="text" placeholder=" " id="assignmentDetailID" name="assignmentDetail"></textarea>
+                                                <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                          id="assignmentDetailID" name="assignmentDetail"></textarea>
                                                 <label class="textField-label">Detail</label>
                                             </div>
                                             <div class="textField-label-content w-full" id="assignmentWeightDivId">
-                                                <input type="text" placeholder=" " name="price" id="assignmentWeight" class="textField block w-full pl-12 pr-12" style="padding-left:2.3em ">
+                                                <input type="text" placeholder=" " name="price" id="assignmentWeight"
+                                                       class="textField block w-full pl-12 pr-12"
+                                                       style="padding-left:2.3em ">
                                                 <label class="textField-label ml-3">Weights</label>
 
                                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -252,11 +269,14 @@
                                             <div class="vertical-line"></div>
                                             <div class="textField-label-content w-full" id="assignmentDetailDivId">
                                                 <label for="assignmentDetailID"></label>
-                                                <textarea class="textField" type="tex" placeholder=" " id="assignmentDetailID" name="assignmentDetail"></textarea>
+                                                <textarea class="textarea-h textField" type="tex" placeholder=" "
+                                                          id="assignmentDetailID" name="assignmentDetail"></textarea>
                                                 <label class="textField-label">Detail</label>
                                             </div>
                                             <div class="textField-label-content w-full" id="assignmentWeightDivId">
-                                                <input type="text" placeholder=" " name="price" id="assignmentWeight" class="textField block w-full pl-12 pr-12" style="padding-left:2.3em ">
+                                                <input type="text" placeholder=" " name="price" id="assignmentWeight"
+                                                       class="textField block w-full pl-12 pr-12"
+                                                       style="padding-left:2.3em ">
                                                 <label class="textField-label ml-3">Weights</label>
 
                                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -274,12 +294,15 @@
 
                                             <div class="textField-label-content w-full" id="assignmentDetailDivId">
                                                 <label for="assignmentDetailID"></label>
-                                                <textarea class="textField" type="tex" placeholder=" " id="assignmentDetailID" name="assignmentDetail"></textarea>
+                                                <textarea class="textarea-h textField" type="tex" placeholder=" "
+                                                          id="assignmentDetailID" name="assignmentDetail"></textarea>
                                                 <label class="textField-label">Detail</label>
                                             </div>
 
                                             <div class="textField-label-content w-full" id="assignmentWeightDivId">
-                                                <input type="text" placeholder=" " name="price" id="assignmentWeight" class="textField block w-full pl-12 pr-12" style="padding-left:2.3em ">
+                                                <input type="text" placeholder=" " name="price" id="assignmentWeight"
+                                                       class="textField block w-full pl-12 pr-12"
+                                                       style="padding-left:2.3em ">
                                                 <label class="textField-label ml-3">Weights</label>
 
                                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -297,12 +320,15 @@
 
                                             <div class="textField-label-content w-full" id="assignmentDetailDivId">
                                                 <label for="assignmentDetailID"></label>
-                                                <textarea class="textField" type="tex" placeholder=" " id="assignmentDetailID" name="assignmentDetail"></textarea>
+                                                <textarea class="textarea-h textField" type="tex" placeholder=" "
+                                                          id="assignmentDetailID" name="assignmentDetail"></textarea>
                                                 <label class="textField-label">Detail</label>
                                             </div>
 
                                             <div class="textField-label-content w-full" id="assignmentWeightDivId">
-                                                <input type="text" placeholder=" " name="price" id="assignmentWeight" class="textField block w-full pl-12 pr-12" style="padding-left:2.3em ">
+                                                <input type="text" placeholder=" " name="price" id="assignmentWeight"
+                                                       class="textField block w-full pl-12 pr-12"
+                                                       style="padding-left:2.3em ">
                                                 <label class="textField-label ml-3">Weights</label>
 
                                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -315,40 +341,42 @@
 
                                     </div>
 
+                                </div>
+                                <div class=" assessment-wrap flex-1 mt-4">
 
+                                    <div class="textField-label-content w-full" id="courseTitleDivId">
+                                        <label for="courseTitleID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="courseTitleID"
+                                               name="courseTitle">
+                                        <label class="textField-label">Course Title</label>
+                                    </div>
+                                    <div class="textField-label-content w-full" id="courseTitleDivId">
+                                        <label for="courseTitleID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="courseTitleID"
+                                               name="courseTitle">
+                                        <label class="textField-label">Course Title</label>
+                                    </div>
+                                    <div class="textField-label-content w-full" id="courseTitleDivId">
+                                        <label for="courseTitleID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="courseTitleID"
+                                               name="courseTitle">
+                                        <label class="textField-label">Course Title</label>
+                                    </div>
 
                                 </div>
-
-                                <div class=" assessment-wrap flex-1 mt-10">
-                                    <div class="textField-label-content w-full" id="courseTitleDivId">
-                                        <label for="courseTitleID"></label>
-                                        <input class="textField" type="text" placeholder=" " id="courseTitleID" name="courseTitle">
-                                        <label class="textField-label">Course Title</label>
-                                    </div>
-                                    <div class="textField-label-content w-full" id="courseTitleDivId">
-                                        <label for="courseTitleID"></label>
-                                        <input class="textField" type="text" placeholder=" " id="courseTitleID" name="courseTitle">
-                                        <label class="textField-label">Course Title</label>
-                                    </div>
-                                    <div class="textField-label-content w-full" id="courseTitleDivId">
-                                        <label for="courseTitleID"></label>
-                                        <input class="textField" type="text" placeholder=" " id="courseTitleID" name="courseTitle">
-                                        <label class="textField-label">Course Title</label>
-                                    </div>
-
-                                </div>
-
                             </div>
 
                         </div>
                     </form>
                 </div>
 
-                <div class="step-1" id="checkout-progress" data-current-step="1">
-                    <div class="progress-bar">
+                <div class="" id="checkout-progress"
+                     data-current-step="1">
+
+                    <!--<div class="progress-bar">
                         <div class="step step-1 active"><span> 1</span>
                             <div class="fa fa-check opaque"></div>
-                            <div class="step-label"> Course Essential</div>
+                            <div class="step-label "> Course Essential</div>
                         </div>
                         <div class="step step-2"><span> 2</span>
                             <div class="fa fa-check opaque"></div>
@@ -358,8 +386,57 @@
                             <div class="fa fa-check opaque"></div>
                             <div class="step-label"> CLO Distribution</div>
                         </div>
+                    </div>-->
+                </div>
+
+                <!--                progress status-->
+                <div class="my-4">
+                    <div class="flex-center pb-3">
+                        <div id="progressCircle-1" class="flex-grow-0 ">
+                            <div class="w-10 h-10 bg-black mx-auto rounded-full text-lg text-white flex items-center">
+                                <span class="text-white text-center w-full"><i
+                                            class="fa fa-check w-full fill-current white"></i></span>
+                            </div>
+                        </div>
+                        <div class="w-1/6 align-center items-center align-middle content-center flex">
+                            <div class="w-full bg-gray-200 items-center align-middle align-center flex-1">
+                                <div class="bg-black text-xs leading-none py-1 text-center text-grey-900"
+                                     style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <div id="progressCircle-2" class="flex-grow-0 ">
+                            <div class="w-10 h-10 bg-black mx-auto rounded-full text-lg text-white flex items-center">
+                                <span class="text-white text-center w-full"><i
+                                            class="fa fa-check w-full fill-current white"></i></span>
+                            </div>
+                        </div>
+                        <div class="w-1/6 align-center items-center align-middle content-center flex">
+                            <div class="w-full bg-gray-200 items-center align-middle align-center flex-1">
+                                <div class="bg-black text-xs leading-none py-1 text-center"
+                                     style="width: 20%"></div>
+                            </div>
+                        </div>
+
+                        <div id="progressCircle-3" class="flex-grow-0 ">
+                            <div class="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
+                                <span class="text-gray-400 text-center w-full">3</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-center text-center">
+                        <div class="w-1/5">
+                            Course Essential
+                        </div>
+                        <div class="w-1/5">
+                            Course Detail
+                        </div>
+                        <div class="w-1/5">
+                            CLO Distribution
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
