@@ -34,14 +34,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
     <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
-    <title>Catalyst - Login</title>
+    <title>Catalyst | Login</title>
 
 </head>
 
 <body class="flex flex-col justify-center">
 
 <header class="header-section bg-palette_Catalyst-form_btn shadow-2xl max-h-full">
-<!--container px-5 py-2 mx-auto flex items-center sm:flex-row flex-col-->
+    <!--container px-5 py-2 mx-auto flex items-center sm:flex-row flex-col-->
     <div class="px-5 py-4 mx-auto  sm:flex-row flex-col sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
 
         <div class="relative flex items-center justify-between flex-row">
@@ -51,13 +51,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <ul class="flex inline-flex items-center justify-start hidden space-x-2 lg:flex">
 
                 <li><a href="#" title="Home"
-                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-300 px-2 py-2">Home</a></li>
+                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-300 px-2 py-2">Home</a>
+                </li>
 
                 <li><a href="#" title="Features-list"
-                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-200 px-2 py-2">Features</a></li>
+                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-200 px-2 py-2">Features</a>
+                </li>
 
                 <li><a href="#" title="About-is"
-                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-400 focus:bg-palette_Catalyst-authentication_type px-2 py-2">About Us</a></li>
+                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-400 focus:bg-palette_Catalyst-authentication_type px-2 py-2">About
+                        Us</a></li>
             </ul>
             <ul class="flex inline-flex items-center justify-start hidden space-x-8 lg:flex">
                 <li style="margin:0">
@@ -404,24 +407,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <span class="inline-flex sm:ml-auto sm:mt-0 mt-0">
               <a class="text-white">
-                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5"
+                     viewBox="0 0 24 24">
                   <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
                 </svg>
               </a>
               <a class="ml-3 text-white">
-                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5"
+                     viewBox="0 0 24 24">
                   <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
                 </svg>
               </a>
               <a class="ml-3 text-white">
-                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     class="w-5 h-5" viewBox="0 0 24 24">
                   <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
                 </svg>
               </a>
               <a class="ml-3 text-white">
-                <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
-                  <path stroke="none" d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+                <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                     stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+                  <path stroke="none"
+                        d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
                   <circle cx="4" cy="4" r="2" stroke="none"></circle>
                 </svg>
               </a>
