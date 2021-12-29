@@ -106,10 +106,10 @@
                     <h2 class="parent-container-header" id="subject-topic-ID">Course Profile Creation</h2>
 
                     <form method="post">
-                        <div class="bg-white rounded-t-md  border-solid border-t-2 flex flex-row px-5 pt-4 pb-4">
 
+                        <div id="cpID-1"
+                             class="hidden bg-white rounded-t-md  border-solid border-t-2 flex flex-row px-5 pt-4 pb-4">
                             <div class="left-container w-1/4">
-
                                 <!--                        course title-->
                                 <div class="textField-label-content w-full" id="courseTitleDivId">
                                     <label for="courseTitleID"></label>
@@ -205,15 +205,13 @@
                                 </div>
 
                             </div>
-
-                            <!--                            my right container-->
                             <div class="right-container flex-1 mx-3 pb-5">
+
                                 <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
                                             border-b-2 border-solid" style="background-color: #0284FC">
 
                                     <h2 class="text-center my-2 font-bold text-white">Assessment Instrument with
                                         Weights</h2>
-
                                     <div class="grid grid-rows-5 bg-white -rounded-t-md  border-solid border-t-2">
 
                                         <div class="assessment-wrap">
@@ -340,8 +338,8 @@
                                         </div>
 
                                     </div>
-
                                 </div>
+
                                 <div class=" assessment-wrap flex-1 mt-4">
 
                                     <div class="textField-label-content w-full" id="courseTitleDivId">
@@ -365,65 +363,103 @@
 
                                 </div>
                             </div>
-
                         </div>
+
+                        <div class="bg-white rounded-t-md border-solid border-t-2 grid grid-rows-2 px-5 pt-4 pb-4 ">
+
+                            <!--                                Course Learning Outcome-->
+                            <div class="first-container">
+
+                                <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
+                                            border-b-2 border-solid" style="background-color: #0284FC">
+                                    <h2 class="text-center my-2 font-bold text-white">Course Learning Outcome</h2>
+
+                                    <div class="text-black uppercase text-center text-lg font-medium bg-gray-200">
+                                        <div class="assessment-wrap h-2/4" style="border: 1px solid;">
+                                            <label class="flex-shrink-0 sm:w-auto">CLO's</label>
+                                            <label class="flex-grow w-1/4 sm:w-auto">Description of clo's</label>
+                                            <label class="flex-grow w-5 sm:w-auto">domain</label>
+                                            <label class="flex-grow w-4 sm:w-auto">BT-level</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-rows-4 auto-rows-min bg-white -rounded-t-md
+                                                mb-auto border-solid border-t-2 h-1/3">
+
+                                        <div class="assessment-wrap">
+                                            <h3>Quizzes</h3>
+
+                                            <div class="vertical-line"></div>
+
+                                            <div class="textField-label-content w-full" id="quizDetailDivId">
+                                                <label for="quizDetailID"></label>
+                                                <textarea class="textarea-h textField" type="tex" placeholder=" "
+                                                          id="quizDetailID"
+                                                          name="quizDetail"></textarea>
+                                                <label class="textField-label">Detail</label>
+                                            </div>
+
+                                            <div class="textField-label-content w-full" id="quizWeightDivId">
+                                                <input type="text" placeholder=" " name="price" id="quizWeight"
+                                                       class="textField block w-full pl-12 pr-12"
+                                                       style="padding-left:2.3em ">
+                                                <label class="textField-label ml-3">Weights</label>
+
+                                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                                                    <span class="text-gray-500 sm:text-sm">%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="second-container w-1/6"></div>
+                        </div>
+
                     </form>
-                </div>
-
-                <div class="" id="checkout-progress"
-                     data-current-step="1">
-
-                    <!--<div class="progress-bar">
-                        <div class="step step-1 active"><span> 1</span>
-                            <div class="fa fa-check opaque"></div>
-                            <div class="step-label "> Course Essential</div>
-                        </div>
-                        <div class="step step-2"><span> 2</span>
-                            <div class="fa fa-check opaque"></div>
-                            <div class="step-label"> Course Detail</div>
-                        </div>
-                        <div class="step step-3"><span> 3</span>
-                            <div class="fa fa-check opaque"></div>
-                            <div class="step-label"> CLO Distribution</div>
-                        </div>
-                    </div>-->
                 </div>
 
                 <!--                progress status-->
                 <div class="my-4">
                     <div class="flex-center pb-3">
+
                         <div id="progressCircle-1" class="flex-grow-0 ">
-                            <div class="w-10 h-10 bg-black mx-auto rounded-full text-lg text-white flex items-center">
-                                <span class="text-white text-center w-full"><i
-                                            class="fa fa-check w-full fill-current white"></i></span>
+                            <div class="progress-circle progress-circle-filled">
+                                <span class="circular-span">
+                                    <i class="fa fa-check"></i>
+                                </span>
                             </div>
                         </div>
-                        <div class="w-1/6 align-center items-center align-middle content-center flex">
-                            <div class="w-full bg-gray-200 items-center align-middle align-center flex-1">
-                                <div class="bg-black text-xs leading-none py-1 text-center text-grey-900"
-                                     style="width: 100%"></div>
+
+                        <div class="w-1/6 items-center flex">
+                            <!-- w-1/6 align-center items-center align-middle content-center flex-->
+                            <div class="bg-gray-200  flex-1">
+                                <!-- w-full bg-gray-200 items-center align-middle align-center flex-1 -->
+                                <div class="progress-circle-filled py-1 w-full"></div>
                             </div>
                         </div>
 
                         <div id="progressCircle-2" class="flex-grow-0 ">
-                            <div class="w-10 h-10 bg-black mx-auto rounded-full text-lg text-white flex items-center">
-                                <span class="text-white text-center w-full"><i
-                                            class="fa fa-check w-full fill-current white"></i></span>
-                            </div>
-                        </div>
-                        <div class="w-1/6 align-center items-center align-middle content-center flex">
-                            <div class="w-full bg-gray-200 items-center align-middle align-center flex-1">
-                                <div class="bg-black text-xs leading-none py-1 text-center"
-                                     style="width: 20%"></div>
+                            <div class="progress-circle progress-circle-unfilled">
+                                <span class="text-gray-400 circular-span">2</span>
                             </div>
                         </div>
 
+                        <div class="w-1/6 items-center flex">
+                            <div class="bg-gray-200  flex-1">
+                                <div class="progress-circle-unfilled py-1 w-0"></div>
+                            </div>
+                        </div>
                         <div id="progressCircle-3" class="flex-grow-0 ">
-                            <div class="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
-                                <span class="text-gray-400 text-center w-full">3</span>
+                            <div class="progress-circle progress-circle-unfilled">
+                                <span class="text-gray-400 circular-span">3</span>
                             </div>
                         </div>
                     </div>
+
                     <div class="flex-center text-center">
                         <div class="w-1/5">
                             Course Essential

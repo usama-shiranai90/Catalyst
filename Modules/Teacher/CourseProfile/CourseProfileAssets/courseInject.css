@@ -2,33 +2,59 @@
 @tailwind components;
 
 
-.left-container , .right-container{
+.left-container, .right-container {
     @apply flex flex-col flex-shrink-0 max-w-full;
 }
 
-.parent-container-box-border{
+.parent-container-box-border {
     @apply border-solid border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 ;
 }
 
-.parent-container-header{
-    @apply  text-xl text-center my-2 font-bold;
+.parent-container-header {
+    @apply text-xl text-center my-2 font-bold;
 }
 
-.assessment-wrap{
-    @apply flex flex-row max-w-full items-center  mx-2;
-/*    mt-2*/
+.assessment-wrap {
+    @apply flex flex-row max-w-full items-center
+    mx-2;
+    /*    mt-2*/
 }
 
-.assessment-wrap > h3{
+.assessment-wrap > h3 {
     @apply w-56 font-bold;
 }
 
-.vertical-line{
+.vertical-line {
     @apply border-solid border-gray-400 border-l-2 mx-5 h-2/4;
 }
 
-.flex-center{
+.flex-center {
     @apply flex justify-center;
 }
 
+.progress-circle{
+    @apply flex items-center w-10 h-10
+     rounded-full text-lg mx-auto;
+}
+
+.progress-circle-filled{
+    @apply bg-palette_ms_bg-200 text-palette_ms_bg-800 ;
+}
+
+.progress-circle-unfilled {
+    @apply  bg-palette_ms_bg-800 text-palette_ms_bg-200 ;
+}
+
+.circular-span{
+    @apply text-white text-center w-full;
+}
+
+
 @tailwind utilities;
+
+
+/*  max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex
+    items-center justify-between h-20*/
+
+/*  text-3xl font-bold text-blue-800
+    flex-grow text-center*/
