@@ -10,6 +10,15 @@
     @apply border-solid border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 ;
 }
 
+
+.course-assessment-border , .clo-table-border {
+    @apply rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 border-solid;
+}
+
+.table-head{
+    @apply text-center my-2 font-bold text-white;
+}
+
 .parent-container-header {
     @apply text-xl text-center my-2 font-bold;
 }
@@ -49,6 +58,17 @@
     @apply text-white text-center w-full;
 }
 
+.course-profile-container-block{
+    @apply bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4;
+}
+
+.cprofile-column{
+    @apply border border-t-0 border-gray-300 self-center flex-grow overflow-hidden list-none h-10;
+}
+
+.cprofile-cell-data{
+    @apply flex justify-center items-center min-h-full min-w-full;
+}
 
 @tailwind utilities;
 

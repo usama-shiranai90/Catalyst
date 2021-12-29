@@ -1,5 +1,5 @@
-@tailwind base;
-@tailwind components;
+/*@tailwind base;*/
+/*@tailwind components;*/
 
 .login-container-label{
     @apply text-center pt-3 pb-3
@@ -38,5 +38,4 @@
     @apply bg-palette_Catalyst-form_btn shadow-2xl max-h-full;
 }
 
-
-@tailwind utilities;
+/*@tailwind utilities;*/

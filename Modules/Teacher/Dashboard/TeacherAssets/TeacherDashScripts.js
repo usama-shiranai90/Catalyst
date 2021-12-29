@@ -7,7 +7,7 @@
 
         //Loading teacher's dashboard
         $("#teacherDashboardID").click(function () {
-            $("#teacherMainContent").html("<iframe class='h-full block' src='LoadingTestPage.php' style='width: 100%'></iframe>");
+            $("#teacherMainContent").html("<iframe class='h-full block' src='../LoadingTestPage.php' style='width: 100%'></iframe>");
         })
     });
 // }

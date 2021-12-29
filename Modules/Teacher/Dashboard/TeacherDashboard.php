@@ -145,7 +145,7 @@
                         <label class="pl-3">Course Management</label>
                     </div>
                     <img class="sidePanelNavigationItemDropdownIcon rotate" name="courseManagement"
-                         src="../../../Assets/Images/chevron-down.svg">
+                         src="../../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="dropdownNavigationItemMenu menu menuClosed" id="courseManagementMenu">
                     <div class="menuItem">Profile</div>
@@ -169,7 +169,7 @@
                     </div>
 
                     <img class="sidePanelNavigationItemDropdownIcon rotate"
-                         src="../../../Assets/Images/chevron-down.svg">
+                         src="../../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
                     <div class="menuItem">Sessional</div>

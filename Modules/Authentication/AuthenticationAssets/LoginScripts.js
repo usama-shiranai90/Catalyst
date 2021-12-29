@@ -82,7 +82,7 @@ window.onload = function () {
 
     function checkStudentUsername() {
         incompleteUsername = false //it would be turned back to true if any one of the below conditions execute
-        if (batch.value == "") {
+        if (batch.value === "") {
             batchDiv.classList.add("select-error-input")
             incompleteUsername = true
         }
@@ -236,15 +236,17 @@ window.onload = function () {
         $(rollNo).on("input", function () {
             rollNoDiv.classList.remove("select-error-input")
             removeStudentUsernameError()
+
         });
 
         /*On Username Inputs*/
         $(teacherUsername).add(adminUsername).on("input", function () {
-            if (this.id == teacherUsername.id) {
+            if (this.id === teacherUsername.id) {
                 removeUsernameError(teacherUsername, teacherUsernameDiv, teacherUsernameError)
-            } else if (this.id == adminUsername.id) {
+            } else if (this.id === adminUsername.id) {
                 removeUsernameError(adminUsername, adminUsernameDiv, adminUsernameError)
             }
+
         });
 
 
@@ -280,6 +282,7 @@ window.onload = function () {
             if (incompleteUsername || incompletePassword) {
                 event.preventDefault()
             }
+
         });
 
     });

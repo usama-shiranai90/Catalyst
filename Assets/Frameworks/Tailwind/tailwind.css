@@ -1,3 +1,7 @@
+
+@import "Modules/Authentication/AuthenticationAssets/LoginInject.css";
+/*@import "../../../Modules/Teacher/CourseProfile/CourseProfileAssets/courseInject.css";*/
+
 @tailwind base;
 @tailwind components;
 
@@ -11,4 +15,8 @@
     font-family: Poppins-Bold;
     src: url(../../Fonts/Poppins/Poppins-Bold.ttf);
 }
+
+
 @tailwind utilities;
+
+

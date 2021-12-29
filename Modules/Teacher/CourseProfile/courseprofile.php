@@ -107,8 +107,9 @@
 
                     <form method="post">
 
+<!--                        start page-1 -->
                         <div id="cpID-1"
-                             class="hidden bg-white rounded-t-md  border-solid border-t-2 flex flex-row px-5 pt-4 pb-4">
+                             class="hidden course-profile-container-block flex flex-row">
                             <div class="left-container w-1/4">
                                 <!--                        course title-->
                                 <div class="textField-label-content w-full" id="courseTitleDivId">
@@ -207,10 +208,9 @@
                             </div>
                             <div class="right-container flex-1 mx-3 pb-5">
 
-                                <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
-                                            border-b-2 border-solid" style="background-color: #0284FC">
+                                <div class="course-assessment-border" style="background-color: #0284FC">
 
-                                    <h2 class="text-center my-2 font-bold text-white">Assessment Instrument with
+                                    <h2 class="table-head">Assessment Instrument with
                                         Weights</h2>
                                     <div class="grid grid-rows-5 bg-white -rounded-t-md  border-solid border-t-2">
 
@@ -364,59 +364,63 @@
                                 </div>
                             </div>
                         </div>
+<!--                        end page-1-->
 
-                        <div class="bg-white rounded-t-md border-solid border-t-2 grid grid-rows-2 px-5 pt-4 pb-4 ">
+                        <div class="course-profile-container-block grid grid-rows-2">
 
                             <!--                                Course Learning Outcome-->
-                            <div class="first-container">
+                            <div class="clo-container">
+                                <div class="clo-table-border" style="background-color: #0284FC">
+                                    <h2 class="table-head">Course Learning Outcome</h2>
 
-                                <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
-                                            border-b-2 border-solid" style="background-color: #0284FC">
-                                    <h2 class="text-center my-2 font-bold text-white">Course Learning Outcome</h2>
-
-                                    <div class="text-black uppercase text-center text-lg font-medium bg-gray-200">
-                                        <div class="assessment-wrap h-2/4" style="border: 1px solid;">
-                                            <label class="flex-shrink-0 sm:w-auto">CLO's</label>
-                                            <label class="flex-grow w-1/4 sm:w-auto">Description of clo's</label>
-                                            <label class="flex-grow w-5 sm:w-auto">domain</label>
-                                            <label class="flex-grow w-4 sm:w-auto">BT-level</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="grid grid-rows-4 auto-rows-min bg-white -rounded-t-md
-                                                mb-auto border-solid border-t-2 h-1/3">
-
-                                        <div class="assessment-wrap">
-                                            <h3>Quizzes</h3>
-
-                                            <div class="vertical-line"></div>
-
-                                            <div class="textField-label-content w-full" id="quizDetailDivId">
-                                                <label for="quizDetailID"></label>
-                                                <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                          id="quizDetailID"
-                                                          name="quizDetail"></textarea>
-                                                <label class="textField-label">Detail</label>
+                                    <div id="courseLearningDiv" class="flex flex-wrap p-0">
+                                        <div class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10 ">
+                                            <div class="cprofile-column h-10 w-24">
+                                                
+                                                <span class="cprofile-cell-data">CLO's</span>
                                             </div>
-
-                                            <div class="textField-label-content w-full" id="quizWeightDivId">
-                                                <input type="text" placeholder=" " name="price" id="quizWeight"
-                                                       class="textField block w-full pl-12 pr-12"
-                                                       style="padding-left:2.3em ">
-                                                <label class="textField-label ml-3">Weights</label>
-
-                                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                                                    <span class="text-gray-500 sm:text-sm">%</span>
-                                                </div>
+                                            <div class="cprofile-column h-10 w-3/4">
+                                                <span class="cprofile-cell-data">Description of clo's</span>
+                                            </div>
+                                            <div class="cprofile-column h-10 w-1/6">
+                                                <span class="cprofile-cell-data">Domain</span>
+                                            </div>
+                                            <div class="cprofile-column h-10 w-1/6">
+                                                <span class="cprofile-cell-data">BT-level</span>
                                             </div>
                                         </div>
 
+                                        <div id="clo-div-1" class="flex w-full items-start capitalize text-black bg-white font-medium h-10 text-center text-sm">
+                                            <div class="cprofile-column h-10 w-24 bg-blue-500 text-white">
+                                                <span class="cprofile-cell-data">CLO-1</span>
+                                            </div>
+                                            <div class="cprofile-column h-10 w-3/4">
+<!--                                                <span class="cprofile-cell-data">Understanding the role of Indesign and its major activities within the OO software</span>-->
+                                                <label for="clo1-description">
+                                                    <input type="text" class="text-center min-h-full min-w-full" value=""
+                                                           placeholder="Enter CLO description" id="clo-1-description">
+                                                </label>
+                                            </div>
+                                            <div class="cprofile-column h-10 w-1/6">
+                                                <span class="cprofile-cell-data">Undergraduate</span>
+                                            </div>
+                                            <div class="cprofile-column h-10 w-1/6">
+                                                <span class="cprofile-cell-data">1</span>
+                                            </div>
+                                        </div>
 
                                     </div>
+
+                                </div>
+
+                                <div class="flex justify-center mt-2">
+                                    <button type="button" class="max-w-2xl rounded-full" id="add-clo-btn" aria-expanded="false" aria-haspopup="true">
+                                        <img class="h-14 w-14 rounded-full" src="../../../Assets/Images/vectorFiles/Icons/add-button.svg" alt="">
+                                    </button>
                                 </div>
                             </div>
 
-                            <div class="second-container w-1/6"></div>
+                            <div class="cloMapping-container"></div>
                         </div>
 
                     </form>
@@ -478,6 +482,12 @@
 
     </main>
 </div>
-
 </body>
+<script>
+
+    window.onload = function () {
+
+    }
+
+</script>
 </html>

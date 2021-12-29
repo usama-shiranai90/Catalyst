@@ -7,7 +7,7 @@
 
 /*Changing arrow of dropdown in side panel*/
 .classSelector .select:not([multiple]):not([size]) {
-    background-image: url(../../../../Assets/Images/dropdown-white.svg);
+    background-image: url(../../../../Assets/Images/vectorFiles/Icons/dropdown-white.svg);
     background-position: right 15px top 50%;
     background-repeat: no-repeat;
 }

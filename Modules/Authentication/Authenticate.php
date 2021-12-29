@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div class="relative flex items-center justify-between flex-row">
 
-            <a href="#"><img src="../../Assets/Images/catalystLogo.svg" alt="logo"></a>
+            <a href="#"><img src="../../Assets/Images/vectorFiles/Primary/catalystLogo.svg" alt="logo"></a>
 
             <ul class="flex inline-flex items-center justify-start hidden space-x-2 lg:flex">
 
@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                      text-white transition-colors duration-200 transform rounded-md hover:bg-blue-500">
 
                         <img class="w-7 h-7 mx-1 transform rotate-180 " alt="login-logo"
-                             src="../../Assets/Images/logoutIcon.svg">
+                             src="../../Assets/Images/vectorFiles/logoutIcon.svg">
                         <span class="mx-1">Login</span>
                     </button>
                 </li>
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <a href="/" class="inline-flex items-center">
-                                    <img src="../../Assets/Images/catalystLogo.svg" alt="logo">
+                                    <img src="../../Assets/Images/vectorFiles/Primary/catalystLogo.svg" alt="logo">
                                 </a>
                             </div>
                             <div>
@@ -244,7 +244,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </button>
                     </div>
                     <div class="align-middle text-center hidden sm:inline-block">
-                        <img src="../../Assets/Images/User-Vector/man-with-umbralla.svg" alt="">
+                        <img src="../../Assets/Images/vectorFiles/User-Vector/man-with-umbralla.svg" alt="">
                     </div>
                 </div>
 
@@ -312,7 +312,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </button>
                     </div>
                     <div class="align-middle text-center hidden sm:inline-block">
-                        <img class="h-48" src="../../Assets/Images/User-Vector/man-with-umbralla.svg" alt="">
+                        <img class="h-48" src="../../Assets/Images/vectorFiles/User-Vector/man-with-umbralla.svg" alt="">
                     </div>
                 </div>
 
@@ -374,7 +374,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </button>
                     </div>
                     <div class="align-middle text-center hidden sm:inline-block">
-                        <img class="h-48" src="../../Assets/Images/User-Vector/man-with-umbralla.svg" alt="">
+                        <img class="h-48" src="../../Assets/Images/vectorFiles/User-Vector/man-with-umbralla.svg" alt="">
                     </div>
                 </div>
 
