@@ -270,12 +270,10 @@ window.onload = function () {
             if (this.id == studentLoginBtn.id) {
                 checkStudentUsername()
                 checkPassword(studentPassword, studentPasswordDiv, studentPassErrorLabel)
-            }
-            else if (this.id == teacherLoginBtn.id) {
+            } else if (this.id == teacherLoginBtn.id) {
                 checkUsername(teacherUsername, teacherUsernameDiv, teacherUsernameError)
                 checkPassword(teacherPassword, teacherPasswordDiv, teacherPassErrorLabel)
-            }
-            else{
+            } else {
                 checkUsername(adminUsername, adminUsernameDiv, adminUsernameError)
                 checkPassword(adminPassword, adminPasswordDiv, adminPassErrorLabel)
             }

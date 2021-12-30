@@ -1,29 +1,43 @@
 @tailwind base;
 @tailwind components;
 
-
-.left-container, .right-container {
-    @apply flex flex-col flex-shrink-0 max-w-full;
+.main-content-alignment {
+    @apply container mx-auto py-3 sm:px-3 lg:px-5  max-w-7xl sm:max-w-xl md:max-w-3xl lg:max-w-7xl;
 }
 
-.parent-container-box-border {
-    @apply border-solid border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 ;
+.cprofile-content-head {
+    @apply row-span-2 space-y-2;
 }
 
-
-.course-assessment-border , .clo-table-border {
-    @apply rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 border-solid;
+.cprofile-primary-border, .course-assessment-border, .clo-table-border {
+    @apply border-solid border-2;
+    /*        @apply border-solid border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 ;*/
 }
 
-.table-head{
-    @apply text-center my-2 font-bold text-white;
+.cprofile-content-box-border {
+    @apply bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4;
 }
 
-.parent-container-header {
+.cprofile-creation-content {
     @apply text-xl text-center my-2 font-bold;
 }
 
-.assessment-wrap {
+.cprofile-left-container, .cprofile-right-container {
+    @apply flex flex-col flex-shrink-0 max-w-full;
+}
+
+.course-assessment-border, .clo-table-border {
+    /*@apply  border-solid border-gray-300 border-b-2 border-t-2 border-r-2 border-l-2  ;*/
+    @apply rounded-t-lg;
+}
+
+
+.table-head {
+    @apply text-center my-2 font-bold text-white;
+}
+
+
+.assessment-wrap , .cprofile-content-division {
     @apply flex flex-row max-w-full items-center
     mx-2;
     /*    mt-2*/
@@ -41,32 +55,30 @@
     @apply flex justify-center;
 }
 
-.progress-circle{
+.progress-circle {
     @apply flex items-center w-10 h-10
-     rounded-full text-lg mx-auto;
+    rounded-full text-lg mx-auto;
 }
 
-.progress-circle-filled{
+.progress-circle-filled {
     @apply bg-palette_ms_bg-200 text-palette_ms_bg-800 ;
 }
 
 .progress-circle-unfilled {
-    @apply  bg-palette_ms_bg-800 text-palette_ms_bg-200 ;
+    @apply bg-palette_ms_bg-800 text-palette_ms_bg-200 ;
 }
 
-.circular-span{
+.circular-span {
     @apply text-white text-center w-full;
 }
 
-.course-profile-container-block{
-    @apply bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4;
-}
 
-.cprofile-column{
+
+.cprofile-column {
     @apply border border-t-0 border-gray-300 self-center flex-grow overflow-hidden list-none h-10;
 }
 
-.cprofile-cell-data{
+.cprofile-cell-data {
     @apply flex justify-center items-center min-h-full min-w-full;
 }
 

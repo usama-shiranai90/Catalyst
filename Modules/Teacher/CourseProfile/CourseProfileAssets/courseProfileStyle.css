@@ -1,12 +1,12 @@
-:root{
-    --courseProfileHeaderTypeColor:#F4F8F9;
+:root {
+    --courseProfileHeaderTypeColor: #F4F8F9;
     --sectionSecondaryHeader: #3B3E43;
-    --courseProfileTextFieldsBordersTypeColor:#9B9B9E;
+    --courseProfileTextFieldsBordersTypeColor: #9B9B9E;
     --courseProfilePageSliderTypeColor: #5648C5;
-    --courseProfileCircularBox : #0259C2;
+    --courseProfileCircularBox: #0259C2;
 
-    --background-catalyst-home :#F9F8FE;
-    --background-catalyst-instruments-weights :#0284FC;
+    --background-catalyst-home: #F9F8FE;
+    --background-catalyst-instruments-weights: #0284FC;
 }
 
 @font-face {
@@ -19,15 +19,15 @@
     src: url(../../../../Assets/Fonts/Poppins/Poppins-Bold.ttf);
 }
 
-.home-main{
+.home-main {
     background-color: #F9F8FE;
 }
 
-.textarea-h{
+.textarea-h {
     height: 5em;
 }
 
-.middleSectionLayout{
+.middleSectionLayout {
     background-color: #F4FAFF;
     display: inline-flex;
     background-repeat: no-repeat;
@@ -40,4 +40,13 @@
 
 .left-container > div {
     margin: 0.5em 0;
+}
+
+.loginButton {
+    background-color: var(--loginButton);
+    color: #ffffff;
+    font-family: Poppins-Regular;
+    border-radius: 5px;
+    border: 0;
+    padding: 0.5% 3%;
 }
