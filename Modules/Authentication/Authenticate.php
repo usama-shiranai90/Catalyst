@@ -310,8 +310,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!--Login and SVG-->
                 <div class="mt-5 sm:mt-0 sm:grid sm:grid-cols-3 sm:grid sm:gap-0 items-center mb-10 sm:mb-0 block">
                     <div class="align-middle text-center col-start-2">
-                        <button type="submit" class="loginButton sm:h-1/5 sm:w-2/3" name="studentLogin"
-                                id="studentLoginBtnID">Login
+                        <button type="submit" class="loginButton sm:h-1/5 sm:w-2/3"
+                                name="studentLogin" id="studentLoginBtnID">Login
                         </button>
                     </div>
                     <div class="align-middle text-center hidden sm:inline-block">

@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
-    <link href="../../../Assets/Frameworks/Tailwind/tailwind.css" rel="stylesheet">
+    <!--    <link href="../../../Assets/Frameworks/Tailwind/tailwind.css" rel="stylesheet">-->
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/courseInject.css" rel="stylesheet">
-    <script rel="CourseProfileAssets/courseScript.js"></script>
     <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
+    <script src="CourseProfileAssets/courseScript.js" rel="script"></script>
 
 </head>
 <body>
@@ -33,10 +33,12 @@
                             <button type="button" class="max-w-6xl bg-gray-800 rounded-full flex items-center
 
                             text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 focus:ring-white"
-                                    id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                                <span class="sr-only">Open user menu</span>
-                                <img class="h-14 w-14 rounded-full"
-                                     src="../../../Assets/Images/profilePicAvatar.jpg" alt="">
+                                    id="user-menu-button"
+                            ">
+                            <!--                            aria-expanded="false" aria-haspopup="true   -->
+                            <span class="sr-only">Open user menu</span>
+                            <img class="h-14 w-14 rounded-full"
+                                 src="../../../Assets/Images/profilePicAvatar.jpg" alt="">
                             </button>
                         </div>
                         <div class="hidden origin-top-right absolute right-0 mt-2 w-48
@@ -63,21 +65,13 @@
                         class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                         aria-controls="mobile-menu" aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
-                    <!--
-                      Heroicon name: outline/menu
 
-                      Menu open: "hidden", Menu closed: "block"
-                    -->
                     <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
-                    <!--
-                      Heroicon name: outline/x
 
-                      Menu open: "block", Menu closed: "hidden"
-                    -->
                     <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -94,7 +88,7 @@
 
             <!--       Course-Profile-Main-Heading         -->
             <div class="cprofile-content-head">
-                <h3 class="text-2xl font-bold" id="subject-topic-ID">Course Profile Creation</h3>
+                <h3 class="text-2xl font-bold" id="subjectTopic">Course Profile Creation</h3>
                 <p class="text-sm">Following data needs to be completed before manipulating student data
                     course.</p>
             </div>
@@ -103,7 +97,7 @@
             <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 h-full"
                  style="background-color: #F4F8F9">
 
-                <h2 class="cprofile-creation-content" id="subject-topic-ID">Course Profile Creation</h2>
+                <h2 class="cprofile-creation-content">Course Profile Creation</h2>
 
                 <form method="post">
                     <!--                        start page-1 -->
@@ -168,7 +162,7 @@
                             </div>
 
                             <!--                       Program level-->
-                            <div class="textField-label-content w-full" id="courseTitleDivId">
+                            <div class="textField-label-content w-full" id="programLevelDivId">
                                 <label for="ProgramLevelID"></label>
                                 <input class="textField" type="text" id="ProgramLevelID" name="ProgramLevel"
                                        value="Undergraduate" readonly>
@@ -260,14 +254,15 @@
                                     <div class="assessment-wrap">
                                         <h3>Projects</h3>
                                         <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id="assignmentDetailDivId">
-                                            <label for="assignmentDetailID"></label>
+                                        <div class="textField-label-content w-full" id="projectDetailDivId">
+                                            <label for="projectDetailID"></label>
                                             <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                      id="assignmentDetailID" name="assignmentDetail"></textarea>
+                                                      id="projectDetailID" name="projectDetail"></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
-                                        <div class="textField-label-content w-full" id="assignmentWeightDivId">
-                                            <input type="text" placeholder=" " name="price" id="assignmentWeight"
+
+                                        <div class="textField-label-content w-full" id="projectWeightDivId">
+                                            <input type="text" placeholder=" " name="price" id="projectWeight"
                                                    class="textField block w-full pl-12 pr-12"
                                                    style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
@@ -279,20 +274,21 @@
                                         </div>
 
                                     </div>
+
                                     <div class="assessment-wrap">
                                         <h3>Mid Term</h3>
 
                                         <div class="vertical-line"></div>
 
-                                        <div class="textField-label-content w-full" id="assignmentDetailDivId">
-                                            <label for="assignmentDetailID"></label>
+                                        <div class="textField-label-content w-full" id="midTermDetailDivId">
+                                            <label for="midTermDetailID"></label>
                                             <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                      id="assignmentDetailID" name="assignmentDetail"></textarea>
+                                                      id="midTermDetailID" name="midTermDetail"></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
 
-                                        <div class="textField-label-content w-full" id="assignmentWeightDivId">
-                                            <input type="text" placeholder=" " name="price" id="assignmentWeight"
+                                        <div class="textField-label-content w-full" id="midTermWeightDivId">
+                                            <input type="text" placeholder=" " name="price" id="midTermWeight"
                                                    class="textField block w-full pl-12 pr-12"
                                                    style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
@@ -310,15 +306,15 @@
 
                                         <div class="vertical-line"></div>
 
-                                        <div class="textField-label-content w-full" id="assignmentDetailDivId">
-                                            <label for="assignmentDetailID"></label>
+                                        <div class="textField-label-content w-full" id="finalTermDetailDivId">
+                                            <label for="finalTermDetailID"></label>
                                             <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                      id="assignmentDetailID" name="assignmentDetail"></textarea>
+                                                      id="finalTermDetailID" name="finalTermDetail"></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
 
-                                        <div class="textField-label-content w-full" id="assignmentWeightDivId">
-                                            <input type="text" placeholder=" " name="price" id="assignmentWeight"
+                                        <div class="textField-label-content w-full" id="finalTermWeightDivId">
+                                            <input type="text" placeholder=" " name="price" id="finalTermtWeight"
                                                    class="textField block w-full pl-12 pr-12"
                                                    style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
@@ -333,33 +329,44 @@
 
                                 </div>
                             </div>
-                            <div class=" assessment-wrap flex-1 mt-4">
 
-                                <div class="textField-label-content w-full" id="courseTitleDivId">
-                                    <label for="courseTitleID"></label>
-                                    <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                           name="courseTitle">
-                                    <label class="textField-label">Course Title</label>
+                            <div class=" assessment-wrap flex-1 mt-4">
+                                <div class="textField-label-content w-full" id="coordinatingUnitDivId">
+                                    <label for="coordinatingUnitID"></label>
+                                    <select class="select" name="coordinatingUnit"
+                                            onclick="this.setAttribute('value', this.value);"
+                                            onchange="this.setAttribute('value', this.value);" value=""
+                                            id="coordinatingUnitID">
+                                        <option value=" " hidden></option>
+                                        <option value="one">BCSE</option>
+                                        <option value="two">BSCS</option>
+                                        <option value="three">BSIT</option>
+                                    </select>
+                                    <label class="select-label top-1/4 sm:top-3">Coordinating Unit</label>
                                 </div>
-                                <div class="textField-label-content w-full" id="courseTitleDivId">
-                                    <label for="courseTitleID"></label>
-                                    <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                           name="courseTitle">
-                                    <label class="textField-label">Course Title</label>
+
+                                <!----------------------- TeachingMethadology--------------------->
+                                <div class="textField-label-content w-full" id="teachingMethodologyDivID">
+                                    <label for="teachingMethodologyID"></label>
+                                    <input class="textField" type="text" placeholder=" " id="teachingMethodologyID"
+                                           name="teachingMethodology">
+                                    <label class="textField-label">teaching Methodology</label>
                                 </div>
-                                <div class="textField-label-content w-full" id="courseTitleDivId">
-                                    <label for="courseTitleID"></label>
-                                    <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                           name="courseTitle">
-                                    <label class="textField-label">Course Title</label>
+                                <!--                                    CourseinteractionModel-->
+                                <div class="textField-label-content w-full" id="courseInteractionModelDivId">
+                                    <label for="courseInteractionModelID"></label>
+                                    <input class="textField" type="text" placeholder=" " id="courseInteractionModelID"
+                                           name="courseInteractionModel">
+                                    <label class="textField-label">Course Interaction Model</label>
                                 </div>
 
                             </div>
 
                         </div>
+
                         <div class="text-right">
-                            <button type="submit" class="loginButton" name="profileComplete"
-                                    id="continue-btn">Continue
+                            <button type="button" class="loginButton" name="profileComplete" id="continue-btn-1">
+                                Continue
                             </button>
                         </div>
                     </div>
@@ -426,8 +433,8 @@
                                 </div>
                             </div>
                             <div class="flex justify-center">
-                                <button type="button" class="max-w-2xl rounded-full" id="add-clo-btn"
-                                        aria-expanded="false" aria-haspopup="true">
+                                <button type="button" aria-label="add_clos_button_label" class="max-w-2xl rounded-full"
+                                        id="add-clo-btn" aria-expanded="false" aria-haspopup="true">
                                     <img class="h-8 w-8 rounded-full"
                                          src="../../../Assets/Images/vectorFiles/Icons/add-button.svg" alt="">
                                 </button>
@@ -496,50 +503,49 @@
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-2">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-3">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-4">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-5">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-6">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-7">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-8">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-9">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-10">
                                         </div>
 
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-11">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
+                                                   placeholder="" id="clo-1-PLO-12">
                                         </div>
-
 
                                         <!--<div class="cprofile-column h-10 w-1/6">
                                             <label for="clo-1-PLO-1">
@@ -559,7 +565,6 @@
                             </button>
                         </div>
                     </div>
-
 
                 </form>
             </div>
@@ -620,11 +625,5 @@
     </main>
 </div>
 </body>
-<script>
 
-    window.onload = function () {
-
-    }
-
-</script>
 </html>

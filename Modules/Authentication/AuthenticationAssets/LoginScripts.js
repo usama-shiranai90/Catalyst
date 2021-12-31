@@ -266,7 +266,8 @@ window.onload = function () {
         });
 
 
-        $(studentLoginBtn).add(teacherLoginBtn).add(adminLoginBtn).click(function (event) {
+        $(studentLoginBtn).add(teacherLoginBtn)
+            .add(adminLoginBtn).click(function (event) {
             if (this.id == studentLoginBtn.id) {
                 checkStudentUsername()
                 checkPassword(studentPassword, studentPasswordDiv, studentPassErrorLabel)
