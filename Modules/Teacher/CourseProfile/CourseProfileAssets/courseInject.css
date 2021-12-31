@@ -20,11 +20,11 @@
 }
 
 .assessment-wrap > h3{
-    @apply w-56 font-bold;
+    @apply w-56 font-bold text-center;
 }
 
 .vertical-line{
-    @apply border-solid border-gray-400 border-l-2 mx-5 h-2/4;
+    @apply border-solid border-gray-400 border-l-2 mx-2 h-10;
 }
 
 .flex-center{

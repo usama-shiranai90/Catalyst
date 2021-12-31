@@ -1,6 +1,5 @@
 /*Script would load when the whole page it is associated to is loaded along with its contents*/
 window.onload = function () {
-
     /*Authentication Types*/
 
     let studentAuthBtn = document.getElementById("studentAuthenticationBtn")
@@ -41,7 +40,6 @@ window.onload = function () {
     /*Boolean Checks*/
     incompleteUsername = true //would be turned false when username is complete
     incompletePassword = true //would be turned false when studentPassword is complete
-
 
     /*Teacher Authentication*/
 
@@ -175,7 +173,6 @@ window.onload = function () {
             } else {
                 authBtns[i].classList.toggle("selected", false)
                 panels[i].classList.toggle("hidden", true)
-
             }
         }
     }
@@ -240,9 +237,9 @@ window.onload = function () {
 
         /*On Username Inputs*/
         $(teacherUsername).add(adminUsername).on("input", function () {
-            if (this.id == teacherUsername.id) {
+            if (this.id === teacherUsername.id) {
                 removeUsernameError(teacherUsername, teacherUsernameDiv, teacherUsernameError)
-            } else if (this.id == adminUsername.id) {
+            } else if (this.id === adminUsername.id) {
                 removeUsernameError(adminUsername, adminUsernameDiv, adminUsernameError)
             }
         });
@@ -268,12 +265,10 @@ window.onload = function () {
             if (this.id == studentLoginBtn.id) {
                 checkStudentUsername()
                 checkPassword(studentPassword, studentPasswordDiv, studentPassErrorLabel)
-            }
-            else if (this.id == teacherLoginBtn.id) {
+            } else if (this.id == teacherLoginBtn.id) {
                 checkUsername(teacherUsername, teacherUsernameDiv, teacherUsernameError)
                 checkPassword(teacherPassword, teacherPasswordDiv, teacherPassErrorLabel)
-            }
-            else{
+            } else {
                 checkUsername(adminUsername, adminUsernameDiv, adminUsernameError)
                 checkPassword(adminPassword, adminPasswordDiv, adminPassErrorLabel)
             }

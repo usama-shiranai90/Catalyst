@@ -341,7 +341,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="sm:grid sm:grid-cols-5">
                     <label class="text-red-900 text-center sm:col-start-2 sm:col-span-3 hidden"
-                           id="adminUsernameError"></label>
+                           id="adminUsernameError">
+
+                    </label>
                 </div>
 
 

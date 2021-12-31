@@ -240,12 +240,6 @@ select.select {
     /*top: 10px;*/
     font-size: 13px;
 }
-/*.select-label{
-    top:-8px;
-}
-.select:not(:checked) {
-    color: #0078ff;
-}*/
 
 
 /*Arrow*/

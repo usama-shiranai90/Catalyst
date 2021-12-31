@@ -19,6 +19,8 @@
 </head>
 <body class="min-h-full">
 <div class="w-full">
+
+
     <header class="bg-white shadow-md">
         <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
             <h1 class="text-3xl font-bold text-blue-800 flex-grow text-center">Course Profile Creation</h1>
@@ -207,7 +209,7 @@
                             </div>
 
                             <!--                            my right container-->
-                            <div class="right-container flex-1 mx-3 pb-5">
+                            <div class="right-container flex-1 mx-3 pb-5 ml-10">
                                 <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
                                             border-b-2 border-solid" style="background-color: #0284FC">
 
@@ -336,31 +338,38 @@
                                                 </div>
 
                                             </div>
-
                                         </div>
-
                                     </div>
 
                                 </div>
                                 <div class=" assessment-wrap flex-1 mt-4">
+                                    <div class="textField-label-content w-full" id="cordinatingUnitDivId">
+                                        <label for="CordinatingUnitID"></label>
+                                        <select class="select" name="Coordinating Unit"
+                                                onclick="this.setAttribute('value', this.value);"
+                                                onchange="this.setAttribute('value', this.value);" value=""
+                                                id="cordinatingUnitDivId">
+                                            <option value=" " hidden></option>
+                                            <option value="one">BCSE</option>
+                                            <option value="two">BSCS</option>
+                                            <option value="three">BSIT</option>
+                                        </select>
+                                        <label class="select-label top-1/4 sm:top-3">Coordinating Unit</label>
+                                    </div>
 
-                                    <div class="textField-label-content w-full" id="courseTitleDivId">
-                                        <label for="courseTitleID"></label>
-                                        <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                               name="courseTitle">
-                                        <label class="textField-label">Course Title</label>
+<!----------------------- TeachingMethadology--------------------->
+                                    <div class="textField-label-content w-full" id="teachingMethadologyDivId">
+                                        <label for="TeachingMethadologyID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="teachingMethadologyID"
+                                               name="teachingMethadology">
+                                        <label class="textField-label">teaching Methadology</label>
                                     </div>
-                                    <div class="textField-label-content w-full" id="courseTitleDivId">
-                                        <label for="courseTitleID"></label>
-                                        <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                               name="courseTitle">
-                                        <label class="textField-label">Course Title</label>
-                                    </div>
-                                    <div class="textField-label-content w-full" id="courseTitleDivId">
-                                        <label for="courseTitleID"></label>
-                                        <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                               name="courseTitle">
-                                        <label class="textField-label">Course Title</label>
+<!--                                    CourseinteractionModel-->
+                                    <div class="textField-label-content w-full" id="courseInteractionModelDivId">
+                                        <label for="CourseInteractionModelID"></label>
+                                        <input class="textField" type="text" placeholder=" " id="courseInteractionModelID"
+                                               name="CourseInteractionModel">
+                                        <label class="textField-label">Course Interaction Model</label>
                                     </div>
 
                                 </div>
