@@ -16,74 +16,56 @@ font-size: 12px;
 
 </head>
 <body class="container h-screen mx-auto sm:w-11/12 lg:w-8/12">
-<header class="flex justify-center p-8">
-    <div class="w-2/3">
 
-        <svg width="131" height="24" viewBox="0 0 131 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="131" height="24"/>
-            <path d="M114.865 0.118813C114.394 0.118813 114.013 0.494374 114.013 0.957471V6.83944H129.775L122.597 0.119355L114.865 0.118813Z"
-                  fill="#117ACA"/>
-            <path d="M130.351 8.61889C130.351 8.1547 129.973 7.78076 129.5 7.78076H123.535V23.3187L130.349 16.2398L130.351 8.61889Z"
-                  fill="#117ACA"/>
-            <path d="M121.728 23.8812C122.197 23.8812 122.578 23.5051 122.578 23.0409V17.1611H106.816L113.995 23.8801L121.728 23.8812Z"
-                  fill="#117ACA"/>
-            <path d="M106.24 15.3822C106.24 15.8458 106.621 16.2236 107.092 16.2236H113.056V0.684586L106.241 7.76131L106.24 15.3822Z"
-                  fill="#117ACA"/>
-            <path d="M33.9952 2.95524V10.1309H23.8541V2.95524L20.1605 2.952V21.0448H23.8541V13.272H33.9952V21.0448H37.6948V2.95524H33.9952Z"
-                  fill="#211E1E"/>
-            <path d="M83.1313 2.95524V21.0405H99.3356L97.2833 17.8566H86.8352V13.272H96.9522V10.2054H86.8352V6.06455H97.2658L99.2764 2.95524H83.1313Z"
-                  fill="#211E1E"/>
-            <path d="M6.43113 2.95163C2.58903 2.95163 0.648499 5.25416 0.648499 8.60448V15.3581C0.648499 19.2352 3.14924 21.0455 6.41194 21.0455L18.0002 21.0444L15.8519 17.7373H7.12785C5.27448 17.7373 4.46704 17.077 4.46704 15.0322V8.90493C4.46704 6.92824 5.14677 6.15713 7.17718 6.15713H15.9429L18.0057 2.95163H6.43113Z"
-                  fill="#211E1E"/>
-            <path d="M66.923 2.94659C64.7041 2.94659 62.4297 4.26132 62.4297 7.64298V8.51189C62.4297 12.0373 64.618 13.3823 66.8074 13.3915H74.4921C75.2903 13.3915 75.9387 13.5222 75.9387 14.8521L75.9376 16.3884C75.9174 17.5831 75.3127 17.8566 74.4647 17.8566H64.3549L62.2839 21.0405H74.7026C77.6973 21.0405 79.7304 19.5717 79.7304 16.1793V14.9326C79.7304 11.6526 77.8414 10.1028 74.9126 10.1028H67.5748C66.7613 10.1028 66.1945 9.8839 66.1945 8.69616V7.4452C66.1945 6.43362 66.5832 6.06455 67.5309 6.06455L77.159 6.06076L79.1713 2.94227L66.923 2.94659Z"
-                  fill="#211E1E"/>
-            <path d="M48.4257 2.95524L39.7235 21.0437H43.8364L45.5314 17.3081H54.9878L56.6772 21.0437H60.8082L52.0858 2.95524H48.4257ZM50.2505 6.71083L53.5944 14.229H46.9281L50.2505 6.71083Z"
-                  fill="#211E1E"/>
-        </svg>
-    </div>
-</header>
-<main class="flex justify-center">
+<div class="bg-white px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+    <div class="" style="display: flex;">
 
-    <div class="w-2/3 bg-blue-500 rounded-t-2xl border-blue-600 border-opacity-100 border-solid border-2">
-        <p>Chase</p>
-        <div class="mt-6 rounded-t-2xl bg-white mb-5" style="border: #fefffe 1px solid">
-
-            <p class="mt-10">
-                Dear Customer,
-                <br>
-                <br>
-                We are letting you know that we detected some unusual activity on your Chase account.
-                <br>
-                <br>
-                We placed a temporary suspension until you verify your account.
-                <br>
-                <br>
-                <strong>Date and Time:</strong> 14 October, 2021 4:39 PM (PDT)
-                <br>
-                <strong>IP Address:</strong> 71.234.221.178
-                <br>
-                <strong>Country:</strong> United States
-                <br>
-                <br>
-                We recommend that you validate your online gateway details using your secure device to avoid interrupted
-                services.
-            </p>
-
-            <div class="flex justify-center m-10">
-                <button class="bg-blue-50 rounded-md text-blue-800 p-2">
-                    Activate Online Banking
+        <div class="space-y-5">
+            <div class="border rounded shadow-sm">
+                <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none">
+                    <p class="text-lg font-medium">Course Essential</p>
+                    <div class="flex items-center justify-center w-8 h-8 border rounded-full rotate-1" style="
+    offset-rotate: -30;
+">
+                        <!-- Add "transform rotate-180" classes on svg, if is open" -->
+                        <svg viewBox="0 0 24 24" class="w-3 rotate-1 text-gray-600 transition-transform duration-200">
+                            <polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
+                        </svg>
+                    </div>
                 </button>
+
+            </div>
+            <div class="border rounded shadow-sm">
+                <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none">
+                    <p class="text-lg font-medium">Course Instructor Information</p>
+                    <div class="flex items-center justify-center w-8 h-8 border rounded-full">
+                        <svg viewBox="0 0 24 24" class="w-3 text-gray-600 transition-transform duration-200 transform rotate-180">
+                            <polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
+                        </svg>
+                    </div>
+                </button>
+                <!-- Show content if is open
+                <div class="p-4 pt-0"><p class="text-gray-700">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque rem aperiam, eaque ipsa quae.</p></div>
+                -->
+            </div>
+            <div class="border rounded shadow-sm">
+                <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none">
+                    <p class="text-lg font-medium">CLO Distribution</p>
+                    <div class="flex items-center justify-center w-8 h-8 border rounded-full">
+                        <svg viewBox="0 0 24 24" class="w-3 text-gray-600 transition-transform duration-200 transform rotate-180">
+                            <polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
+                        </svg>
+                    </div>
+                </button>
+                <!-- Show content if is open
+                <div class="p-4 pt-0"><p class="text-gray-700">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque rem aperiam, eaque ipsa quae.</p></div>
+                -->
             </div>
 
-            <p class="mt-10 mb-7">
-                Please ignore this account alert if you recently accessed your account from that location.
-                <br>
-                <br>
-                Thank you, <br>
-                Chase Customer Service
-            </p>
         </div>
     </div>
-</main>
+</div>
+
+
 </body>
 </html>

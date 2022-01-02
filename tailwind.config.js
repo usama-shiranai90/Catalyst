@@ -1,55 +1,68 @@
 module.exports = {
+  content: [
+    './pages/**/*.{html,js}',
+    './components/**/*.{html,js}',
+  ],
   purge: [],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       fontFamily: {
-        pop_regular: ['Poppins-Regular', 'sans-serif'],
-        pop_bold: ['Poppins-Bold', 'sans-serif'],
+        PoppinsRegular: ['Poppins-Regular', 'sans-serif'],
+        PoppinsBold: ['Poppins-Bold', 'sans-serif'],
+        PoppinsBlack: ['Poppins-Black', 'sans-serif'],
+        PoppinsBlackItalic: ['Poppins-BlackItalic', 'sans-serif'],
+        PoppinsExtraBold: ['Poppins-ExtraBold', 'sans-serif'],
+        PoppinsSemiBoldItalic: ['Poppins-SemiBoldItalic', 'sans-serif'],
+
       },
 
       colors: {
-        palette_c1_bg: {
-          50: '#016BDD',
-          100: '#0175E9',
-          200: '#0184FC',
-          300: '#3EA1FE',
-          400: '#E0E0E0',
-          500: '#EFFFFC',
-          600: '#F4FAFF',
-          700: '#F5F5F5',
-          800: '#EDFAFD',
-          900: '#FFFFFF',
+        catalystLight: {   // from lightest to darkest.
+          f1: '#F9F9F9',
+          f2: '#F4FAFF',
+          f3: '#F5F5F5',
+          f4: '#F4FAFF',
+          f5: '#F4F8F9',   // use for table-header i.e. clos, description , domain et.c
+          f6_bg: '#F9F8FF', // background for middle-section
+
+          e1: '#E0E0E0',
+          e2: '#E5E9EF',
+          e3: '#E5F3FD',
+          e4: '#E8F6FE',
+          e5: '#EDFAFD',
+          e6: '#EFFFFC',
+          b1: '#BED6EB',   // header-vertical line.
+          89: '#89DEFE',
+
         },
-        palette_c2_bg: {
-          50: '#1A1A1A',
-          100: '#001D6E',
-          200: '#01409B',
-          300: '#5BB0FE',
-          400: '#4DBCFE',
-          500: '#36BDFF',
-          600: '#89DFFE',
-          700: '#E5E9EF',
-          800: '#E8F6FE',
-          900: '#F9F9F9',
+        catalystDark: {
+          d1: '#1A1A1A',
+          d2: '#1B1B1B',   // main section sub-para / i.e. following data needs to be.
+          d3: '#3B3E43',   // main section major heading /  Course profile /
+
         },
-        palette_ms_bg: {
-          50: '#011D6F',
-          100: '#003D9C',
-          200: '#0259C2',
-          300: '#016BDD',
-          400: '#0184FC',
-          500: '#4DBEFF',
-          600: '#89DEFE',
-          700: '#BED6EB',
-          800: '#E5F3FD',
-          900: '#F4FAFF',
-        },
-        palette_Catalyst: {
-          authentication_type: '#001D6E',
-          form_main_heading: '#003D9C',
-          form_btn: '#0184FC',
-          footer: '#3EA1FE',
+
+        catalystBlue: {
+          d1: '#011D6F',
+          d2: '#001D6E',  // authentication type ,
+
+          ld1: '#01409B', // dashboard top header  , header-login
+          dl2: '#003D9C', // form_main_heading
+          dl3: '#0259C2',
+          dl4: '#016BDD',
+
+          l1: '#0175E9',
+          l11: '#108BFE',  // sidebar / nav
+          l2: '#0184FC',   // form button /  CourseInstructorDetail , CLO , Mapping Table
+          l3: '#3EA1FE',   // footer
+          l4: '#36BDFF',
+          l5: '#4DBCFE',
+          l6: '#4DBEFF',
+          l61: '#41A3FD',   //  for table-row left most data (i.e. Clo-1 to n )
+          l7: '#5BB0FE',
+          l8: '#0284FC',  // for AIW , CID text bg.
+
         },
       }
     },

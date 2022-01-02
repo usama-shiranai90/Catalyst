@@ -206,7 +206,12 @@ header {
     border-radius: 10px;
     box-sizing: border-box;
     margin: 2%;
+
 }
+
+.textField:placeholder-shown::-webkit-input-placeholder { color:transparent; }
+.textField:focus::-webkit-input-placeholder {  color: #9CA3AF; }
+
 
 /*Outline*/
 .select:focus, .textField:focus {
@@ -239,14 +244,8 @@ select.select {
 .select[value=""]:focus ~ .select-label { /*when it is focus /clicked */
     /*top: 10px;*/
     font-size: 13px;
-}
-/*.select-label{
-    top:-8px;
-}
-.select:not(:checked) {
-    color: #0078ff;
-}*/
 
+}
 
 /*Arrow*/
 .select:not([multiple]):not([size]) {

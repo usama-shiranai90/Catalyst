@@ -35,7 +35,7 @@
 }
 
 .header-section , .footer-section{
-    @apply bg-palette_Catalyst-form_btn shadow-2xl max-h-full;
+    @apply bg-catalystBlue-l2 shadow-2xl max-h-full;
 }
 
 /*@tailwind utilities;*/

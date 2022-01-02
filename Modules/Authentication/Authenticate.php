@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body class="flex flex-col justify-center">
 
-<header class="header-section bg-palette_Catalyst-form_btn shadow-2xl max-h-full">
+<header class="header-section bg-catalystBlue-l2 shadow-2xl max-h-full">
     <!--container px-5 py-2 mx-auto flex items-center sm:flex-row flex-col-->
     <div class="px-5 py-4 mx-auto  sm:flex-row flex-col sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
 
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </li>
 
                 <li><a href="#" title="About-is"
-                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-400 focus:bg-palette_Catalyst-authentication_type px-2 py-2">About
+                       class="font-medium tracking-wider text-white transition-colors duration-200 transform rounded-md hover:bg-palette_ms_bg-400 focus:bg-catalystBlue-d2 px-2 py-2">About
                         Us</a></li>
             </ul>
             <ul class="flex inline-flex items-center justify-start hidden space-x-8 lg:flex">
@@ -400,7 +400,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </main>
 
-<footer class="footer-section bg-palette_Catalyst-form_btn shadow-2xl max-h-full">
+<footer class="footer-section bg-catalystBlue-l2 shadow-2xl max-h-full">
     <div class="px-5 py-2 mx-auto flex items-center sm:flex-row flex-col sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
 
         <p class="hidden sm:block text-sm text-white sm:ml-4 sm:pl-4 sm:py-2 sm:mt-0 mt-4">© 2021 Catalyst Provider —
