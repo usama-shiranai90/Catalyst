@@ -1,83 +1,72 @@
 window.onload = function () {
-
-    let firstContinueBtn = document.getElementById("continue-btn-1");
-
-    const courseTitleField = document.getElementById("courseTitleID");
-    const courseCodeField = document.getElementById("courseCodeID");
-    const creditHourField = document.getElementById("creditHourID");
-    const preReqField = document.getElementById("preRequisiteID");
-    const termField = document.getElementById("semesterTermID");
-    const programLevelField = document.getElementById("ProgramLevelID");
-    const programField = document.getElementById("programID");
-    const courseEffectiveField = document.getElementById("courseEffectiveID");
-    const co_ordinatingUnitField = document.getElementById("coordinatingUnitID");
-    const teachingMethodologyField = document.getElementById("teachingMethodologyID");
-    const courseInteractionField = document.getElementById("courseInteractionModelID");
-
-//    parent section for each field
-    let parentNode_CourseTitle, parentNode_CourseCode, parentNode_creditHour, parentNode_Prereq, parentNode_term,
-        parentNode_program, parentNode_courseEffective, parentNode_coordination, parentNode_teachingMethodology,
-        parentNode_courseInteraction;
+    /*    //    parent section for each field
+        let parentNode_CourseTitle, parentNode_CourseCode, parentNode_creditHour, parentNode_Prereq, parentNode_term,
+            parentNode_program, parentNode_courseEffective, parentNode_coordination, parentNode_teachingMethodology,
+            parentNode_courseInteraction;*/
+    const cEssentialField = {
+        cTitleField : document.getElementById("courseTitleID"),
+        cCodeField : document.getElementById("courseCodeID"),
+        cHoursField : document.getElementById("creditHourID"),
+        cPreReqField : document.getElementById("preRequisiteID"),
+        cTermField : document.getElementById("semesterTermID"),
+        cProgramLevelField : document.getElementById("ProgramLevelID"),
+        cProgramField : document.getElementById("programID"),
+        cEffectiveField : document.getElementById("courseEffectiveID"),
+        cCoordinationField : document.getElementById("coordinatingUnitID"),
+        cMethodologyField : document.getElementById("teachingMethodologyID"),
+        cModelField : document.getElementById("courseInteractionModelID"),
+    }
+    let completeFlag = false;
 
 //    Jquery
     $(document).ready(function () {
-        $(firstContinueBtn).click(function (event) {
-
-            checkEmptyFields();
+        $("#coursepContinuebtn-1").on("click", function (e) {
+            let fieldsArray = [cEssentialField.cTitleField , cEssentialField.cCodeField ,  cEssentialField.cHoursField ,cEssentialField.cPreReqField,
+                cEssentialField.cTermField , cEssentialField.cProgramLevelField , cEssentialField.cProgramField , cEssentialField.cEffectiveField ,
+                cEssentialField.cCoordinationField , cEssentialField.cMethodologyField , cEssentialField.cModelField];
+            e.preventDefault();
+            checkEmptyFields(fieldsArray );
         });
+
     });
 
-    function checkEmptyFields() {  //textField-error-input
-        let fieldsArray = [courseTitleField, courseCodeField, creditHourField, preReqField,
-            termField, programLevelField, programField, courseEffectiveField, co_ordinatingUnitField,
-            teachingMethodologyField, courseInteractionField]
+    function checkEmptyFields(fieldsArray) {  //textField-error-input
 
-        if (courseTitleField.value.length === 0 || courseCodeField.value === "") {
-            parentNode_CourseTitle = courseTitleField.parentElement;
-            parentNode_CourseTitle.classList.toggle("textField-error-input");
-        }
-        if (courseCodeField.value.length === 0 || courseCodeField.value === "") {
-            parentNode_CourseCode = courseCodeField.parentElement;
-            parentNode_CourseCode.classList.toggle("textField-error-input");
-        }
-        if (creditHourField.value.length === 0 || creditHourField.value === "") {
-            parentNode_creditHour = creditHourField.parentElement;
-            parentNode_creditHour.classList.toggle("textField-error-input");
-        }
-        if (preReqField.value.length === 0 || preReqField.value === "") {
-            parentNode_Prereq = preReqField.parentElement;
-            parentNode_Prereq.classList.toggle("textField-error-input");
-        }
-        if (termField.value.length === 0 || termField.value === "") {
-            parentNode_term = termField.parentElement;
-            parentNode_term.classList.toggle("textField-error-input");
-        }
-        if (programLevelField.value.length === 0) {
-            parentNode_program = programField.parentElement;
-            parentNode_program.classList.toggle("textField-error-input");
-        }
-        if (courseEffectiveField.value.length === 0 || courseEffectiveField.value === "") {
-            parentNode_courseEffective = courseEffectiveField.parentElement;
-            parentNode_courseEffective.classList.toggle("textField-error-input");
-        }
-        if (co_ordinatingUnitField.value.length === 0) {
-            parentNode_coordination = co_ordinatingUnitField.parentElement;
-            parentNode_coordination.classList.toggle("textField-error-input");
-        }
-        if (teachingMethodologyField.value.length === 0 || teachingMethodologyField.value === "") {
-            parentNode_teachingMethodology = teachingMethodologyField.parentElement;
-            parentNode_teachingMethodology.classList.toggle("textField-error-input");
-        }
-        if (courseInteractionField.value.length === 0 || courseInteractionField.value === "") {
-            parentNode_courseInteraction = courseInteractionField.parentElement;
-            parentNode_courseInteraction.classList.toggle("textField-error-input");
-        }
+            for (let i = 0; i < fieldsArray.length; i++) {
+                let currentfield = fieldsArray[i];
+                if (currentfield.value.length === 0){
+                    completeFlag = false;
+                    if (currentfield.tagName === "SELECT")
+                        currentfield.parentElement.classList.add("select-error-input" )
+                    else if (currentfield.tagName === "INPUT")
+                        currentfield.parentElement.classList.add("textField-error-input")
+                }
+             }
+            if (completeFlag){
+                $('#coursepContinuebtn-1').classList.add("hidden");
+                $('#coursepContinuebtn-2').classList.toggle("hidden");
+            }
+            else{
+              showErrorBox("Please complete all fields to continue")
+            }
     }
 
-    function iterateFields() {
 
+    function showErrorBox(message) {
+        $('#errorID span').text("Empty Alert!")
+        $('#errorID').textNodes().first().replaceWith(message);
+        $("#errorMessageDiv").toggle("hidden").animate(
+            {right: 0,
+            }, 1000,
+            function () {
+                $(this).delay(2000).fadeOut();
+            });
+    }
 
-
+    jQuery.fn.textNodes = function() {
+        return this.contents().filter(function() {
+            return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
+        });
     }
 
 }

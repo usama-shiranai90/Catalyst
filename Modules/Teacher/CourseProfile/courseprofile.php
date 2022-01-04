@@ -83,6 +83,16 @@
 
         <div class="cprofile-grid">
 
+            <div id="errorMessageDiv" class="hidden flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert"
+                 style="position: fixed;bottom: 0;right: 0;z-index: 9999;">
+                <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
+                     001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                <div id="errorID">
+                    <span class="font-medium">missing field alert!</span><br>try submitting again.
+                </div>
+            </div>
+            
             <!--       Course-Profile-Main-Head         -->
             <div class="cprofile-content-head">
                 <h3 class="text-2xl font-bold" id="subjectTopic">Course Profile Creation</h3>
@@ -194,19 +204,20 @@
                                 <label class="select-label top-1/4 sm:top-3">Course Effective</label>
                             </div>
 
-                            <div class="textField-label-content w-full" id="coordinatingUnitDivId">
+                            <div class="textField-label-content w-full" id="coordinatingUnitDivID">
                                 <label for="coordinatingUnitID"></label>
-                                <select class="select" name="coordinatingUnit"
+                                <select class="select" name="courseEffective"
                                         onclick="this.setAttribute('value', this.value);"
                                         onchange="this.setAttribute('value', this.value);" value=""
                                         id="coordinatingUnitID">
-                                    <option value=" " hidden></option>
-                                    <option value="one">BCSE</option>
-                                    <option value="two">BSCS</option>
-                                    <option value="three">BSIT</option>
+                                    <option value="" hidden></option>
+                                    <option value="one">Fall-16 Batch Onwards</option>
+                                    <option value="one">Fall-18 Batch Onwards</option>
                                 </select>
-                                <label class="select-label top-1/4 sm:top-3">Coordinating Unit</label>
+                                <label class="select-label top-1/4 sm:top-3">Co-ordinating Unit</label>
                             </div>
+
+
 
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
@@ -354,13 +365,13 @@
                             </div>
                             <!-- 1st coutinue button -->
                             <div class="text-right mx-4">
-                                <button type="button" class="loginButton" name="profileContinue1st" id="cp_continuebtn1ID">Continue</button>
+                                <button type="button" class="loginButton" name="profileContinue1st" id="coursepContinuebtn-1">Continue</button>
                             </div>
                         </div>
                     </section>
 
                     <!--        course detail section            -->
-                    <section id="cpDetaillID" class=" cprofile-content-box-border cprofile-content-division mx-0 my-0 ">
+                    <section id="cpDetaillID" class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 ">
 
                         <div class="cprofile-left-container mx-3 w-1/4" >
                             <!---------------------Reference Books--------------------------->
@@ -470,14 +481,14 @@
                                 </div>
                             </div>
                             <div class="text-right mx-4">
-                                <button type="button" class="loginButton" name="profileContinue1st" id="continuebtn2ID">Continue</button>
+                                <button type="button" class="loginButton" name="profileContinue1st" id="coursepContinuebtn-2">Continue</button>
                             </div>
 
                         </div>
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <div id="cpDistributionID" class="cprofile-content-box-border mx-0 my-0  ">
+                    <div id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
 
@@ -649,7 +660,6 @@
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
                                                    placeholder="" id="clo-1-PLO-12">
                                         </div>
-
                                         <!--<div class="cprofile-column h-10 w-1/6">
                                             <label for="clo-1-PLO-1">
                                                 <input type="text" class="text-center" value=""
@@ -663,7 +673,7 @@
                         </div>
 
                         <div class="text-right mx-8 mr-5">
-                            <button type="button" class="loginButton" name="profileContinue3rd" id="cp_continuebtn3ID">Finish</button>
+                            <button type="submit" class="loginButton" name="profileContinue3rd" id="coursepContinuebtn-3">Finish</button>
                         </div>
                     </div>
 
@@ -742,7 +752,8 @@
 
 </html>
 
+
 <!--<div id="tooltip-animation" role="tooltip" class="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-    Tooltip content
-    <div class="tooltip-arrow" data-popper-arrow></div>
-</div>-->
+                Tooltip content
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>-->

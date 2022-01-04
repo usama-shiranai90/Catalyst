@@ -253,13 +253,13 @@ window.onload = function () {
         /*On Password Input*/
         $(studentPassword).add(teacherPassword).add(adminPassword).on("input", function () {
 
-            if (this.id == studentPassword.id) {
+            if (this.id === studentPassword.id) {
                 studentPasswordDiv.classList.toggle("textField-error-input", false)
                 studentPassErrorLabel.classList.toggle("hidden", true)
-            } else if (this.id == teacherPassword.id) {
+            } else if (this.id === teacherPassword.id) {
                 teacherPasswordDiv.classList.toggle("textField-error-input", false)
                 teacherPassErrorLabel.classList.toggle("hidden", true)
-            } else if (this.id == adminPassword.id) {
+            } else if (this.id === adminPassword.id) {
                 adminPasswordDiv.classList.toggle("textField-error-input", false)
                 adminPassErrorLabel.classList.toggle("hidden", true)
             }
