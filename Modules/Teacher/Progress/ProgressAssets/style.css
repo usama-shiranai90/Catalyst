@@ -1,0 +1,15 @@
+
+.assessment-type-bg {
+    border: 1px solid #E2E2E8;
+    border-radius: 10px;
+}
+
+.assessment-type-bg-inside {
+    background: linear-gradient(113.91deg, #FFFFFF 0%, rgba(11, 152, 197, 0.06) 82.9%);
+    /*background: linear-gradient(113.91deg, #FFFFFF 0%, rgba(11, 152, 197, 0.22) 82.9%);*/
+
+    mix-blend-mode: normal;
+     /*opacity: 0.5;*/
+    filter: blur(-0.115px);
+    border-radius: 5px;
+}

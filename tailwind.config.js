@@ -46,6 +46,7 @@ module.exports = {
         catalystBlue: {
           d1: '#011D6F',
           d2: '#001D6E',  // authentication type ,
+          d3: '#CEE6FC',  // authentication type ,
 
           ld1: '#01409B', // dashboard top header  , header-login
           dl2: '#003D9C', // form_main_heading
