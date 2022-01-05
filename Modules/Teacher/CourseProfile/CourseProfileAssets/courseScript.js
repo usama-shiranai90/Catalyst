@@ -1,6 +1,7 @@
 window.onload = function () {
     let counter;
-// Course Essential:
+
+    // Course Essential:
     const cEssentialField = {
         cTitleField: document.getElementById("courseTitleID"),
         cCodeField: document.getElementById("courseCodeID"),
@@ -65,6 +66,9 @@ window.onload = function () {
     ];
 
     let completeFlag = true;
+    const clo_row  = document.getElementById('CourseLearningRow-1');
+    const map_clo_row  = document.getElementById('clo-map-div-1');
+
 
 //    Jquery
     $(document).ready(function () {
@@ -86,95 +90,101 @@ window.onload = function () {
         })
 
         $('.textField , .select').on('input', function () {
-            if (this.type == "text" || this.type == "textarea") {
+            if (this.type === "text" || this.type === "textarea") {
                 $(this).parent().removeClass().addClass("textField-label-content w-full");
-            } else if (this.type == "select-one")
+            } else if (this.type === "select-one")
                 $(this).parent().removeClass().addClass("select-label-content w-full");
         })
 
         $('#add-clo-btn').on('click', function (e) {
-            const MAXCLOS = 5;
+            counter++;
+            createCLORow(clo_row ,  1 );
+            createCLORow(map_clo_row , 2);
+        });
 
-            if (counter !== MAXCLOS){
-                // section is for CLO row addition.
-                const cloRow = document.getElementById('CourseLearningRow-1');
-                const outcomeReplica = cloRow.cloneNode(true); // duplicate.
-                let cloRow_columns = [];
-                for (let i = 0; i < outcomeReplica.childNodes.length; i++) {
-                    if (i % 2 !== 0) {
-                        cloRow_columns.push(outcomeReplica.childNodes[i]);
-                    }
-                }
-                updateRows_column_info(outcomeReplica, cloRow_columns);
-                cloRow.parentNode.appendChild(outcomeReplica);
-
-
-                // Section is for CLO to PLO Mapping.  i.e. row addition for CLO.
-                const mapCloRow =  document.getElementById('clo-map-div-1');
-                const  mapRowReplica = mapCloRow.cloneNode(true);
-
-
-
-                mapCloRow.parentNode.appendChild(outcomeReplica);
-                counter++;
-
-            }else{
-                showErrorBox("Maximum CLO's must be five!")
+        $('input[name="clo1"]').click(function() {
+            const totalChecks = $("input[name=\"clo1\"]:checked").length;
+            let flag;
+            console.log(totalChecks)
+            if (totalChecks !== 3){
+                flag = false;
+                $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled",flag);
             }
+            else{
+                flag = true;
+                showErrorBox("Maximum limit of CLO-1 is reached")
+                $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled",flag);
+            }
+        });
+        // working for only first only.
+        $('.h-10 .w-6').on('click' , function (e) {
+            counter--;
+            console.log(this)
+            $(this).closest('.learning-outcome-row').remove();
+        });
 
-        })
     });
 
-
-    function updateRows_column_info(node, cloColumn) {
-        if (node.hasAttribute("id")) {
-            node["id"] = unqiueName(node["id"]);
+    function createCLORow(node , t) {
+        const newReplica = node.cloneNode(true); // duplicate.
+        let cloColumn = [] ;
+        for (let i = 0; i < newReplica.childNodes.length; i++) {  // length will be total no of columns i.e. divs in that row.
+            if (i%2 !== 0)
+                cloColumn.push(newReplica.childNodes[i]);
         }
-        cloColumn.forEach(function (currentTag, index) {
-            if (index === 0) {
-                currentTag.setAttribute("id", unqiueName(currentTag.getAttribute("id")));  // div us ka ID change ki hai.
-                // let span = currentTag.childNodes[1];
-                let span = currentTag.firstElementChild;
-                span.innerHTML = "CLO-" + counter;
-            }
-            else if (index === 1 || index === 2){
-              let input =  currentTag.lastElementChild;
-              input.setAttribute("id" , unqiueName(input.getAttribute("id")));
-            }
-            else if (index === 3){
-                let input =  currentTag.firstElementChild.firstElementChild;
-                input.setAttribute("id" , unqiueName(input.getAttribute("id")));
-            }
-        })
+        setTagAttribute(newReplica);
+        if (t === 1){
+            cloColumn.forEach(function (currentTag, index) {
+                if (index === 0) {
+                    currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id")));  // div us ka ID change ki hai.
+                    // let span = currentTag.childNodes[1];
+                    let span = currentTag.firstElementChild;
+                    span.innerHTML = "CLO-" + counter;
+                }
+                else if (index === 1 || index === 2){
+                    let input =  currentTag.lastElementChild;
+                    input.setAttribute("id" , uniqueName(input.getAttribute("id")));
+                }
+                else if (index === 3){
+                    let input =  currentTag.firstElementChild.firstElementChild;
+                    input.setAttribute("id" , uniqueName(input.getAttribute("id")));
+                }
+            });
+        }
+        else {
+            cloColumn.forEach(function (currentTag, index) {
 
+                if (index > 1 && index < 14){
+                    let i = --index;
+                    console.log(currentTag);
+                    const c_input = currentTag.firstElementChild;
+                    const c_label = currentTag.lastElementChild;
+                    c_input.setAttribute("name" , uniqueName(c_input.getAttribute("name")));
+                    c_input.setAttribute("id" , uniquePLO(c_input.getAttribute("id") , i));
+                    c_label.setAttribute("for" , uniquePLO(c_label.getAttribute("for") , i));
+                }
+
+            })
+        }
+
+        node.parentNode.appendChild(newReplica);
+
+        /* // working fine here
+            $('.h-10 .w-6').on('click' , function (e) {
+            $(this).closest('.learning-outcome-row').remove();
+        });*/
     }
 
     counter = 1;
-
-    function unqiueName(str) {
+    function uniqueName(str) {
         return str.replace(/1/g, counter);
     }
 
-    function duplicateNode(/*DOMNode*/sourceNode, /*Array*/attributesToBump) {
-        counter++;
-        var out = sourceNode.cloneNode(true);
-        if (out.hasAttribute("id")) {
-            out["id"] = unqiueName(out["id"]);
-        }
-        var nodes = out.getElementsByTagName("*");
-
-        for (var i = 0, len1 = nodes.length; i < len1; i++) {
-            var node = nodes[i];
-            for (var j = 0, len2 = attributesToBump.length; j < len2; j++) {
-                var attribute = attributesToBump[j];
-                if (node.hasAttribute(attribute)) {
-                    node[attribute] = unqiueName(node[attribute]);
-                }
-            }
-        }
-        return out;
+    function uniquePLO(str , c) {
+        return "clo-"+counter+"-plo-"+c;
+        // return str.replace("clo-1-plo-1", ("clo-"+counter+"-plo-"+c) );
+    //    .replace('/-plo-1/i', "plo-"+c)
     }
-
 
     function checkEmptyFields(fieldsArray, counter) {  //textField-error-input
 
@@ -227,4 +237,9 @@ window.onload = function () {
         });
     }
 
+
+    function setTagAttribute(newReplica){
+        if (newReplica.hasAttribute("id"))
+            newReplica.setAttribute("id", uniqueName(newReplica.getAttribute("id")));
+    }
 }

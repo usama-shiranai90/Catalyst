@@ -1,4 +1,5 @@
-:root {
+:root  {
+
     --courseProfileHeaderTypeColor: #F4F8F9;
     --sectionSecondaryHeader: #3B3E43;
     --courseProfileTextFieldsBordersTypeColor: #9B9B9E;
@@ -19,7 +20,7 @@
     src: url(../../../../Assets/Fonts/Poppins/Poppins-Bold.ttf);
 }*/
 
-.home-main {
+.home-clo-toggle {
     background-color: #F9F8FE;
 }
 
@@ -50,3 +51,54 @@
     border: 0;
     padding: 0.5% 3%;
 }
+
+.tick-icon {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.clo-toggle:checked + .inside-label span svg {
+    stroke-dashoffset:0 ;
+}
+
+.inside-label {
+    cursor: pointer;
+    user-select: none;
+    padding: 6px 8px;
+    overflow: hidden;
+    transition: all 0.1s ease;
+    background-color: white;
+}
+
+.inside-label:hover {
+    background: rgb(240, 240, 243);
+}
+.inside-label span {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: all 0.1s ease;
+}
+.inside-label span svg {
+    position: absolute;
+    top: -7px;
+    left: 4px;
+    fill: none;
+    stroke: #0259C2;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 16px;
+    stroke-dashoffset: 16px;
+    transition: all 0.1s ease;
+    transition-delay: 0.1s;
+    transform: translate3d(0, 0, 0);
+}
+
+/*.clo-toggle:checked + .inside-label span {
+    background: var(--background-catalyst-instruments-weights);
+    animation: myAnimation 0.4s ease;
+}*/
