@@ -1,5 +1,6 @@
 window.onload = function () {
-    // Course Essential:
+    let counter;
+// Course Essential:
     const cEssentialField = {
         cTitleField: document.getElementById("courseTitleID"),
         cCodeField: document.getElementById("courseCodeID"),
@@ -92,47 +93,74 @@ window.onload = function () {
         })
 
         $('#add-clo-btn').on('click', function (e) {
-            const mainSource  = document.getElementById('CourseLearningRow-1');
-            const node = mainSource.cloneNode(true); // duplicate.
-            counter++;
-            let cloRow_columns = [] ;
+            const MAXCLOS = 5;
 
-            for (let i = 0; i < node.childNodes.length; i++) {
-                if (i%2 !== 0){
-                    cloRow_columns.push(node.childNodes[i]);
+            if (counter !== MAXCLOS){
+                // section is for CLO row addition.
+                const cloRow = document.getElementById('CourseLearningRow-1');
+                const outcomeReplica = cloRow.cloneNode(true); // duplicate.
+                let cloRow_columns = [];
+                for (let i = 0; i < outcomeReplica.childNodes.length; i++) {
+                    if (i % 2 !== 0) {
+                        cloRow_columns.push(outcomeReplica.childNodes[i]);
+                    }
                 }
-            }
+                updateRows_column_info(outcomeReplica, cloRow_columns);
+                cloRow.parentNode.appendChild(outcomeReplica);
 
-            if (node.hasAttribute("id")){
-                node["id"] = unqiueName(node["id"]);
+
+                // Section is for CLO to PLO Mapping.  i.e. row addition for CLO.
+                const mapCloRow =  document.getElementById('clo-map-div-1');
+                const  mapRowReplica = mapCloRow.cloneNode(true);
+
+
+
+                mapCloRow.parentNode.appendChild(outcomeReplica);
+                counter++;
+
+            }else{
+                showErrorBox("Maximum CLO's must be five!")
             }
-            ILY(node , cloRow_columns);
-            mainSource.parentNode.appendChild(node);
 
         })
     });
 
 
-    function ILY(node , cloColumn) {
-        cloColumn.forEach(function (currentTag ,  index) {
-            if (index === 0){
-                currentTag.setAttribute("id" , unqiueName(currentTag.getAttribute("id")));
-                
+    function updateRows_column_info(node, cloColumn) {
+        if (node.hasAttribute("id")) {
+            node["id"] = unqiueName(node["id"]);
+        }
+        cloColumn.forEach(function (currentTag, index) {
+            if (index === 0) {
+                currentTag.setAttribute("id", unqiueName(currentTag.getAttribute("id")));  // div us ka ID change ki hai.
+                // let span = currentTag.childNodes[1];
+                let span = currentTag.firstElementChild;
+                span.innerHTML = "CLO-" + counter;
             }
-
-
+            else if (index === 1 || index === 2){
+              let input =  currentTag.lastElementChild;
+              input.setAttribute("id" , unqiueName(input.getAttribute("id")));
+            }
+            else if (index === 3){
+                let input =  currentTag.firstElementChild.firstElementChild;
+                input.setAttribute("id" , unqiueName(input.getAttribute("id")));
+            }
         })
 
     }
 
-    var counter = 1;
+    counter = 1;
+
     function unqiueName(str) {
         return str.replace(/1/g, counter);
     }
+
     function duplicateNode(/*DOMNode*/sourceNode, /*Array*/attributesToBump) {
         counter++;
         var out = sourceNode.cloneNode(true);
-        if (out.hasAttribute("id")) { out["id"] = unqiueName(out["id"]); }
+        if (out.hasAttribute("id")) {
+            out["id"] = unqiueName(out["id"]);
+        }
         var nodes = out.getElementsByTagName("*");
 
         for (var i = 0, len1 = nodes.length; i < len1; i++) {
@@ -162,8 +190,7 @@ window.onload = function () {
             } else {
                 showErrorBox("Please complete all fields to continue")
             }
-        }
-        else if (counter === 2) {
+        } else if (counter === 2) {
             if (completeFlag) {
                 $('#cpDetaillID').toggleClass("hidden");
                 $('#cpDistributionID').toggleClass("hidden");
@@ -174,7 +201,7 @@ window.onload = function () {
     function iterate(currentField) {
         if (currentField.value.length === 0) {
             completeFlag = false;
-            console.log(currentField)
+            // console.log(currentField)
             if (currentField.tagName === "SELECT")
                 currentField.parentElement.classList.add("select-error-input")
             else if (currentField.tagName === "INPUT" || currentField.tagName === "TEXTAREA")

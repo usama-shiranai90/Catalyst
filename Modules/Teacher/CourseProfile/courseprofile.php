@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Catalyst | Course Profile Management</title>
 
     <!--    <link href="../../../Assets/Frameworks/Tailwind/tailwind.css" rel="stylesheet">-->
@@ -16,6 +16,7 @@
     <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
     <script src="CourseProfileAssets/courseScript.js" rel="script"></script>
 
+    <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
 </head>
 <body>
 <div class="w-full min-h-full">
@@ -33,7 +34,8 @@
                             <button type="button" class="max-w-6xl bg-gray-800 rounded-full flex items-center
 
                             text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 focus:ring-white"
-                                    id="user-menu-button"">
+                                    id="user-menu-button"
+                            ">
                             <!--                            aria-expanded="false" aria-haspopup="true   -->
                             <span class="sr-only">Open user menu</span>
                             <img class="h-14 w-14 rounded-full"
@@ -83,15 +85,19 @@
 
         <div class="cprofile-grid">
 
-            <div id="errorMessageDiv" class="hidden fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-                <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <div id="errorMessageDiv"
+                 class="hidden fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
+                 role="alert">
+                <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
-                     001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                     001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
                 <div id="errorID">
                     <span class="font-medium">missing field alert!</span><br>try submitting again.
                 </div>
             </div>
-            
+
             <!--       Course-Profile-Main-Head         -->
             <div class="cprofile-content-head">
                 <h3 class="text-2xl font-bold" id="subjectTopic">Course Profile Creation</h3>
@@ -106,9 +112,10 @@
                 <form method="post">
 
                     <!--     course essential section            -->
-                    <section id="cpEssentialID" class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0">
+                    <section id="cpEssentialID"
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0">
 
-                        <div class="cprofile-left-container mx-3 w-1/4" >
+                        <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
                             <div class="textField-label-content w-full" id="courseTitleDivId">
                                 <label for="courseTitleID"></label>
@@ -217,7 +224,6 @@
                             </div>
 
 
-
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
 
@@ -283,7 +289,8 @@
                                         <div class="textField-label-content w-2/3" id="projectWeightDivId">
                                             <label for="projectWeightID"></label>
                                             <input type="text" placeholder=" " name="projectWeight"
-                                                   id="projectWeightID" class="textField px-12" style="padding-left:2.3em ">
+                                                   id="projectWeightID" class="textField px-12"
+                                                   style="padding-left:2.3em ">
 
                                             <label class="textField-label ml-3">Weights</label>
                                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -356,7 +363,8 @@
                                 </div>
                                 <div class="textField-label-content w-full" id="courseInteractionModelDivId">
                                     <label for="courseInteractionModelID"></label>
-                                    <input class="textField" type="text" placeholder="Interaction model" id="courseInteractionModelID"
+                                    <input class="textField" type="text" placeholder="Interaction model"
+                                           id="courseInteractionModelID"
                                            name="courseInteractionModel">
                                     <label class="textField-label">Course Model</label>
                                 </div>
@@ -364,15 +372,18 @@
                             </div>
                             <!-- 1st coutinue button -->
                             <div class="text-right mx-4">
-                                <button type="button" class="loginButton" name="profileContinue1st" id="coursepContinuebtn-1">Continue</button>
+                                <button type="button" class="loginButton" name="profileContinue1st"
+                                        id="coursepContinuebtn-1">Continue
+                                </button>
                             </div>
                         </div>
                     </section>
 
                     <!--        course detail section            -->
-                    <section id="cpDetaillID" class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 ">
+                    <section id="cpDetaillID"
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 ">
 
-                        <div class="cprofile-left-container mx-3 w-1/4" >
+                        <div class="cprofile-left-container mx-3 w-1/4">
                             <!---------------------Reference Books--------------------------->
                             <div class="textField-label-content w-full" id="ReferenceBooksDivId">
                                 <label for="referenceBooksID"></label>
@@ -479,7 +490,9 @@
                                 </div>
                             </div>
                             <div class="text-right mx-4">
-                                <button type="button" class="loginButton" name="profileContinue1st" id="coursepContinuebtn-2">Continue</button>
+                                <button type="button" class="loginButton" name="profileContinue1st"
+                                        id="coursepContinuebtn-2">Continue
+                                </button>
                             </div>
 
                         </div>
@@ -494,7 +507,8 @@
                             <div class="clo-table-border " style="background-color: #0284FC">
                                 <h2 class="table-head">Course Learning Outcome</h2>
                                 <div id="courseLearningDivID" class="flex flex-wrap p-0">
-                                    <div id="courseLearningHeaderID" class="learning-outcome-head text-md row-flex w-full mx-0">
+                                    <div id="courseLearningHeaderID"
+                                         class="learning-outcome-head text-md row-flex w-full mx-0">
                                         <div class="cprofile-column h-10 w-24">
                                             <span class="cprofile-cell-data">CLO's</span>
                                         </div>
@@ -509,36 +523,30 @@
                                         </div>
                                     </div>
 
-                                    <div id="CourseLearningRow-1"
-                                         class="flex w-full learning-outcome-row">
-                                        <div class="cprofile-column h-10 w-24 bg-catalystBlue-l61 text-white" id="nameCLO-1">
+                                    <div id="CourseLearningRow-1" class="flex w-full learning-outcome-row">
+                                        <div class="cprofile-column h-10 w-24 bg-catalystBlue-l61 text-white"
+                                             id="nameCLO-1">
                                             <span class="cprofile-cell-data">CLO-1</span>
                                         </div>
+
                                         <div class="cprofile-column h-10 w-3/4">
-        <!-- <span class="cprofile-cell-data">Understanding the role of Indesign and its major activities within the OO software</span>-->
-                                            <label for="clo-1-description">
-                                                <input type="text" class="cell-input" value=""
-                                                       placeholder="Enter CLO description" id="descriptionCLO-1" />
-                                            </label>
+                                            <!-- <span class="cprofile-cell-data">Understanding the role of Indesign and its major activities within the OO software</span>-->
+                                            <label for="descriptionCLO-1"></label>
+                                            <input type="text" class="cell-input min-w-full" value=""
+                                                   placeholder="Enter CLO description" id="descriptionCLO-1"/>
+
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
-                                            <label for="clo-1-undergraduate">
-                                                <input type="text" class="cell-input"
-                                                       value="Undergraduate"
-                                                       id="undergraduateCLO-1">
-                                            </label>
+                                            <label for="undergraduateCLO-1"></label>
+                                            <input type="text" class="cell-input" value="Undergraduate" id="undergraduateCLO-1" readonly>
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
-                                            <label for="clo-1-bt-level">
-
-                                                <div class="flex flex-row">
-                                                    <input type="text" class="cell-input h-10 min-w-0" value=""
-                                                           placeholder="Enter BT-Level" id="btLevelCLO-1">
-                                                    <img class="h-10 w-6" alt=""
-                                                         src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg" >
-                                                </div>
-                                            </label>
-
+                                            <div class="flex flex-row">
+                                                <input type="text" class="cell-input h-10 min-w-0" value="" placeholder="Enter BT-Level" id="btLevelCLO-1">
+                                                <label for="btLevelCLO-1"></label>
+                                                <img class="h-10 w-6" alt=""
+                                                     src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -571,6 +579,9 @@
                                             <span class="cprofile-cell-data">2</span>
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
+                                            <span class="cprofile-cell-data">3</span>
+                                        </div>
+                                        <div class="cprofile-column h-10 w-1/6">
                                             <span class="cprofile-cell-data">4</span>
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
@@ -595,10 +606,7 @@
                                             <span class="cprofile-cell-data">11</span>
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
-                                            <span class="cprofile-cell-data">10</span>
-                                        </div>
-                                        <div class="cprofile-column h-10 w-1/6">
-                                            <span class="cprofile-cell-data">11</span>
+                                            <span class="cprofile-cell-data">12</span>
                                         </div>
                                     </div>
 
@@ -609,9 +617,8 @@
                                             <span class="cprofile-cell-data">CLO-1</span>
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
+                                            <input type="image" class="cprofile-cell-data far fa-user cprofile-cell-data text-center max-w-0" value="" placeholder="" id="clo-1-PLO-1">
 
-                                            <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
-                                                   placeholder="" id="clo-1-PLO-1">
                                         </div>
                                         <div class="cprofile-column h-10 w-1/6">
                                             <input type="text" class="cprofile-cell-data text-center max-w-0" value=""
@@ -671,7 +678,9 @@
                         </div>
 
                         <div class="text-right mx-8 mr-5">
-                            <button type="submit" class="loginButton" name="profileContinue3rd" id="coursepContinuebtn-3">Finish</button>
+                            <button type="submit" class="loginButton" name="profileContinue3rd"
+                                    id="coursepContinuebtn-3">Finish
+                            </button>
                         </div>
                     </div>
 
