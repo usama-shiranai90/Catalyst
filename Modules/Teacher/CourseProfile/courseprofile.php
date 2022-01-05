@@ -83,8 +83,7 @@
 
         <div class="cprofile-grid">
 
-            <div id="errorMessageDiv" class="hidden flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert"
-                 style="position: fixed;bottom: 0;right: 0;z-index: 9999;">
+            <div id="errorMessageDiv" class="hidden fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
                 <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
                      001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
@@ -107,7 +106,7 @@
                 <form method="post">
 
                     <!--     course essential section            -->
-                    <section id="cpEssentialID" class=" cprofile-content-box-border cprofile-content-division mx-0 my-0">
+                    <section id="cpEssentialID" class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0">
 
                         <div class="cprofile-left-container mx-3 w-1/4" >
                             <!--                        course title-->
@@ -414,10 +413,9 @@
                                         <h3>Name</h3>
                                         <div class="vertical-line"></div>
                                         <div class="textField-label-content w-full" id="nameWeightDivId">
-                                            <label for="quizDetailID"></label>
+                                            <label for="nameDetailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      id="nameID"
-                                                      name="nameDetail"></textarea>
+                                                      id="nameDetailID" name="nameDetail"></textarea>
                                             <label class="textField-label my-2">Detail</label>
                                         </div>
                                     </div>
@@ -428,7 +426,7 @@
                                         <div class="textField-label-content w-full" id="designationWeightDivId">
                                             <label for="DesignationDetailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      id="designationID"
+                                                      id="DesignationDetailID"
                                                       name="DesignationDetail"></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
@@ -438,7 +436,7 @@
                                         <h3>Qualification</h3>
                                         <div class="vertical-line"></div>
                                         <div class="textField-label-content w-full" id=" qualificationWeightDivId">
-                                            <label for=" QualificationDetailID"></label>
+                                            <label for=" qualificationID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="qualificationID"
                                                       name=" QualificationDetail"></textarea>
@@ -449,10 +447,10 @@
                                         <h3>Specialization</h3>
                                         <div class="vertical-line"></div>
                                         <div class="textField-label-content w-full" id=" SpecializationWeightDivId">
-                                            <label for=" SpecializationDetailID"></label>
+                                            <label for="specializationID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="specializationID"
-                                                      name=" SpecializationDetail"></textarea>
+                                                      name="SpecializationDetail"></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -460,7 +458,7 @@
                                         <h3>Contacts</h3>
                                         <div class="vertical-line"></div>
                                         <div class="textField-label-content w-full" id=" contactsWeightDivId">
-                                            <label for="ContactsDetailID"></label>
+                                            <label for="contactsID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="contactsID"
                                                       name="ContactsDetail"></textarea>
@@ -471,7 +469,7 @@
                                         <h3>Personal Email</h3>
                                         <div class="vertical-line"></div>
                                         <div class="textField-label-content w-full" id=" personalEmailWeightDivId">
-                                            <label for="PersonalEmailDetailID"></label>
+                                            <label for="personalEmailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="personalEmailID"
                                                       name="PersonalEmailDetail"></textarea>
@@ -488,7 +486,7 @@
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <div id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
+                    <div id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
 
@@ -702,7 +700,7 @@
 
                     <div id="progressCircle-2" class="flex-grow-0 ">
                         <div class="progress-circle progress-circle-unfilled">
-                            <span class="text-gray-400 circular-span">2</span>
+                            <span class="text-white circular-span">2</span>
                         </div>
                     </div>
 
@@ -713,7 +711,7 @@
                     </div>
                     <div id="progressCircle-3" class="flex-grow-0 ">
                         <div class="progress-circle progress-circle-unfilled">
-                            <span class="text-gray-400 circular-span">3</span>
+                            <span class="text-white circular-span">3</span>
                         </div>
                     </div>
                 </div>
@@ -728,19 +726,6 @@
                     <div class="w-1/5">
                         CLO Distribution
                     </div>
-                </div>
-            </div>
-
-            <div class="hidden flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                <div>
-                    <span class="font-medium">Danger alert!</span> Change a few things up and try submitting again.
-                </div>
-            </div>
-            <div class="hidden flex p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                <div>
-                    <span class="font-medium">Success alert!</span> Change a few things up and try submitting again.
                 </div>
             </div>
 

@@ -63,7 +63,7 @@ window.onload = function () {
     let adminUsernameDiv = document.getElementById("adminUsernameDiv")
     let adminUsername = document.getElementById("adminUsername")
     let adminPassword = document.getElementById("adminPassword")
-    let adminPasswordDiv = document.getElementById("adminPasswordDiv")
+    let adminPasswordDiv = document.getElementById("adminPasswordDiv"), incompleteUsername
 
     /*Errors*/
     adminUsernameError = document.getElementById("adminUsernameError")
