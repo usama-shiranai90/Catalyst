@@ -287,6 +287,68 @@
 
                                             </div>
 
+<<<<<<< Updated upstream
+=======
+                            </div>
+                            <!-- 1st coutinue button -->
+                            <div class="text-right mx-4">
+                                <button type="button" class="loginButton" name="profileContinue1st"
+                                        id="coursepContinuebtn-1">Continue
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- course detail section -->
+                    <section id="cpDetaillID"
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 ">
+
+                        <div class="cprofile-left-container mx-3 w-1/4">
+                            <!---------------------Reference Books--------------------------->
+                            <div class="textField-label-content w-full" id="ReferenceBooksDivId">
+                                <label for="referenceBooksID"></label>
+                                <input class="textField" type="text" placeholder=" " id="referenceBooksID"
+                                       name="ReferenceBooks">
+                                <label class="textField-label">ReferenceBooks</label>
+                            </div>
+                            <!-------------------------------RecommendedTextbooks----------------------->
+                            <div class="textField-label-content w-full" id="recommendedTextbooksDivId">
+                                <label for="recommendedTextbooksID"></label>
+                                <input class="textField" type="text" placeholder=" " id="recommendedTextbooksID"
+                                       name="RecommendedTextbooks">
+                                <label class="textField-label">RecommendedTextbooks</label>
+                            </div>
+                            <!--                        course Description-->
+                            <div class="textField-label-content w-full" id="courseDescriptionDivId">
+                                <label for="courseDescriptionID"></label>
+                                <textarea class="textarea-h textField" type="text" placeholder=" "
+                                          id="courseDescriptionID" name="assignmentDetail"
+                                          style="height: 9em"></textarea>
+                                <label class="textField-label">Course Description</label>
+                            </div>
+                            <!--                        OtherreferenceMaterial-->
+                            <div class="textField-label-content w-full" id="otherRefDivId">
+                                <label for="otherReferenceId"></label>
+                                <textarea class="textarea-h textField" type="text" placeholder=" "
+                                          id="otherReferenceId" name="otherReference"
+                                          style="height: 9em"></textarea>
+                                <label class="textField-label">Other reference Material</label>
+                            </div>
+                        </div>
+                        <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
+                            <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
+                                        border-b-2 border-solid mb-10" style="background-color: #0284fc">
+                                <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
+                                <div class="grid bg-white border-solid border-t-2 text-center">
+                                    <div class="assessment-wrap mx-35">
+                                        <h3>Name</h3>
+                                        <div class="vertical-line"></div>
+                                        <div class="textField-label-content w-full" id="nameWeightDivId">
+                                            <label for="nameDetailID"></label>
+                                            <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      id="nameDetailID" name="nameDetail"></textarea>
+                                            <label class="textField-label my-2">Detail</label>
+>>>>>>> Stashed changes
                                         </div>
 
                                         <div class="assessment-wrap">
