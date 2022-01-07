@@ -78,14 +78,14 @@
 }
 .inside-label span {
     position: relative;
-    width: 100%;
+    /*width: 100%;*/
     height: 100%;
     transition: all 0.1s ease;
 }
 .inside-label span svg {
-    position: absolute;
-    top: -7px;
-    left: 4px;
+    /*position: absolute;*/
+    /*top: -7px;*/
+    /*left: 4px;*/
     fill: none;
     stroke: #0259C2;
     stroke-width: 2;
