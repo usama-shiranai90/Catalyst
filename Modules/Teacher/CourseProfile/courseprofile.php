@@ -15,8 +15,8 @@
     <link href="CourseProfileAssets/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
     <script src="CourseProfileAssets/courseScript.js" rel="script"></script>
-
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+
 </head>
 <body>
 <div class="w-full min-h-full">
@@ -86,8 +86,7 @@
         <div class="cprofile-grid">
 
             <div id="errorMessageDiv"
-                 class="fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
-                 role="alert">
+                 class="fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
                 <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                      xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
@@ -108,7 +107,7 @@
             <!--        Course-Profile Container -->
             <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 h-full bg-catalystLight-f5">
                 <div class="flex flex-row items-center">
-                    <img class="mx-2 h-6"  src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
+                    <img class="mx-2 h-6" src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
                     <!--<svg  class="mx-2 h-6 hover:bg-gray-700 relative" width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.3333 7.7085L4.625 15.4168L12.3333 23.1252" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M4.625 15.417H16.9583C25.473 15.417 32.375 22.319 32.375 30.8337V32.3753" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -119,7 +118,7 @@
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class=" cprofile-content-box-border cprofile-content-division mx-0 my-0">
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -506,7 +505,7 @@
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <div id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
 
@@ -549,15 +548,15 @@
                                 <h2 class="table-head">CLO's & PLO's Mapping</h2>
                                 <div id="courseMappingDivID" class="flex flex-wrap p-0">
 
-                                    <div id="cloMapHeaderID" class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10 ">
+                                    <div id="cloMapHeaderID"
+                                         class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10 ">
                                         <div class="cprofile-column h-10 w-1/6">
                                             <span class="cprofile-cell-data">PLOs</span>
                                         </div>
 
 
-
                                     </div>
-                                <!--  placing your first CLO Map here-->
+                                    <!--  placing your first CLO Map here-->
 
                                     <!--     <div class="cprofile-column h-10 w-1/6">
                                                                            <input class="clo-toggle hidden" id="clo-1-plo-2" name="clo1" type="checkbox" />
@@ -662,12 +661,12 @@
                             </div>
                         </div>
 
-                        <div class="text-right mx-8 mr-5">
+                        <div class="text-right mt-5 mx-8 mr-5">
                             <button type="submit" class="loginButton" name="profileContinue3rd"
                                     id="coursepContinuebtn-3">Finish
                             </button>
                         </div>
-                    </div>
+                    </section>
 
                 </form>
             </div>

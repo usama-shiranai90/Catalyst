@@ -175,6 +175,7 @@ $courseSessional = array("Assignment 1", "Assignment 2", "Quiz 1", "Assignment 3
 
             $(selectSessional).on('click', function () {
                 const act = $(sessionalTable).hasClass("hidden");
+
                 $(sessionalTable).toggle("hidden").animate({right: 0,}, "slow", changeArrowPosition());
 
                 function changeArrowPosition() {
@@ -192,7 +193,7 @@ $courseSessional = array("Assignment 1", "Assignment 2", "Quiz 1", "Assignment 3
 
     function fetchSessionalInfo(total, courseSessionalInfo_Parent) {
         for (let i = 0; i < total.length; i++) {
-            courseSessionalInfo_Parent.innerHTML += `<span class="h-10 py-2 font-medium text-gray-700 border hover:bg-catalystBlue-l6 hover:border-transparent">${total[i]}</span>`
+            courseSessionalInfo_Parent.innerHTML += `<span class="h-10 py-2 font-medium text-gray-700 border hover:bg-catalystBlue-l6 transition duration-500 ease-in-out hover:border-transparent">${total[i]}</span>`
         }
     }
 

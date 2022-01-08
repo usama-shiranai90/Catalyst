@@ -1,104 +1,108 @@
-// Course Essential:
-const cEssentialField = {
-    cTitleField: document.getElementById("courseTitleID"),
-    cCodeField: document.getElementById("courseCodeID"),
-    cHoursField: document.getElementById("creditHourID"),
-    cPreReqField: document.getElementById("preRequisiteID"),
-    cTermField: document.getElementById("semesterTermID"),
-    cProgramLevelField: document.getElementById("ProgramLevelID"),
-    cProgramField: document.getElementById("programID"),
-    cEffectiveField: document.getElementById("courseEffectiveID"),
-    cCoordinationField: document.getElementById("coordinatingUnitID"),
-    cMethodologyField: document.getElementById("teachingMethodologyID"),
-    cModelField: document.getElementById("courseInteractionModelID"),
-}
-const instrumentWeight = {
-    quizzsection: {
-        detail: document.getElementById('quizDetailID'),
-        weight: document.getElementById('quizWeightID')
-    },
-    assignmentsection: {
-        detail: document.getElementById('assignmentDetailID'),
-        weight: document.getElementById('assignmentWeightID')
-    },
-    projectsection: {
-        detail: document.getElementById('projectDetailID'),
-        weight: document.getElementById('projectWeightID')
-    },
-    midsection: {
-        detail: document.getElementById('midTermDetailID'),
-        weight: document.getElementById('midWeightID')
-    },
-    finalsection: {
-        detail: document.getElementById('finalTermDetailID'),
-        weight: document.getElementById('finalWeightID')
-    },
-}
-let fieldsArray = [cEssentialField.cTitleField, cEssentialField.cCodeField, cEssentialField.cHoursField, cEssentialField.cPreReqField,
-    cEssentialField.cTermField, cEssentialField.cProgramLevelField, cEssentialField.cProgramField, cEssentialField.cEffectiveField,
-    cEssentialField.cCoordinationField, cEssentialField.cMethodologyField, cEssentialField.cModelField,
-    instrumentWeight.assignmentsection.detail, instrumentWeight.assignmentsection.weight,
-    instrumentWeight.quizzsection.detail, instrumentWeight.quizzsection.weight,
-    instrumentWeight.projectsection.detail, instrumentWeight.projectsection.weight,
-    instrumentWeight.midsection.detail, instrumentWeight.midsection.weight,
-    instrumentWeight.finalsection.detail, instrumentWeight.finalsection.weight];
-
-// Course Detail:
-const cDetailField = {
-    cReferenceField: document.getElementById("referenceBooksID"),
-    cRecommendedBooksField: document.getElementById("recommendedTextbooksID"),
-    cCourseDetailField: document.getElementById("courseDescriptionID"),
-    cOtherReferenceMaterialField: document.getElementById("otherReferenceId"),
-    cNameDetailField: document.getElementById("nameDetailID"),
-    cDesignationField: document.getElementById("DesignationDetailID"),
-    cQualificationField: document.getElementById("qualificationID"),
-    cSpecializationFiled: document.getElementById("specializationID"),
-    cContactsField: document.getElementById("contactsID"),
-    cPersonalEmailFiled: document.getElementById("personalEmailID"),
-}
-let fieldsArray_2 = [
-    cDetailField.cReferenceField, cDetailField.cRecommendedBooksField, cDetailField.cCourseDetailField
-    , cDetailField.cOtherReferenceMaterialField, cDetailField.cNameDetailField, cDetailField.cDesignationField
-    , cDetailField.cQualificationField, cDetailField.cSpecializationFiled, cDetailField.cContactsField, cDetailField.cPersonalEmailFiled
-];
-
 window.onload = function (e) {
+
+    // Course Essential:
+    const cEssentialField = {
+        cTitleField: document.getElementById("courseTitleID"),
+        cCodeField: document.getElementById("courseCodeID"),
+        cHoursField: document.getElementById("creditHourID"),
+        cPreReqField: document.getElementById("preRequisiteID"),
+        cTermField: document.getElementById("semesterTermID"),
+        cProgramLevelField: document.getElementById("ProgramLevelID"),
+        cProgramField: document.getElementById("programID"),
+        cEffectiveField: document.getElementById("courseEffectiveID"),
+        cCoordinationField: document.getElementById("coordinatingUnitID"),
+        cMethodologyField: document.getElementById("teachingMethodologyID"),
+        cModelField: document.getElementById("courseInteractionModelID"),
+    }
+    const instrumentWeight = {
+        quizzsection: {
+            detail: document.getElementById('quizDetailID'),
+            weight: document.getElementById('quizWeightID')
+        },
+        assignmentsection: {
+            detail: document.getElementById('assignmentDetailID'),
+            weight: document.getElementById('assignmentWeightID')
+        },
+        projectsection: {
+            detail: document.getElementById('projectDetailID'),
+            weight: document.getElementById('projectWeightID')
+        },
+        midsection: {
+            detail: document.getElementById('midTermDetailID'),
+            weight: document.getElementById('midWeightID')
+        },
+        finalsection: {
+            detail: document.getElementById('finalTermDetailID'),
+            weight: document.getElementById('finalWeightID')
+        },
+    }
+    let fieldsArray = [cEssentialField.cTitleField, cEssentialField.cCodeField, cEssentialField.cHoursField, cEssentialField.cPreReqField,
+        cEssentialField.cTermField, cEssentialField.cProgramLevelField, cEssentialField.cProgramField, cEssentialField.cEffectiveField,
+        cEssentialField.cCoordinationField, cEssentialField.cMethodologyField, cEssentialField.cModelField,
+        instrumentWeight.assignmentsection.detail, instrumentWeight.assignmentsection.weight,
+        instrumentWeight.quizzsection.detail, instrumentWeight.quizzsection.weight,
+        instrumentWeight.projectsection.detail, instrumentWeight.projectsection.weight,
+        instrumentWeight.midsection.detail, instrumentWeight.midsection.weight,
+        instrumentWeight.finalsection.detail, instrumentWeight.finalsection.weight];
+
+    // Course Detail:
+    const cDetailField = {
+        cReferenceField: document.getElementById("referenceBooksID"),
+        cRecommendedBooksField: document.getElementById("recommendedTextbooksID"),
+        cCourseDetailField: document.getElementById("courseDescriptionID"),
+        cOtherReferenceMaterialField: document.getElementById("otherReferenceId"),
+        cNameDetailField: document.getElementById("nameDetailID"),
+        cDesignationField: document.getElementById("DesignationDetailID"),
+        cQualificationField: document.getElementById("qualificationID"),
+        cSpecializationFiled: document.getElementById("specializationID"),
+        cContactsField: document.getElementById("contactsID"),
+        cPersonalEmailFiled: document.getElementById("personalEmailID"),
+    }
+    let fieldsArray_2 = [
+        cDetailField.cReferenceField, cDetailField.cRecommendedBooksField, cDetailField.cCourseDetailField
+        , cDetailField.cOtherReferenceMaterialField, cDetailField.cNameDetailField, cDetailField.cDesignationField
+        , cDetailField.cQualificationField, cDetailField.cSpecializationFiled, cDetailField.cContactsField, cDetailField.cPersonalEmailFiled
+    ];
 
     let completeFlag = true;
     const outcomeDiv = document.getElementById("courseLearningDivID");
     const outcomeMapDiv = document.getElementById("courseMappingDivID");
     let incrementClo = 0;
 
+    const cEssentialSection = document.getElementById('cpEssentialID');
+    const cDetailSection = document.getElementById('cpDetaillID');
+    const cDistributionSection = document.getElementById('cpDistributionID');
+    let backArrow = document.getElementsByClassName('mx-2 h-6')[0]
+
     $(document).ready(function () {
+        checkBackArrow();
 
-        $('.mx-2 .h-6').on("click", function (e) {
+        $(backArrow).on("click", function (e) {
 
-            let sec1 = $('#cpEssentialID');
-            let sec2 = $('#cpDetaillID');
-            let sec3 = $('#cpDistributionID');
+            if (!$(cDetailSection).hasClass("hidden")) {                // 2nd section to move to 1st section.
+                $(cEssentialSection).toggleClass("hidden");             // open first section.
+                $(cDetailSection).toggleClass("hidden");                // close second section.
+                checkBackArrow();
+            } else if (!$(cDistributionSection).hasClass("hidden")) {     // if on third page then go to 2nd.
 
-            if ($(this).is(':hidden')) {
-                $(this).text('This element is hidden.');
-            } else {
-                $(this).text('This element is visible.');
+                $(cDistributionSection).toggleClass("hidden");
+                $(cDetailSection).toggleClass("hidden");
+                checkBackArrow();
             }
-
-            $('#cpEssentialID').toggleClass("hidden");
-            $('#cpDetaillID').toggleClass("hidden");
-            $('#cpDistributionID').toggleClass("hidden");
-
         });
 
         $("#coursepContinuebtn-1").on("click", function (e) {
             completeFlag = true;
             e.preventDefault();
             checkEmptyFields(fieldsArray, 1);
+            checkBackArrow();
         });
 
         $('#coursepContinuebtn-2').on('click', function (e) {
             completeFlag = true;
             e.preventDefault();
             checkEmptyFields(fieldsArray_2, 2);
+            checkBackArrow();
         })
 
         $('#coursepContinuebtn-3').on('click', function (e) {
@@ -106,11 +110,16 @@ window.onload = function (e) {
             // let totalRowsOfCLOs  = document.getElementsByClassName("flex w-full learning-outcome-row");
         })
 
-        $('.textField , .select').on('input', function () {
-            if (this.type === "text" || this.type === "textarea") {
-                $(this).parent().removeClass().addClass("textField-label-content w-full");
-            } else if (this.type === "select-one")
-                $(this).parent().removeClass().addClass("select-label-content w-full");
+        $('.textField , .select').on('input', function (e) {
+            if (this.classList.contains("px-12")) {
+                $(this).parent().removeClass().addClass("textField-label-content w-2/3");
+            } else {
+                if (this.type === "text" || this.type === "textarea")
+                    $(this).parent().removeClass().addClass("textField-label-content w-full");
+                else if (this.type === "select-one")
+                    $(this).parent().removeClass().addClass("select-label-content w-full");
+            }
+
         })
 
         $('#add-clo-btn').on('click', function (e) {
@@ -123,8 +132,12 @@ window.onload = function (e) {
             if (incrementClo === 0) {
                 ++incrementClo;
                 outcomeDiv.innerHTML += createFirstCLODetailRow();
-
                 createFirstCLOMapRow(12); // pass no of PLOs you have per curriculum.
+                $('input[name="clo1"]').on('click', function () {
+                    console.log(this);
+                })
+
+
             } else {
                 ++incrementClo;  // 2
                 const ma1 = document.getElementById('CourseLearningRow-1');
@@ -132,34 +145,42 @@ window.onload = function (e) {
                 createCLORow(ma1, 1);
                 createCLORow(ma2, 2);
             }
-
         });
 
-        $(document).click('\'input[name="^clo"]\'', function (e) {
-            const totalChecks = $("input[name=\"clo1\"]:checked").length;
-            let flag;
-            if (totalChecks !== 3) {
-                flag = false;
-                $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
-            } else {
-                flag = true;
-                showErrorBox("Maximum limit of CLO-1 is reached")
-                $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
-            }
-        });
-
+        /* $(document).click('\'input[name="^clo"]\'', function (e) {
+             const totalChecks = $("input[name=\"clo1\"]:checked").length;
+             let flag;
+             if (totalChecks !== 3) {
+                 flag = false;
+                 $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
+             } else {
+                 flag = true;
+                 showErrorBox("Maximum limit of CLO-1 is reached")
+                 $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
+             }
+         });*/
 
         let toRemove_CLO = -1;
         $(document).on('click', ".h-10 .w-6", function (e) {
             toRemove_CLO = $(this).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');
             $(this).closest('.learning-outcome-row').remove(); // CLO Detail i.e description , bt level , domain..
-
             //clo-map-div-1
             $('#clo-map-div-' + toRemove_CLO).remove();
             incrementClo = incrementClo - 1;
         });
 
     });
+
+    function checkBackArrow() {
+
+        if (!cEssentialSection.classList.contains("hidden")) {
+            backArrow.classList.add("hidden");
+        } else {
+            console.log(backArrow.classList);
+            if (backArrow.classList.contains("hidden"))
+                backArrow.classList.remove("hidden");
+        }
+    }
 
     function createCLORow(replicaNode, t) {
 
@@ -207,9 +228,7 @@ window.onload = function (e) {
             });
             // map_clo_row.parentNode.appendChild(replicaNode);
             outcomeMapDiv.appendChild(node);
-
         }
-
 
     }
 
@@ -231,8 +250,8 @@ window.onload = function (e) {
 
         if (counter === 1) {
             if (completeFlag) {
-                $('#cpEssentialID').toggleClass("hidden");
-                $('#cpDetaillID').toggleClass("hidden");
+                $('#cpEssentialID').addClass("hidden");
+                $('#cpDetaillID').removeClass("hidden");
 
                 // $('#cpDetaillID').classList.toggle("hidden");
             } else {
@@ -240,8 +259,9 @@ window.onload = function (e) {
             }
         } else if (counter === 2) {
             if (completeFlag) {
-                $('#cpDetaillID').toggleClass("hidden");
-                $('#cpDistributionID').toggleClass("hidden");
+                $('#cpDetaillID').addClass("hidden");
+                $('#cpDistributionID').removeClass("hidden");
+
             } else showErrorBox("Please fill all fields to continue");
         }
     }
@@ -261,10 +281,7 @@ window.onload = function (e) {
         $('#errorID span').text("Empty Alert!")
         $('#errorID').textNodes().first().replaceWith(message);
         $("#errorMessageDiv").toggle("hidden").animate(
-            {
-                right: 0,
-            }, 1000,
-            function () {
+            {right: 0,}, 1000, function () {
                 $(this).delay(3000).fadeOut();
             });
     }
@@ -322,126 +339,6 @@ window.onload = function (e) {
                             </label> </div>`
             clo_map_row_div.innerHTML += row_data;
         }
-
-        /* return '  <div id="clo-map-div-1"\n' +
-             '                                         class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10">\n' +
-             '\n' +
-             '                                        <svg class="hidden tick-icon">\n' +
-             '                                            <symbol id="check-tick" viewbox="0 0 12 10">\n' +
-             '                                                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>\n' +
-             '                                            </symbol>\n' +
-             '                                        </svg>\n' +
-             '\n' +
-             '                                        <div class="cprofile-column h-10 bg-catalystBlue-l61 text-white w-1/6">\n' +
-             '                                            <span class="cprofile-cell-data">CLO-1</span>\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-1" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-1">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-2" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-2">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-3" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-3">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-4" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-4">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-5" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-5">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-6" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-6">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-7" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-7">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-8" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-8">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-9" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-9">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-10" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-10">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-11" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-11">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                        <div class="cprofile-column h-10 w-1/6">\n' +
-             '                                            <input class="clo-toggle hidden" id="clo-1-plo-12" name="clo1" type="checkbox" />\n' +
-             '                                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-12">\n' +
-             '                                                <span>\n' +
-             '                                                    <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>\n' +
-             '                                                </span>\n' +
-             '                                            </label>\n' +
-             '\n' +
-             '                                        </div>\n' +
-             '                                    </div>'*/
     }
 
     function setTagAttribute(newReplica) {
@@ -454,4 +351,23 @@ window.onload = function (e) {
             return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
         });
     }
+
+
+    /*window.onbeforeunload = function (ev) {}*/
+    /*   $(window).on('beforeunload', function (e) {
+           console.log("wtf")
+           e.preventDefault();
+           e.returnValue = '';
+           //    Are you sure you want to navigate away from the Test Runner
+
+       });
+
+       $(window).on('onunload', function (e) {
+           var r = confirm('Are you sure you want to stop the Test Runner?');
+           if (r === true) {
+               console.log('leaving');
+           } else
+               console.log("leaving unsaved");
+       });*/
+
 }

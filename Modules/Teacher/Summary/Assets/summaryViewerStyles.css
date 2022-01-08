@@ -1,0 +1,20 @@
+.dropdownLabel, .dropdown {
+    background-color: #F4F8F9;
+    color: #3F575C;
+}
+
+span{
+    color: #3F575C;
+}
+
+th{
+    color: #6E6893;
+}
+
+html, body{
+    height: auto;
+}
+
+option{
+    cursor: pointer;
+}
