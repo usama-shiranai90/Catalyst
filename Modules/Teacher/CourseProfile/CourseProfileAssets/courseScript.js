@@ -1,4 +1,3 @@
-
 window.onload = function (e) {
 
     // Course Essential:
@@ -76,6 +75,7 @@ window.onload = function (e) {
     const cDetailSection = document.getElementById('cpDetaillID');
     const cDistributionSection = document.getElementById('cpDistributionID');
 
+    let lastAvailableCLONumber = 0;
     $(document).ready(function () {
         $("#coursepContinuebtn-1").on("click", function (e) {
             completeFlag = true;
@@ -92,35 +92,29 @@ window.onload = function (e) {
         })
 
 
-
-
-
-
-
-
-
         $('#coursepContinuebtn-3').on('click', function (e) {
             completeFlag = true;
             e.preventDefault();
             // checkEmptyOutcome();
 
-            if (outcomeLearningContainer.children.length < 2){ // generate alert
+            if (outcomeLearningContainer.children.length < 2) { // generate alert
                 $("main").addClass("blur-filter");
                 $("#alertContainer").removeClass("hidden");
-                $("#alertBtnCLOCreation").add("#alertBtnCLOContinue").on('click' , function () {
+                $("#alertBtnCLOCreation").add("#alertBtnCLOContinue").on('click', function () {
                     $("main").removeClass("blur-filter");
                     $("#alertContainer").addClass("hidden");
                 })
-            } else{
-                let tempArray = ["nameCLO-1" , "descriptionCLO-1","undergraduateCLO-1","btLevelCLO-1"];
+            } else {
+                let tempArray = ["nameCLO-1", "descriptionCLO-1", "undergraduateCLO-1", "btLevelCLO-1"];
+                const array = new Array(incrementClo);
+                /*for (let i = 0 ;  i < incrementClo ;  i++){
 
-                var array = [];
-                $("input:checkbox[name=clo1]:checked").each(function() {
-                    array.push($(this).val());
-                });
-
-                console.log(array)
-
+                    $("input:checkbox[name='clo "+(i+1)+"']:checked").each(function () {
+                        // array.push($(this).val());
+                        array[i].push($(this).val())
+                    });
+                }
+                console.log(array)*/
 
             }
         })
@@ -137,30 +131,48 @@ window.onload = function (e) {
 
         })
 
-
-
-
-
-
-
-
         $('#add-clo-btn').on('click', function (e) {
-            console.log("sfdgse")
+
+            if (incrementClo === 0) {
+                lastAvailableCLONumber = ++incrementClo;
+                outcomeLearningContainer.innerHTML += createFirstCLODetailRow();
+                createFirstCLOMapRow(12); // pass no of PLOs you have per curriculum.
+            } else {
+                console.log("CLO being passed to ma1: ", lastAvailableCLONumber)
+                const ma1 = document.getElementById('CourseLearningRow-' + lastAvailableCLONumber);
+                createCLORow(ma1, 1, lastAvailableCLONumber + 1);
+
+                //Creates a CLO Mapping Row
+                const ma2 = document.getElementById('clo-map-div-' + lastAvailableCLONumber);
+                createCLORow(ma2, 2, lastAvailableCLONumber + 1);
+
+                ++incrementClo;
+                lastAvailableCLONumber++;
+            }
+        });
+        /*        $('#add-clo-btn').on('click', function (e) {
+
+
             if (incrementClo === 0) {
                 ++incrementClo;
                 outcomeLearningContainer.innerHTML += createFirstCLODetailRow();
                 createFirstCLOMapRow(12); // pass no of PLOs you have per curriculum.
-                $('input[name="clo1"]').on('click', function () {
+
+                /!*$('input[name="clo1"]').on('click', function () {
                     // console.log(this);
                 });
+*!/
+
             } else {
                 ++incrementClo;  // 2
                 const ma1 = document.getElementById('CourseLearningRow-1');
-                const ma2 = document.getElementById('clo-map-div-1');
                 createCLORow(ma1, 1);
+
+                //Creates a CLO Mapping Row
+                const ma2 = document.getElementById('clo-map-div-1');
                 createCLORow(ma2, 2);
             }
-        });
+        });*/
 
         $(backArrow).on("click", function (e) {
             if (!$(cDetailSection).hasClass("hidden")) {                // 2nd section to move to 1st section.
@@ -176,22 +188,29 @@ window.onload = function (e) {
         });
 
 
-
-
-
-
-
-
-
-
-
-        let toRemove_CLO = -1;
         $(document).on('click', ".h-10 .w-6", function (e) {
-            toRemove_CLO = $(this).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');
+            const toRemove_CLO = $(this).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');
+            console.log(toRemove_CLO)
             $(this).closest('.learning-outcome-row').remove(); // CLO Detail i.e description , bt level , domain..
-            //clo-map-div-1
+
             $('#clo-map-div-' + toRemove_CLO).remove();
-            incrementClo = incrementClo - 1;
+
+
+            console.log("here it is : "+ toRemove_CLO , "\t" , lastAvailableCLONumber +"\t" + incrementClo)
+            if(toRemove_CLO === lastAvailableCLONumber){
+                lastAvailableCLONumber--;
+            }
+            incrementClo--;
+            console.log("CLOs After Removal: ", incrementClo)
+
+
+            if (incrementClo === 0) {
+                $('#cloMapHeaderID').html(`<div class="cprofile-column h-10 w-1/6">
+                                            <span class="cprofile-cell-data">PLOs</span>
+                                        </div>`);
+            }
+
+
         });
 
         // checkBackArrow();
@@ -210,6 +229,7 @@ window.onload = function (e) {
     });
 
     checkBackArrow();
+
     function checkBackArrow() {
         if (!cEssentialSection.classList.contains("hidden")) {
             backArrow.classList.add("hidden");
@@ -221,22 +241,74 @@ window.onload = function (e) {
     }
 
 
-
-
-
-
-
-
-    function createCLORow(replicaNode, t) {
+    function createCLORow(replicaNode, t, CLONumber) {
 
         const node = replicaNode.cloneNode(true);
         let cloColumn = [];
-        setTagAttribute(node);
+        setTagAttribute(node, CLONumber);
+
         if (t === 1) {
             for (let i = 0; i < node.childNodes.length; i++) {  // length will be total no of columns i.e. divs in that row.
                 if (i % 2 !== 0)
                     cloColumn.push(node.childNodes[i]);
             }
+
+            cloColumn.forEach(function (currentTag, index) {
+                console.log(currentTag)
+                if (index === 0) {
+                    currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), CLONumber));  // div us ka ID change ki hai.
+                    // let span = currentTag.childNodes[1];
+                    let span = currentTag.firstElementChild;
+                    span.innerHTML = "CLO-" + CLONumber;
+                } else if (index === 1 || index === 2) {
+                    let label = currentTag.firstElementChild;
+                    let input = currentTag.lastElementChild;
+                    label.setAttribute("for", uniqueName(input.getAttribute("id"), CLONumber));
+                    input.setAttribute("id", uniqueName(input.getAttribute("id"), CLONumber));
+                } else if (index === 3) {
+                    let input = currentTag.firstElementChild.firstElementChild;
+                    input.setAttribute("id", uniqueName(input.getAttribute("id"), CLONumber));
+                    let label = currentTag.firstElementChild.childNodes[3];
+                    label.setAttribute("for" , uniqueName(input.getAttribute("id"), CLONumber))
+                }
+            });
+            // clo_row.parentNode.appendChild(replicaNode);
+            outcomeLearningContainer.appendChild(node);
+            console.log("New Node ID ", node.id)
+
+        } else {
+
+            node.childNodes[3].innerHTML = "CLO-" + CLONumber;
+            for (let i = 5; i < node.childNodes.length; i++) {  // length will be total no of columns i.e. divs in that row.
+                cloColumn.push(node.childNodes[i]);
+            }
+            cloColumn.forEach(function (currentTag, index) {
+                const c_input = currentTag.firstElementChild;
+                const c_label = currentTag.lastElementChild;
+                c_input.setAttribute("name", uniqueName(c_input.getAttribute("name"), CLONumber));
+                c_input.setAttribute("id", uniquePLO(c_input.getAttribute("id"), (index + 1), CLONumber));
+                c_input.setAttribute("value", uniquePLO(c_input.getAttribute("id"), (index + 1), CLONumber));
+                c_label.setAttribute("for", uniquePLO(c_label.getAttribute("for"), (index + 1), CLONumber));
+            });
+            // map_clo_row.parentNode.appendChild(replicaNode);
+            outcomeMapContainer.appendChild(node);
+        }
+
+    }
+
+
+/*    function createCLORow(replicaNode, t) {
+
+        const node = replicaNode.cloneNode(true);
+        let cloColumn = [];
+        setTagAttribute(node);
+
+        if (t === 1) {
+            for (let i = 0; i < node.childNodes.length; i++) {  // length will be total no of columns i.e. divs in that row.
+                if (i % 2 !== 0)
+                    cloColumn.push(node.childNodes[i]);
+            }
+
             cloColumn.forEach(function (currentTag, index) {
                 if (index === 0) {
                     currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id")));  // div us ka ID change ki hai.
@@ -253,6 +325,7 @@ window.onload = function (e) {
             });
             // clo_row.parentNode.appendChild(replicaNode);
             outcomeLearningContainer.appendChild(node);
+
 
         } else {
 
@@ -275,16 +348,16 @@ window.onload = function (e) {
             outcomeMapContainer.appendChild(node);
         }
 
+    }*/
+
+
+    function uniqueName(str, CLONumber) {
+        return str.replace(lastAvailableCLONumber, CLONumber);
+    //  return str.replace(/1/g, incrementClo);
     }
 
-    function uniqueName(str) {
-        return str.replace(/1/g, incrementClo);
-    }
-
-    function uniquePLO(str, c) {
-        return "clo-" + incrementClo + "-plo-" + c;
-        // return str.replace("clo-1-plo-1", ("clo-"+counter+"-plo-"+c) );
-        //    .replace('/-plo-1/i', "plo-"+c)
+    function uniquePLO(str, c, CLONumber) {
+        return "clo-" + CLONumber + "-plo-" + c;
     }
 
     function checkEmptyFields(fieldsArray, counter) {  //textField-error-input
@@ -328,13 +401,6 @@ window.onload = function (e) {
     }
 
 
-
-
-
-
-
-
-
     function createFirstCLODetailRow() {
         return "<div id=\"CourseLearningRow-1\" class=\"flex w-full learning-outcome-row\">\n" +
             "                                        <div class=\"cprofile-column h-10 w-24 bg-catalystBlue-l61 text-white\" id=\"nameCLO-1\">\n" +
@@ -361,13 +427,6 @@ window.onload = function (e) {
     }
 
 
-
-
-
-
-
-
-
     function createFirstCLOMapRow(totalPlo) {
 
         let container = '<div id="clo-map-div-1" class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10">\n' +
@@ -385,31 +444,63 @@ window.onload = function (e) {
 
         let header = document.getElementById('cloMapHeaderID');
         let clo_map_row_div = document.getElementById('clo-map-div-1');
-
-        console.log(header.children.length  ,  totalPlo)
-        if (header.children.length < totalPlo){
+        /*if (header.childre;n.length < totalPlo) {
             for (let i = 1; i <= totalPlo; i++) {
                 let header_number = `<div class="cprofile-column h-10 w-1/6"> <span class="cprofile-cell-data">${i}</span> </div>`
                 header.innerHTML += header_number;
 
-                let row_data = `<div class="cprofile-column h-10 w-1/6"> <input class="clo-toggle hidden" id="clo-1-plo-${i}" value="clo-1-plo-${i}" name="clo1" type="checkbox" />
-                            <label class="inside-label cprofile-cell-data" for="clo-1-plo-${i}">
-                                     <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
-                            </label> </div>`
+                let row_data = `<div class="cprofile-column h-10 w-1/6">
+                                    <input class="clo-toggle hidden" id="clo-1-plo-${i}" value="clo-1-plo-${i}" name="clo1" type="checkbox" />
+                                    <label class="inside-label cprofile-cell-data" for="clo-1-plo-${i}">
+                                    <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
+                                    </label>
+                                </div>`
                 clo_map_row_div.innerHTML += row_data;
             }
-        }
-        else {
+        } else {
 
+        }*/
+
+
+        //Zero's
+        header.innerHTML = `<div class="cprofile-column h-10 w-1/6"> 
+                                <span class="cprofile-cell-data">PLOs</span>
+                            </div>`
+
+        for (let i = 1; i <= totalPlo; i++) {
+            let header_number = `<div class="cprofile-column h-10 w-1/6"> 
+                                    <span class="cprofile-cell-data">${i}</span> 
+                                </div>`
+            header.innerHTML += header_number;
+
+            let row_data = `<div class="cprofile-column h-10 w-1/6"> 
+                                <input class="clo-toggle hidden" id="clo-1-plo-${i}" value="clo-1-plo-${i}" name="clo1" type="checkbox" />
+                                <label class="inside-label cprofile-cell-data" for="clo-1-plo-${i}">
+                                <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
+                                </label> 
+                            </div>`
+            clo_map_row_div.innerHTML += row_data;
         }
+        console.log("Mapping Table Header Children: ", header.children.length, "Total PLOs", totalPlo)
 
     }
 
 
-    function setTagAttribute(newReplica) {
+    function setTagAttribute(newReplica, CLONmber) {
+        console.log("CLONumber in tag attribute: ", CLONmber)
         if (newReplica.hasAttribute("id"))
-            newReplica.setAttribute("id", uniqueName(newReplica.getAttribute("id")));
+            newReplica.setAttribute("id", uniqueName(newReplica.getAttribute("id"), CLONmber));
+
+        console.log("newReplicaID in tag Attribute: ", newReplica.id)
+
     }
+
+    /*
+        function setTagAttribute(newReplica) {
+            if (newReplica.hasAttribute("id"))
+                newReplica.setAttribute("id", uniqueName(newReplica.getAttribute("id")));
+        }
+    */
 
     jQuery.fn.textNodes = function () {
         return this.contents().filter(function () {
@@ -419,7 +510,6 @@ window.onload = function (e) {
 
     /*window.onbeforeunload = function (ev) {}*/
     /*   $(window).on('beforeunload', function (e) {
-           console.log("wtf")
            e.preventDefault();
            e.returnValue = '';
            //    Are you sure you want to navigate away from the Test Runner

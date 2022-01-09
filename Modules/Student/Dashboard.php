@@ -123,7 +123,19 @@
                                 <!--  Subjects list -->
                                 <div class="mb-10 bg-white p-1 gap-5 grid grid-rows-6">
                                     <div class="flex flex-row py-2 justify-start ">
-                                        <p class="font-medium text-md text-gray-700 px-10">xxxxx</p>
+                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
+                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                    </div>
+                                    <div class="flex flex-row py-2 justify-start ">
+                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
+                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                    </div>
+                                    <div class="flex flex-row py-2 justify-start ">
+                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
+                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                    </div>
+                                    <div class="flex flex-row py-2 justify-start ">
+                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
                                         <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
                                     </div>
                                 </div>
@@ -132,7 +144,7 @@
 
 
                         <!--   selected subject table right side.  -->
-                        <div class="hidden w-full mx-auto overflow-auto shadow-md">
+                        <div class="w-full mx-auto overflow-auto shadow-md">
                             <h2 class="table-head text-black">Selected Course Information</h2>
                             <table class="table-auto w-full text-left whitespace-no-wrap">
                                 <thead>
@@ -183,8 +195,7 @@
 
 
     function getCGPA_Progress(currentCGPA = 2) {
-        let cgpa_circle ;
-       return cgpa_circle = {
+       return {
             series: [valueToPercent(currentCGPA)],
             chart: {
                 height: 180,
