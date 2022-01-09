@@ -19,6 +19,7 @@ function createTableHeader(listOfCLOs) {
             svTableHeader.innerHTML += "<th>" + listOfCLOs[i] + "</th>"
         }
     } else {
+        console.log(listOfCLOs)
         svTableHeader.innerHTML += "<th>" + listOfCLOs + "</th>"
     }
     if (statusEnabled)
@@ -29,7 +30,7 @@ function checkEmptyFilters() {
     let errors = false;
     //selects all the select boxes which are not disabled, check if they empty or not, then shows errors accordingly
     $('select:not(:disabled)').each(function () {
-        if ($(this).val() == "") {
+        if ($(this).val() === "") {
             $(this).closest('div').addClass('select-error-input')
             errors = true;
         }
@@ -46,6 +47,7 @@ function createTableRows(selectedCLO, status) {
         data: {listOfCLOs: selectedCLO, status: status},
         success: function (result) {
             data = JSON.parse(result)
+
             if (Array.isArray(data)) {
                 let numberOfStudents = data[0]
                 let studentRegistrationNumbers = data[1]
@@ -76,8 +78,11 @@ function createTableRows(selectedCLO, status) {
         }
     });
 
-
 }
+
+
+
+
 
 //Shows marks in each row in other words, fills the rows
 function getMarksAndStatusInaRow(rowID, CLOMarksOfStudent, status) {

@@ -1,8 +1,7 @@
 <?php
 $subject = $section = "";
-
-$courseSessional = array("Assignment 1", "Assignment 2", "Quiz 1", "Assignment 3", "Assignment 4", "Quiz 2", "Quiz 3");
-
+$courseSessional = array("f18-os-a1"=>"Assignment 1", "f18-os-a2"=> "Assignment 2","f18-os-q1"=> "Quiz 1",
+    "f18-os-a3"=> "Assignment 3", "f18-os-a4"=> "Assignment 4", "f18-os-q2"=>"Quiz 2", "f18-os-q3"=>"Quiz 3");
 
 ?>
 
@@ -57,6 +56,7 @@ $courseSessional = array("Assignment 1", "Assignment 2", "Quiz 1", "Assignment 3
                     <div id="sessionalTableDivID"
                          class="hidden border-solid border-2 rounded-md shadow-sm bg-catalystLight-f5">
                         <h2 class="table-head text-black">Assessment</h2>
+
                         <div id="courseSessionalInfoDivID" class="bg-white grid lg:grid-cols-4 text-center">
 
                         </div>
@@ -87,7 +87,9 @@ $courseSessional = array("Assignment 1", "Assignment 2", "Quiz 1", "Assignment 3
                                         </th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+
+                                    <tbody id="studentTableBodyID">
+
                                     <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight">
                                         <td class="px-4 py-3">F18-BCSE-002</td>
                                         <td class="px-4 py-3 ">To control the letter spacing of an element at a specific
@@ -97,6 +99,7 @@ $courseSessional = array("Assignment 1", "Assignment 2", "Quiz 1", "Assignment 3
                                         <td class="px-4 py-3 ">10</td>
                                         <td class="px-4 py-3 ">80%</td>
                                     </tr>
+
                                     </tbody>
                                 </table>
                             </div>
@@ -146,56 +149,7 @@ $courseSessional = array("Assignment 1", "Assignment 2", "Quiz 1", "Assignment 3
     </main>
 </div>
 <script>
-
-    let data = <?php echo json_encode($courseSessional, JSON_HEX_TAG); ?>;
-    window.onload = function (e) {
-
-        const selectSessional = document.querySelector(".assessment-type-bg img");
-        const sessionalTable = document.getElementById("sessionalTableDivID");
-        const courseSessionalInfoDiv = document.getElementById("courseSessionalInfoDivID");
-        fetchSessionalInfo(data, courseSessionalInfoDiv);
-
-        document.querySelectorAll("span.h-10.py-2").forEach((value, key) => {
-            value.addEventListener("click", evt => {
-
-                if (!document.getElementById('selectedStudentTableInfoID').classList.contains("hidden"))
-                    document.getElementById('selectedStudentTableInfoID').classList.add("hidden");
-                document.getElementById('studentTableID').classList.remove("hidden");
-            });
-        });
-
-        document.querySelectorAll("tr.text-center.text-sm.font-base").forEach((value, key) => {
-            value.addEventListener("click", evt => {
-                document.getElementById('selectedStudentTableInfoID').classList.remove("hidden");
-            });
-        });
-
-
-        $(document).ready(function (e) {
-
-            $(selectSessional).on('click', function () {
-                const act = $(sessionalTable).hasClass("hidden");
-
-                $(sessionalTable).toggle("hidden").animate({right: 0,}, "slow", changeArrowPosition());
-
-                function changeArrowPosition() {
-                    if (act)
-                        selectSessional.setAttribute("src", "../../../Assets/Images/bottom-arrow.svg");
-                    else
-                        selectSessional.setAttribute("src", "../../../Assets/Images/left-arrow.svg");
-                    $(sessionalTable).toggleClass("hidden");
-                    return "";
-                }
-            });
-
-        });
-    }
-
-    function fetchSessionalInfo(total, courseSessionalInfo_Parent) {
-        for (let i = 0; i < total.length; i++) {
-            courseSessionalInfo_Parent.innerHTML += `<span class="h-10 py-2 font-medium text-gray-700 border hover:bg-catalystBlue-l6 transition duration-500 ease-in-out hover:border-transparent">${total[i]}</span>`
-        }
-    }
+    let currentSectionAssessments = <?php echo json_encode($courseSessional); ?>;
 
 </script>
 

@@ -1,3 +1,4 @@
+
 window.onload = function (e) {
 
     // Course Essential:
@@ -64,33 +65,18 @@ window.onload = function (e) {
         , cDetailField.cQualificationField, cDetailField.cSpecializationFiled, cDetailField.cContactsField, cDetailField.cPersonalEmailFiled
     ];
 
-    let completeFlag = true;
-    const outcomeDiv = document.getElementById("courseLearningDivID");
-    const outcomeMapDiv = document.getElementById("courseMappingDivID");
     let incrementClo = 0;
+    let completeFlag = true;
+    let backArrow = document.getElementsByClassName('mx-2 h-6')[0]
+    console.log(backArrow)
 
+    const outcomeLearningContainer = document.getElementById("courseLearningDivID");
+    const outcomeMapContainer = document.getElementById("courseMappingDivID");
     const cEssentialSection = document.getElementById('cpEssentialID');
     const cDetailSection = document.getElementById('cpDetaillID');
     const cDistributionSection = document.getElementById('cpDistributionID');
-    let backArrow = document.getElementsByClassName('mx-2 h-6')[0]
 
     $(document).ready(function () {
-        checkBackArrow();
-
-        $(backArrow).on("click", function (e) {
-
-            if (!$(cDetailSection).hasClass("hidden")) {                // 2nd section to move to 1st section.
-                $(cEssentialSection).toggleClass("hidden");             // open first section.
-                $(cDetailSection).toggleClass("hidden");                // close second section.
-                checkBackArrow();
-            } else if (!$(cDistributionSection).hasClass("hidden")) {     // if on third page then go to 2nd.
-
-                $(cDistributionSection).toggleClass("hidden");
-                $(cDetailSection).toggleClass("hidden");
-                checkBackArrow();
-            }
-        });
-
         $("#coursepContinuebtn-1").on("click", function (e) {
             completeFlag = true;
             e.preventDefault();
@@ -105,9 +91,38 @@ window.onload = function (e) {
             checkBackArrow();
         })
 
+
+
+
+
+
+
+
+
         $('#coursepContinuebtn-3').on('click', function (e) {
+            completeFlag = true;
             e.preventDefault();
-            // let totalRowsOfCLOs  = document.getElementsByClassName("flex w-full learning-outcome-row");
+            // checkEmptyOutcome();
+
+            if (outcomeLearningContainer.children.length < 2){ // generate alert
+                $("main").addClass("blur-filter");
+                $("#alertContainer").removeClass("hidden");
+                $("#alertBtnCLOCreation").add("#alertBtnCLOContinue").on('click' , function () {
+                    $("main").removeClass("blur-filter");
+                    $("#alertContainer").addClass("hidden");
+                })
+            } else{
+                let tempArray = ["nameCLO-1" , "descriptionCLO-1","undergraduateCLO-1","btLevelCLO-1"];
+
+                var array = [];
+                $("input:checkbox[name=clo1]:checked").each(function() {
+                    array.push($(this).val());
+                });
+
+                console.log(array)
+
+
+            }
         })
 
         $('.textField , .select').on('input', function (e) {
@@ -122,22 +137,22 @@ window.onload = function (e) {
 
         })
 
-        $('#add-clo-btn').on('click', function (e) {
-            /*            counter++;
-                const anotherOne = replica_clo_row.cloneNode(true);
-                createCLORow(anotherOne, 1);
-                // const anothertwo = replica_map_clo_row.cloneNode(true);
-                // createCLORow(anothertwo, 2);*/
 
+
+
+
+
+
+
+        $('#add-clo-btn').on('click', function (e) {
+            console.log("sfdgse")
             if (incrementClo === 0) {
                 ++incrementClo;
-                outcomeDiv.innerHTML += createFirstCLODetailRow();
+                outcomeLearningContainer.innerHTML += createFirstCLODetailRow();
                 createFirstCLOMapRow(12); // pass no of PLOs you have per curriculum.
                 $('input[name="clo1"]').on('click', function () {
-                    console.log(this);
-                })
-
-
+                    // console.log(this);
+                });
             } else {
                 ++incrementClo;  // 2
                 const ma1 = document.getElementById('CourseLearningRow-1');
@@ -147,18 +162,28 @@ window.onload = function (e) {
             }
         });
 
-        /* $(document).click('\'input[name="^clo"]\'', function (e) {
-             const totalChecks = $("input[name=\"clo1\"]:checked").length;
-             let flag;
-             if (totalChecks !== 3) {
-                 flag = false;
-                 $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
-             } else {
-                 flag = true;
-                 showErrorBox("Maximum limit of CLO-1 is reached")
-                 $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
-             }
-         });*/
+        $(backArrow).on("click", function (e) {
+            if (!$(cDetailSection).hasClass("hidden")) {                // 2nd section to move to 1st section.
+                $(cEssentialSection).toggleClass("hidden");             // open first section.
+                $(cDetailSection).toggleClass("hidden");                // close second section.
+                checkBackArrow();
+            } else if (!$(cDistributionSection).hasClass("hidden")) {     // if on third page then go to 2nd.
+
+                $(cDistributionSection).toggleClass("hidden");
+                $(cDetailSection).toggleClass("hidden");
+                checkBackArrow();
+            }
+        });
+
+
+
+
+
+
+
+
+
+
 
         let toRemove_CLO = -1;
         $(document).on('click', ".h-10 .w-6", function (e) {
@@ -169,18 +194,38 @@ window.onload = function (e) {
             incrementClo = incrementClo - 1;
         });
 
+        // checkBackArrow();
+        /* $(document).click('\'input[name="^clo"]\'', function (e) {
+     const totalChecks = $("input[name=\"clo1\"]:checked").length;
+     let flag;
+     if (totalChecks !== 3) {
+         flag = false;
+         $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
+     } else {
+         flag = true;
+         showErrorBox("Maximum limit of CLO-1 is reached")
+         $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
+     }
+ });*/
     });
 
+    checkBackArrow();
     function checkBackArrow() {
-
         if (!cEssentialSection.classList.contains("hidden")) {
             backArrow.classList.add("hidden");
         } else {
-            console.log(backArrow.classList);
+            // console.log(backArrow.classList);
             if (backArrow.classList.contains("hidden"))
                 backArrow.classList.remove("hidden");
         }
     }
+
+
+
+
+
+
+
 
     function createCLORow(replicaNode, t) {
 
@@ -207,19 +252,19 @@ window.onload = function (e) {
                 }
             });
             // clo_row.parentNode.appendChild(replicaNode);
-            outcomeDiv.appendChild(node);
+            outcomeLearningContainer.appendChild(node);
 
         } else {
 
-            console.log(node.childNodes[3])
+            // console.log(node.childNodes[3])
             node.childNodes[3].innerHTML = "CLO-" + incrementClo;
             for (let i = 5; i < node.childNodes.length; i++) {  // length will be total no of columns i.e. divs in that row.
                 cloColumn.push(node.childNodes[i]);
             }
-            console.log(cloColumn.length)
-            console.log(cloColumn)
+            // console.log(cloColumn.length)
+            // console.log(cloColumn)
             cloColumn.forEach(function (currentTag, index) {
-                console.log(incrementClo + "\t\t" + (index + 1))
+                // console.log(incrementClo + "\t\t" + (index + 1))
                 const c_input = currentTag.firstElementChild;
                 const c_label = currentTag.lastElementChild;
                 c_input.setAttribute("name", uniqueName(c_input.getAttribute("name")));
@@ -227,7 +272,7 @@ window.onload = function (e) {
                 c_label.setAttribute("for", uniquePLO(c_label.getAttribute("for"), (index + 1)));
             });
             // map_clo_row.parentNode.appendChild(replicaNode);
-            outcomeMapDiv.appendChild(node);
+            outcomeMapContainer.appendChild(node);
         }
 
     }
@@ -243,17 +288,13 @@ window.onload = function (e) {
     }
 
     function checkEmptyFields(fieldsArray, counter) {  //textField-error-input
-
-        for (let i = 0; i < fieldsArray.length; i++) {
+        for (let i = 0; i < fieldsArray.length; i++)
             iterate(fieldsArray[i]);
-        }
 
         if (counter === 1) {
             if (completeFlag) {
                 $('#cpEssentialID').addClass("hidden");
                 $('#cpDetaillID').removeClass("hidden");
-
-                // $('#cpDetaillID').classList.toggle("hidden");
             } else {
                 showErrorBox("Please complete all fields to continue")
             }
@@ -286,6 +327,14 @@ window.onload = function (e) {
             });
     }
 
+
+
+
+
+
+
+
+
     function createFirstCLODetailRow() {
         return "<div id=\"CourseLearningRow-1\" class=\"flex w-full learning-outcome-row\">\n" +
             "                                        <div class=\"cprofile-column h-10 w-24 bg-catalystBlue-l61 text-white\" id=\"nameCLO-1\">\n" +
@@ -311,6 +360,14 @@ window.onload = function (e) {
             "                                    </div>"
     }
 
+
+
+
+
+
+
+
+
     function createFirstCLOMapRow(totalPlo) {
 
         let container = '<div id="clo-map-div-1" class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10">\n' +
@@ -324,22 +381,30 @@ window.onload = function (e) {
             '                                        </div>\n' +
             '                                    </div>';
 
-        outcomeMapDiv.innerHTML += container;
+        outcomeMapContainer.innerHTML += container;
 
         let header = document.getElementById('cloMapHeaderID');
         let clo_map_row_div = document.getElementById('clo-map-div-1');
 
-        for (let i = 1; i <= totalPlo; i++) {
-            let header_number = `<div class="cprofile-column h-10 w-1/6"> <span class="cprofile-cell-data">${i}</span> </div>`
-            header.innerHTML += header_number;
+        console.log(header.children.length  ,  totalPlo)
+        if (header.children.length < totalPlo){
+            for (let i = 1; i <= totalPlo; i++) {
+                let header_number = `<div class="cprofile-column h-10 w-1/6"> <span class="cprofile-cell-data">${i}</span> </div>`
+                header.innerHTML += header_number;
 
-            let row_data = `<div class="cprofile-column h-10 w-1/6"> <input class="clo-toggle hidden" id="clo-1-plo-${i}" name="clo1" type="checkbox" />
+                let row_data = `<div class="cprofile-column h-10 w-1/6"> <input class="clo-toggle hidden" id="clo-1-plo-${i}" value="clo-1-plo-${i}" name="clo1" type="checkbox" />
                             <label class="inside-label cprofile-cell-data" for="clo-1-plo-${i}">
                                      <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
                             </label> </div>`
-            clo_map_row_div.innerHTML += row_data;
+                clo_map_row_div.innerHTML += row_data;
+            }
         }
+        else {
+
+        }
+
     }
+
 
     function setTagAttribute(newReplica) {
         if (newReplica.hasAttribute("id"))
@@ -351,7 +416,6 @@ window.onload = function (e) {
             return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
         });
     }
-
 
     /*window.onbeforeunload = function (ev) {}*/
     /*   $(window).on('beforeunload', function (e) {
@@ -369,5 +433,4 @@ window.onload = function (e) {
            } else
                console.log("leaving unsaved");
        });*/
-
 }

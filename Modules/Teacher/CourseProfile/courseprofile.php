@@ -18,9 +18,11 @@
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
 
 </head>
-<body>
+<body >
 <div class="w-full min-h-full">
-    <header class="hidden bg-white shadow-md">
+
+
+    <header class=" bg-white shadow-md">
         <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
             <h1 class="text-3xl font-bold text-blue-800 flex-grow text-center">Course Profile Creation</h1>
 
@@ -86,7 +88,7 @@
         <div class="cprofile-grid">
 
             <div id="errorMessageDiv"
-                 class="fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                 class="hidden fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
                 <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                      xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
@@ -504,6 +506,7 @@
                         </div>
                     </section>
 
+
                     <!--      course CLO Distribution            -->
                     <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
 
@@ -529,7 +532,6 @@
                                         </div>
                                     </div>
                                     <!--  creating your first CLO -row des, btlvel etc. -->
-
 
                                 </div>
                             </div>
@@ -708,7 +710,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="flex-center text-center">
                     <div class="w-1/5">
                         Course Essential
@@ -721,10 +722,29 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
     </main>
+</div>
+
+<div id="alertContainer" class="hidden shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
+    <div class="w-full h-full text-center">
+        <div class="flex h-full flex-col justify-between">
+            <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross" class="h-12 w-12 mt-4 m-auto">
+            <p class="text-gray-600 dark:text-gray-100 text-md py-2 px-6">
+                Do you wish to continue without creating any  <span class="text-gray-800 dark:text-white font-bold">CLO</span> and map their respective <span class="text-gray-800 dark:text-white font-bold">PLO</span>?
+            </p>
+            <div id="aboxcontainer" class="flex items-center justify-between gap-4 w-full mt-8">
+                <button id="alertBtnCLOCreation" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
+                        text-white w-full transition ease-in duration-200 text-center text-base
+                         font-semibold shadow-md rounded-lg">No, add now</button>
+
+                <button id="alertBtnCLOContinue" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
+                        text-white w-full transition ease-in duration-200 text-center text-base
+                         font-semibold shadow-md rounded-lg">Continue</button>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 
