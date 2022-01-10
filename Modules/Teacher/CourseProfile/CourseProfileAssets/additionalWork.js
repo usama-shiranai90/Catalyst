@@ -2,15 +2,12 @@
 function setLocalStorage(key , currentPageArray) {
     localStorage.setItem(key, currentPageArray);
 }
-
 function getLocalStorage(key) { // returns an array list for current page data.
     return  localStorage.getItem(key);
 }
-
 function clearAllStorage() {
     localStorage.clear();
 }
-
 function setJsonLocalStorage() {
     let simpleJson = {
         fruits: [
@@ -42,8 +39,6 @@ function getJsonLocalStorage() {
 
     document.getElementById("localStorageValue").textContent = backToJson.fruits[4].name + ": " + backToJson.fruits[4].color;
 }
-
-
 function location(){
     // <button onClick="gmapController.addUserLocation()">
 
@@ -329,7 +324,6 @@ function location(){
         }
     })();
 }
-
 function loadGoogleMaps() {
     // Set your Google Maps key here
     let key = "YOUR_KEY_HERE";
@@ -342,3 +336,5 @@ function loadGoogleMaps() {
     elem.src = "https://maps.googleapis.com/maps/api/js?key=" + key + "&callback=" + callback + "&libraries=geometry";
     document.body.appendChild(elem);
 }
+
+

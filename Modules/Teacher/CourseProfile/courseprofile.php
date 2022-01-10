@@ -14,7 +14,7 @@
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
-    <script src="CourseProfileAssets/courseScript.js" rel="script"></script>
+    <script src="CourseProfileAssets/CourseProfileCreationScript.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
 
 </head>
@@ -109,7 +109,7 @@
             <!--        Course-Profile Container -->
             <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 h-full bg-catalystLight-f5">
                 <div class="flex flex-row items-center">
-                    <img class="mx-2 h-6" src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
+                    <img class="mx-2 h-6 transition duration-800 ease-in-out" src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
                     <!--<svg  class="mx-2 h-6 hover:bg-gray-700 relative" width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.3333 7.7085L4.625 15.4168L12.3333 23.1252" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M4.625 15.417H16.9583C25.473 15.417 32.375 22.319 32.375 30.8337V32.3753" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -120,7 +120,7 @@
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0">
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -389,7 +389,7 @@
 
                     <!--        course detail section            -->
                     <section id="cpDetaillID"
-                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 ">
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!---------------------Reference Books--------------------------->
@@ -511,7 +511,6 @@
                     <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
-
                         <div class="mx-3 mr-5 clo-container">
                             <div class="clo-table-border " style="background-color: #0284FC">
                                 <h2 class="table-head">Course Learning Outcome</h2>
@@ -555,109 +554,8 @@
                                         <div class="cprofile-column h-10 w-1/6">
                                             <span class="cprofile-cell-data">PLOs</span>
                                         </div>
-
-
                                     </div>
                                     <!--  placing your first CLO Map here-->
-
-                                    <!--     <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-2" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-2">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-3" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-3">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-4" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-4">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-5" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-5">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-6" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-6">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-7" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-7">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-8" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-8">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-9" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-9">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-10" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-10">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-11" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-11">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>
-                                                                       <div class="cprofile-column h-10 w-1/6">
-                                                                           <input class="clo-toggle hidden" id="clo-1-plo-12" name="clo1" type="checkbox" />
-                                                                           <label class="inside-label cprofile-cell-data" for="clo-1-plo-12">
-                                                                               <span>
-                                                                                   <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg>
-                                                                               </span>
-                                                                           </label>
-
-                                                                       </div>-->
 
                                 </div>
                             </div>

@@ -16,7 +16,7 @@
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
-    <script src="CourseProfileAssets/courseScript.js" rel="script"></script>
+    <script src="CourseProfileAssets/CourseProfileCreationScript.js" rel="script"></script>
 
 </head>
 
