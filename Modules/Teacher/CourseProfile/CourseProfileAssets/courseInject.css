@@ -75,7 +75,7 @@
 
 .progress-circle {
     @apply flex items-center w-10 h-10
-    rounded-full text-lg mx-auto;
+    rounded-full text-lg;
 }
 
 .progress-circle-filled {

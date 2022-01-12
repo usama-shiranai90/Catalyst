@@ -1,3 +1,14 @@
+<?php
+
+if (isset($_POST['profileContinue3rd'])) {
+    print_r(sizeof($_POST['courseCLOs']));
+
+    foreach ($_POST['courseCLOs'] as $fuck) {
+        print_r($fuck);
+    }
+}
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -18,7 +29,7 @@
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
 
 </head>
-<body >
+<body>
 <div class="w-full min-h-full">
 
 
@@ -85,6 +96,52 @@
     </header>
     <main class="main-content-alignment">
 
+        <!-- tool-tip -->
+        <div class="hidden flex-col md:flex-row flex items-center md:justify-center">
+            <!--Code Block for white tooltip starts-->
+            <a tabindex="0" role="link" aria-label="tooltip 1"
+               class="focus:outline-none focus:ring-gray-300 rounded-full focus:ring-offset-2 focus:ring-2 focus:bg-gray-200 relative mt-20 md:mt-0"
+               onmouseover="showTooltip(1)" onfocus="showTooltip(1)" onmouseout="hideTooltip(1)">
+                <div class=" cursor-pointer">
+                    <img src="https://tuk-cdn.s3.amazonaws.com/can-uploader/with_steps_alternate-svg1.svg" alt="icon"/>
+                </div>
+                <div id="tooltip1" role="tooltip"
+                     class="hidden z-20 -mt-20 w-64 absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-white p-4 rounded">
+                    <svg class="absolute left-0 -ml-2 bottom-0 top-0 h-full" width="9px" height="16px"
+                         viewBox="0 0 9 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="Tooltips-" transform="translate(-874.000000, -1029.000000)" fill="#FFFFFF">
+                                <g id="Group-3-Copy-16" transform="translate(850.000000, 975.000000)">
+                                    <g id="Group-2" transform="translate(24.000000, 0.000000)">
+                                        <polygon id="Triangle"
+                                                 transform="translate(4.500000, 62.000000) rotate(-90.000000) translate(-4.500000, -62.000000) "
+                                                 points="4.5 57.5 12.5 66.5 -3.5 66.5"></polygon>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <p class="text-sm font-bold text-gray-800 pb-1">Keep track of follow ups</p>
+                    <p class="text-xs leading-4 text-gray-600 pb-3">Reach out to more prospects at the right moment.</p>
+                    <div class="flex justify-between">
+                        <div class="flex items-center">
+                            <span class="text-xs font-bold text-indigo-700">Step 1 of 4</span>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">
+                                Skip Tour
+                            </button>
+                            <button onblur="hideTooltip(1)"
+                                    class="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 focus:bg-indigo-400 focus:outline-none bg-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 rounded text-white px-5 py-1 text-xs">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
         <div class="cprofile-grid">
 
             <div id="errorMessageDiv"
@@ -109,7 +166,8 @@
             <!--        Course-Profile Container -->
             <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 h-full bg-catalystLight-f5">
                 <div class="flex flex-row items-center">
-                    <img class="mx-2 h-6 transition duration-800 ease-in-out" src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
+                    <img class="mx-2 h-6 transition duration-800 ease-in-out"
+                         src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
                     <!--<svg  class="mx-2 h-6 hover:bg-gray-700 relative" width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.3333 7.7085L4.625 15.4168L12.3333 23.1252" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M4.625 15.417H16.9583C25.473 15.417 32.375 22.319 32.375 30.8337V32.3753" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -508,7 +566,7 @@
 
 
                     <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class="cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">
@@ -572,84 +630,126 @@
             </div>
 
             <!--                progress status-->
-            <div class="my-4">
+            <div class="my-5">
                 <div class="flex-center pb-3">
 
-                    <div id="progressCircle-1" class="flex-grow-0 ">
-                        <div class="progress-circle progress-circle-filled">
-                                <span class="circular-span">
-                                    <i class="fa fa-check"></i>
-                                </span>
+                    <div id="progressCircle-1" class="flex-grow-0">
+                        <div class="progress-circle progress-circle-filled bg-white rounded-full shadow -mr-3 animate-spin">
+                            <span class="circular-span "><i class="fa fa-check"></i></span>
+                            <!--                             <div class="h-3 w-3 bg-indigo-700 rounded-full animate-ping"></div>-->
                         </div>
                     </div>
-
                     <div class="w-1/6 items-center flex">
-                        <!-- w-1/6 align-center items-center align-middle content-center flex-->
-                        <div class="bg-gray-200  flex-1">
-                            <!-- w-full bg-gray-200 items-center align-middle align-center flex-1 -->
-                            <div class="progress-circle-filled py-1 w-full"></div>
+                        <div class="bg-gray-200 flex-1">
+                            <div class="progress-circle-unfilled py-1 w-0"></div>
                         </div>
                     </div>
 
                     <div id="progressCircle-2" class="flex-grow-0 ">
+
                         <div class="progress-circle progress-circle-unfilled">
-                            <span class="text-white circular-span">2</span>
+                            <span class="circular-span">2</span>
                         </div>
                     </div>
-
                     <div class="w-1/6 items-center flex">
                         <div class="bg-gray-200  flex-1">
                             <div class="progress-circle-unfilled py-1 w-0"></div>
                         </div>
                     </div>
+
                     <div id="progressCircle-3" class="flex-grow-0 ">
                         <div class="progress-circle progress-circle-unfilled">
-                            <span class="text-white circular-span">3</span>
+                            <span class="circular-span">3</span>
                         </div>
                     </div>
+
                 </div>
                 <div class="flex-center text-center">
-                    <div class="w-1/5">
-                        Course Essential
-                    </div>
-                    <div class="w-1/5">
-                        Course Detail
-                    </div>
-                    <div class="w-1/5">
-                        CLO Distribution
-                    </div>
+                    <p class="w-1/5">Course Essential</p>
+
+                    <div class="w-1/5">Course Detail</div>
+                    <div class="w-1/5">CLO Distribution</div>
                 </div>
             </div>
+
         </div>
 
     </main>
 </div>
 
-<div id="alertContainer" class="hidden shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
+<div id="alertContainer"
+     class="hidden shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
     <div class="w-full h-full text-center">
         <div class="flex h-full flex-col justify-between">
-            <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross" class="h-12 w-12 mt-4 m-auto">
+            <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross"
+                 class="h-12 w-12 mt-4 m-auto">
             <p class="text-gray-600 dark:text-gray-100 text-md py-2 px-6">
-                Do you wish to continue without creating any  <span class="text-gray-800 dark:text-white font-bold">CLO</span> and map their respective <span class="text-gray-800 dark:text-white font-bold">PLO</span>?
+                Do you wish to continue without creating any <span
+                        class="text-gray-800 dark:text-white font-bold">CLO</span> and map their respective <span
+                        class="text-gray-800 dark:text-white font-bold">PLO</span>?
             </p>
             <div id="aboxcontainer" class="flex items-center justify-between gap-4 w-full mt-8">
                 <button id="alertBtnCLOCreation" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
                         text-white w-full transition ease-in duration-200 text-center text-base
-                         font-semibold shadow-md rounded-lg">No, add now</button>
+                         font-semibold shadow-md rounded-lg">No, add now
+                </button>
 
                 <button id="alertBtnCLOContinue" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
                         text-white w-full transition ease-in duration-200 text-center text-base
-                         font-semibold shadow-md rounded-lg">Continue</button>
+                         font-semibold shadow-md rounded-lg">Continue
+                </button>
             </div>
         </div>
     </div>
 </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
+        type="text/javascript"></script>
+<script>
 
+    function creationAjaxCall(cEssentialField, instrumentWeight, cDetailField, arrayCLO, arrayMapping) {
+        console.log(arrayCLO)
+        console.log(arrayMapping)
+
+        console.log(cEssentialField[0].getAttribute("value"))
+        $.ajax({
+                    type: "POST",
+                    url: 'CourseProfile.php',
+                    dataType: 'json',
+                    data: {
+                        functionName: 'create_profile',
+                        array_arguments: [arrayMapping],
+                        fields_argument: [arrayCLO]
+                    },
+
+                    success: function (obj, textstatus) {
+                        let yourVariable;
+                        if (!('error' in obj)) {
+                            yourVariable = obj.result;
+                        } else {
+                            console.log(obj.error);
+                        }
+                    }
+                });
+
+
+    }
+
+    function showTooltip(flag) {
+        switch (flag) {
+            case 1:
+                document.getElementById("tooltip1").classList.remove("hidden");
+                break;
+        }
+    }
+
+    function hideTooltip(flag) {
+        switch (flag) {
+            case 1:
+                document.getElementById("tooltip1").classList.add("hidden");
+                break;
+        }
+    }
+</script>
 </html>
 
-
-<!--<div id="tooltip-animation" role="tooltip" class="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-                Tooltip content
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>-->

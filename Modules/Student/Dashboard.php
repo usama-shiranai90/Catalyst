@@ -117,25 +117,31 @@
                     <div class="col-span-4 flex flex-row border-2 border-solid rounded-md">
 
                         <!--   register courses list left side.  -->
-                        <div class="text-black rounded-t-md rounded-b-md mt-2 mr-10">
+                        <div class="text-black rounded-t-md rounded-b-md mt-2 w-5/12">
                             <h2 class="text-md pl-5 my-2 font-bold">Register Courses</h2>
-                            <section class="mx-2 p-4 clo-container">
+
+                            <section class="py-4 clo-container">
+
                                 <!--  Subjects list -->
-                                <div class="mb-10 bg-white p-1 gap-5 grid grid-rows-6">
-                                    <div class="flex flex-row py-2 justify-start ">
-                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
+                                <div class="mb-10  py-1 gap-5 grid grid-rows-6 font-medium text-sm text-gray-700">
+                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
+                                        <p class="px-10">Operation Research</p>
                                         <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
                                     </div>
-                                    <div class="flex flex-row py-2 justify-start ">
-                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
+                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
+                                        <p class=" px-10">Operation Research</p>
                                         <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
                                     </div>
-                                    <div class="flex flex-row py-2 justify-start ">
-                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
+                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
+                                        <p class="px-10">Operation Research</p>
                                         <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
                                     </div>
-                                    <div class="flex flex-row py-2 justify-start ">
-                                        <p class="font-medium text-md text-gray-700 px-10">Operation Research</p>
+                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
+                                        <p class="px-10">Operation Research</p>
+                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                    </div>
+                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
+                                        <p class="px-10">Operation Research</p>
                                         <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
                                     </div>
                                 </div>
@@ -145,7 +151,7 @@
 
                         <!--   selected subject table right side.  -->
                         <div class="w-full mx-auto overflow-auto shadow-md">
-                            <h2 class="table-head text-black">Selected Course Information</h2>
+                            <h2 class="table-head text-center text-black">Selected Course Information</h2>
                             <table class="table-auto w-full text-left whitespace-no-wrap">
                                 <thead>
                                 <tr class="text-center bg-catalystLight-f5">

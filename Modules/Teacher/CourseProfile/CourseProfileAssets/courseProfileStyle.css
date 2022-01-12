@@ -105,8 +105,8 @@
     -ms-filter: blur(2px);
     filter: blur(2px);
 }
-
 /*.clo-toggle:checked + .inside-label span {
     background: var(--background-catalyst-instruments-weights);
     animation: myAnimation 0.4s ease;
 }*/
+
