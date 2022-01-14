@@ -7,7 +7,7 @@
     "build-css": "tailwindcss build Assets/Frameworks/Tailwind/tailwind.css -o Assets/Stylesheets/Tailwind.css",
     "watch-main": "tailwindcss build Assets/Frameworks/Tailwind/tailwind.css -o Assets/Stylesheets/Tailwind.css --watch",
     "watch-authentication": "tailwindcss build Modules/Authentication/AuthenticationAssets/LoginInject.css -o Assets/Stylesheets/Tailwind.css --watch",
-    "watch-courseProfile": "tailwindcss build Modules/Teacher/CourseProfile/CourseProfileAssets/courseInject.css -o Assets/Stylesheets/Tailwind.css --watch",
+    "watch-courseProfile": "tailwindcss build Modules/Teacher/CourseProfile/CourseProfileAssets/css/courseInject.css -o Assets/Stylesheets/Tailwind.css --watch",
     "watch-progress": "tailwindcss build Modules/Teacher/Progress/ProgressAssets/progressInjection.css -o Assets/Stylesheets/Tailwind.css --watch"
   },
   "repository": {

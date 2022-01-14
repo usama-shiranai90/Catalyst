@@ -1,3 +1,14 @@
+<?php
+
+// calling db for exisiting weekly covered topics list.
+$ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18-or represents the key and has following data.
+    array('week-1' ,'By default, Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
+    array('clo1', 'clo2', 'clo3'),
+    'CSS property here so you can make your custom column values as generic or as complicated and site-specific')
+);
+
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,34 +17,28 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Catalyst | Weekly Covered Topics</title>
-
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
-    <link href="CourseProfileAssets/courseInject.css" rel="stylesheet">
-    <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
-    <script src="CourseProfileAssets/weeklyTopicsScript.js" rel="script"></script>
-
+    <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
+    <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
+        <script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>
     <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
-
 </head>
 <body style="background-color: #F9F8FE">
 <div class="w-full min-h-full">
     <header class="bg-white shadow-md">
         <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
             <h1 class="text-3xl font-bold text-blue-800 flex-grow text-center">Weekly Covered Topics</h1>
-
             <!--  Desktop view of top          -->
             <div class="hidden md:block">
                 <div class="ml-2 flex items-center md:ml-6">
                     <!-- Profile -->
                     <div class="mr-3 relative">
-
                         <div class="user-profile-section-desktop">
                             <button type="button" class="max-w-6xl bg-gray-800 rounded-full flex items-center
-
                             text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 focus:ring-white"
                                     id="user-menu-button"
                             ">
@@ -57,7 +62,6 @@
                         <div class="w-full self-center border-t-2 border-gray-300 "></div>
                         <p class="text-sm text-gray-800 text-center">Student F18-BCSE-037</p>
                     </div>
-
                 </div>
             </div>
             <!--            Mobile View-->
@@ -67,13 +71,11 @@
                         class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                         aria-controls="mobile-menu" aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
-
                     <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
-
                     <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -82,452 +84,55 @@
             </div>
         </div>
     </header>
-
+    <svg class="hidden tick-icon">
+        <symbol id="check-tick" viewbox="0 0 12 10">
+            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+        </symbol>
+    </svg>
     <main class="main-content-alignment">
         <div class="weeklytopics-primary-border text-black rounded-t-md rounded-b-md mt-2 h-full bg-catalystLight-f5">
             <h2 class="weekly-topic-container-centertxt">Covered Topics</h2>
-
             <!--    Weekly Topics Section     -->
-            <section id="weeklyTopicsID" class="cprofile-content-box-border cprofile-grid mx-0 my-0 ">
 
-                <div class="mx-2 weekly-container">  <!-- remove p-4 for less inner size -->
+            <section id="weeklyTopicsID" class="cprofile-content-box-border cprofile-grid mx-0 my-0 ">
+                <div class="mx-2 weekly-container">
+
                     <div class="clo-table-border rounded-md shadow-sm bg-catalystBlue-l8">
                         <h2 class="table-head font-semibold">Weekly Covered Topics</h2>
-                        <div id="courseLearningDivID" class="flex flex-wrap p-0">           <!--flex flex-wrap p-0-->
-                            <div id="courseLearningHeaderID" class="learning-outcome-head text-md row-flex w-full mx-0">
-                                <div class="cprofile-column h-10 w-20">
-                                    <span class="cprofile-cell-data">Week</span>
-                                </div>
-                                <div class="cprofile-column h-10 w-1/2">
-                                    <span class="cprofile-cell-data">Detail of topics covered</span>
-                                </div>
-                                <div class="cprofile-column h-10 w-14">
-                                    <span class="cprofile-cell-data">CLO</span>
-                                </div>
-                                <div class="cprofile-column h-10 w-1/6">
-                                    <span class="cprofile-cell-data">Assessment</span>
-                                </div>
-                                <div class="cprofile-column h-10 w-14">
-                                    <span class="cprofile-cell-data">Status</span>
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
 
+                        <div id="courseweekParentDivID" class="flex flex-col p-0"> <!--flex flex-wrap p-0-->
+                            <div id="courseLearningHeaderID"
+                                 class="learning-outcome-head learning-week-header-dp overflow-hidden">
+                                <!--  text-md row-flex w-full mx-0-->
+                                <div class="lweek-column bg-catalystBlue-l61 text-white col-start-1 col-end-2">
+                                    <!--   flex justify-center items-center min-h-full min-w-full  -->
+                                    <span class="wlearn-cell-data">Week</span>
                                 </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                    <!--  https://stackoverflow.com/questions/30190588/html-select-multiple-as-dropdown-->
+                                <div class="lweek-column col-start-2 col-end-7">
+                                    <span class="wlearn-cell-data">Detail of topics covered</span>
                                 </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
+                                <div class="lweek-column col-start-7 col-end-8">
+                                    <span class="wlearn-cell-data">CLO</span>
                                 </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
+                                <div class="lweek-column col-start-8 col-end-12">
+                                    <span class="wlearn-cell-data">Assessment</span>
                                 </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div id="CourseLearningRow-1"
-                                 class="flex w-full learning-outcome-row h-16">
-                                <div class="cprofile-column h-16 w-20 bg-catalystBlue-l61 text-white" id="nameCLO-1">
-                                    <span class="cprofile-cell-data ">01</span>
-                                </div>
-                                <div class="cprofile-column h-16 w-1/2">
-                                    <!--<label for="clo-1-description">
-                                         <input type="text" class="cell-input min-w-full" value=""
-                                                placeholder="Per week description" id="descriptionWeek-1" />
-                                     </label>-->
-                                    <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm"
-                                              value="" placeholder="Per week description" id="detail-1"></textarea>
-
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <!--                                            <label for="clo-1-description"><input type="text" class="cell-input w-full font-medium text-sm" value="" placeholder="CLO" id="descriptionWeek-1" /></label>-->
-                                    <select class="cell-input w-full font-medium text-sm" name="creditHour"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="creditHourID">
-                                        <option value="" hidden></option>
-                                        <option value="one">1</option>
-                                        <option value="two">2</option>
-                                        <option value="three">3</option>
-                                    </select>
-                                </div>
-
-                                <div class="cprofile-column h-16 w-1/6">
-                                    <label for="clo-1-description">
-                                        <input type="text" class="cell-input w-full font-medium text-sm" value=""
-                                               placeholder="" id="descriptionWeek-1"/>
-                                    </label>
-                                </div>
-                                <div class="cprofile-column h-16 w-14">
-                                    <label for="clo-1-bt-level">
-                                        <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
-                                            <img class="h-10 w-6" alt=""
-                                                 src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
-                                        </div>
-                                    </label>
-
+                                <div class="lweek-column">
+                                    <span class="wlearn-cell-data">Status</span>
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
                     <div class="flex justify-center">
                         <button type="button" aria-label="add_clos_button_label" class="max-w-2xl rounded-full"
                                 id="add-clo-btn" aria-expanded="false" aria-haspopup="true">
-                            <img class="h-8 w-8 rounded-full"
+                            <img id="createWeeklyBtn" class="h-8 w-8 rounded-full"
                                  src="../../../Assets/Images/vectorFiles/Icons/add-button.svg" alt="">
                         </button>
                     </div>
                 </div>
-
                 <!--   Update Button   -->
                 <div class="text-right mx-4">
                     <button type="button" class="loginButton" name="updatecpbtn" id="updateCourseProfilebtn">Save
@@ -535,10 +140,16 @@
                 </div>
             </section>
         </div>
-
     </main>
-
 </div>
 
+
 </body>
+<script>
+
+
+    // call existing weekly topics from Server.
+    let fetchWeeklyCoveredRows = <?php echo json_encode($ifExistingWeeklyData); ?>;
+    console.log(fetchWeeklyCoveredRows)
+</script>
 </html>

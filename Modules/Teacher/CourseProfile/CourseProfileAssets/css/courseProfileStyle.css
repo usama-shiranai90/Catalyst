@@ -1,0 +1,112 @@
+:root  {
+
+    --courseProfileHeaderTypeColor: #F4F8F9;
+    --sectionSecondaryHeader: #3B3E43;
+    --courseProfileTextFieldsBordersTypeColor: #9B9B9E;
+    --courseProfilePageSliderTypeColor: #5648C5;
+    --courseProfileCircularBox: #0259C2;
+
+    --background-catalyst-home: #F9F8FE;
+    --background-catalyst-instruments-weights: #0284FC;
+}
+
+/*@font-face {
+    font-family: Poppins-Regular;
+    src: url(../../../../Assets/Fonts/Poppins/Poppins-Regular.ttf);
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url(../../../../Assets/Fonts/Poppins/Poppins-Bold.ttf);
+}*/
+
+.home-clo-toggle {
+    background-color: #F9F8FE;
+}
+
+.textarea-h {
+    height: 5em;
+}
+
+.middleSectionLayout {
+    background-color: #F4FAFF;
+    display: inline-flex;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.left-container > div {
+    margin: 0.7em 0;
+}
+
+.loginButton {
+    background-color: var(--loginButton);
+    color: #ffffff;
+    font-family: Poppins-Regular;
+    border-radius: 5px;
+    border: 0;
+    padding: 0.5% 3%;
+}
+
+.tick-icon {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.clo-toggle:checked + .inside-label span svg {
+    stroke-dashoffset:0 ;
+}
+
+.inside-label {
+    cursor: pointer;
+    user-select: none;
+    padding: 6px 8px;
+    overflow: hidden;
+    transition: all 0.1s ease;
+    background-color: white;
+}
+
+.inside-label:hover {
+    background: rgb(240, 240, 243);
+}
+.inside-label span {
+    position: relative;
+    /*width: 100%;*/
+    height: 100%;
+    transition: all 0.1s ease;
+}
+.inside-label span svg {
+    /*position: absolute;*/
+    /*top: -7px;*/
+    /*left: 4px;*/
+    fill: none;
+    stroke: #0259C2;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 16px;
+    stroke-dashoffset: 16px;
+    transition: all 0.1s ease;
+    transition-delay: 0.1s;
+    transform: translate3d(0, 0, 0);
+}
+
+.blur-filter {
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -o-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
+}
+/*.clo-toggle:checked + .inside-label span {
+    background: var(--background-catalyst-instruments-weights);
+    animation: myAnimation 0.4s ease;
+}*/
+

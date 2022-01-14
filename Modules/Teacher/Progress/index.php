@@ -1,4 +1,6 @@
 <?php
+
+
 $subject = $section = "";
 $courseSessional = array("f18-os-a1"=>"Assignment 1", "f18-os-a2"=> "Assignment 2","f18-os-q1"=> "Quiz 1",
     "f18-os-a3"=> "Assignment 3", "f18-os-a4"=> "Assignment 4", "f18-os-q2"=>"Quiz 2", "f18-os-q3"=>"Quiz 3");

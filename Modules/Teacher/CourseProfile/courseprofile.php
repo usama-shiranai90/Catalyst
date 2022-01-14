@@ -1,12 +1,15 @@
 <?php
-
+/*
 if (isset($_POST['profileContinue3rd'])) {
     print_r(sizeof($_POST['courseCLOs']));
 
-    foreach ($_POST['courseCLOs'] as $fuck) {
-        print_r($fuck);
+    foreach ($_POST['courseCLOs'] as $fu) {
+        print_r($fu);
     }
-}
+}*/
+
+
+
 
 ?>
 <!doctype html>
@@ -23,9 +26,9 @@ if (isset($_POST['profileContinue3rd'])) {
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
-    <link href="CourseProfileAssets/courseInject.css" rel="stylesheet">
-    <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
-    <script src="CourseProfileAssets/CourseProfileCreationScript.js" rel="script"></script>
+    <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
+    <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
+    <script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
 
 </head>
@@ -545,7 +548,7 @@ if (isset($_POST['profileContinue3rd'])) {
                                     <div class="assessment-wrap mx-35">
                                         <h3>Personal Email</h3>
                                         <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id=" personalEmailWeightDivId">
+                                        <div class=" textField-label-content w-full" id=" personalEmailWeightDivId">
                                             <label for="personalEmailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="personalEmailID"
@@ -705,34 +708,27 @@ if (isset($_POST['profileContinue3rd'])) {
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
         type="text/javascript"></script>
+
+<script src="CourseProfileAssets/js/additionalWork.js"></script>
 <script>
 
-    function creationAjaxCall(cEssentialField, instrumentWeight, cDetailField, arrayCLO, arrayMapping) {
-        console.log(arrayCLO)
-        console.log(arrayMapping)
+    //    courseEssentialFieldValue, courseDetailFieldValue,
+    function creationAjaxCall(arrayCLO, arrayMapping) {
 
-        console.log(cEssentialField[0].getAttribute("value"))
         $.ajax({
-                    type: "POST",
-                    url: 'CourseProfile.php',
-                    dataType: 'json',
-                    data: {
-                        functionName: 'create_profile',
-                        array_arguments: [arrayMapping],
-                        fields_argument: [arrayCLO]
-                    },
-
-                    success: function (obj, textstatus) {
-                        let yourVariable;
-                        if (!('error' in obj)) {
-                            yourVariable = obj.result;
-                        } else {
-                            console.log(obj.error);
-                        }
-                    }
-                });
-
-
+            type: "POST",
+            url: 'phpcode/CourseProfile.php',
+            data: {
+                arrayCLO: arrayCLO, arrayMapping: (arrayMapping)
+            },
+            success: function (data) {
+                clearAllStorage();
+                setLocalStorage("courseCLO_key" , arrayCLO)
+                setLocalStorage("courseMap_key" , arrayMapping)
+                console.log("getting data from AJAX :", data)
+                location.href = "courseprofile_view.php";
+            }
+        });
     }
 
     function showTooltip(flag) {

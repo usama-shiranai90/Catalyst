@@ -219,7 +219,6 @@ class CourseProfile implements Persistable
         // TODO: Implement saveCourseProfileData() method.  will save data in database and temporary in session variable.
 
 
-
     }
 
     public function loadCourseProfileData($courseProfileID)
@@ -235,31 +234,20 @@ class CourseProfile implements Persistable
 
 
 header('Content-Type: application/json');
-$aResult = array();
-if (!isset($_POST['functionName'])) {
-    $aResult['error'] = 'No function name!';
-}
+$array_cCLO = $_POST['arrayCLO'];
+$array_cMapping = $_POST['arrayMapping'];
 
-if (!isset($_POST['arguments'])) {
-    $aResult['error'] = 'No function arguments!';
-}
+// apply query to create save data on server.
 
-if (!isset($aResult['error'])) {
+//$_SESSION['course1'] = $array_cCLO ;
+//$_SESSION['course2'] = $array_cMapping ;
+$_SESSION['course3_clo'] = $array_cCLO;
+$_SESSION['course4_map'] = $array_cMapping;
 
-    switch ($_POST['functionName']) {
-        case 'create_profile':
 
-            if (!is_array($_POST['arguments']) || (count($_POST['arguments']) < 2)) {
-                $aResult['error'] = 'Error in arguments!';
-            } else {
-//                $aResult['result'] = add(floatval($_POST['arguments'][0]), floatval($_POST['arguments'][1]));
-            }
-            break;
+echo json_encode($array_cCLO[0]);
 
-        default:
-            $aResult['error'] = 'Not found function ' . $_POST['functionName'] . '!';
-            break;
-    }
-}
+//print_r($array_cMapping);
+//print_r($array_cCLO);
 
-echo json_encode($aResult);
+?>

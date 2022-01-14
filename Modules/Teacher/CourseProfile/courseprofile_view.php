@@ -1,6 +1,3 @@
-<?php
-?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -14,9 +11,9 @@
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
-    <link href="CourseProfileAssets/courseInject.css" rel="stylesheet">
-    <link href="CourseProfileAssets/courseProfileStyle.css" rel="stylesheet">
-    <script src="CourseProfileAssets/CourseProfileCreationScript.js" rel="script"></script>
+    <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
+    <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
+    <script src="CourseProfileAssets/js/CourseProfileView.js" rel="script"></script>
 
 </head>
 
@@ -448,136 +445,16 @@
 
                                </div>
                            </div>
+
+
                            <!--   assigned CLO with their respective PLO.   -->
                            <div class="mx-2 p-4 clo-container ">
                                <div class="clo-table-border rounded-md shadow-sm" style="background-color: #0284FC">
                                    <h2 class="table-head">Assigned CLO's With Mapping</h2>
-                                   <div class="bg-white p-4  gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-
-                                       <div class="w-full rounded-md shadow-sm">
-                                           <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/CLO_white_svg.svg">
-                                           <div class="px-4 py-0">
-                                               <p class="font-semibold text-xl py-2">CLO-1</p>
-                                               <p class="font-medium text-sm text-gray-700 text-justify">Understand the role of design and its major activities within the OO software
-                                                   development process, with focus on the Unified process.</p>
-                                               <div class="flex flex-col my-5 space-y-0">
-                                                   <p class="font-semibold text-base">Undergraduate</p>
-                                                   <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>
-                                               </div>
-                                           </div>
-                                           <div class="px-4 border-t-4 border-b-4 border-catalystLight-f6_bg hover:border-catalystLight-89">
-                                               <div class="flex flex-row my-5 items-center w-full text-center">
-                                                   <a class="font-semibold text-base w-full">PLO - 1</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 3</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 4</a>
+                                   <div id="vCloMappingDivID" class="bg-white p-4  gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
 
 
-                                               </div>
-                                           </div>
-                                       </div>
-                                       <div class="w-full rounded-md shadow-sm">
-                                           <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/CLO_white_svg.svg">
-                                           <div class="px-4 py-0">
-                                               <p class="font-semibold text-xl py-2">CLO-2</p>
-                                               <p class="font-medium text-sm text-gray-700 text-justify">Understand the role of design and its major activities within the OO software
-                                                   development process, with focus on the Unified process.</p>
-                                               <div class="flex flex-col my-5 space-y-0">
-                                                   <p class="font-semibold text-base">Undergraduate</p>
-                                                   <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>
-                                               </div>
-                                           </div>
-                                           <div class="px-4 border-t-4 border-b-4 border-catalystLight-f6_bg hover:border-catalystLight-89">
-                                               <div class="flex flex-row my-5 items-center w-full text-center">
-                                                   <a class="font-semibold text-base w-full">PLO - 1</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 3</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 4</a>
 
-
-                                               </div>
-                                           </div>
-                                       </div>
-                                       <div class="w-full rounded-md shadow-sm">
-                                           <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/clo_white_svg_2.svg">
-                                           <div class="px-4 py-0">
-                                               <p class="font-semibold text-xl py-2">CLO-3</p>
-                                               <p class="font-medium text-sm text-gray-700 text-justify">Understand the role of design and its major activities within the OO software
-                                                   development process, with focus on the Unified process.</p>
-                                               <div class="flex flex-col my-5 space-y-0">
-                                                   <p class="font-semibold text-base">Undergraduate</p>
-                                                   <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>
-                                               </div>
-                                           </div>
-                                           <div class="px-4 border-t-4 border-b-4 border-catalystLight-f6_bg hover:border-catalystLight-89">
-                                               <div class="flex flex-row my-5 items-center w-full text-center">
-                                                   <a class="font-semibold text-base w-full">PLO - 1</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 3</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 4</a>
-
-
-                                               </div>
-                                           </div>
-                                       </div>
-                                       <div class="w-full rounded-md shadow-sm">
-                                           <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/CLO_white_svg.svg">
-                                           <div class="px-4 py-0">
-                                               <p class="font-semibold text-xl py-2">CLO-1</p>
-                                               <p class="font-medium text-sm text-gray-700 text-justify">Understand the role of design and its major activities within the OO software
-                                                   development process, with focus on the Unified process.</p>
-                                               <div class="flex flex-col my-5 space-y-0">
-                                                   <p class="font-semibold text-base">Undergraduate</p>
-                                                   <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>
-                                               </div>
-                                           </div>
-                                           <div class="px-4 border-t-4 border-b-4 border-catalystLight-f6_bg hover:border-catalystLight-89">
-                                               <div class="flex flex-row my-5 items-center w-full text-center">
-                                                   <a class="font-semibold text-base w-full">PLO - 1</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 3</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 4</a>
-
-
-                                               </div>
-                                           </div>
-                                       </div>
-                                       <div class="w-full rounded-md shadow-sm">
-                                           <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/CLO_white_svg.svg">
-                                           <div class="px-4 py-0">
-                                               <p class="font-semibold text-xl py-2">CLO-1</p>
-                                               <p class="font-medium text-sm text-gray-700 text-justify">Understand the role of design and its major activities within the OO software
-                                                   development process, with focus on the Unified process.</p>
-                                               <div class="flex flex-col my-5 space-y-0">
-                                                   <p class="font-semibold text-base">Undergraduate</p>
-                                                   <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>
-                                               </div>
-                                           </div>
-                                           <div class="px-4 border-t-4 border-b-4 border-catalystLight-f6_bg hover:border-catalystLight-89">
-                                               <div class="flex flex-row my-5 items-center w-full text-center">
-                                                   <a class="font-semibold text-base w-full">PLO - 1</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 3</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 4</a>
-
-
-                                               </div>
-                                           </div>
-                                       </div>
-                                       <div class="w-full rounded-md shadow-sm">
-                                           <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/CLO_white_svg.svg">
-                                           <div class="px-4 py-0">
-                                               <p class="font-semibold text-xl py-2">CLO-1</p>
-                                               <p class="font-medium text-sm text-gray-700 text-justify">Understand the role of design and its major activities within the OO software
-                                                   development process, with focus on the Unified process.</p>
-                                               <div class="flex flex-col my-5 space-y-0">
-                                                   <p class="font-semibold text-base">Undergraduate</p>
-                                                   <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>
-                                               </div>
-                                           </div>
-                                           <div class="px-4 border-t-4 border-b-4 border-catalystLight-f6_bg hover:border-catalystLight-89">
-                                               <div class="flex flex-row my-5 items-center w-full text-center">
-                                                   <a class="font-semibold text-base w-full">PLO - 1</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 3</a>
-                                                   <a class="font-semibold text-base w-full">PLO - 4</a>
-                                               </div>
-                                           </div>
-                                       </div>
                                    </div>
                                </div>
                            </div>
@@ -592,4 +469,6 @@
 
         </div>
 </body>
+<script src="CourseProfileAssets/js/additionalWork.js"></script>
+
 </html>
