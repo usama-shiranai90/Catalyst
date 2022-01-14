@@ -8,8 +8,28 @@ if (isset($_POST['profileContinue3rd'])) {
     }
 }*/
 
+// fetch on going PLO list from curriculum list.
+$hasPLOs = true;
+$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
+    'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+    'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+    'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
+    'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
+    'PLO 6' => "Use AJAX to get the data you need from the server.
+                                 Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
+    'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
+    'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
+    'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
+    'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
+    'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
+    'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation",
+];
 
-
+function fetchingPLOs($hasPLOs, $PLOsArray)
+{
+    // checking list.
+    // if exist:
+}
 
 ?>
 <!doctype html>
@@ -30,11 +50,11 @@ if (isset($_POST['profileContinue3rd'])) {
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <script src="CourseProfileAssets/js/additionalWork.js"></script>
 
 </head>
 <body>
 <div class="w-full min-h-full">
-
 
     <header class=" bg-white shadow-md">
         <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
@@ -50,12 +70,11 @@ if (isset($_POST['profileContinue3rd'])) {
                             <button type="button" class="max-w-6xl bg-gray-800 rounded-full flex items-center
 
                             text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 focus:ring-white"
-                                    id="user-menu-button"
-                            ">
-                            <!--                            aria-expanded="false" aria-haspopup="true   -->
-                            <span class="sr-only">Open user menu</span>
-                            <img class="h-14 w-14 rounded-full"
-                                 src="../../../Assets/Images/profilePicAvatar.jpg" alt="">
+                                    id="user-menu-button">
+                                <!--                            aria-expanded="false" aria-haspopup="true   -->
+                                <span class="sr-only">Open user menu</span>
+                                <img class="h-14 w-14 rounded-full"
+                                     src="../../../Assets/Images/profilePicAvatar.jpg" alt="">
                             </button>
                         </div>
                         <div class="hidden origin-top-right absolute right-0 mt-2 w-48
@@ -97,58 +116,30 @@ if (isset($_POST['profileContinue3rd'])) {
             </div>
         </div>
     </header>
+
     <main class="main-content-alignment">
 
         <!-- tool-tip -->
-        <div class="hidden flex-col md:flex-row flex items-center md:justify-center">
-            <!--Code Block for white tooltip starts-->
+        <!--<div class="flex-col md:flex-row flex items-center md:justify-center">
+
             <a tabindex="0" role="link" aria-label="tooltip 1"
                class="focus:outline-none focus:ring-gray-300 rounded-full focus:ring-offset-2 focus:ring-2 focus:bg-gray-200 relative mt-20 md:mt-0"
                onmouseover="showTooltip(1)" onfocus="showTooltip(1)" onmouseout="hideTooltip(1)">
-                <div class=" cursor-pointer">
+                <div class=" cursor-pointer" >
                     <img src="https://tuk-cdn.s3.amazonaws.com/can-uploader/with_steps_alternate-svg1.svg" alt="icon"/>
                 </div>
-                <div id="tooltip1" role="tooltip"
-                     class="hidden z-20 -mt-20 w-64 absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-white p-4 rounded">
-                    <svg class="absolute left-0 -ml-2 bottom-0 top-0 h-full" width="9px" height="16px"
-                         viewBox="0 0 9 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g id="Tooltips-" transform="translate(-874.000000, -1029.000000)" fill="#FFFFFF">
-                                <g id="Group-3-Copy-16" transform="translate(850.000000, 975.000000)">
-                                    <g id="Group-2" transform="translate(24.000000, 0.000000)">
-                                        <polygon id="Triangle"
-                                                 transform="translate(4.500000, 62.000000) rotate(-90.000000) translate(-4.500000, -62.000000) "
-                                                 points="4.5 57.5 12.5 66.5 -3.5 66.5"></polygon>
-                                    </g>
-                                </g>
-                            </g>
-                        </g>
-                    </svg>
-                    <p class="text-sm font-bold text-gray-800 pb-1">Keep track of follow ups</p>
+                <div id="tooltip1" role="tooltip" class="z-20 -mt-20 w-64 absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-white p-4 rounded">
+                    <p class="text-sm font-bold text-gray-800 pb-1" id="plono-1">PLO 1</p>
                     <p class="text-xs leading-4 text-gray-600 pb-3">Reach out to more prospects at the right moment.</p>
-                    <div class="flex justify-between">
-                        <div class="flex items-center">
-                            <span class="text-xs font-bold text-indigo-700">Step 1 of 4</span>
-                        </div>
-                        <div class="flex items-center">
-                            <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">
-                                Skip Tour
-                            </button>
-                            <button onblur="hideTooltip(1)"
-                                    class="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 focus:bg-indigo-400 focus:outline-none bg-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 rounded text-white px-5 py-1 text-xs">
-                                Next
-                            </button>
-                        </div>
-                    </div>
+                    <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">Map view</button>
                 </div>
             </a>
-        </div>
+        </div>-->
 
         <div class="cprofile-grid">
 
             <div id="errorMessageDiv"
-                 class="hidden fixed bottom-0 right-0 z-50 w-1/5 flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                 class="hidden fixed bottom-0 right-0 z-50 flex p-4 mb-4 text-md w-2/12 font-sm text-red-700 bg-red-100 rounded-lg">
                 <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                      xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
@@ -314,6 +305,7 @@ if (isset($_POST['profileContinue3rd'])) {
                                             <input type="text" placeholder=" " name="quizWeight"
                                                    id="quizWeightID"
                                                    class="textField px-12"
+                                                   oninput="isNumeric(this)"
                                                    style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
 
@@ -335,6 +327,7 @@ if (isset($_POST['profileContinue3rd'])) {
                                             <label for="assignmentWeightID"></label>
                                             <input type="text" placeholder=" " name="assignmentWeight"
                                                    id="assignmentWeightID" class="textField px-12"
+                                                   oninput="isNumeric(this)"
                                                    style="padding-left:2.3em ">
 
                                             <label class="textField-label ml-3">Weights</label>
@@ -358,6 +351,7 @@ if (isset($_POST['profileContinue3rd'])) {
                                             <label for="projectWeightID"></label>
                                             <input type="text" placeholder=" " name="projectWeight"
                                                    id="projectWeightID" class="textField px-12"
+                                                   oninput="isNumeric(this)"
                                                    style="padding-left:2.3em ">
 
                                             <label class="textField-label ml-3">Weights</label>
@@ -382,7 +376,9 @@ if (isset($_POST['profileContinue3rd'])) {
 
                                         <div class="textField-label-content w-2/3" id="midTermWeightDivId">
                                             <label for="midWeightID"></label>
-                                            <input type="text" placeholder=" " name="midWeight" id="midWeightID"
+                                            <input type="text" placeholder=" "
+                                                   oninput="isNumeric(this)"
+                                                   name="midWeight" id="midWeightID"
                                                    class="textField px-12" style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
 
@@ -407,7 +403,9 @@ if (isset($_POST['profileContinue3rd'])) {
 
                                         <div class="textField-label-content w-2/3" id="finalTermWeightDivId">
                                             <label for="finalTermtWeight"></label>
-                                            <input type="text" placeholder=" " name="finalWeight" id="finalWeightID"
+                                            <input type="text" placeholder=" "
+                                                   oninput="isNumeric(this)"
+                                                   name="finalWeight" id="finalWeightID"
                                                    class="textField px-12" style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
 
@@ -434,6 +432,7 @@ if (isset($_POST['profileContinue3rd'])) {
                                     <label for="courseInteractionModelID"></label>
                                     <input class="textField" type="text" placeholder="Interaction model"
                                            id="courseInteractionModelID"
+                                           oninput="isNumeric(this)"
                                            name="courseInteractionModel">
                                     <label class="textField-label">Course Model</label>
                                 </div>
@@ -566,7 +565,6 @@ if (isset($_POST['profileContinue3rd'])) {
 
                         </div>
                     </section>
-
 
                     <!--      course CLO Distribution            -->
                     <section id="cpDistributionID" class="cprofile-content-box-border mx-0 my-0  ">
@@ -701,51 +699,52 @@ if (isset($_POST['profileContinue3rd'])) {
                         text-white w-full transition ease-in duration-200 text-center text-base
                          font-semibold shadow-md rounded-lg">Continue
                 </button>
+
             </div>
         </div>
     </div>
 </div>
 </body>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
         type="text/javascript"></script>
 
-<script src="CourseProfileAssets/js/additionalWork.js"></script>
 <script>
 
-    //    courseEssentialFieldValue, courseDetailFieldValue,
-    function creationAjaxCall(arrayCLO, arrayMapping) {
 
-        $.ajax({
-            type: "POST",
-            url: 'phpcode/CourseProfile.php',
-            data: {
-                arrayCLO: arrayCLO, arrayMapping: (arrayMapping)
-            },
-            success: function (data) {
-                clearAllStorage();
-                setLocalStorage("courseCLO_key" , arrayCLO)
-                setLocalStorage("courseMap_key" , arrayMapping)
-                console.log("getting data from AJAX :", data)
-                location.href = "courseprofile_view.php";
-            }
-        });
-    }
+    let hasPLOs =false|| <?php echo json_encode($hasPLOs, JSON_HEX_TAG); ?> ;
+    let ploArray;
 
-    function showTooltip(flag) {
-        switch (flag) {
-            case 1:
-                document.getElementById("tooltip1").classList.remove("hidden");
-                break;
+    if (hasPLOs) {
+        let ploObject = <?php echo json_encode($PLOsArray, JSON_HEX_TAG); ?>;
+
+        ploArray = Object.entries(ploObject);
+        console.log(ploArray.length)
+        console.log(ploArray[0][0])
+
+        function creationAjaxCall(arrayCLO, arrayMapping) {
+
+            $.ajax({
+                type: "POST",
+                url: 'phpcode/CourseProfile.php',
+                data: {
+                    arrayCLO: arrayCLO, arrayMapping: (arrayMapping)
+                },
+                success: function (data) {
+                    clearAllStorage();
+                    setLocalStorage("courseCLO_key", arrayCLO)
+                    setLocalStorage("courseMap_key", arrayMapping)
+                    console.log("getting data from AJAX :", data)
+                    location.href = "courseprofile_view.php";
+                }
+            });
         }
+
+    } else {
+        location.href = "weekly_cover_topics.php";
+        // blockScreen("header" , "message");
     }
 
-    function hideTooltip(flag) {
-        switch (flag) {
-            case 1:
-                document.getElementById("tooltip1").classList.add("hidden");
-                break;
-        }
-    }
 </script>
 </html>
 

@@ -1,13 +1,16 @@
-function setLocalStorage(key , currentPageArray) {
+function setLocalStorage(key, currentPageArray) {
 
     localStorage.setItem(key, JSON.stringify(currentPageArray));
 }
+
 function getLocalStorage(key) { // returns an array list for current page data.
-    return  JSON.parse(localStorage.getItem(key));
+    return JSON.parse(localStorage.getItem(key));
 }
+
 function clearAllStorage() {
     localStorage.clear();
 }
+
 function setJsonLocalStorage() {
     let simpleJson = {
         fruits: [
@@ -30,6 +33,7 @@ function setJsonLocalStorage() {
 
     localStorage.setItem("fruitsAndVeggies", JSON.stringify(simpleJson));
 }
+
 function getJsonLocalStorage() {
     let fromStorage = localStorage.getItem("fruitsAndVeggies");
     let backToJson = JSON.parse(fromStorage);
@@ -39,6 +43,7 @@ function getJsonLocalStorage() {
 
     document.getElementById("localStorageValue").textContent = backToJson.fruits[4].name + ": " + backToJson.fruits[4].color;
 }
+
 /*
 function location(){
     // <button onClick="gmapController.addUserLocation()">
@@ -339,4 +344,18 @@ function loadGoogleMaps() {
     document.body.appendChild(elem);
 }
 
+function isNumeric(selectedInput) {
+    return selectedInput.value = selectedInput.value.replace(/[^0-9.]/g, '').replace(/(..?)../g, '');
+}
 
+
+function showTooltip(flag) {
+    const toolid = 'tooltip' + flag;
+    $(`div[id='${toolid}']`).removeClass('hidden');
+
+}
+
+function hideTooltip(flag) {
+    const toolid = 'tooltip' + flag;
+    $(`div[id='${toolid}']`).addClass('hidden');
+}

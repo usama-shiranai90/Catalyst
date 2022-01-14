@@ -1,6 +1,6 @@
 let incrementClo = 0;
 let completeFlag = true;
-let lastAvailableCLONumber = 0;
+// let lastAvailableCLONumber = 0;
 
 window.onload = function (e) {
 
@@ -95,6 +95,7 @@ window.onload = function (e) {
     let courseDetailFieldValue = [];
 
     $(document).ready(function () {
+
         $('.textField , .select').on('input', function (e) {
             if (this.classList.contains("px-12"))
                 $(this).parent().removeClass().addClass("textField-label-content w-2/3");
@@ -108,8 +109,6 @@ window.onload = function (e) {
 
         $("#coursepContinuebtn-1").on("click", function (e) {
             e.preventDefault();
-            // console.log(cEssentialField.getEssentialValue(cEssentialField.cTitleField))
-
             completeFlag = true;
             checkEmptyFields(fieldsArray, 1);
             arrowPositionCheck();
@@ -160,7 +159,6 @@ window.onload = function (e) {
             creationAjaxCall(arrayCLO, arrayMapping);
 
 
-
             /*if (outcomeLearningContainer.children.length < 2) { // generate alert
                 $("main").addClass("blur-filter");
                 $("#alertContainer").removeClass("hidden");
@@ -175,19 +173,22 @@ window.onload = function (e) {
         });
 
         $(addOutcomeBtn).on('click', function (event) {
-            initialCreationCLODetail_Mapping();
+            if (incrementClo > 5)
+                showErrorBox('CLO limit has exceed.')
+            else
+                initialCreationCLODetail_Mapping();
+        });
 
-            $("img[data-clo-des='remove']").click(function (event) {
-                event.stopImmediatePropagation()
-                // const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');  // clo-3 ya clo-2 us ma sa 3 ya 2 ko extract kary ga.
-                const dischargedIndex = $(event.target).closest('.learning-outcome-row').index();
+        $(document).on('click', "img[data-clo-des='remove']", function (event) {
+            event.stopImmediatePropagation()
+            // const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');  // clo-3 ya clo-2 us ma sa 3 ya 2 ko extract kary ga.
+            const dischargedIndex = $(event.target).closest('.learning-outcome-row').index();
 
-                // $(event.target).closest('.learning-outcome-row').remove();
-                $(('#CourseLearningRow-' + dischargedIndex)).remove();
-                $('#clo-map-div-' + dischargedIndex).remove();
-                iterateIndexDetail_Mapping(parseInt(dischargedIndex));
-                // console.log("after deletion : ", incrementClo, lastAvailableCLONumber)
-            })
+            // $(event.target).closest('.learning-outcome-row').remove();
+            $(('#CourseLearningRow-' + dischargedIndex)).remove();
+            $('#clo-map-div-' + dischargedIndex).remove();
+            iterateIndexDetail_Mapping(parseInt(dischargedIndex));
+
         });
 
         $(backArrow).on("click", function (e) {
@@ -214,41 +215,6 @@ window.onload = function (e) {
          $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
      }
  });*/
-
-        $(backArrow).click(function () {
-            if (animating) return false;
-            animating = true;
-
-            current_fs = $(this).parent();
-            previous_fs = $(this).parent().prev();
-
-            //de-activate current step on progressbar
-            $("#progressbar li").eq($("section").index(current_fs)).removeClass("active");
-
-            //show the previous fieldset
-            previous_fs.show();
-            //hide the current fieldset with style
-            current_fs.animate({opacity: 0}, {
-                step: function (now, mx) {
-                    //as the opacity of current_fs reduces to 0 - stored in "now"
-                    //1. scale previous_fs from 80% to 100%
-                    scale = 0.8 + (1 - now) * 0.2;
-                    //2. take current_fs to the right(50%) - from 0%
-                    left = ((1 - now) * 50) + "%";
-                    //3. increase opacity of previous_fs to 1 as it moves in
-                    opacity = 1 - now;
-                    current_fs.css({'left': left});
-                    previous_fs.css({'transform': 'scale(' + scale + ')', 'opacity': opacity});
-                },
-                duration: 500,
-                complete: function () {
-                    current_fs.hide();
-                    animating = false;
-                },
-                //this comes from the custom easing plugin
-                easing: 'easeOutQuint'
-            });
-        });
 
     });
 
@@ -292,24 +258,26 @@ window.onload = function (e) {
 
     function initialCreationCLODetail_Mapping() {
         if (incrementClo === 0) {
-            lastAvailableCLONumber = ++incrementClo;
+            ++incrementClo;
             // outcomeLearningContainer.innerHTML += createFirstCLODetailRow();
             outcomeLearningContainer.appendChild(createFirstCLODetailRow())
-            createFirstCLOMapRow(12); // pass no of PLOs you have per curriculum.
+
+            console.log(ploArray.length, " chuss")
+            createFirstCLOMapRow(ploArray.length); // pass no of PLOs you have per curriculum.
         } else {
-            const newCLORowDetail = document.getElementById('CourseLearningRow-' + lastAvailableCLONumber);
+            const newCLORowDetail = document.getElementById('CourseLearningRow-' + incrementClo);
             // console.log("My new clo row : " , newCLORowDetail)
-            outcomeLearningContainer.appendChild(createCLORow(newCLORowDetail, 1, lastAvailableCLONumber + 1));
+            outcomeLearningContainer.appendChild(createCLORow(newCLORowDetail, 1, incrementClo + 1));
 
             //Creates a CLO Mapping Row
-            const newCLORowMapping = document.getElementById('clo-map-div-' + lastAvailableCLONumber);
-            outcomeMapContainer.appendChild(createCLORow(newCLORowMapping, 2, lastAvailableCLONumber + 1));
+            const newCLORowMapping = document.getElementById('clo-map-div-' + incrementClo);
+            outcomeMapContainer.appendChild(createCLORow(newCLORowMapping, 2, incrementClo + 1));
 
-            lastAvailableCLONumber = ++incrementClo;
-            console.log("incremental Stage :", lastAvailableCLONumber, incrementClo)
+            incrementClo++;
+            console.log("incremental Stage :", incrementClo)
         }
 
-        console.log(incrementClo, lastAvailableCLONumber)
+        console.log(incrementClo)
     }
 
     function createFirstCLODetailRow() {
@@ -329,7 +297,7 @@ window.onload = function (e) {
             "                                        </div>\n" +
             "                                        <div class=\"cprofile-column h-10 w-1/6\">\n" +
             "                                            <div class=\"flex flex-row\">\n" +
-            "                                                <input type=\"text\" class=\"cell-input h-10 min-w-0\" data-clod-bt ='c1-bt' name='courseCLOs[CLO-1][BTLevel]' value=\"\" placeholder=\"Enter BT-Level\" id=\"btLevelCLO-1\">\n" +
+            "                                                <input type=\"text\" class=\"cell-input h-10 min-w-0\" oninput='isNumeric(this)' data-clod-bt ='c1-bt' name='courseCLOs[CLO-1][BTLevel]' value=\"\" placeholder=\"Enter BT-Level\" id=\"btLevelCLO-1\">\n" +
             "                                                <label for=\"btLevelCLO-1\"></label>\n" +
             "                                                <img class=\"h-10 w-6 cursor-pointer\" alt=\"\" src=\"../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg\" data-clo-des=\"remove\">\n" +
             "                                            </div>\n" +
@@ -366,13 +334,25 @@ window.onload = function (e) {
                                 <span class="cprofile-cell-data">PLOs</span>
                             </div>`
 
+        // CLO number header.
         for (let i = 1; i <= totalPlo; i++) {
-            let header_number = `<div class="cprofile-column h-10 w-1/6"> 
+
+            //onmouseover="this.classList.remove('hidden')" onfocus="this.classList.remove('hidden')" onmouseout="this.classList.add('hidden')"
+            //onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})"
+            let header_number = `<div class="cprofile-column h-10 w-1/6 hover:bg-catalystLight-e4
+                               focus:outline-none focus:ring-gray-300 relative"
+                               onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})" > 
+                                      
+                <!-- tool-tip description section. -->
+                    <div id="tooltip${i}" role="tooltip" class="hidden z-20 w-64 fixed transition duration-150 ease-in-out top-1/2 right-14 ml-8 shadow-lg bg-white p-4 rounded">
+                    <p class="text-sm font-bold text-gray-800 pb-1" id="plono-${i}">${ploArray[i - 1][0]}</p>
+                    <p class="text-xs leading-4 text-gray-600 pb-3">${ploArray[i - 1][1]}</p>
+                    <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">Map view</button>  </div>
                                     <span class="cprofile-cell-data">${i}</span> 
                                 </div>`
             header.innerHTML += header_number;
 
-            let row_data = `<div class="cprofile-column h-10 w-1/6"> 
+            let row_data = `<div class="cprofile-column h-10 w-1/6  "> 
                                 <input class="clo-toggle hidden" id="clo-1-plo-${i}" value="clo-1-plo-${i}" name="[clo-1][plo-${i}]" type="checkbox" />
                                 <label class="inside-label cprofile-cell-data" for="clo-1-plo-${i}">
                                 <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
@@ -420,7 +400,7 @@ window.onload = function (e) {
     }
 
     function iterateIndexDetail_Mapping(setFromIndex) {
-        lastAvailableCLONumber = --incrementClo;
+        --incrementClo;
 
         if (incrementClo !== 0) {
             $(outcomeLearningContainer).children().each(function (index) {
@@ -501,17 +481,18 @@ window.onload = function (e) {
         }
     }
 
-    function showErrorBox(message) {
-        $('#errorID span').text("Empty Alert!")
+    function showErrorBox(header = 'Empty Alert!', message) {
+        $('#errorID span').text(header)
         $('#errorID').textNodes().first().replaceWith(message);
         $("#errorMessageDiv").toggle("hidden").animate(
             {right: 0,}, 1000, function () {
                 $(this).delay(3000).fadeOut();
             });
+        // $('#errorMessageDiv').removeAttr("style");
     }
 
     function uniqueName(str, CLONumber) {
-        return str.replace(lastAvailableCLONumber, CLONumber);
+        return str.replace(incrementClo, CLONumber);
         //  return str.replace(/1/g, incrementClo);
     }
 

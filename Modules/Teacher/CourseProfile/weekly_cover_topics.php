@@ -121,8 +121,9 @@ $ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18
                                     <span class="wlearn-cell-data">Status</span>
                                 </div>
                             </div>
-                        </div>
 
+
+                        </div>
                     </div>
 
                     <div class="flex justify-center">
@@ -146,7 +147,6 @@ $ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18
 
 </body>
 <script>
-
 
     // call existing weekly topics from Server.
     let fetchWeeklyCoveredRows = <?php echo json_encode($ifExistingWeeklyData); ?>;
