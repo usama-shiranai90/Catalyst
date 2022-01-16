@@ -3,7 +3,6 @@ let completeFlag = true;
 // let lastAvailableCLONumber = 0;
 
 window.onload = function (e) {
-
     // Course Essential:
     const cEssentialField = {
         cTitleField: document.getElementById("courseTitleID"),
@@ -218,18 +217,45 @@ window.onload = function (e) {
 
     });
 
+
+    let totalWeight = 0;
+
+    const isWeightExceeded = () => {
+        let weight_array = [instrumentWeight.quizzsection.weight,instrumentWeight.assignmentsection.weight,
+            instrumentWeight.projectsection.weight,instrumentWeight.midsection.weight,instrumentWeight.finalsection.weight]
+
+        weight_array.forEach(function (item, index) {
+
+            totalWeight += parseInt(item.value , 10);
+            console.log(item.value , typeof totalWeight , totalWeight)
+
+            if (totalWeight > 99){
+                item.parentElement.classList.add("textField-error-input");
+
+                return false;
+            }
+        });
+        console.log(totalWeight , "totl")
+        return true;
+    }
+
     function checkEmptyFields(fieldsArray, counter) {  //textField-error-input
         for (let i = 0; i < fieldsArray.length; i++)
             errorInputType(fieldsArray[i]);
 
         if (counter === 1) {
             if (completeFlag) {
-                $('#cpEssentialID').addClass("hidden");
-                $('#cpDetaillID').removeClass("hidden");
-                for (let i = 0; i < fieldsArray.length; i++) {
-                    courseEssentialFieldValue.push(fieldsArray[i].value);
+
+                if (isWeightExceeded()){
+                    $('#cpEssentialID').addClass("hidden");
+                    $('#cpDetaillID').removeClass("hidden");
+                    for (let i = 0; i < fieldsArray.length; i++) {
+                        courseEssentialFieldValue.push(fieldsArray[i].value);
+                    }
                 }
-                // console.log(courseEssentialFieldValue)
+                else{
+                    showErrorBox("Weight for assessment is exceeded");
+                }
 
             } else {
                 showErrorBox("Please complete all fields to continue")

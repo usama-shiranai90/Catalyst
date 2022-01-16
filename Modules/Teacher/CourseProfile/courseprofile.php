@@ -51,6 +51,20 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
     <script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/additionalWork.js"></script>
+    <script type="text/javascript">
+        writeRandomQuote = function () {
+            var quotes = new Array();
+            quotes[0] = "Action is the real measure of intelligence.";
+            quotes[1] = "Baseball has the great advantage over cricket of being sooner ended.";
+            quotes[2] = "Every goal, every action, every thought, every feeling one experiences, whether it be consciously or unconsciously known, is an attempt to increase one's level of peace of mind.";
+            quotes[3] = "A good head and a good heart are always a formidable combination.";
+            var rand = Math.floor(Math.random()*quotes.length);
+            document.write(quotes[rand]);
+        }
+        // writeRandomQuote();
+    </script>
+
+
 
 </head>
 <body>
@@ -172,7 +186,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                             class=" cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -286,9 +300,9 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
 
-                            <div class="course-assessment-border" style="background-color: #0284FC">
+                            <div class="course-assessment-border border-t-2 shadow-sm" style="background-color: #0284FC">
                                 <h2 class="table-head">Assessment Instrument with Weights</h2>
-                                <div class="grid bg-white  border-solid border-t-2 py-3">
+                                <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
                                     <div class="assessment-wrap">
                                         <h3>Quizzes</h3>
                                         <div class="vertical-line"></div>
@@ -306,8 +320,10 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                                    id="quizWeightID"
                                                    class="textField px-12"
                                                    oninput="isNumeric(this)"
+                                                   maxlength="2"
                                                    style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
+
 
                                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
                                                 <span class="text-gray-500 sm:text-sm">%</span>
@@ -328,6 +344,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             <input type="text" placeholder=" " name="assignmentWeight"
                                                    id="assignmentWeightID" class="textField px-12"
                                                    oninput="isNumeric(this)"
+                                                   maxlength="2"
                                                    style="padding-left:2.3em ">
 
                                             <label class="textField-label ml-3">Weights</label>
@@ -352,6 +369,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             <input type="text" placeholder=" " name="projectWeight"
                                                    id="projectWeightID" class="textField px-12"
                                                    oninput="isNumeric(this)"
+                                                   maxlength="2"
                                                    style="padding-left:2.3em ">
 
                                             <label class="textField-label ml-3">Weights</label>
@@ -378,6 +396,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             <label for="midWeightID"></label>
                                             <input type="text" placeholder=" "
                                                    oninput="isNumeric(this)"
+                                                   maxlength="2"
                                                    name="midWeight" id="midWeightID"
                                                    class="textField px-12" style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
@@ -405,6 +424,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             <label for="finalTermtWeight"></label>
                                             <input type="text" placeholder=" "
                                                    oninput="isNumeric(this)"
+                                                   maxlength="2"
                                                    name="finalWeight" id="finalWeightID"
                                                    class="textField px-12" style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
@@ -433,6 +453,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                     <input class="textField" type="text" placeholder="Interaction model"
                                            id="courseInteractionModelID"
                                            oninput="isNumeric(this)"
+                                           maxlength="2"
                                            name="courseInteractionModel">
                                     <label class="textField-label">Course Model</label>
                                 </div>
@@ -484,10 +505,12 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                             </div>
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
-                            <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
-                                        border-b-2 border-solid mb-10" style="background-color: #0284fc">
+                        <!--  text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
+                                border-b-2 border-solid mb-10 -->
+
+                            <div class="course-assessment-border border-t-2 shadow-sm mb-5" style="background-color: #0284fc">
                                 <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
-                                <div class="grid bg-white border-solid border-t-2 text-center">
+                                <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
                                     <div class="assessment-wrap mx-35">
                                         <h3>Name</h3>
                                         <div class="vertical-line"></div>
@@ -556,6 +579,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             <div class="text-right mx-4">
                                 <button type="button" class="loginButton" name="profileContinue1st"
@@ -567,7 +591,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class="cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">
@@ -676,6 +700,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
         </div>
 
     </main>
+
 </div>
 
 <div id="alertContainer"
@@ -710,41 +735,47 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
         type="text/javascript"></script>
 
 <script>
+    let hasPLOs, ploArray;
+    try {
+         (hasPLOs =true || <?php echo json_encode($hasPLOs, JSON_HEX_TAG) ?>);
+        if (hasPLOs) {
+            let ploObject = <?php echo json_encode($PLOsArray, JSON_HEX_TAG); ?>;
 
+            ploArray = Object.entries(ploObject);
+            console.log(ploArray.length)
+            console.log(ploArray[0][0])
 
-    let hasPLOs =false|| <?php echo json_encode($hasPLOs, JSON_HEX_TAG); ?> ;
-    let ploArray;
+            function creationAjaxCall(arrayCLO, arrayMapping) {
 
-    if (hasPLOs) {
-        let ploObject = <?php echo json_encode($PLOsArray, JSON_HEX_TAG); ?>;
+                $.ajax({
+                    type: "POST",
+                    url: 'phpcode/CourseProfile.php',
+                    data: {
+                        arrayCLO: arrayCLO, arrayMapping: (arrayMapping)
+                    },
+                    success: function (data) {
+                        clearAllStorage();
+                        setLocalStorage("courseCLO_key", arrayCLO)
+                        setLocalStorage("courseMap_key", arrayMapping)
+                        console.log("getting data from AJAX :", data)
+                        location.href = "courseprofile_view.php";
+                    }
+                });
+            }
 
-        ploArray = Object.entries(ploObject);
-        console.log(ploArray.length)
-        console.log(ploArray[0][0])
-
-        function creationAjaxCall(arrayCLO, arrayMapping) {
-
-            $.ajax({
-                type: "POST",
-                url: 'phpcode/CourseProfile.php',
-                data: {
-                    arrayCLO: arrayCLO, arrayMapping: (arrayMapping)
-                },
-                success: function (data) {
-                    clearAllStorage();
-                    setLocalStorage("courseCLO_key", arrayCLO)
-                    setLocalStorage("courseMap_key", arrayMapping)
-                    console.log("getting data from AJAX :", data)
-                    location.href = "courseprofile_view.php";
-                }
-            });
+        } else {
+            location.href = "weekly_cover_topics.php";
+            // blockScreen("header" , "message");
         }
-
-    } else {
-        location.href = "weekly_cover_topics.php";
-        // blockScreen("header" , "message");
+    }
+    catch (err){
+        console.log(err);
     }
 
+
+
+
 </script>
+
 </html>
 
