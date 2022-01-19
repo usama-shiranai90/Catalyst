@@ -79,10 +79,10 @@ window.onload = function (e) {
     function createRowClosList(currentIndex, clo_list) {
         console.log(fetchWeeklyCoveredRows[(currentIndex)][2].length)
 
-        for (let i = 0; i < fetchWeeklyCoveredRows[(currentIndex)][2].length; i++) {  //weekclo${(i + 1)}
+        for (let i = 0; i < fetchWeeklyCoveredRows[(currentIndex)][2].length; i++) {
             let clo_no_row = `<div id="wtc-${currentIndex + 1}-clo-c${i + 1}-c">
-                                            <input class="clo-toggle hidden" id="week${(i + 1)}-clo-${currentIndex + 1}" value="week${(currentIndex + 1)}-clo-${i + 1}" name="week${(currentIndex + 1)}-clos" type="checkbox">
-                                            <label class="inside-label cprofile-cell-data" for="week1-clo-${currentIndex + 1}">
+                                            <input class="clo-toggle hidden" id="week${(currentIndex + 1)}-clo-${i + 1}" value="week${(currentIndex + 1)}-clo-${i + 1}" name="week${(currentIndex + 1)}-clo-${i + 1}" type="checkbox">
+                                            <label class="inside-label cprofile-cell-data" for="week1-clo-${i + 1}">
                                                 CLO${i + 1}<span><svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
                                             </label>
                                         </div>`

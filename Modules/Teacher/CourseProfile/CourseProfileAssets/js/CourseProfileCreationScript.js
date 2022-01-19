@@ -22,35 +22,17 @@ window.onload = function (e) {
         }
     }
     const instrumentWeight = {
-        quizzsection: {
-            detail: document.getElementById('quizDetailID'),
-            weight: document.getElementById('quizWeightID')
-        },
-        assignmentsection: {
-            detail: document.getElementById('assignmentDetailID'),
-            weight: document.getElementById('assignmentWeightID')
-        },
-        projectsection: {
-            detail: document.getElementById('projectDetailID'),
-            weight: document.getElementById('projectWeightID')
-        },
-        midsection: {
-            detail: document.getElementById('midTermDetailID'),
-            weight: document.getElementById('midWeightID')
-        },
-        finalsection: {
-            detail: document.getElementById('finalTermDetailID'),
-            weight: document.getElementById('finalWeightID')
-        },
+        quizz_weight: document.getElementById('quizWeightID'),
+        assignment_weight: document.getElementById('assignmentWeightID'),
+        project_weight: document.getElementById('projectWeightID'),
+        mid_weight: document.getElementById('midWeightID'),
+        final_weight: document.getElementById('finalWeightID')
+
     }
     let fieldsArray = [cEssentialField.cTitleField, cEssentialField.cCodeField, cEssentialField.cHoursField, cEssentialField.cPreReqField,
         cEssentialField.cTermField, cEssentialField.cProgramLevelField, cEssentialField.cProgramField, cEssentialField.cEffectiveField,
         cEssentialField.cCoordinationField, cEssentialField.cMethodologyField, cEssentialField.cModelField,
-        instrumentWeight.quizzsection.detail, instrumentWeight.quizzsection.weight,
-        instrumentWeight.assignmentsection.detail, instrumentWeight.assignmentsection.weight,
-        instrumentWeight.projectsection.detail, instrumentWeight.projectsection.weight,
-        instrumentWeight.midsection.detail, instrumentWeight.midsection.weight,
-        instrumentWeight.finalsection.detail, instrumentWeight.finalsection.weight];
+        instrumentWeight.quizz_weight,instrumentWeight.assignment_weight , instrumentWeight.project_weight , instrumentWeight.mid_weight,instrumentWeight.final_weight];
 
     // Course Detail:
     const cDetailField = {
@@ -93,11 +75,13 @@ window.onload = function (e) {
     let courseEssentialFieldValue = [];
     let courseDetailFieldValue = [];
 
+    // isWeightExceeded(instrumentWeight)
     $(document).ready(function () {
 
         $('.textField , .select').on('input', function (e) {
-            if (this.classList.contains("px-12"))
-                $(this).parent().removeClass().addClass("textField-label-content w-2/3");
+            if (this.classList.contains("px-12")){
+                $(this).parent().removeClass().addClass("textField-label-content w-2/5");
+            }
             else {
                 if (this.type === "text" || this.type === "textarea")
                     $(this).parent().removeClass().addClass("textField-label-content w-full");
@@ -109,13 +93,13 @@ window.onload = function (e) {
         $("#coursepContinuebtn-1").on("click", function (e) {
             e.preventDefault();
             completeFlag = true;
-            checkEmptyFields(fieldsArray, 1);
+            checkEmptyFields(fieldsArray, 1 , courseEssentialFieldValue , instrumentWeight);
             arrowPositionCheck();
         });
         $('#coursepContinuebtn-2').on('click', function (e) {
             e.preventDefault();
             completeFlag = true;
-            checkEmptyFields(fieldsArray_2, 2);
+            checkEmptyFields(fieldsArray_2, 2 ,  courseDetailFieldValue, null);
             arrowPositionCheck();
         });
         $('#coursepContinuebtn-3').on('click', function (e) {
@@ -130,6 +114,7 @@ window.onload = function (e) {
                 // console.log(node)
                 arrayCLO[node].push($(this).text())
             })
+            console.log("2nd :" + arrayCLO)
 
             let extremeCounter = 0;
             let cycle = 0;
@@ -137,10 +122,10 @@ window.onload = function (e) {
                 if (extremeCounter === 0) { // des
                     arrayCLO[cycle].push($(this).val())
                     extremeCounter++;
-                } else if (extremeCounter === 1) { //  ungra
+                } else if (extremeCounter === 1) {
                     arrayCLO[cycle].push($(this).val())
                     extremeCounter++
-                } else if (extremeCounter === 2) { // bt level.
+                } else if (extremeCounter === 2) {
                     arrayCLO[cycle].push($(this).val())
                     extremeCounter = 0;
                     cycle++;
@@ -154,8 +139,7 @@ window.onload = function (e) {
                     arrayMapping[i].push($(this).val())
                 });
             }
-            //courseEssentialFieldValue , courseDetailFieldValue ,
-            creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue);
+           creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue);
 
             /*if (outcomeLearningContainer.children.length < 2) { // generate alert
                 $("main").addClass("blur-filter");
@@ -216,70 +200,7 @@ window.onload = function (e) {
 
     });
 
-    let totalWeight;
 
-    const isWeightExceeded = () => {
-        totalWeight = 0;
-        let weight_array = [instrumentWeight.quizzsection.weight, instrumentWeight.assignmentsection.weight,
-            instrumentWeight.projectsection.weight, instrumentWeight.midsection.weight, instrumentWeight.finalsection.weight]
-        let flag = true;
-        weight_array.forEach(function (item, index) {
-
-            totalWeight += parseInt(item.value, 10);
-            console.log(item.value, typeof totalWeight, totalWeight)
-
-            if (totalWeight > 99) {
-                item.parentElement.classList.add("textField-error-input");
-                flag = false;
-                return flag;
-            }
-        });
-        if (flag)
-            return true;
-        else return false;
-    }
-
-    function checkEmptyFields(fieldsArray, counter) {  //textField-error-input
-        for (let i = 0; i < fieldsArray.length; i++)
-            errorInputType(fieldsArray[i]);
-
-        if (counter === 1) {
-            if (completeFlag) {
-                console.log(isWeightExceeded())
-                if (isWeightExceeded()) {
-                    $('#cpEssentialID').addClass("hidden");
-                    $('#cpDetaillID').removeClass("hidden");
-                    for (let i = 0; i < fieldsArray.length; i++) {
-                        courseEssentialFieldValue.push(fieldsArray[i].value);
-                    }
-                } else {
-                    showErrorBox("Weight for assessment is exceeded");
-                }
-
-            } else {
-                showErrorBox("Please complete all fields to continue")
-            }
-        } else if (counter === 2) {
-            if (completeFlag) {
-                $('#cpDetaillID').addClass("hidden");
-                $('#cpDistributionID').removeClass("hidden");
-
-                for (let i = 0; i < fieldsArray_2.length; i++) {
-                    courseDetailFieldValue.push(fieldsArray[i].value);
-                }
-            } else showErrorBox("Please fill all fields to continue");
-        }
-    }
-
-    function errorInputType(currentField) {
-        if (currentField.value.length === 0) {
-            completeFlag = false;
-            if (currentField.tagName === "SELECT")
-                currentField.parentElement.classList.add("select-error-input")
-            else if (currentField.tagName === "INPUT" || currentField.tagName === "TEXTAREA")
-                currentField.parentElement.classList.add("textField-error-input")
-        }
-    }
 
     function initialCreationCLODetail_Mapping() {
         if (incrementClo === 0) {
@@ -287,7 +208,7 @@ window.onload = function (e) {
             // outcomeLearningContainer.innerHTML += createFirstCLODetailRow();
             outcomeLearningContainer.appendChild(createFirstCLODetailRow())
 
-            createFirstCLOMapRow(ploArray.length); // pass no of PLOs you have per curriculum.
+            createFirstCLOMapRow(ploArray.length , outcomeMapContainer); // pass no of PLOs you have per curriculum.
         } else {
             const newCLORowDetail = document.getElementById('CourseLearningRow-' + incrementClo);
             // console.log("My new clo row : " , newCLORowDetail)
@@ -302,88 +223,6 @@ window.onload = function (e) {
         }
 
         console.log(incrementClo)
-    }
-
-    function createFirstCLODetailRow() {
-        const data = "<div id=\"CourseLearningRow-1\" class=\"flex w-full learning-outcome-row\">\n" +
-            "                                        <div class=\"cprofile-column h-10 w-24 bg-catalystBlue-l61 text-white\" id=\"nameCLO-1\">\n" +
-            "                                            <span class=\"cprofile-cell-data\" data-clod-no ='c1-no'>CLO-1</span>\n" +
-            "                                        </div>\n" +
-            "                                        <div class=\"cprofile-column h-10 w-3/4\">\n" +
-            "                                            <!-- <span class=\"cprofile-cell-data\">Understanding the role of Indesign and its major activities within the OO software</span>-->\n" +
-            "                                            <label for=\"descriptionCLO-1\"></label>\n" +
-            "                                            <input type=\"text\" class=\"cell-input min-w-full\" name='courseCLOs[CLO-1][Description]' data-clod-desc ='c1-desc'  value=\"\" placeholder=\"Enter CLO description\" id=\"descriptionCLO-1\">\n" +
-            "\n" +
-            "                                        </div>\n" +
-            "                                        <div class=\"cprofile-column h-10 w-1/6\">\n" +
-            "                                            <label for=\"undergraduateCLO-1\"></label>\n" +
-            "                                            <input type=\"text\" class=\"cell-input\" name='courseCLOs[CLO-1][Domain]' data-clod-domain ='c1-domain' value=\"Undergraduate\" id=\"undergraduateCLO-1\" readonly=\"\">\n" +
-            "                                        </div>\n" +
-            "                                        <div class=\"cprofile-column h-10 w-1/6\">\n" +
-            "                                            <div class=\"flex flex-row\">\n" +
-            "                                                <input type=\"text\" class=\"cell-input h-10 min-w-0\" oninput='isNumeric(this)' data-clod-bt ='c1-bt' name='courseCLOs[CLO-1][BTLevel]' value=\"\" placeholder=\"Enter BT-Level\" id=\"btLevelCLO-1\">\n" +
-            "                                                <label for=\"btLevelCLO-1\"></label>\n" +
-            "                                                <img class=\"h-10 w-6 cursor-pointer\" alt=\"\" src=\"../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg\" data-clo-des=\"remove\">\n" +
-            "                                            </div>\n" +
-            "                                        </div>\n" +
-            "                                    </div>"
-
-        var frag = document.createDocumentFragment();
-        var elem = document.createElement('div');
-        elem.innerHTML = data;
-        while (elem.childNodes[0]) {
-            frag.appendChild(elem.childNodes[0]);
-        }
-        return frag;
-    }
-
-    function createFirstCLOMapRow(totalPlo) {
-
-        let container = '<div id="clo-map-div-1" class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10">\n' +
-            '                                        <svg class="hidden tick-icon">\n' +
-            '                                            <symbol id="check-tick" viewbox="0 0 12 10">\n' +
-            '                                                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>\n' +
-            '                                            </symbol>\n' +
-            '                                        </svg>\n' +
-            '                                        <div class="cprofile-column h-10 bg-catalystBlue-l61 text-white w-1/6">\n' +
-            '                                            <span class="cprofile-cell-data">CLO-1</span>\n' +
-            '                                        </div>\n' +
-            '                                    </div>';
-
-        outcomeMapContainer.innerHTML += container;
-
-        let header = document.getElementById('cloMapHeaderID');
-        let clo_map_row_div = document.getElementById('clo-map-div-1');
-        header.innerHTML = `<div class="cprofile-column h-10 w-1/6"> 
-                                <span class="cprofile-cell-data">PLOs</span>
-                            </div>`
-
-        // CLO number header.
-        for (let i = 1; i <= totalPlo; i++) {
-
-            //onmouseover="this.classList.remove('hidden')" onfocus="this.classList.remove('hidden')" onmouseout="this.classList.add('hidden')"
-            //onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})"
-            let header_number = `<div class="cprofile-column h-10 w-1/6 hover:bg-catalystLight-e4
-                               focus:outline-none focus:ring-gray-300 relative"
-                               onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})" > 
-                                      
-                <!-- tool-tip description section. -->
-                    <div id="tooltip${i}" role="tooltip" class="hidden z-20 w-64 fixed transition duration-150 ease-in-out top-1/2 right-14 ml-8 shadow-lg bg-white p-4 rounded">
-                    <p class="text-sm font-bold text-gray-800 pb-1" id="plono-${i}">${ploArray[i - 1][0]}</p>
-                    <p class="text-xs leading-4 text-gray-600 pb-3">${ploArray[i - 1][1]}</p>
-                    <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">Map view</button>  </div>
-                                    <span class="cprofile-cell-data">${i}</span> 
-                                </div>`
-            header.innerHTML += header_number;
-
-            let row_data = `<div class="cprofile-column h-10 w-1/6  "> 
-                                <input class="clo-toggle hidden" id="clo-1-plo-${i}" value="clo-1-plo-${i}" name="[clo-1][plo-${i}]" type="checkbox" />
-                                <label class="inside-label cprofile-cell-data" for="clo-1-plo-${i}">
-                                <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
-                                </label> 
-                            </div>`
-            clo_map_row_div.innerHTML += row_data;
-        }
     }
 
     function createCLORow(replicaNode, t, CLONumber) {
@@ -505,15 +344,7 @@ window.onload = function (e) {
         }
     }
 
-    function showErrorBox(header = 'Empty Alert!', message) {
-        $('#errorID span').text(header)
-        $('#errorID').textNodes().first().replaceWith(message);
-        $("#errorMessageDiv").toggle("hidden").animate(
-            {right: 0,}, 1000, function () {
-                $(this).delay(3000).fadeOut();
-            });
-        // $('#errorMessageDiv').removeAttr("style");
-    }
+
 
     function uniqueName(str, CLONumber) {
         return str.replace(incrementClo, CLONumber);

@@ -12,10 +12,10 @@
                     courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue
                 },
                 success: function (data) {
-                    // clearAllStorage();
-                    // setLocalStorage("courseCLO_key", arrayCLO)
-                    // setLocalStorage("courseMap_key", arrayMapping)
-                    // console.log("getting data from AJAX :", data)
+                    clearAllStorage();
+                    setLocalStorage("courseCLO_key", arrayCLO)
+                    setLocalStorage("courseMap_key", arrayMapping)
+                    console.log("getting data from AJAX :", data)
                     location.href = "courseprofile_view.php";
                 }
             });

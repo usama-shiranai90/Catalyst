@@ -24,14 +24,9 @@ class CourseProfile implements Persistable
     private $instructorInfo; // composition
     private $assessmentInfo; // composition
 
-
-    public static function create()
-    {
-        return new self();
-    }
-
-
-    public function __construct($courseTitle, $courseCode, $courseCreditHr, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective, $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook, $courseDescription, $courseOtherReference, $instructorInfo, $assessmentInfo)
+    public function __construct($courseTitle, $courseCode, $courseCreditHr, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
+                                $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook, $courseDescription,
+                                $courseOtherReference, $instructorInfo, $assessmentInfo)
     {
         $this->courseTitle = $courseTitle;
         $this->courseCode = $courseCode;
@@ -49,6 +44,11 @@ class CourseProfile implements Persistable
         $this->courseOtherReference = $courseOtherReference;
         $this->instructorInfo = $instructorInfo;
         $this->assessmentInfo = $assessmentInfo;
+    }
+
+    public static function create()
+    {
+        return new self();
     }
 
     public function getCourseTitle()
@@ -238,28 +238,22 @@ class CourseProfile implements Persistable
     }
 }
 
+//header('Content-Type: application/json');
 
-header('Content-Type: application/json');
+if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])) {
 
-if (!empty($_POST['arrayCLO']) && !empty($_POST['arrayMapping']) &&
-    !empty($_POST['courseEssentialFieldValue']) && !empty($_POST['courseDetailFieldValue'])) {
-
+    session_start();
+    $array_courseEssential = $_POST['courseEssentialFieldValue'];
+    $array_courseDetail = $_POST['courseDetailFieldValue'];
     $array_cCLO = $_POST['arrayCLO'];
     $array_cMapping = $_POST['arrayMapping'];
 
-    $courseProfile = new CourseProfile();
-
     // apply query to create save data on server.
-    //$_SESSION['course1'] = $array_cCLO ;
-    //$_SESSION['course2'] = $array_cMapping ;
-    $_SESSION['course3_clo'] = $array_cCLO;
-    $_SESSION['course4_map'] = $array_cMapping;
-    echo json_encode($array_cCLO[0]);
-    //print_r($array_cMapping);
+    $_SESSION['currentSubjectEssential_array'] = $array_courseEssential ;
+    $_SESSION['currentSubjectDetail_array'] = $array_courseDetail ;
+    $_SESSION['currentSubject_outcomeDetail_array'] = $array_cCLO;
+    $_SESSION['currentSubject_cloToPlo_array'] = $array_cMapping;
 
-} elseif (!isset($_POST['curriculumID']) && !isset($_POST['batchID']) && !isset($_POST['courseCodeID'])) {
-//    $courseProfile = new CourseProfile();
 }
-
 
 ?>

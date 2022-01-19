@@ -264,15 +264,105 @@
 
 
                             <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                                <div id="xxx" class="rounded-full">
+                                <div id="averageCLOAchievedID" class="rounded-full">
+                                    <!--                                    <apexchart type="radialBar" height="390" :options="chartOptions" :series="series"></apexchart>-->
+                                    <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
+                                        <h2 class="text-md font-bold text-center">Average Achieved CLO Score</h2>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 bg-white border-2 border-solid rounded-md">
+                                <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
+                                    <h2 class="text-md font-bold text-center">CLO's List</h2>
+                                </div>
+                                <table class="table-auto w-full text-left whitespace-no-wrap">
+                                    <thead>
+                                    <tr class="text-center bg-catalystLight-f5">
+                                        <th class="capitalize px-4 w-1/6 py-3 title-font tracking-wider font-medium text-sm rounded-tl rounded-bl">
+                                            CLO No
+                                        </th>
+                                        <th class="capitalize px-4 py-3 w-full title-font tracking-wider font-medium text-sm">
+                                            Description
+                                        </th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody id="">
+                                    <tr class="text-center text-sm font-base tracking-tight">
+                                        <td class="px-4 py-3">CLO 1</td>
+                                        <td class="px-4 py-3 ">Understand the role of design and its major activities within the OO software development process, with focus on the Unified process</td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                            <div class="col-span-2 bg-white border-2 border-solid rounded-md">
+                                <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
+                                    <h2 class="text-md font-bold text-center">Latest Assessment Created</h2>
+                                </div>
+                                <div class="px-4 py-0">
+                                    <p class="font-semibold text-based">Quizz : 2</p>
+                                    <p class="font-semibold text-based py-2">Topic:
+                                        <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2">topic detail here</span>
+                                    </p>
+                                    <div class="flex flex-col space-y-0">
+                                        <p class="font-semibold text-based py-2 text-gray-700">Weightage : <span
+                                                    class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2">3.5%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="border-t-4">
+                                    <table class="table-auto w-full text-left whitespace-no-wrap">
+                                        <thead>
+                                        <tr class="text-center bg-catalystLight-f5">
+                                            <th class="capitalize px-4 w-1/2 py-3 title-font tracking-wider font-medium text-sm rounded-tl rounded-bl">
+                                                Question No
+                                            </th>
+                                            <th class="capitalize px-4 py-3 w-full title-font tracking-wider font-medium text-sm">
+                                                CLO
+                                            </th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody id="">
+                                        <tr class="text-center text-sm font-base tracking-tight">
+                                            <td class="px-4 py-3">Question 1</td>
+                                            <td class="px-4 py-3 ">CLO 1</td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+
                                 </div>
                             </div>
                             <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                                <div id="averageCLOAchievedID" class="rounded-full">
-<!--                                    <apexchart type="radialBar" height="390" :options="chartOptions" :series="series"></apexchart>-->
-                                    <p>average score</p>
+                                <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
+                                    <h2 class="text-md font-bold text-center">Latest Created Weekly Topic</h2>
+                                </div>
+                                <!--                                    <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/CLO_white_svg.svg">-->
+                                <div class="px-4 py-0">
+                                    <p class="font-semibold text-based py-2">Week : 1</p>
+                                    <p class=" mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2 text-gray-700">
+                                        description here</p>
+                                    <div class="flex flex-col my-5 space-y-0">
+                                        <p class="font-semibold text-based py-2">Assessment:
+                                            <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2">enter detail of assessment here</span>
+                                        </p>
+                                        <!--                                        <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>-->
+                                    </div>
+                                </div>
+                                <div class="px-4 border-t-4">
+                                    <div id="" class=" flex flex-row my-5 items-center w-full text-center">
+                                        <a class="capitalize font-semibold text-base w-full">CLO-1</a>
+                                        <a class="capitalize font-semibold text-base w-full">CLO-2</a>
+                                        <a class="capitalize font-semibold text-base w-full">CLO-3</a>
+                                    </div>
                                 </div>
                             </div>
+
 
                             <!--   Enrolled Courses.  -->
                             <div class="col-span-4 flex flex-row border-2 border-solid rounded-md">
@@ -367,110 +457,8 @@
     totalCLO = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4'];  // fetch from server
     avgScorePerCLO = [66, 51, 33, 10];  // fetch from server
 
-    let ploChart = new ApexCharts(document.querySelector("#xxx"), getStudentPLOProgress(ploArray));
     let averageCLOAchievedChart = new ApexCharts(document.querySelector("#averageCLOAchievedID"), getOverAllCloAvg(avgScorePerCLO));
-    ploChart.render();
     averageCLOAchievedChart.render();
-
-    function getStudentPLOProgress(ploArrayList) {
-        return {
-            series: [{
-                name: 'PLO',
-                data: ploArrayList,  // data we fetch from php of students overall PLOs score.
-            }],
-            chart: {
-                height: 400,
-                type: 'bar',
-                stacked: true,
-                events: {
-                    click: function (chart, w, e) {
-
-                    }
-                },
-                toolbar: {
-                    /*tools: {
-                        // download: '<img src="../../assets/images/1101098.png" width="20" height="20" />',
-                        customIcons: [{
-                            html: '<i class="fa fa-angle-down">xxxx</i>',
-                            onClick: function(e, chartContext) {
-                                console.log(e) },
-                            appendTo: 'left' // left / top means the button will be appended to the left most or right most position
-                        }]
-                    }*/
-                    show: false
-                }
-            },
-            colors: colors,
-            plotOptions: {
-                bar: {
-                    borderRadius: 6,
-                    columnWidth: '30%',
-                    distributed: true,
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                show: false,
-            },
-            title: {
-                text: 'Outcome Based Chart',
-                floating: true,
-                enabled: true,
-                style: {
-                    colors: ['#111']
-                },
-                background: {
-                    enabled: true,
-                    foreColor: '#fff',
-                    borderWidth: 0
-                },
-                offsetX: 15
-            },
-            subtitle: {
-                text: 'Following graph shows current status of PLO covered so far.',
-                offsetX: 15,
-                offsetY: 22
-            },
-            xaxis: {
-                min: 1,
-                max: ploArrayList.size,
-                categories: [ // Mention each PLO  here.
-                    ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12']],
-
-                labels: {
-                    enabled: true,
-                    style: {colors: ['#111']},
-                    background: {enabled: true, foreColor: '#fff', borderWidth: 0},
-                },
-                title: {
-                    text: "Program Learning Outcome",
-                    offsetX: 0,
-                    offsetY: 0,
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        cssClass: 'apexcharts-xaxis-title',
-                    },
-                },
-            },
-            yaxis: {
-                min: 0,
-                max: 100,
-                title: {
-                    text: "Percentage",
-                    offsetX: 0,
-                    offsetY: 0,
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        cssClass: 'apexcharts-xaxis-title',
-                    },
-                }
-            }
-        };
-    }
 
     function getOverAllCloAvg(avgScorePerCLO) {
         return {
@@ -516,7 +504,7 @@
                 markers: {
                     size: 0
                 },
-                formatter: function(seriesName, opts) {
+                formatter: function (seriesName, opts) {
                     return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
                 },
                 itemMargin: {
@@ -525,7 +513,7 @@
             },
             xaxis: {
                 title: {
-                    show:true,
+                    show: true,
                     text: "Program Learning Outcome",
                     offsetX: 0,
                     offsetY: 0,

@@ -1,8 +1,26 @@
 <?php
+
+include "phpcode/CourseProfile.php";
+//include "phpcode/CourseInstructor.php";
+//include "phpcode/AssessmentWeight.php";
+
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
+$cp_data = $_SESSION['currentSubjectEssential_array'];
+
+$courseProfile  = new CourseProfile("Operation Research", "OR0192", "3", "7th Semester" ,
+    "F18 Bachy",  "Undergraduate" , "F-18 and onwards","None"
+,"Still None" , "23" , "many reference" ,
+    "Dr.Shaheen","xxxxxxxxxxxxxxxxxxxx","none reference" ,null, null);
+
 $profileID = 1;
+
+// fetch data from server.
+
+
+
+
 
 ?>
 <!doctype html>
@@ -96,361 +114,262 @@ $profileID = 1;
             <section id="cpWholeDetail" class="cprofile-content-box-border cprofile-grid mx-0 my-0 ">
                 <!--   base information   -->
                 <div class="cprofile-content-division bg-white">
-                    <div class="cprofile-left-container mx-3 w-1/4">
+
+                    <div class="cprofile-left-container mx-3 w-2/5 ml-5">
                         <!--                        course title-->
-                        <div class="textField-label-content w-full" id="courseTitleDivId">
-                            <label for="courseTitleID"></label>
-                            <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                   name="courseTitle">
-                            <label class="textField-label">Course Title</label>
+                        <!--                        <div class="flex flex-row w-full" id="courseTitleDivId">
+                            <label class="w-1/2 text-base font-bold">Course Title<span>:&nbsp;</span></label>
+                            <label class="w-full text-sm leading-6"> Operation Research</label>
+                        </div>-->
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Course Title:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"><?php echo $courseProfile->getCourseTitle() ?></span>
+                            </p>
                         </div>
 
                         <!--                        course Code-->
-                        <div class="textField-label-content w-full" id="courseCodeDivId">
-                            <label for="courseCodeID"></label>
-                            <input class="textField" type="text" placeholder=" " id="courseCodeID"
-                                   name="courseCode">
-                            <label class="textField-label">Course Code</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Course Code:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseCodeID-view"><?php echo $courseProfile->getCourseCode() ?></span>
+                            </p>
                         </div>
 
                         <!--                        credit Hour-->
-                        <div class="textField-label-content w-full" id="creditHourDivId">
-                            <label for="creditHourID"></label>
-                            <select class="select" name="creditHour"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
-                                    id="creditHourID">
-                                <option value="" hidden></option>
-                                <option value="one">1</option>
-                                <option value="two">2</option>
-                                <option value="three">3</option>
-                            </select>
-                            <label class="select-label top-1/4 sm:top-3">Credit Hour</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Credit Hour:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="creditHourID-view"><?php echo $courseProfile->getCourseCreditHr() ?></span>
+                            </p>
                         </div>
+
+
 
                         <!--                        Pre requisite-->
-                        <div class="textField-label-content w-full" id="preRequisiteDivId">
-                            <label for="preRequisiteID"></label>
-                            <select class="select" name="preRequisite"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
-                                    id="preRequisiteID">
-                                <option value="" hidden></option>
-                                <option value="one">Programming Fundamental</option>
-                            </select>
-                            <label class="select-label top-1/4 sm:top-3">Pre-Requisites</label>
+
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Course Pre-requisite:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="preRequisiteID-view"><?php echo "ajeeb" ?></span>
+                            </p>
                         </div>
+
 
                         <!--                       Term (select semester )-->
-                        <div class="select-label-content w-full" id="TermDivId">
-                            <label for="semesterTermID"></label>
-                            <select class="select" name="semesterTerm"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
-                                    id="semesterTermID">
-                                <option value="" hidden></option>
-                                <option value="one">Programming Fundamental</option>
-                            </select>
-
-                            <label class="select-label top-1/4 sm:top-3">Term</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Term:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="semesterTermID-view"><?php echo $courseProfile->getCourseProgram() ?></span>
+                            </p>
                         </div>
+
 
                         <!--                       Program level-->
-                        <div class="textField-label-content w-full" id="programLevelDivId">
-                            <label for="ProgramLevelID"></label>
-                            <input class="textField" type="text" id="ProgramLevelID" name="ProgramLevel"
-                                   value="Undergraduate" readonly>
-                            <label class="textField-label">Program level</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Program level:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="ProgramLevelID-view"><?php echo $courseProfile->getCourseProgramLevel() ?></span>
+                            </p>
                         </div>
 
-                        <!--                        program-->
-                        <div class="textField-label-content w-full" id="programDivId">
-                            <label for="programID"></label>
-                            <select class="select" name="program"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value="" id="programID">
-                                <option value="" hidden></option>
-                                <option value="one">BCSE</option>
-                                <option value="one">BSIT</option>
-                            </select>
 
-                            <label class="select-label top-1/4 sm:top-3">Program</label>
+                        <!--                        program-->
+
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Program:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="programID-view">BCSE</span>
+                            </p>
                         </div>
 
                         <!--                        course effective-->
-                        <div class="textField-label-content w-full" id="courseEffectiveDivId">
-                            <label for="courseEffectiveID"></label>
-                            <select class="select" name="courseEffective"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
-                                    id="courseEffectiveID">
-                                <option value="" hidden></option>
-                                <option value="one">Fall-16 Batch Onwards</option>
-                                <option value="one">Fall-18 Batch Onwards</option>
-                            </select>
-                            <label class="select-label top-1/4 sm:top-3">Course Effective</label>
+
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Course Effective:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseEffectiveID-view">Fall-18 Batch Onwards</span>
+                            </p>
                         </div>
 
-                        <div class="textField-label-content w-full" id="coordinatingUnitDivId">
-                            <label for="coordinatingUnitID"></label>
-                            <select class="select" name="coordinatingUnit"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
-                                    id="coordinatingUnitID">
-                                <option value=" " hidden></option>
-                                <option value="one">BCSE</option>
-                                <option value="two">BSCS</option>
-                                <option value="three">BSIT</option>
-                            </select>
-                            <label class="select-label top-1/4 sm:top-3">Coordinating Unit</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Coordinating Unit:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="coordinatingUnitID-view">.....</span>
+                            </p>
                         </div>
 
-                        <div class="textField-label-content w-full" id="teachingMethodologyDivID">
-                            <label for="teachingMethodologyID"></label>
-                            <input class="textField" type="text" placeholder=" " id="teachingMethodologyID"
-                                   name="teachingMethodology">
-                            <label class="textField-label">teaching Methodology</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">teaching Methodology:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="teachingMethodologyID-view">....</span>
+                            </p>
                         </div>
 
-                        <div class="textField-label-content w-full" id="courseInteractionModelDivId">
-                            <label for="courseInteractionModelID"></label>
-                            <input class="textField" type="text" placeholder="Interaction model"
-                                   id="courseInteractionModelID"
-                                   name="courseInteractionModel">
-                            <label class="textField-label">Course Model</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Course Model:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseInteractionModelID-view">idk</span>
+                            </p>
                         </div>
 
-                        <div class="textField-label-content w-full" id="ReferenceBooksDivId">
-                            <label for="referenceBooksID"></label>
-                            <input class="textField" type="text" placeholder=" " id="referenceBooksID"
-                                   name="ReferenceBooks">
-                            <label class="textField-label">ReferenceBooks</label>
+
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">ReferenceBooks:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="referenceBooksID-view">....</span>
+                            </p>
                         </div>
 
-                        <div class="textField-label-content w-full" id="recommendedTextbooksDivId">
-                            <label for="recommendedTextbooksID"></label>
-                            <input class="textField" type="text" placeholder=" " id="recommendedTextbooksID"
-                                   name="RecommendedTextbooks">
-                            <label class="textField-label">RecommendedTextbooks</label>
+
+
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">RecommendedTextbooks:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="recommendedTextbooksID-view">.......</span>
+                            </p>
                         </div>
 
-                        <div class="textField-label-content w-full" id="courseDescriptionDivId">
-                            <label for="courseDescriptionID"></label>
-                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                      id="courseDescriptionID" name="assignmentDetail"
-                                      style="height: 9em"></textarea>
-                            <label class="textField-label">Course Description</label>
+
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Course Description:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseDescriptionID-view">CSS SlideShow – Are you looking for CSS based SideShow Plugins, If yes then in this post I am going to share hand-picked CSS SlideShow Examples for you. jQuery sliders, slideshows, and galleries are extremely common on a variety of different types of websites. Portfolio sites, blogs, e-commerce sites, and about any type of site can make use of a jQuery slideshow. Fortunately, there are a number of great plugins already coded that make it easy to add a slideshow</span>
+                            </p>
                         </div>
 
-                        <div class="textField-label-content w-full" id="otherRefDivId">
-                            <label for="otherReferenceId"></label>
-                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                      id="otherReferenceId" name="otherReference"
-                                      style="height: 9em"></textarea>
-                            <label class="textField-label">Other reference Material</label>
+                        <div class="flex flex-row my-2  w-full space-y-0">
+                            <p class="font-semibold text-based py-2 text-justify">Other reference Material:&nbsp;
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="otherReferenceId-view">Operation Research</span>
+                            </p>
                         </div>
+
 
                     </div>
-                    <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
-                        <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
-                                        border-b-2 border-solid mb-10 shadow-md" style="background-color: #0284fc">
+                    <div class="cprofile-right-container flex-1 w-2/5 ml-20 pb-5 mr-5">
+
+                        <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 border-solid mb-10 shadow-md" style="background-color: #0284fc">
                             <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
                             <div class="grid bg-white border-solid border-t-2 text-center">
-                                <div class="assessment-wrap mx-35">
-                                    <h3>Name</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+                                    <h4 class="font-semibold text-based py-2 w-1/3">Name:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id="nameWeightDivId">
-                                        <label for="quizDetailID"></label>
-                                        <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                  id="nameID"
-                                                  name="nameDetail"></textarea>
-                                        <label class="textField-label my-2">Detail</label>
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="otherReferenceID-view">hello mello</span>
                                 </div>
-                                <!--                                                           Designation-->
-                                <div class="assessment-wrap mx-35 ">
-                                    <h3>Designation</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2 ">
+                                    <h4 class="font-semibold text-based py-2 w-1/3">Designation:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id="designationWeightDivId">
-                                        <label for="DesignationDetailID"></label>
-                                        <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                  id="designationID"
-                                                  name="DesignationDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="DesignationDetailID-view"></span>
                                 </div>
-                                <!--                                                          Qualification-->
-                                <div class="assessment-wrap mx-35">
-                                    <h3>Qualification</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+
+                                    <h4 class="font-semibold text-based py-2 w-1/3">Qualification:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id=" qualificationWeightDivId">
-                                        <label for=" QualificationDetailID"></label>
-                                        <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                  id="qualificationID"
-                                                  name=" QualificationDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="QualificationDetailID-view"></span>
                                 </div>
-                                <div class="assessment-wrap mx-35">
-                                    <h3>Specialization</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+                                    <h4 class="font-semibold text-based py-2 w-1/3">Specialization:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id=" SpecializationWeightDivId">
-                                        <label for=" SpecializationDetailID"></label>
-                                        <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                  id="specializationID"
-                                                  name=" SpecializationDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="specializationID-view"></span>
                                 </div>
-                                <div class="assessment-wrap mx-35">
-                                    <h3>Contacts</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+
+                                    <h4 class="font-semibold text-based py-2 w-1/3">Contacts:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id=" contactsWeightDivId">
-                                        <label for="ContactsDetailID"></label>
-                                        <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                  id="contactsID"
-                                                  name="ContactsDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="ContactsDetailID-view"></span>
+
                                 </div>
-                                <div class="assessment-wrap mx-35">
-                                    <h3>Personal Email</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+
+                                    <h4 class="font-semibold text-based py-2 w-1/3">Personal Email:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id=" personalEmailWeightDivId">
-                                        <label for="PersonalEmailDetailID"></label>
-                                        <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                  id="personalEmailID"
-                                                  name="PersonalEmailDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="PersonalEmailDetailID-view"></span>
+
                                 </div>
+
                             </div>
                         </div>
+
 
                         <div class="course-assessment-border shadow-md" style="background-color: #0284FC">
                             <h2 class="table-head">Assessment Instrument with Weights</h2>
-                            <div class="grid bg-white  border-solid border-t-2 py-3">
-                                <div class="assessment-wrap">
-                                    <h3>Quizzes</h3>
+                            <div class="grid bg-white  border-solid border-t-2 py-3 text-center">
+
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Quizzes (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id="quizDetailDivId">
-                                        <label for="quizDetailID"></label>
-                                        <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                  id="quizDetailID"
-                                                  name="quizDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
-
-                                    <div class="textField-label-content w-2/3" id="quizWeightDivId">
-                                        <label for="quizWeight"></label>
-                                        <input type="text" placeholder=" " name="quizWeight"
-                                               id="quizWeightID"
-                                               class="textField px-12"
-                                               style="padding-left:2.3em ">
-                                        <label class="textField-label ml-3">Weights</label>
-
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                                            <span class="text-gray-500 sm:text-sm">%</span>
-                                        </div>
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="quizWeightID-view">2.5%</span>
                                 </div>
-                                <div class="assessment-wrap">
-                                    <h3>Assignments</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Assignment (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id="assignmentDetailDivId">
-                                        <label for="assignmentDetailID"></label>
-                                        <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                  id="assignmentDetailID" name="assignmentDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
-                                    <div class="textField-label-content w-2/3" id="assignmentWeightDivId">
-                                        <label for="assignmentWeightID"></label>
-                                        <input type="text" placeholder=" " name="assignmentWeight"
-                                               id="assignmentWeightID" class="textField px-12"
-                                               style="padding-left:2.3em ">
-
-                                        <label class="textField-label ml-3">Weights</label>
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                                            <span class="text-gray-500 sm:text-sm">%</span>
-                                        </div>
-
-                                    </div>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="assignmentWeightID-view">2.5%</span>
                                 </div>
-                                <div class="assessment-wrap">
-                                    <h3>Projects</h3>
+
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Projects (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <div class="textField-label-content w-full" id="projectDetailDivId">
-                                        <label for="projectDetailID"></label>
-                                        <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                  id="projectDetailID" name="projectDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
-
-                                    <div class="textField-label-content w-2/3" id="projectWeightDivId">
-                                        <label for="projectWeightID"></label>
-                                        <input type="text" placeholder=" " name="projectWeight"
-                                               id="projectWeightID" class="textField px-12" style="padding-left:2.3em ">
-
-                                        <label class="textField-label ml-3">Weights</label>
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                                            <span class="text-gray-500 sm:text-sm">%</span>
-                                        </div>
-
-                                    </div>
-
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="projectWeightID-view">2.5%</span>
                                 </div>
-                                <div class="assessment-wrap">
-                                    <h3>Mid Term</h3>
 
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Mid-Term (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-
-                                    <div class="textField-label-content w-full" id="midTermDetailDivId">
-                                        <label for="midTermDetailID"></label>
-                                        <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                  id="midTermDetailID" name="midTermDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
-
-                                    <div class="textField-label-content w-2/3" id="midTermWeightDivId">
-                                        <label for="midWeightID"></label>
-                                        <input type="text" placeholder=" " name="midWeight" id="midWeightID"
-                                               class="textField px-12" style="padding-left:2.3em ">
-                                        <label class="textField-label ml-3">Weights</label>
-
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                                            <span class="text-gray-500 sm:text-sm">%</span>
-                                        </div>
-
-                                    </div>
-
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="midtermWeightID-view">2.5%</span>
                                 </div>
-                                <div class="assessment-wrap">
-                                    <h3>Final Term</h3>
 
+                                <div class="assessment-wrap mx-35 space-y-0 my-2">
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Final-Term (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-
-                                    <div class="textField-label-content w-full" id="finalTermDetailDivId">
-                                        <label for="finalTermDetailID"></label>
-                                        <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                  id="finalTermDetailID" name="finalTermDetail"></textarea>
-                                        <label class="textField-label">Detail</label>
-                                    </div>
-
-                                    <div class="textField-label-content w-2/3" id="finalTermWeightDivId">
-                                        <label for="finalTermtWeight"></label>
-                                        <input type="text" placeholder=" " name="finalWeight" id="finalWeightID"
-                                               class="textField px-12" style="padding-left:2.3em ">
-                                        <label class="textField-label ml-3">Weights</label>
-
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                                            <span class="text-gray-500 sm:text-sm">%</span>
-                                        </div>
-
-                                    </div>
-
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="finaltermWeightID-view">2.5%</span>
                                 </div>
+
+
                             </div>
                         </div>
+
+
+                        <!--<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                            <div class="px-4 py-5 sm:px-6"  style="background-color: #0284fc">
+                                <h3 class="text-lg leading-6 font-bold text-white text-center" >
+                                    Applicant Information
+                                </h3>
+                            </div>
+                            <div class="border-t border-gray-200">
+
+                                <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                                    <h4 class="font-semibold text-based w-1/3">Name:&nbsp;</h4>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="otherReferenceID-view">hello mello</span>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Application for
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        Backend Developer
+                                    </dd>
+                                </div>
+                                <div class=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Email address
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        margotfoster@example.com
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Salary expectation
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        $120,000
+                                    </dd>
+                                </div>
+                                <div class=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        About
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu.
+                                    </dd>
+                                </div>
+
+                            </div>
+                        </div>-->
 
                     </div>
                 </div>
@@ -474,19 +393,22 @@ $profileID = 1;
                     </button>
 
                     <script>
-                        //location.href = "courseprofile.php?profileID="+<?php //echo $profileID?>//;
+
+                        $('updateCourseProfilebtn').on('click', function () {
+                            location.href = "courseprofile.php?profileID="+<?php echo $profileID?>;
+                        })
                     </script>
                 </div>
             </section>
         </div>
     </main>
 
-</div>
-</body>
 <script src="CourseProfileAssets/js/additionalWork.js"></script>
 <script>
     let curriculumID = <?php echo json_encode($_SESSION['cpid'], JSON_HEX_TAG) ?>)
     let batchID = <?php echo json_encode($_SESSION['batchcode'], JSON_HEX_TAG) ?>)
+    </div>
+    </body>
     let courseCodeID = <?php echo json_encode($_SESSION['ccode'], JSON_HEX_TAG) ?>)
 
     $.ajax({

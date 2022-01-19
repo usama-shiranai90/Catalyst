@@ -7,9 +7,11 @@ if (isset($_POST['profileContinue3rd'])) {
         print_r($fu);
     }
 }*/
-
+$var = '';
 if (isset($_GET['profileID'])) {
     echo "im in editing mode";
+    $var = "hello";
+
 }
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
@@ -71,6 +73,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
     <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
+    <script src="CourseProfileAssets/js/cpm_common.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/additionalWork.js"></script>
     <script type="text/javascript">
@@ -214,7 +217,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                             <div class="textField-label-content w-full" id="courseTitleDivId">
                                 <label for="courseTitleID"></label>
                                 <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                       name="courseTitle">
+                                       name="courseTitle" value="<?php echo $var; ?>">
                                 <label class="textField-label">Course Title</label>
                             </div>
 
@@ -321,22 +324,15 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
 
-                            <div class="course-assessment-border border-t-2 shadow-sm"
+                            <div class="course-assessment-border border-t-2 shadow-sm px-1 pb-1"
                                  style="background-color: #0284FC">
                                 <h2 class="table-head">Assessment Instrument with Weights</h2>
-                                <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
-                                    <div class="assessment-wrap">
+                                <div class="grid bg-white  border-solid border-t-2 py-3 -mb-0.5 -mx-0.5">
+                                    <div class="assessment-wrap px-12">
                                         <h3>Quizzes</h3>
                                         <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id="quizDetailDivId">
-                                            <label for="quizDetailID"></label>
-                                            <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                      id="quizDetailID"
-                                                      name="quizDetail"></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
 
-                                        <div class="textField-label-content w-2/3" id="quizWeightDivId">
+                                        <div class="textField-label-content  w-2/5" id="quizWeightDivId">
                                             <label for="quizWeight"></label>
                                             <input type="text" placeholder=" " name="quizWeight"
                                                    id="quizWeightID"
@@ -352,16 +348,11 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="assessment-wrap">
+                                    <div class="assessment-wrap px-12">
                                         <h3>Assignments</h3>
                                         <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id="assignmentDetailDivId">
-                                            <label for="assignmentDetailID"></label>
-                                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      id="assignmentDetailID" name="assignmentDetail"></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
-                                        <div class="textField-label-content w-2/3" id="assignmentWeightDivId">
+
+                                        <div class="textField-label-content  w-2/5" id="assignmentWeightDivId">
                                             <label for="assignmentWeightID"></label>
                                             <input type="text" placeholder=" " name="assignmentWeight"
                                                    id="assignmentWeightID" class="textField px-12"
@@ -376,17 +367,12 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
 
                                         </div>
                                     </div>
-                                    <div class="assessment-wrap">
+                                    <div class="assessment-wrap px-12">
                                         <h3>Projects</h3>
                                         <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id="projectDetailDivId">
-                                            <label for="projectDetailID"></label>
-                                            <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                      id="projectDetailID" name="projectDetail"></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
 
-                                        <div class="textField-label-content w-2/3" id="projectWeightDivId">
+
+                                        <div class="textField-label-content  w-2/5" id="projectWeightDivId">
                                             <label for="projectWeightID"></label>
                                             <input type="text" placeholder=" " name="projectWeight"
                                                    id="projectWeightID" class="textField px-12"
@@ -402,19 +388,14 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         </div>
 
                                     </div>
-                                    <div class="assessment-wrap">
+                                    <div class="assessment-wrap px-12">
                                         <h3>Mid Term</h3>
 
                                         <div class="vertical-line"></div>
 
-                                        <div class="textField-label-content w-full" id="midTermDetailDivId">
-                                            <label for="midTermDetailID"></label>
-                                            <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                      id="midTermDetailID" name="midTermDetail"></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
 
-                                        <div class="textField-label-content w-2/3" id="midTermWeightDivId">
+
+                                        <div class="textField-label-content  w-2/5" id="midTermWeightDivId">
                                             <label for="midWeightID"></label>
                                             <input type="text" placeholder=" "
                                                    oninput="isNumeric(this)"
@@ -430,19 +411,13 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         </div>
 
                                     </div>
-                                    <div class="assessment-wrap">
+                                    <div class="assessment-wrap px-12">
                                         <h3>Final Term</h3>
 
                                         <div class="vertical-line"></div>
 
-                                        <div class="textField-label-content w-full" id="finalTermDetailDivId">
-                                            <label for="finalTermDetailID"></label>
-                                            <textarea class="textarea-h textField" type="tex" placeholder=" "
-                                                      id="finalTermDetailID" name="finalTermDetail"></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
 
-                                        <div class="textField-label-content w-2/3" id="finalTermWeightDivId">
+                                        <div class="textField-label-content  w-2/5" id="finalTermWeightDivId">
                                             <label for="finalTermtWeight"></label>
                                             <input type="text" placeholder=" "
                                                    oninput="isNumeric(this)"
@@ -768,7 +743,7 @@ if ($_SESSION['typeOfProfile'] == 1) {
         let ploObject = " . json_encode($PLOsArray, JSON_HEX_TAG) . ";
         ploArray = Object.entries(ploObject);
 </script>
-<script src='CourseProfileAssets/CourseProfileCreationScript.js'></script>
+<script src='CourseProfileAssets/CourseProfileScript.js'></script>
 ";
 }
 ?>
