@@ -155,8 +155,7 @@ window.onload = function (e) {
                 });
             }
             //courseEssentialFieldValue , courseDetailFieldValue ,
-            creationAjaxCall(arrayCLO, arrayMapping);
-
+            creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue);
 
             /*if (outcomeLearningContainer.children.length < 2) { // generate alert
                 $("main").addClass("blur-filter");
@@ -179,7 +178,7 @@ window.onload = function (e) {
         });
 
         $(document).on('click', "img[data-clo-des='remove']", function (event) {
-            event.stopImmediatePropagation()
+            event.stopImmediatePropagation();
             // const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');  // clo-3 ya clo-2 us ma sa 3 ya 2 ko extract kary ga.
             const dischargedIndex = $(event.target).closest('.learning-outcome-row').index();
 
@@ -217,26 +216,27 @@ window.onload = function (e) {
 
     });
 
-
-    let totalWeight = 0;
+    let totalWeight;
 
     const isWeightExceeded = () => {
-        let weight_array = [instrumentWeight.quizzsection.weight,instrumentWeight.assignmentsection.weight,
-            instrumentWeight.projectsection.weight,instrumentWeight.midsection.weight,instrumentWeight.finalsection.weight]
-
+        totalWeight = 0;
+        let weight_array = [instrumentWeight.quizzsection.weight, instrumentWeight.assignmentsection.weight,
+            instrumentWeight.projectsection.weight, instrumentWeight.midsection.weight, instrumentWeight.finalsection.weight]
+        let flag = true;
         weight_array.forEach(function (item, index) {
 
-            totalWeight += parseInt(item.value , 10);
-            console.log(item.value , typeof totalWeight , totalWeight)
+            totalWeight += parseInt(item.value, 10);
+            console.log(item.value, typeof totalWeight, totalWeight)
 
-            if (totalWeight > 99){
+            if (totalWeight > 99) {
                 item.parentElement.classList.add("textField-error-input");
-
-                return false;
+                flag = false;
+                return flag;
             }
         });
-        console.log(totalWeight , "totl")
-        return true;
+        if (flag)
+            return true;
+        else return false;
     }
 
     function checkEmptyFields(fieldsArray, counter) {  //textField-error-input
@@ -245,15 +245,14 @@ window.onload = function (e) {
 
         if (counter === 1) {
             if (completeFlag) {
-
-                if (isWeightExceeded()){
+                console.log(isWeightExceeded())
+                if (isWeightExceeded()) {
                     $('#cpEssentialID').addClass("hidden");
                     $('#cpDetaillID').removeClass("hidden");
                     for (let i = 0; i < fieldsArray.length; i++) {
                         courseEssentialFieldValue.push(fieldsArray[i].value);
                     }
-                }
-                else{
+                } else {
                     showErrorBox("Weight for assessment is exceeded");
                 }
 
@@ -288,7 +287,6 @@ window.onload = function (e) {
             // outcomeLearningContainer.innerHTML += createFirstCLODetailRow();
             outcomeLearningContainer.appendChild(createFirstCLODetailRow())
 
-            console.log(ploArray.length, " chuss")
             createFirstCLOMapRow(ploArray.length); // pass no of PLOs you have per curriculum.
         } else {
             const newCLORowDetail = document.getElementById('CourseLearningRow-' + incrementClo);

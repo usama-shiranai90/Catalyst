@@ -119,10 +119,10 @@
             </svg>
         </div>
 
-<!--        Navigation items start-->
+        <!--        Navigation items start-->
 
         <div class="mt-5 relative h-full">
-<!--            Class Selector-->
+            <!--            Class Selector-->
             <div class="select-label-content classSelector w-full" id="classDiv">
                 <select class="select" name="class" value="" id="classFromSidePanel"
                         onclick="this.setAttribute('value', this.value);"
@@ -210,7 +210,7 @@
             </div>
 
             <!--            Logout-->
-            <div class="flex justify-center w-full bottom-3 absolute" >
+            <div class="flex justify-center w-full bottom-3 absolute">
                 <div class="logout rounded-md bg-white w-2/3 p-0.5 cursor-pointer" id="logout">
                     <svg class="inline-block" width="25" height="25" viewBox="0 0 30 31" fill="none"
                          xmlns="http://www.w3.org/2000/svg">
@@ -223,8 +223,8 @@
         </div>
     </div>
     <div class="ml-48 w-full h-full" id="teacherMainContent">
-<!--        Pages to load go here through scripts-->
-<!--        <iframe class="h-full" src="example1.php" style="width: 100%"></iframe>-->
+        <!--        Pages to load go here through scripts-->
+        <!--        <iframe class="h-full" src="example1.php" style="width: 100%"></iframe>-->
 
         <div class="w-full min-h-full">
             <main class="container mx-auto py-3 max-w-7xl px-5">
@@ -237,7 +237,8 @@
                             <div class="shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="rounded-full relative">
-                                        <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Student <br>Strength</p>
+                                        <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Student
+                                            <br>Strength</p>
                                     </div>
                                     <p class="text-3xl font-semibold" style="color: #003C9C">7</p>
                                 </div>
@@ -245,7 +246,8 @@
                             <div class="shadow-lg col-span-2 rounded-2xl w-full h-40  p-4 py-4 bg-white">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="rounded-full relative">
-                                        <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-12 mt-4">Assign Sections</p>
+                                        <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-12 mt-4">
+                                            Assign Sections</p>
                                     </div>
                                     <p class="text-3xl font-semibold" style="color: #003C9C">15</p>
                                 </div>
@@ -253,18 +255,22 @@
                             <div class="shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="rounded-full relative">
-                                        <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">---</p>
+                                        <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">
+                                            ---</p>
                                     </div>
                                     <p class="text-3xl font-semibold" style="color: #003C9C">-</p>
                                 </div>
                             </div>
+
 
                             <div class="col-span-2 bg-white border-2 border-solid rounded-md">
                                 <div id="xxx" class="rounded-full">
                                 </div>
                             </div>
                             <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                                <div id="xxxxx" class="rounded-full">
+                                <div id="averageCLOAchievedID" class="rounded-full">
+<!--                                    <apexchart type="radialBar" height="390" :options="chartOptions" :series="series"></apexchart>-->
+                                    <p>average score</p>
                                 </div>
                             </div>
 
@@ -281,23 +287,28 @@
                                         <div class="mb-10  py-1 gap-5 grid grid-rows-6 font-medium text-sm text-gray-700">
                                             <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
                                                 <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                                <img class="w-5" id="s-arrow-r" alt=""
+                                                     src="../../../Assets/Images/left-arrow.svg">
                                             </div>
                                             <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
                                                 <p class=" px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                                <img class="w-5" id="s-arrow-r" alt=""
+                                                     src="../../../Assets/Images/left-arrow.svg">
                                             </div>
                                             <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
                                                 <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                                <img class="w-5" id="s-arrow-r" alt=""
+                                                     src="../../../Assets/Images/left-arrow.svg">
                                             </div>
                                             <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
                                                 <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                                <img class="w-5" id="s-arrow-r" alt=""
+                                                     src="../../../Assets/Images/left-arrow.svg">
                                             </div>
                                             <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
                                                 <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
+                                                <img class="w-5" id="s-arrow-r" alt=""
+                                                     src="../../../Assets/Images/left-arrow.svg">
                                             </div>
                                         </div>
                                     </section>
@@ -325,8 +336,12 @@
                                         <tbody id="courseTableBodyID">
                                         <tr class="text-center text-sm font-base tracking-tight">
                                             <td class="px-4 py-3">CLO-1</td>
-                                            <td class="px-4 py-3 ">To control the letter spacing of an element at a specific breakpoint</td>
-                                            <td class="px-4 py-3"><i class="fa text-gray-600 fa-ellipsis-v hover:text-catalystBlue-l61"></i></td>
+                                            <td class="px-4 py-3 ">To control the letter spacing of an element at a
+                                                specific breakpoint
+                                            </td>
+                                            <td class="px-4 py-3"><i
+                                                        class="fa text-gray-600 fa-ellipsis-v hover:text-catalystBlue-l61"></i>
+                                            </td>
                                         </tr>
 
                                         </tbody>
@@ -348,14 +363,14 @@
 <script>
     const colors = ['#016ADD', '#0183FB', '#4DBFFE']
 
-    ploArray = [24,55,99.9,52,72,57,0 , 0 , 0 ,18,51,38]; // fetch from server.
-    semesterResultArray = [2.35 , 3.52 , 3.8 ,3.9 ,3.4];  // fetch from server
+    ploArray = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38]; // fetch from server.
+    totalCLO = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4'];  // fetch from server
+    avgScorePerCLO = [66, 51, 33, 10];  // fetch from server
 
     let ploChart = new ApexCharts(document.querySelector("#xxx"), getStudentPLOProgress(ploArray));
-    let gpaChart = new ApexCharts(document.querySelector("#xxxxx"), getStudentGPA(semesterResultArray));
-
+    let averageCLOAchievedChart = new ApexCharts(document.querySelector("#averageCLOAchievedID"), getOverAllCloAvg(avgScorePerCLO));
     ploChart.render();
-    gpaChart.render();
+    averageCLOAchievedChart.render();
 
     function getStudentPLOProgress(ploArrayList) {
         return {
@@ -368,7 +383,7 @@
                 type: 'bar',
                 stacked: true,
                 events: {
-                    click: function(chart, w, e) {
+                    click: function (chart, w, e) {
 
                     }
                 },
@@ -413,21 +428,21 @@
                 },
                 offsetX: 15
             },
-            subtitle:{
+            subtitle: {
                 text: 'Following graph shows current status of PLO covered so far.',
                 offsetX: 15,
                 offsetY: 22
             },
             xaxis: {
                 min: 1,
-                max : ploArrayList.size,
+                max: ploArrayList.size,
                 categories: [ // Mention each PLO  here.
                     ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12']],
 
                 labels: {
                     enabled: true,
                     style: {colors: ['#111']},
-                    background: { enabled: true, foreColor: '#fff', borderWidth: 0  },
+                    background: {enabled: true, foreColor: '#fff', borderWidth: 0},
                 },
                 title: {
                     text: "Program Learning Outcome",
@@ -440,8 +455,8 @@
                     },
                 },
             },
-            yaxis:{
-                min : 0,
+            yaxis: {
+                min: 0,
                 max: 100,
                 title: {
                     text: "Percentage",
@@ -456,88 +471,79 @@
             }
         };
     }
-    function getStudentGPA(semesterArray) {
-        let totalSemester =[];
-        semesterArray.forEach(function (key , value) {
-            totalSemester.push((value+1))
-        })
 
+    function getOverAllCloAvg(avgScorePerCLO) {
         return {
-            series: [{
-                name: 'PLO',
-                data: semesterArray,  // data we fetch from php of students overall PLOs score.
-            }],
+            series: avgScorePerCLO,
             chart: {
-                height: 400,
-                type: 'bar',
-                stacked: true,
-                events: {
-                    click: function(chart, w, e) {
-
-                    }
-                },
-                toolbar: {
-                    /*tools: {
-                        // download: '<img src="../../assets/images/1101098.png" width="20" height="20" />',
-                        customIcons: [{
-                            html: '<i class="fa fa-angle-down">xxxx</i>',
-                            onClick: function(e, chartContext) {
-                                console.log(e) },
-                            appendTo: 'left' // left / top means the button will be appended to the left most or right most position
-                        }]
-                    }*/
-                    show: false
-                }
+                height: 410,
+                type: 'radialBar',
             },
-            colors: colors,
             plotOptions: {
-                bar: {
-                    borderRadius: 6,
-                    columnWidth: '30%',
-                    distributed: true,
+                radialBar: {
+                    offsetY: 0,
+                    startAngle: 0,
+                    endAngle: 270,
+                    hollow: {
+                        margin: 5,
+                        size: '30%',
+                        background: 'transparent',
+                        image: undefined,
+                    },
+                    dataLabels: {
+                        name: {
+                            show: false,
+                        },
+                        value: {
+                            show: false,
+                        }
+                    }
                 }
             },
-            dataLabels: {
-                enabled: false
-            },
+
+            colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
+            labels: totalCLO,
             legend: {
-                show: false,
-            },
-            title: {
-                text: 'GPA Based Chart',
+                show: true,
                 floating: true,
-                enabled: true,
-                style: {
-                    colors: ['#111']
+                fontSize: '14px',
+                position: 'left',
+                offsetX: 150,
+                offsetY: 15,
+                labels: {
+                    useSeriesColors: true,
                 },
-                offsetX: 15
+                markers: {
+                    size: 0
+                },
+                formatter: function(seriesName, opts) {
+                    return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
+                },
+                itemMargin: {
+                    vertical: 3
+                }
             },
             xaxis: {
-                min: 1,
-                max : semesterArray.size,
-                categories: totalSemester,
-                labels: {
-                    enabled: true,
-                    style: {colors: ['#111']},
-                    background: { enabled: true, foreColor: '#fff', borderWidth: 0  },
-                },
                 title: {
-                    text: "Semester",
+                    show:true,
+                    text: "Program Learning Outcome",
                     offsetX: 0,
                     offsetY: 0,
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        cssClass: '',
-                    },
                 },
+
             },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    legend: {
+                        show: false
+                    }
+                }
+            }],
 
         };
-    }
 
-    function valueToPercent (value) {
-        return (value * 100) / 4
+
     }
 </script>
 </html>

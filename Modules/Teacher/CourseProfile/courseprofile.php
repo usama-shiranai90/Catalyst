@@ -8,22 +8,44 @@ if (isset($_POST['profileContinue3rd'])) {
     }
 }*/
 
+if (isset($_GET['profileID'])) {
+    echo "im in editing mode";
+}
+if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
+    session_start();
+//    $_SESSION['recordExist'] = false;  // will pass PLOlist , each field value to courseprofile View.
+}
+
+$hasPLOs = '';
+$PLOsArray = [];
+
+if ($_SESSION['typeOfProfile'] == 1) { // if record does not exist then its creation type.
+// curriculumID(program) , BatchCode ,  CourseCode server fetch.  if existed.
+
 // fetch on going PLO list from curriculum list.
-$hasPLOs = true;
-$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
-    'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-    'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-    'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
-    'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
-    'PLO 6' => "Use AJAX to get the data you need from the server.
+    $hasPLOs = true;
+    $PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
+        'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+        'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+        'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
+        'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
+        'PLO 6' => "Use AJAX to get the data you need from the server.
                                  Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
-    'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
-    'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
-    'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
-    'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
-    'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
-    'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation",
-];
+        'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
+        'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
+        'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
+        'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
+        'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
+        'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation",
+    ];
+} elseif ($_SESSION['typeOfProfile'] == 2) { // record exist we move to view page.
+    if ($_SESSION['recordExist']) { // then record already exist.
+        $_SESSION['cpid'] = 'curriculum-18';
+        $_SESSION['batchcode'] = 'f18-bcse';
+        $_SESSION['ccode'] = 'or011';
+        header("Location: courseprofile_view.php");
+    }
+}
 
 function fetchingPLOs($hasPLOs, $PLOsArray)
 {
@@ -58,12 +80,11 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
             quotes[1] = "Baseball has the great advantage over cricket of being sooner ended.";
             quotes[2] = "Every goal, every action, every thought, every feeling one experiences, whether it be consciously or unconsciously known, is an attempt to increase one's level of peace of mind.";
             quotes[3] = "A good head and a good heart are always a formidable combination.";
-            var rand = Math.floor(Math.random()*quotes.length);
+            var rand = Math.floor(Math.random() * quotes.length);
             document.write(quotes[rand]);
         }
         // writeRandomQuote();
     </script>
-
 
 
 </head>
@@ -300,7 +321,8 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
 
-                            <div class="course-assessment-border border-t-2 shadow-sm" style="background-color: #0284FC">
+                            <div class="course-assessment-border border-t-2 shadow-sm"
+                                 style="background-color: #0284FC">
                                 <h2 class="table-head">Assessment Instrument with Weights</h2>
                                 <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
                                     <div class="assessment-wrap">
@@ -505,10 +527,11 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                             </div>
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
-                        <!--  text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
-                                border-b-2 border-solid mb-10 -->
+                            <!--  text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
+                                    border-b-2 border-solid mb-10 -->
 
-                            <div class="course-assessment-border border-t-2 shadow-sm mb-5" style="background-color: #0284fc">
+                            <div class="course-assessment-border border-t-2 shadow-sm mb-5"
+                                 style="background-color: #0284fc">
                                 <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
                                 <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
                                     <div class="assessment-wrap mx-35">
@@ -734,48 +757,20 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
         type="text/javascript"></script>
 
+<?php
+
+if ($_SESSION['typeOfProfile'] == 1) {
+
+    echo "
 <script>
     let hasPLOs, ploArray;
-    try {
-         (hasPLOs =true || <?php echo json_encode($hasPLOs, JSON_HEX_TAG) ?>);
-        if (hasPLOs) {
-            let ploObject = <?php echo json_encode($PLOsArray, JSON_HEX_TAG); ?>;
-
-            ploArray = Object.entries(ploObject);
-            console.log(ploArray.length)
-            console.log(ploArray[0][0])
-
-            function creationAjaxCall(arrayCLO, arrayMapping) {
-
-                $.ajax({
-                    type: "POST",
-                    url: 'phpcode/CourseProfile.php',
-                    data: {
-                        arrayCLO: arrayCLO, arrayMapping: (arrayMapping)
-                    },
-                    success: function (data) {
-                        clearAllStorage();
-                        setLocalStorage("courseCLO_key", arrayCLO)
-                        setLocalStorage("courseMap_key", arrayMapping)
-                        console.log("getting data from AJAX :", data)
-                        location.href = "courseprofile_view.php";
-                    }
-                });
-            }
-
-        } else {
-            location.href = "weekly_cover_topics.php";
-            // blockScreen("header" , "message");
-        }
-    }
-    catch (err){
-        console.log(err);
-    }
-
-
-
-
+        hasPLOs = " . $hasPLOs . ";
+        let ploObject = " . json_encode($PLOsArray, JSON_HEX_TAG) . ";
+        ploArray = Object.entries(ploObject);
 </script>
-
+<script src='CourseProfileAssets/CourseProfileCreationScript.js'></script>
+";
+}
+?>
 </html>
 

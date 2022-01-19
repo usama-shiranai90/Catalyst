@@ -25,6 +25,12 @@ class CourseProfile implements Persistable
     private $assessmentInfo; // composition
 
 
+    public static function create()
+    {
+        return new self();
+    }
+
+
     public function __construct($courseTitle, $courseCode, $courseCreditHr, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective, $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook, $courseDescription, $courseOtherReference, $instructorInfo, $assessmentInfo)
     {
         $this->courseTitle = $courseTitle;
@@ -234,20 +240,26 @@ class CourseProfile implements Persistable
 
 
 header('Content-Type: application/json');
-$array_cCLO = $_POST['arrayCLO'];
-$array_cMapping = $_POST['arrayMapping'];
 
-// apply query to create save data on server.
+if (!empty($_POST['arrayCLO']) && !empty($_POST['arrayMapping']) &&
+    !empty($_POST['courseEssentialFieldValue']) && !empty($_POST['courseDetailFieldValue'])) {
 
-//$_SESSION['course1'] = $array_cCLO ;
-//$_SESSION['course2'] = $array_cMapping ;
-$_SESSION['course3_clo'] = $array_cCLO;
-$_SESSION['course4_map'] = $array_cMapping;
+    $array_cCLO = $_POST['arrayCLO'];
+    $array_cMapping = $_POST['arrayMapping'];
 
+    $courseProfile = new CourseProfile();
 
-echo json_encode($array_cCLO[0]);
+    // apply query to create save data on server.
+    //$_SESSION['course1'] = $array_cCLO ;
+    //$_SESSION['course2'] = $array_cMapping ;
+    $_SESSION['course3_clo'] = $array_cCLO;
+    $_SESSION['course4_map'] = $array_cMapping;
+    echo json_encode($array_cCLO[0]);
+    //print_r($array_cMapping);
 
-//print_r($array_cMapping);
-//print_r($array_cCLO);
+} elseif (!isset($_POST['curriculumID']) && !isset($_POST['batchID']) && !isset($_POST['courseCodeID'])) {
+//    $courseProfile = new CourseProfile();
+}
+
 
 ?>
