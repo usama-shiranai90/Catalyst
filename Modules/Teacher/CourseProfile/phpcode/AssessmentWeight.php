@@ -9,7 +9,8 @@ class AssessmentWeight
     private $finalWeightage;
 
 
-    public function __construct($assignmentWeightage , $quizWeightage, $projectWeightage, $midWeightage, $finalWeightage)
+    public function __construct($assignmentWeightage , $quizWeightage,
+                                $projectWeightage, $midWeightage, $finalWeightage)
     {
         $this->assignmentWeightage = $assignmentWeightage;
         $this->quizWeightage = $quizWeightage;

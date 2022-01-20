@@ -27,12 +27,12 @@ window.onload = function (e) {
         project_weight: document.getElementById('projectWeightID'),
         mid_weight: document.getElementById('midWeightID'),
         final_weight: document.getElementById('finalWeightID')
-
     }
     let fieldsArray = [cEssentialField.cTitleField, cEssentialField.cCodeField, cEssentialField.cHoursField, cEssentialField.cPreReqField,
         cEssentialField.cTermField, cEssentialField.cProgramLevelField, cEssentialField.cProgramField, cEssentialField.cEffectiveField,
         cEssentialField.cCoordinationField, cEssentialField.cMethodologyField, cEssentialField.cModelField,
-        instrumentWeight.quizz_weight,instrumentWeight.assignment_weight , instrumentWeight.project_weight , instrumentWeight.mid_weight,instrumentWeight.final_weight];
+        instrumentWeight.quizz_weight,instrumentWeight.assignment_weight , instrumentWeight.project_weight ,
+        instrumentWeight.mid_weight,instrumentWeight.final_weight];
 
     // Course Detail:
     const cDetailField = {
@@ -114,8 +114,6 @@ window.onload = function (e) {
                 // console.log(node)
                 arrayCLO[node].push($(this).text())
             })
-            console.log("2nd :" + arrayCLO)
-
             let extremeCounter = 0;
             let cycle = 0;
             $('#courseLearningDivID input').each(function () {
@@ -219,7 +217,7 @@ window.onload = function (e) {
             outcomeMapContainer.appendChild(createCLORow(newCLORowMapping, 2, incrementClo + 1));
 
             incrementClo++;
-            console.log("incremental Stage :", incrementClo)
+            // console.log("incremental Stage :", incrementClo)
         }
 
         console.log(incrementClo)
@@ -343,7 +341,6 @@ window.onload = function (e) {
                 backArrow.classList.remove("hidden");
         }
     }
-
 
 
     function uniqueName(str, CLONumber) {

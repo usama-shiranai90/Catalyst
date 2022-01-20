@@ -31,7 +31,6 @@ function checkEmptyFields(fieldsArray, counter , storeValue , instrumentWeight) 
 }
 
 function errorInputType(currentField) {
-    console.log(currentField)
     if (currentField.value.length === 0) {
         completeFlag = false;
         if (currentField.tagName === "SELECT")
@@ -51,7 +50,6 @@ const isWeightExceeded = (instrumentWeight) => {
             e.stopImmediatePropagation();
             totalWeight+= parseInt( e.target.value , 10);
             if (totalWeight > 99) {
-                console.log(e.target.parentElement)
                 e.target.parentElement.classList.add("textField-error-input");
 
                 flag = false;

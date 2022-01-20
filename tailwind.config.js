@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        PoppinsRegular: ['Poppins-Regular', 'sans-serif'],
+        PoppinsRegular: ['Poppins-Regular', 'Yu Gothic UI Light', 'cursive'],
         PoppinsBold: ['Poppins-Bold', 'sans-serif'],
         PoppinsBlack: ['Poppins-Black', 'sans-serif'],
         PoppinsBlackItalic: ['Poppins-BlackItalic', 'sans-serif'],

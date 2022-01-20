@@ -92,14 +92,14 @@ label{
 }
 
 .studentAuthentication > label:first-child, .teacherAuthentication > label:first-child, .adminAuthentication > label:first-child{
-    font-family: Poppins-Bold;
+    font-family: Poppins-Bold, ui-serif;
 }
 
 
 .loginButton{
     background-color: var(--loginButton);
     color: #ffffff;
-    font-family: Poppins-Regular;
+    font-family: Poppins-Regular, 'Yu Gothic UI Light', cursive;
     border-radius: 5px;
     border: 0;
     padding: 1% 10%;

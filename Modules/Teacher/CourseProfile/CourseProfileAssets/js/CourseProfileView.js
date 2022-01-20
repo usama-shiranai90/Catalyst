@@ -45,7 +45,7 @@ window.onload = function (e) {
         for (let j = 0; j < localStorageViewMapping[i].length; j++) {
             let aRow = `<a class="capitalize font-semibold text-base w-full">${getmyPLO(localStorageViewMapping[i][j])}</a>`
             clomap.innerHTML  += aRow;
-            console.log("row data of a : ", aRow  , getmyPLO(localStorageViewMapping[i][j]))
+            // console.log("row data of a : ", aRow  , getmyPLO(localStorageViewMapping[i][j]))
         }
     }
 

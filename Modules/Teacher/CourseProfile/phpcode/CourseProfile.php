@@ -9,6 +9,7 @@ class CourseProfile implements Persistable
     private $courseTitle;
     private $courseCode;
     private $courseCreditHr;
+    private $coursePreRequisities ; // may change to array if multiple.
     private $courseSemester; // term
     private $courseProgramLevel;
     private $courseProgram;
@@ -24,13 +25,14 @@ class CourseProfile implements Persistable
     private $instructorInfo; // composition
     private $assessmentInfo; // composition
 
-    public function __construct($courseTitle, $courseCode, $courseCreditHr, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
+    public function __construct($courseTitle, $courseCode, $courseCreditHr ,$coursePreReq, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
                                 $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook, $courseDescription,
-                                $courseOtherReference, $instructorInfo, $assessmentInfo)
-    {
+                                $courseOtherReference ,$assessmentInfo , $instructorInfo){ // ,
+
         $this->courseTitle = $courseTitle;
         $this->courseCode = $courseCode;
         $this->courseCreditHr = $courseCreditHr;
+        $this->coursePreRequisities = $coursePreReq;
         $this->courseSemester = $courseSemester;
         $this->courseProgramLevel = $courseProgramLevel;
         $this->courseProgram = $courseProgram;
@@ -46,10 +48,6 @@ class CourseProfile implements Persistable
         $this->assessmentInfo = $assessmentInfo;
     }
 
-    public static function create()
-    {
-        return new self();
-    }
 
     public function getCourseTitle()
     {
@@ -219,12 +217,52 @@ class CourseProfile implements Persistable
         $this->courseOtherReference = $courseOtherReference;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getInstructorInfo()
+    {
+        return $this->instructorInfo;
+    }
+
+    /**
+     * @param mixed $instructorInfo
+     */
+    public function setInstructorInfo($instructorInfo)
+    {
+        $this->instructorInfo = $instructorInfo;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAssessmentInfo()
+    {
+        return $this->assessmentInfo;
+    }
+
+    /**
+     * @param mixed $assessmentInfo
+     */
+    public function setAssessmentInfo($assessmentInfo)
+    {
+        $this->assessmentInfo = $assessmentInfo;
+    }
+
 
     public function saveCourseProfileData($courseProfileID)
     {
         // TODO: Implement saveCourseProfileData() method.  will save data in database and temporary in session variable.
 
 
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCoursePreRequisities()
+    {
+        return $this->coursePreRequisities;
     }
 
     public function loadCourseProfileData($courseProfileID)

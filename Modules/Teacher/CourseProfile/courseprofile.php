@@ -7,25 +7,18 @@ if (isset($_POST['profileContinue3rd'])) {
         print_r($fu);
     }
 }*/
-$var = '';
-if (isset($_GET['profileID'])) {
-    echo "im in editing mode";
-    $var = "hello";
-
-}
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 //    $_SESSION['recordExist'] = false;  // will pass PLOlist , each field value to courseprofile View.
 }
 
-$hasPLOs = '';
-$PLOsArray = [];
+$ifCreation = true;
+$hasPLOs = true; // get from server
+$PLOsArray = []; // fetch on going PLO list from curriculum list.
+$type = $_SESSION['typeOfProfile'];
 
-if ($_SESSION['typeOfProfile'] == 1) { // if record does not exist then its creation type.
-// curriculumID(program) , BatchCode ,  CourseCode server fetch.  if existed.
+if ($hasPLOs){ // if we have plo then enter.
 
-// fetch on going PLO list from curriculum list.
-    $hasPLOs = true;
     $PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
         'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
         'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
@@ -38,16 +31,50 @@ if ($_SESSION['typeOfProfile'] == 1) { // if record does not exist then its crea
         'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
         'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
         'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
-        'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation",
-    ];
-} elseif ($_SESSION['typeOfProfile'] == 2) { // record exist we move to view page.
-    if ($_SESSION['recordExist']) { // then record already exist.
-        $_SESSION['cpid'] = 'curriculum-18';
-        $_SESSION['batchcode'] = 'f18-bcse';
-        $_SESSION['ccode'] = 'or011';
-        header("Location: courseprofile_view.php");
-    }
+        'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];
+
+    if ($type != 1) { //
+        // curriculumID(program) , BatchCode ,  CourseCode server fetch.  if existed.
+
+        if (isset($_GET['profileID'])){
+            $ifCreation = false;
+            echo "Updation Mode.";
+            include "phpcode/CourseProfile.php";
+
+            if (true){ // agr SESSION MA data hai.
+                $c_essential_existing = $_SESSION['currentSubjectEssential_array'];
+                $course_detail = $_SESSION['currentSubjectDetail_array'];
+
+                $c_assessment_existing = new AssessmentWeight($c_essential_existing[11] , $c_essential_existing[12] , $c_essential_existing[13],
+                    $c_essential_existing[14],$c_essential_existing[15]);
+
+                $courseInstructor = new CourseInstructor($course_detail[4] , $course_detail[5] , $course_detail[6],
+                    $course_detail[7],$course_detail[8] , $course_detail[9]);
+
+                $courseProfile = new CourseProfile($c_essential_existing[0] , $c_essential_existing[1] , $c_essential_existing[2],$c_essential_existing[3],
+                    $c_essential_existing[4],$c_essential_existing[5],$c_essential_existing[6],$c_essential_existing[7],$c_essential_existing[8],$c_essential_existing[9],
+                    $c_essential_existing[10], $course_detail[0],$course_detail[1],$course_detail[2],$course_detail[3] , $c_assessment_existing , $courseInstructor);
+
+            }
+
+        } // if in editor mode.
+        elseif ($_SESSION['recordExist']) { //  record exist we move to view page. .
+            $_SESSION['cpid'] = 'curriculum-18';
+            $_SESSION['batchcode'] = 'f18-bcse';
+            $_SESSION['ccode'] = 'or011';
+            header("Location: courseprofile_view.php");
+        }
+
+    } elseif ($type == 2) {
+        // if record does not exist then its creation type.
+     }
+
+
+}else{
+    // error generate and stop working.
 }
+
+
 
 function fetchingPLOs($hasPLOs, $PLOsArray)
 {
@@ -217,15 +244,15 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                             <div class="textField-label-content w-full" id="courseTitleDivId">
                                 <label for="courseTitleID"></label>
                                 <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                       name="courseTitle" value="<?php echo $var; ?>">
+                                       name="courseTitle" value="">
                                 <label class="textField-label">Course Title</label>
                             </div>
-
+                            <?php echo $courseProfile->getCourseTitle() ?>
                             <!--                        course Code-->
                             <div class="textField-label-content w-full" id="courseCodeDivId">
                                 <label for="courseCodeID"></label>
                                 <input class="textField" type="text" placeholder=" " id="courseCodeID"
-                                       name="courseCode">
+                                       name="courseCode" value="">
                                 <label class="textField-label">Course Code</label>
                             </div>
 
@@ -237,9 +264,9 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         onchange="this.setAttribute('value', this.value);" value=""
                                         id="creditHourID">
                                     <option value="" hidden></option>
-                                    <option value="one">1</option>
-                                    <option value="two">2</option>
-                                    <option value="three">3</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Credit Hour</label>
                             </div>
@@ -252,7 +279,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         onchange="this.setAttribute('value', this.value);" value=""
                                         id="preRequisiteID">
                                     <option value="" hidden></option>
-                                    <option value="one">Programming Fundamental</option>
+                                    <option value="Programming Fundamental">Programming Fundamental</option>
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Pre-Requisites</label>
                             </div>
@@ -265,7 +292,14 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         onchange="this.setAttribute('value', this.value);" value=""
                                         id="semesterTermID">
                                     <option value="" hidden></option>
-                                    <option value="one">Programming Fundamental</option>
+                                    <option value="1st Semester">1st</option>
+                                    <option value="2nd Semester">2nd</option>
+                                    <option value="3rd Semester">3rd</option>
+                                    <option value="4th Semester">4th</option>
+                                    <option value="5th Semester">5th</option>
+                                    <option value="6th Semester">6th</option>
+                                    <option value="7th Semester">7th</option>
+                                    <option value="8th Semester">8th</option>
                                 </select>
 
                                 <label class="select-label top-1/4 sm:top-3">Term</label>
@@ -286,8 +320,8 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         onclick="this.setAttribute('value', this.value);"
                                         onchange="this.setAttribute('value', this.value);" value="" id="programID">
                                     <option value="" hidden></option>
-                                    <option value="one">BCSE</option>
-                                    <option value="one">BSIT</option>
+                                    <option value="BCSE">BCSE</option>
+                                    <option value="BCIT">BSIT</option>
                                 </select>
 
                                 <label class="select-label top-1/4 sm:top-3">Program</label>
@@ -301,8 +335,9 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         onchange="this.setAttribute('value', this.value);" value=""
                                         id="courseEffectiveID">
                                     <option value="" hidden></option>
-                                    <option value="one">Fall-16 Batch Onwards</option>
-                                    <option value="one">Fall-18 Batch Onwards</option>
+                                    <option value="Fall-16 Batch">Fall-16 Batch Onwards</option>
+                                    <option value="Fall-18 Batch">Fall-18 Batch Onwards</option>
+                                    <option value="Fall-22 Batch">Fall-22 Batch Onwards</option>
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Course Effective</label>
                             </div>
@@ -314,8 +349,8 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         onchange="this.setAttribute('value', this.value);" value=""
                                         id="coordinatingUnitID">
                                     <option value="" hidden></option>
-                                    <option value="one">Fall-16 Batch Onwards</option>
-                                    <option value="one">Fall-18 Batch Onwards</option>
+                                    <option value="1st unit majid">Sajid Ali</option>
+                                    <option value="2nd unit majid">Dr.Fatima</option>
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Co-ordinating Unit</label>
                             </div>
@@ -747,5 +782,6 @@ if ($_SESSION['typeOfProfile'] == 1) {
 ";
 }
 ?>
+
 </html>
 

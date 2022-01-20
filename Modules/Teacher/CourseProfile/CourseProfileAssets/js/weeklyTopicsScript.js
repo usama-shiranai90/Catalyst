@@ -150,9 +150,9 @@ window.onload = function (e) {
         <label for="clo-1-bt-level">
             <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
                 <img class="h-10 w-6" alt=""
-                     src="../../../Assets/Images/vectorFiles/Icons/add-button.svg">
+                     src="../../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
                 <img class="h-10 w-6" alt=""
-                     src="../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
+                     src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg">
             </div>
         </label>
     </div>
