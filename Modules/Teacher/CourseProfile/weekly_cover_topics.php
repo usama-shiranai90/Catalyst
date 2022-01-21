@@ -1,13 +1,5 @@
 <?php
 
-// calling db for exisiting weekly covered topics list.
-$ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18-or represents the key and has following data.
-    array('week-1' ,'By default, Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
-    array('clo1', 'clo2', 'clo3'),
-    'CSS property here so you can make your custom column values as generic or as complicated and site-specific')
-);
-
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -23,7 +15,7 @@ $ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
-        <script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>
+    <script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>
     <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
 </head>
@@ -122,7 +114,6 @@ $ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18
                                 </div>
                             </div>
 
-
                         </div>
                     </div>
 
@@ -136,7 +127,7 @@ $ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18
                 </div>
                 <!--   Update Button   -->
                 <div class="text-right mx-4">
-                    <button type="button" class="loginButton" name="updatecpbtn" id="updateCourseProfilebtn">Save
+                    <button type="button" class="loginButton" name="updatecpbtn" id="updateweeklyTopicbtn">Save
                     </button>
                 </div>
             </section>
@@ -148,8 +139,13 @@ $ifExistingWeeklyData = array("f18-or-wtc-01" => // is a two dimension array f18
 </body>
 <script>
 
+    $('#courseweekParentDivID').load('WeeklyCovered/record.php');
+
+
     // call existing weekly topics from Server.
-    let fetchWeeklyCoveredRows = <?php echo json_encode($ifExistingWeeklyData); ?>;
-    console.log(fetchWeeklyCoveredRows)
+    //let fetchWeeklyCoveredRows = <?php //echo json_encode($ifExistingWeeklyData); ?>//;
+    // console.log(fetchWeeklyCoveredRows)
+
+
 </script>
 </html>
