@@ -23,5 +23,5 @@
         }
 
     } else {
-        location.href = "weekly_cover_topics.php";
+        location.href = "weeklyTopics.php";
     }

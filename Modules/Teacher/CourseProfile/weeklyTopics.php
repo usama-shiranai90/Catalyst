@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 
 ?>
 <!doctype html>
@@ -139,7 +141,7 @@
 </body>
 <script>
 
-    $('#courseweekParentDivID').load('WeeklyCovered/record.php');
+    // $('#courseweekParentDivID').load('WeeklyCovered/record.php');
 
 
     // call existing weekly topics from Server.
