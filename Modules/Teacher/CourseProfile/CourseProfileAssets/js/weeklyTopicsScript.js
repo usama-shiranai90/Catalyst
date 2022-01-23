@@ -1,4 +1,3 @@
-
 window.onload = function (e) {
 
     // fetchWeeklyCoveredRows = Object.values(fetchWeeklyCoveredRows);
@@ -20,10 +19,10 @@ window.onload = function (e) {
         $('#updateweeklyTopicbtn').on('click', function () {
             $(parentWeeklyContainer).children().each((index, node) => {
                 if (index !== 0) {
-                    const weeklyRowRecord = ['#detail-r-' + index , '#assessment-clo-' + index , '#wtc-clos-r' + index];
+                    const weeklyRowRecord = ['#detail-r-' + index, '#assessment-clo-' + index, '#wtc-clos-r' + index];
 
                     for (let i = 0; i < weeklyRowRecord.length; i++) {
-                        if (i !== 2){ // for clo list
+                        if (i !== 2) { // for clo list
 
                             $().children().each((i, n) => {
                                 let currentCLO = '#week' + index + '-clo-' + (i + 1) + 'ID';
@@ -31,7 +30,7 @@ window.onload = function (e) {
                                 $(currentCLO).children().attr("disabled", true);
                             })
 
-                        }else{
+                        } else {
 
 
                         }
@@ -45,7 +44,7 @@ window.onload = function (e) {
                 }
             })
 
-            if (deletedWeeklyID.length !==0){
+            if (deletedWeeklyID.length !== 0) {
                 console.log(deletedWeeklyID)
                 // deleteWeekly();
                 // updateWeeklyData();
@@ -69,7 +68,7 @@ window.onload = function (e) {
             $(event.target).toggleClass("hidden")
 
             $(this).closest(pclass).children().each((index, node) => {
-                console.log(index ,  node)
+                console.log(index, node)
                 if (index > 1) {
                     $('#detail-r-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");
                     $('#assessment-clo-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");
@@ -77,7 +76,7 @@ window.onload = function (e) {
                         let currentCLOInput = '#week' + modifiedIndex + '-clo-' + (i + 1) + 'ID';
                         $(currentCLOInput).prop('disabled', false);
                         $(currentCLOInput).children().attr("disabled", false);
-                        console.log("type of :" ,  $(currentCLOInput).prop("tagName") ,  $(currentCLOInput).attr('type') )
+                        console.log("type of :", $(currentCLOInput).prop("tagName"), $(currentCLOInput).attr('type'))
 
 
                     })
@@ -120,32 +119,31 @@ window.onload = function (e) {
     function overrideWeeklyRow(index, i, currentTag) {
         // skipping 0 index child because it stores row id as input.
         if (i === 1) {
-            currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index , (index+1)) );  // div us ka ID change ki hai.
+            currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // div us ka ID change ki hai.
             let span = currentTag.firstElementChild;
             span.innerHTML = "week-" + index;
-        }
-        else if (i === 2 || i === 4) {
-            currentTag.setAttribute("id",  uniqueName(currentTag.getAttribute("id"), index , (index+1)) );  //wct-wdescription-r1
+        } else if (i === 2 || i === 4) {
+            currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  //wct-wdescription-r1
 
             let label = currentTag.firstElementChild;
             let input = label.firstElementChild;
-            label.setAttribute("for", uniqueName(input.getAttribute("id"), index , (index+1)));
-            input.setAttribute("id", uniqueName(input.getAttribute("id"), index, (index+1)));
+            label.setAttribute("for", uniqueName(input.getAttribute("id"), index, (index + 1)));
+            input.setAttribute("id", uniqueName(input.getAttribute("id"), index, (index + 1)));
 
         } else if (i === 3) {
-            currentTag.setAttribute("id", "wtc-clos-r"+index);
+            currentTag.setAttribute("id", "wtc-clos-r" + index);
             // currentTag.firstElementChild.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index));  // wtc-clos-r2
 
-            $(this).children().each( (i1) => {
-                this.setAttribute("id", "wtc-clo-r"+index +"-c"+(i1+1))  // wtc-clo-r2-c1
+            $(this).children().each((i1) => {
+                this.setAttribute("id", "wtc-clo-r" + index + "-c" + (i1 + 1))  // wtc-clo-r2-c1
                 let input = this.firstElementChild;
 
-                input.setAttribute("id", "week"+index+"-clo-"+ (i1+1)+"ID"); //week2-clo-1ID
-                input.setAttribute("value", "week"+index+"-clo-"+ (i1+1));  // week2-clo-1
-                input.setAttribute("name","week"+index+"-clo-"+ (i1+1) );
+                input.setAttribute("id", "week" + index + "-clo-" + (i1 + 1) + "ID"); //week2-clo-1ID
+                input.setAttribute("value", "week" + index + "-clo-" + (i1 + 1));  // week2-clo-1
+                input.setAttribute("name", "week" + index + "-clo-" + (i1 + 1));
 
                 let label = this.lastElementChild;
-                label.setAttribute("for", "week"+index+"-clo-"+ (i1+1));
+                label.setAttribute("for", "week" + index + "-clo-" + (i1 + 1));
             });
         }
     }
@@ -162,6 +160,7 @@ window.onload = function (e) {
         }
     }
 
+
     function createNewWeeklyRow(currentWeekNo) {
         const str = `<div id="weeklyCoveredRow-${currentWeekNo}"
      class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
@@ -172,9 +171,10 @@ window.onload = function (e) {
     </div>
     <div id="wct-wdescription-r${currentWeekNo}" class="lweek-column col-start-2 col-end-7">
         <label for="detail-r-${currentWeekNo}">
-            <textarea type="text" class="pt-4 h-auto cell-input w-full font-medium text-sm"
-                      value="" placeholder="Write weekly description here..."
-                      id="detail-r-${currentWeekNo}"></textarea></label>
+            <textarea type="text" class="cell-input pt-4  px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                      value="" placeholder="Write weekly description here..."  
+                      id="detail-r-${currentWeekNo}"  onkeyup="autoHeight('detail-r-${currentWeekNo}')" ></textarea></label>
+
     </div>
     <div class="lweek-column  col-start-7 col-end-8">
         <div id="wtc-clos-r${currentWeekNo}" class="flex flex-col overflow-y-visible ">
@@ -240,7 +240,10 @@ window.onload = function (e) {
                                 </div>
                                 <div id="wct-wdes-r${(i + 1)}-c" class="lweek-column col-start-2 col-end-7">
                                     <label for="detail-${(i + 1)}">
-                                        <textarea type="text" class="pt-4 px-2 h-auto cell-input w-full font-medium text-sm" value="" placeholder="Write weekly description here..." id="detail-${(i + 1)}">${fetchWeeklyCoveredRows[i][1]}</textarea></label>
+                                        <!--  cell-input-->
+                              
+     
+                                
                                 </div>
                                 <div class="lweek-column  col-start-7 col-end-8">
                                     <div id="wtc-clos-r${(i + 1)}" class="flex flex-col overflow-y-visible ">
@@ -271,10 +274,18 @@ window.onload = function (e) {
         }
     }
 
-    function uniqueName(str, no , toReplace) {
+    function uniqueName(str, no, toReplace) {
         return str.replace((toReplace), no);
     }
 }
+
+
+function autoHeight(element) {
+    const el = document.getElementById(element);
+    el.style.height = "5px";
+    el.style.height = (el.scrollHeight) + "px";
+}
+
 
 function loadWeeklyData() {
     $.ajax({
@@ -290,8 +301,8 @@ function updateWeeklyData() {
     $.ajax({
         type: "POST",
         url: "WeeklyTopic/record.php?actionType=UpdateData",
-        data:{
-            "id=":id
+        data: {
+            "id=": id
         },
         success: function (data) {
             $('#courseweekParentDivID').html(data)
@@ -304,7 +315,7 @@ function deleteWeekly() {
         type: "POST",
         url: "WeeklyTopic/record.php?actionType=DeleteData",
         data: {
-            "deletedWeeklyID" : deletedWeeklyID
+            "deletedWeeklyID": deletedWeeklyID
         },
         success: function (data) {
             $('#courseweekParentDivID').html(data)

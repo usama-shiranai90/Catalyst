@@ -1,6 +1,19 @@
 <?php
+include "../../Backend/Packages/DIM/Faculty.php";
+$user = null;
+$studentPanel = "";
+$teacherPanel = "hidden";
+$adminPanel = "hidden";
+$studentTab = "selected";
+$teacherTab = "";
+$adminTab = "";
+$studentIncorrectPass = "hidden";
+$teacherIncorrectPass = "hidden";
+$adminIncorrectPass = "hidden";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $accessGranted = false;
+
     if (isset($_POST["studentLogin"])) {
         if (!empty($_POST["batch"]) && !empty($_POST["program"]) && !empty($_POST["rollNo"]) && !empty($_POST["studentPassword"])) {
             $_SESSION['studentUsername'] = $_POST["batch"] . "/" . $_POST["program"] . "/" . $_POST["rollNo"];
@@ -8,8 +21,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else if (isset($_POST["teacherLogin"])) {
         if (!empty($_POST["teacherUsername"]) && !empty($_POST["teacherPassword"])) {
-            $_SESSION['teacherUsername'] = $_POST["teacherUsername"];
-            $_SESSION['teacherPassword'] = $_POST["teacherPassword"];
+            $email = $_POST["teacherUsername"];
+            $password = $_POST["teacherPassword"];
+
+//            $user = new Faculty($email, $password);
+            $user = Faculty::getFacultyInstance();
+            $accessGranted = $user->login($email, $password);
+//            $faculty->retrieveAllocations();
+
+            if (!$accessGranted) {
+                $teacherIncorrectPass = "";
+                $teacherPanel = "";
+                $teacherTab = "selected";
+                $studentTab = "";
+                $adminTab = "";
+                $studentPanel = "hidden";
+                $adminPanel = "hidden";
+
+            }
         }
     } else if (isset($_POST["adminLogin"])) {
         if (!empty($_POST["adminUsername"]) && !empty($_POST["adminPassword"])) {
@@ -17,6 +46,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['adminPassword'] = $_POST["adminPassword"];
         }
     }
+
+    if ($accessGranted) {
+        session_start();
+        if (isset($_POST["teacherLogin"])) {
+            $user->setPersonalDetails();
+            $_SESSION['facultyCode'] = $user->getUserCode();
+//            Storing object in sessionVariable
+            $_SESSION['facultyInstance'] = serialize(Faculty::getFacultyInstance());
+
+            header("Location: ../Teacher/TeacherDashboard.php");
+        }
+//        echo "Access Granted";
+    }
+
 }
 
 ?>
@@ -136,13 +179,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!--        Authentication Types-->
         <div class="hidden sm:flex authenticationTypes">
-            <div class="selected" style="border-radius: 20px 0 0 0" type="button" id="studentAuthenticationBtn">
+            <div class="<?php echo $studentTab; ?>" style="border-radius: 20px 0 0 0" type="button"
+                 id="studentAuthenticationBtn">
                 Student
             </div>
             <div class="verticalLine"></div>
-            <div type="button" id="teacherAuthenticationBtn">Teacher</div>
+            <div class="<?php echo $teacherTab; ?>" type="button" id="teacherAuthenticationBtn">Teacher</div>
             <div class="verticalLine"></div>
-            <div style="border-radius: 0 20px 0 0" type="button" id="adminAuthenticationBtn">Admin</div>
+            <div class="<?php echo $adminTab; ?>" style="border-radius: 0 20px 0 0" type="button"
+                 id="adminAuthenticationBtn">Admin
+            </div>
         </div>
 
         <!--        Authentication Types for Mobile       -->
@@ -156,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!--        Student Authentication body-->
-        <div class="studentAuthentication px-5 pt-4 pb-4" id="studentAuthenticationPanel">
+        <div class="studentAuthentication px-5 pt-4 pb-4 <?php echo $studentPanel; ?>" id="studentAuthenticationPanel">
             <label class="login-container-label">Please login to continue</label>
 
             <form method="post">
@@ -255,7 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!--        Teacher Authentication body-->
-        <div class="teacherAuthentication px-5 pt-4 pb-4 hidden" id="teacherAuthenticationPanel">
+        <div class="teacherAuthentication px-5 pt-4 pb-4 <?php echo $teacherPanel; ?>" id="teacherAuthenticationPanel">
             <label class="login-container-label">Please login to continue</label>
 
             <form method="post">
@@ -266,8 +312,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="textField-label-content col-span-6" id="teacherUsernameDiv">
                         <label for="teacherUsername"></label>
-                        <input class="textField" type="email"
-                               placeholder=" " id="teacherUsername" name="teacherUsername">
+                        <input class="textField" type="email" placeholder=" " id="teacherUsername"
+                               name="teacherUsername" value="maqeelIqbal@fui.edu.pk">
                         <label class="textField-label">Email</label>
                     </div>
                 </div>
@@ -285,8 +331,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="textField-label-content md:col-start-2 col-span-6" id="teacherPasswordDiv">
 
                         <label for="teacherPassword"></label>
-                        <input class="textField" type="password" placeholder=" "
-                               id="teacherPassword" name="teacherPassword">
+                        <input class="textField" type="password" placeholder=" " id="teacherPassword"
+                               name="teacherPassword" value="123456789">
                         <label class="textField-label">Password</label>
 
                         <!--  forgot section for Desktop-->
@@ -304,14 +350,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <a class="text-red-700" href="#">Forgot Password?</a>
                 </div>
                 <label class="text-red-900 text-center hidden" id="teacherPassError"></label>
-                <label class="text-red-900 text-center hidden" id="teacherIncorrectPass">Username or password
+                <label class="text-red-900 text-center <?php echo $teacherIncorrectPass; ?>" id="teacherIncorrectPass">Username or password
                     is incorrect</label>
 
                 <!--Login and SVG-->
                 <div class="mt-5 sm:mt-0 sm:grid sm:grid-cols-3 sm:grid sm:gap-0 items-center mb-10 sm:mb-0 block">
                     <div class="align-middle text-center col-start-2">
-                        <button type="submit" class="loginButton sm:h-1/5 sm:w-2/3"
-                                name="studentLogin" id="studentLoginBtnID">Login
+                        <button type="submit" class="loginButton" name="teacherLogin" id="teacherLoginBtnID">Login
                         </button>
                     </div>
                     <div class="align-middle text-center hidden sm:inline-block">
@@ -325,7 +370,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!--        Admin Authentication body-->
-        <div class="adminAuthentication px-5 pt-4 pb-4 hidden" id="adminAuthenticationPanel">
+        <div class="adminAuthentication px-5 pt-4 pb-4 <?php echo $adminPanel; ?>" id="adminAuthenticationPanel">
             <label class="login-container-label">Please login to continue</label>
 
             <form method="post">
@@ -444,5 +489,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 </html>
-
-

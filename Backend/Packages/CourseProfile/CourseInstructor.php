@@ -1,5 +1,6 @@
 <?php
 
+
 class CourseInstructor
 {
     private $instructorName;
@@ -10,8 +11,12 @@ class CourseInstructor
     private $instructorPersonalEmail;
 
 
-    public function __construct($name, $designation, $qualification, $specialization, $contact, $personalEmail)
+    public function __construct()
     {
+
+    }
+
+    public function setAll($name, $designation, $qualification, $specialization, $contact, $personalEmail){
         $this->instructorName = $name;
         $this->instructorDesignation = $designation;
         $this->instructorQualification = $qualification;

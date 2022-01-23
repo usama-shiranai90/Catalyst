@@ -5,15 +5,13 @@ function checkEmptyFields(fieldsArray, counter , storeValue , instrumentWeight) 
 
     if (counter === 1) {
         if (completeFlag) {
-            if (isWeightExceeded(instrumentWeight)) {
+            // if (isWeightExceeded(instrumentWeight)) {
                 $('#cpEssentialID').addClass("hidden");
                 $('#cpDetaillID').removeClass("hidden");
                 for (let i = 0; i < fieldsArray.length; i++) {
                     storeValue.push(fieldsArray[i].value);
                 }
-            } else {
-                showErrorBox("Weight for assessment is exceeded");
-            }
+            // } else {showErrorBox("Weight for assessment is exceeded");}
 
         } else {
             showErrorBox("Please complete all fields to continue")

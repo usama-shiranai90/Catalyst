@@ -332,7 +332,6 @@ window.onload = function (e) {
     }
 
     arrowPositionCheck();
-
     function arrowPositionCheck() {
         if (!cEssentialSection.classList.contains("hidden")) {  // doesnt contain hidden class in essential section.
             backArrow.classList.add("hidden");
@@ -451,7 +450,7 @@ window.onload = function (e) {
 
 }
 
-jQuery.fn.textNodes = function () {
+$.fn.textNodes = function () {
     return this.contents().filter(function () {
         return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
     });

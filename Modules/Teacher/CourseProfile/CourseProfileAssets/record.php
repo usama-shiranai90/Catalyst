@@ -69,7 +69,7 @@ switch (@$_POST['actionType']) {
                     </div>
                     <div id="wct-wdescription-r<?php echo $counter ?>" class="lweek-column col-start-2 col-end-7">
                         <label for="detail-<?php echo $counter ?>">
-            <textarea type="text" class="pt-4 px-2 h-auto cell-input w-full font-medium text-sm" value=""
+            <textarea type="text" class="cell-input pt-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0" value=""
                       placeholder="Write weekly description here..."
                       id="detail-r-<?php echo $counter ?>" readonly="readonly"
                       style="height: 100px;"><?php echo $rowData[1]; ?></textarea></label>

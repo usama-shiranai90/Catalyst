@@ -141,7 +141,7 @@ session_start();
 </body>
 <script>
 
-    // $('#courseweekParentDivID').load('WeeklyCovered/record.php');
+    $('#courseweekParentDivID').load('CourseProfileAssets/record.php');
 
 
     // call existing weekly topics from Server.

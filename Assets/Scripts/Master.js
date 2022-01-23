@@ -73,15 +73,15 @@ window.onload = function () {
         $(".navDropBox").on("mouseover", function (event) {
             //querySelector returns the first occurring instance of the object passed to it
             let nextChevronIcon = document.querySelector("#" + this.id + " .sidePanelNavigationItemDropdownIcon")
-            nextChevronIcon.setAttribute("src", "../../Assets/Images/chevron-down-blue.svg")
+            nextChevronIcon.setAttribute("src", "../../Assets/Images/vectorFiles/Icons/chevron-down-blue.svg")
         });
 
         //When hovering-out on a dropdown in side panel
         $(".navDropBox").on("mouseleave", function (event) {
             //querySelector returns the first occurring instance of the object passed to it
             let nextChevronIcon = document.querySelector("#" + this.id + " .sidePanelNavigationItemDropdownIcon")
-            nextChevronIcon.setAttribute("src", "../../Assets/Images/chevron-down.svg")
-        });
+            nextChevronIcon.setAttribute("src", "../../Assets/Images/vectorFiles/Icons/chevron-down.svg")
+        });//Assets\
 
         $(".menuItem").click(function () {
             removeFocusFromSelectedNavItems()

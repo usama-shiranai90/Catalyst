@@ -1,5 +1,12 @@
 <?php
-include "phpcode/CourseProfile.php";
+
+//use phpcode\AssessmentWeight;
+//use phpcode\CourseInstructor;
+//use phpcode\CourseProfile;
+
+
+include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\CourseProfile\CourseProfile.php";
+include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
@@ -8,6 +15,10 @@ $_SESSION['typeOfProfile'] = 2;
 
 $course_essential = $_SESSION['currentSubjectEssential_array'];
 $course_detail = $_SESSION['currentSubjectDetail_array'];
+
+print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
+print_r(json_encode( $_SESSION['currentSubjectDetail_array']));
+
 
 $courseAssessment = new AssessmentWeight($course_essential[11] , $course_essential[12] , $course_essential[13],
                                          $course_essential[14],$course_essential[15]);
@@ -19,8 +30,8 @@ $courseProfile = new CourseProfile($course_essential[0] , $course_essential[1] ,
     $course_essential[4],$course_essential[5],$course_essential[6],$course_essential[7],$course_essential[8],$course_essential[9],
     $course_essential[10], $course_detail[0],$course_detail[1],$course_detail[2],$course_detail[3] , $courseAssessment , $courseInstructor);
 
-echo $course_essential."--->\n\n";
-echo $course_essential[0];
+//print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
+//print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
 
 $profileID = 1;
 

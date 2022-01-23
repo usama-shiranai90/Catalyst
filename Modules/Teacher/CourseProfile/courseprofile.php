@@ -1,85 +1,132 @@
 <?php
-/*
-if (isset($_POST['profileContinue3rd'])) {
-    print_r(sizeof($_POST['courseCLOs']));
+//use backend\package\cp\CourseProfile as cp;
 
-    foreach ($_POST['courseCLOs'] as $fu) {
-        print_r($fu);
-    }
-}*/
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//echo realpath(dirname(__FILE__));
+
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
-//    $_SESSION['recordExist'] = false;  // will pass PLOlist , each field value to courseprofile View.
 }
 
-$ifCreation = true;
-$hasPLOs = true; // get from server
-$PLOsArray = []; // fetch on going PLO list from curriculum list.
-$type = $_SESSION['typeOfProfile'];
+$courseProfile = new CourseProfile();
+$curriculum = new Curriculum();
 
-if ($hasPLOs){ // if we have plo then enter.
+// Choosing input type
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//    $shotname = htmlspecialchars($_REQUEST['shot']); // Getting data from input
 
-    $PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
-        'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-        'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-        'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
-        'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
-        'PLO 6' => "Use AJAX to get the data you need from the server.
-                                 Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
-        'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
-        'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
-        'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
-        'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
-        'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
-        'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];
+    if (@$_GET['p'] == 'saved') {
+        if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])) {
+            $array_courseEssential = $_POST['courseEssentialFieldValue'];
+            $array_courseDetail = $_POST['courseDetailFieldValue'];
+            $array_cCLO = $_POST['arrayCLO'];
+            $array_cMapping = $_POST['arrayMapping'];
 
-    if ($type != 1) { //
-        // curriculumID(program) , BatchCode ,  CourseCode server fetch.  if existed.
+            $courseProfile->setCourseInfo($array_courseEssential[0], $array_courseEssential[1], $array_courseEssential[2], $array_courseEssential[3], $array_courseEssential[4],
+                $array_courseEssential[5], $array_courseEssential[6], $array_courseEssential[7], $array_courseEssential[8], $array_courseEssential[9], $array_courseEssential[10],
+                $array_courseDetail[0], $array_courseDetail[1], $array_courseDetail[2], $array_courseDetail[3]);
 
-        if (isset($_GET['profileID'])){
-            $ifCreation = false;
-            echo "Updation Mode.";
-            include "phpcode/CourseProfile.php";
+            $courseProfile->setAssessmentInfo($array_courseEssential[11], $array_courseEssential[12], $array_courseEssential[13], $array_courseEssential[14], $array_courseEssential[15]);
+            $courseProfile->setInstructorInfo($array_courseDetail[4], $array_courseDetail[5], $array_courseDetail[6], $array_courseDetail[7], $array_courseDetail[8], $array_courseDetail[9]);
 
-            if (true){ // agr SESSION MA data hai.
-                $c_essential_existing = $_SESSION['currentSubjectEssential_array'];
-                $course_detail = $_SESSION['currentSubjectDetail_array'];
+            $courseProfile->saveCourseProfileData($_SESSION['selectedCourse'] , );
 
-                $c_assessment_existing = new AssessmentWeight($c_essential_existing[11] , $c_essential_existing[12] , $c_essential_existing[13],
-                    $c_essential_existing[14],$c_essential_existing[15]);
-
-                $courseInstructor = new CourseInstructor($course_detail[4] , $course_detail[5] , $course_detail[6],
-                    $course_detail[7],$course_detail[8] , $course_detail[9]);
-
-                $courseProfile = new CourseProfile($c_essential_existing[0] , $c_essential_existing[1] , $c_essential_existing[2],$c_essential_existing[3],
-                    $c_essential_existing[4],$c_essential_existing[5],$c_essential_existing[6],$c_essential_existing[7],$c_essential_existing[8],$c_essential_existing[9],
-                    $c_essential_existing[10], $course_detail[0],$course_detail[1],$course_detail[2],$course_detail[3] , $c_assessment_existing , $courseInstructor);
-
+            // apply query to create save data on server.
+            if (isset($_SESSION['currentSubjectEssential_array'])) {
+              unset( $_SESSION['currentSubjectEssential_array']);
+              unset( $_SESSION['currentSubjectDetail_array']);
+              unset( $_SESSION['currentSubject_outcomeDetail_array']);
+              unset( $_SESSION['currentSubject_cloToPlo_array']);
+              //            $_SESSION['currentSubjectEssential_array'] = $array_courseEssential;
+//            $_SESSION['currentSubjectDetail_array'] = $array_courseDetail;
+//            $_SESSION['currentSubject_outcomeDetail_array'] = $array_cCLO;
+//            $_SESSION['currentSubject_cloToPlo_array'] = $array_cMapping;
+//            die(json_encode(array('message' => 'Data Send Sucessfully')));
             }
 
-        } // if in editor mode.
-        elseif ($_SESSION['recordExist']) { //  record exist we move to view page. .
-            $_SESSION['cpid'] = 'curriculum-18';
-            $_SESSION['batchcode'] = 'f18-bcse';
-            $_SESSION['ccode'] = 'or011';
-            header("Location: courseprofile_view.php");
+            echo(json_encode(array('message' => 'Data Send Sucessfully')));
+
+        } else {
+            die(json_encode(array('message' => 'ERROR')));
         }
-
-    } elseif ($type == 2) {
-        // if record does not exist then its creation type.
-     }
-
-
-}else{
-    // error generate and stop working.
-}
+    } else {
+        die(json_encode(array('message' => 'Pata nahi kia Ajeeb')));
+    }
 
 
+} else {
+    $ifCreation = $courseProfile->isProfileExist($_SESSION['selectedSection'], $_SESSION['selectedCourse']);
+    // check if profile has been created or not.
+    //echo "<br>".($ifCreation === false)."fuck you";
+//echo "<br>".($ifCreation === False)."fuck you";
+//echo "<br>".($ifCreation == true)."fuck you";
+//echo "<br>".($ifCreation !== true)."fuck you";
+    $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
+    $ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLOs.
 
-function fetchingPLOs($hasPLOs, $PLOsArray)
-{
-    // checking list.
-    // if exist:
+    $type = ''; // agr 1 to creation else update mode.
+
+    /*foreach ($ploArray as $f)
+    echo "<br>".json_encode($f);*/
+
+
+    if (count($ploArray) != 0) { // if we have plo then enter.
+        $hasPlo = 1;
+        /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
+            'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+            'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+            'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
+            'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
+            'PLO 6' => "Use AJAX to get the data you need from the server. Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
+            'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
+            'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
+            'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
+            'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
+            'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
+            'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
+
+        if ($ifCreation === false) // not created
+            $_SESSION['typeOfProfile'] = 1;
+        else  // is created.
+            $_SESSION['typeOfProfile'] = 2;
+
+        $type = $_SESSION['typeOfProfile'];
+
+        if ($type != 1) { // in Updation Mode.
+            // curriculumID(program) , BatchCode ,  CourseCode server fetch.  if existed.
+
+            if (isset($_GET['profileID'])) {
+                $ifCreation = false;
+                echo "Updation Mode.";
+
+                if (true) { // agr SESSION MA data hai.
+                    $c_essential_existing = $_SESSION['currentSubjectEssential_array'];
+                    $course_detail = $_SESSION['currentSubjectDetail_array'];
+
+                    $c_assessment_existing = new AssessmentWeight($c_essential_existing[11], $c_essential_existing[12], $c_essential_existing[13],
+                        $c_essential_existing[14], $c_essential_existing[15]);
+
+                    $courseInstructor = new CourseInstructor($course_detail[4], $course_detail[5], $course_detail[6],
+                        $course_detail[7], $course_detail[8], $course_detail[9]);
+
+                    $courseProfile = new CourseProfile($c_essential_existing[0], $c_essential_existing[1], $c_essential_existing[2], $c_essential_existing[3],
+                        $c_essential_existing[4], $c_essential_existing[5], $c_essential_existing[6], $c_essential_existing[7], $c_essential_existing[8], $c_essential_existing[9],
+                        $c_essential_existing[10], $course_detail[0], $course_detail[1], $course_detail[2], $course_detail[3], $c_assessment_existing, $courseInstructor);
+
+                }
+
+            } // if in editor mode.
+            else //  profile exist we move to view page. .
+            {
+                header("Location: courseprofile_view.php");
+            }
+        } else { // in creation mode.
+
+        }
+    } else
+        $hasPlo = 0;
 }
 
 ?>
@@ -120,67 +167,6 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
 </head>
 <body>
 <div class="w-full min-h-full">
-
-    <header class=" bg-white shadow-md">
-        <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
-            <h1 class="text-3xl font-bold text-blue-800 flex-grow text-center">Course Profile Creation</h1>
-
-            <!--  Desktop view of top          -->
-            <div class="hidden md:block">
-                <div class="ml-2 flex items-center md:ml-6">
-                    <!-- Profile -->
-                    <div class="mr-3 relative">
-
-                        <div class="user-profile-section-desktop">
-                            <button type="button" class="max-w-6xl bg-gray-800 rounded-full flex items-center
-
-                            text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 focus:ring-white"
-                                    id="user-menu-button">
-                                <!--                            aria-expanded="false" aria-haspopup="true   -->
-                                <span class="sr-only">Open user menu</span>
-                                <img class="h-14 w-14 rounded-full"
-                                     src="../../../Assets/Images/profilePicAvatar.jpg" alt="">
-                            </button>
-                        </div>
-                        <div class="hidden origin-top-right absolute right-0 mt-2 w-48
-                                    rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col">
-                            <a href="#" class=" px-4 py-2 text-sm text-gray-700">Your Profile</a>
-                            <a href="#" class=" px-4 py-2 text-sm text-gray-700">Settings</a>
-                            <a href="#" class=" px-4 py-2 text-sm text-gray-700">Sign out</a>
-                        </div>
-                    </div>
-                    <!--                  bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none
-                                            focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white-->
-                    <div class="flex flex-col relative">
-                        <p class="text-sm  text-gray-800 text-center">2321321</p>
-                        <div class="w-full self-center border-t-2 border-gray-300 "></div>
-                        <p class="text-sm text-gray-800 text-center">Student F18-BCSE-037</p>
-                    </div>
-
-                </div>
-            </div>
-            <!--            Mobile View-->
-            <div class="-mr-2 flex md:hidden">
-                <!-- Mobile menu button -->
-                <button type="button"
-                        class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                        aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-
-                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-
-                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </header>
 
     <main class="main-content-alignment">
 
@@ -225,7 +211,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
             <!--        Course-Profile Container -->
             <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 h-full bg-catalystLight-f5">
                 <div class="flex flex-row items-center">
-                    <img class="mx-2 h-6 transition duration-800 ease-in-out"
+                    <img class="hidden mx-2 h-6 transition duration-800 ease-in-out"
                          src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
                     <!--<svg  class="mx-2 h-6 hover:bg-gray-700 relative" width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.3333 7.7085L4.625 15.4168L12.3333 23.1252" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -244,15 +230,15 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                             <div class="textField-label-content w-full" id="courseTitleDivId">
                                 <label for="courseTitleID"></label>
                                 <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                       name="courseTitle" value="">
+                                       name="courseTitle" value="<?php echo $courseProfile->getCourseTitle() ?>">
                                 <label class="textField-label">Course Title</label>
                             </div>
-                            <?php echo $courseProfile->getCourseTitle() ?>
+
                             <!--                        course Code-->
                             <div class="textField-label-content w-full" id="courseCodeDivId">
                                 <label for="courseCodeID"></label>
                                 <input class="textField" type="text" placeholder=" " id="courseCodeID"
-                                       name="courseCode" value="">
+                                       name="courseCode" value="<?php echo $courseProfile->getCourseCode() ?>">
                                 <label class="textField-label">Course Code</label>
                             </div>
 
@@ -267,6 +253,8 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
+                                    <!--                                    <option value="3" selected>-->
+                                    <?php //echo $courseProfile->getCourseCreditHr() ?><!--</option>-->
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Credit Hour</label>
                             </div>
@@ -357,7 +345,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
 
 
                         </div>
-                        <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
+                        <div class="cprofile-right-container flex-1 ml-40 sm:ml-10 pb-5 mr-5">
 
                             <div class="course-assessment-border border-t-2 shadow-sm px-1 pb-1"
                                  style="background-color: #0284FC">
@@ -374,6 +362,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                                    class="textField px-12"
                                                    oninput="isNumeric(this)"
                                                    maxlength="2"
+                                                   value="<?php echo $courseProfile->getAssessmentInfo()->getQuizWeightage() ?>"
                                                    style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
 
@@ -393,6 +382,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                                    id="assignmentWeightID" class="textField px-12"
                                                    oninput="isNumeric(this)"
                                                    maxlength="2"
+                                                   value="<?php echo $courseProfile->getAssessmentInfo()->getAssignmentWeightage() ?>"
                                                    style="padding-left:2.3em ">
 
                                             <label class="textField-label ml-3">Weights</label>
@@ -413,6 +403,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                                    id="projectWeightID" class="textField px-12"
                                                    oninput="isNumeric(this)"
                                                    maxlength="2"
+                                                   value="<?php echo $courseProfile->getAssessmentInfo()->getProjectWeightage() ?>"
                                                    style="padding-left:2.3em ">
 
                                             <label class="textField-label ml-3">Weights</label>
@@ -429,13 +420,13 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         <div class="vertical-line"></div>
 
 
-
                                         <div class="textField-label-content  w-2/5" id="midTermWeightDivId">
                                             <label for="midWeightID"></label>
                                             <input type="text" placeholder=" "
                                                    oninput="isNumeric(this)"
                                                    maxlength="2"
                                                    name="midWeight" id="midWeightID"
+                                                   value="<?php echo $courseProfile->getAssessmentInfo()->getMidWeightage() ?>"
                                                    class="textField px-12" style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
 
@@ -457,6 +448,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             <input type="text" placeholder=" "
                                                    oninput="isNumeric(this)"
                                                    maxlength="2"
+                                                   value="<?php echo $courseProfile->getAssessmentInfo()->getFinalWeightage() ?>"
                                                    name="finalWeight" id="finalWeightID"
                                                    class="textField px-12" style="padding-left:2.3em ">
                                             <label class="textField-label ml-3">Weights</label>
@@ -485,6 +477,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                     <input class="textField" type="text" placeholder="Interaction model"
                                            id="courseInteractionModelID"
                                            oninput="isNumeric(this)"
+                                           value="<?php echo $courseProfile->getCourseTeachingMythology() ?>"
                                            maxlength="2"
                                            name="courseInteractionModel">
                                     <label class="textField-label">Course Model</label>
@@ -509,6 +502,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                             <div class="textField-label-content w-full" id="ReferenceBooksDivId">
                                 <label for="referenceBooksID"></label>
                                 <input class="textField" type="text" placeholder=" " id="referenceBooksID"
+                                       value="<?php echo $courseProfile->getCourseReferenceBook() ?>"
                                        name="ReferenceBooks">
                                 <label class="textField-label">ReferenceBooks</label>
                             </div>
@@ -516,7 +510,9 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                             <div class="textField-label-content w-full" id="recommendedTextbooksDivId">
                                 <label for="recommendedTextbooksID"></label>
                                 <input class="textField" type="text" placeholder=" " id="recommendedTextbooksID"
+                                       value="<?php echo $courseProfile->getCourseTextBook() ?>"
                                        name="RecommendedTextbooks">
+
                                 <label class="textField-label">RecommendedTextbooks</label>
                             </div>
                             <!--                        course Description-->
@@ -524,6 +520,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                 <label for="courseDescriptionID"></label>
                                 <textarea class="textarea-h textField" type="text" placeholder=" "
                                           id="courseDescriptionID" name="assignmentDetail"
+                                          value="<?php echo $courseProfile->getCourseDescription() ?>"
                                           style="height: 9em"></textarea>
                                 <label class="textField-label">Course Description</label>
                             </div>
@@ -532,6 +529,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                 <label for="otherReferenceId"></label>
                                 <textarea class="textarea-h textField" type="text" placeholder=" "
                                           id="otherReferenceId" name="otherReference"
+                                          value="<?php echo $courseProfile->getCourseOtherReference() ?>"
                                           style="height: 9em"></textarea>
                                 <label class="textField-label">Other reference Material</label>
                             </div>
@@ -550,6 +548,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         <div class="textField-label-content w-full" id="nameWeightDivId">
                                             <label for="nameDetailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?>"
                                                       id="nameDetailID" name="nameDetail"></textarea>
                                             <label class="textField-label my-2">Detail</label>
                                         </div>
@@ -573,6 +572,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         <div class="textField-label-content w-full" id=" qualificationWeightDivId">
                                             <label for=" qualificationID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?>"
                                                       id="qualificationID"
                                                       name=" QualificationDetail"></textarea>
                                             <label class="textField-label">Detail</label>
@@ -584,6 +584,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                         <div class="textField-label-content w-full" id=" SpecializationWeightDivId">
                                             <label for="specializationID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?>"
                                                       id="specializationID"
                                                       name="SpecializationDetail"></textarea>
                                             <label class="textField-label">Detail</label>
@@ -596,6 +597,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             <label for="contactsID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="contactsID"
+                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?>"
                                                       name="ContactsDetail"></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
@@ -607,6 +609,7 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
                                             <label for="personalEmailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="personalEmailID"
+                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?>"
                                                       name="PersonalEmailDetail"></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
@@ -768,19 +771,23 @@ function fetchingPLOs($hasPLOs, $PLOsArray)
         type="text/javascript"></script>
 
 <?php
+//$execution_time = microtime(); // Start counting
 
 if ($_SESSION['typeOfProfile'] == 1) {
 
     echo "
 <script>
     let hasPLOs, ploArray;
-        hasPLOs = " . $hasPLOs . ";
-        let ploObject = " . json_encode($PLOsArray, JSON_HEX_TAG) . ";
-        ploArray = Object.entries(ploObject);
+        hasPLOs = " . $hasPlo . ";
+        let ploObject = " . json_encode($ploArray, JSON_HEX_TAG) . ";
+        ploArray = Object.values(ploObject);
+       
 </script>
-<script src='CourseProfileAssets/CourseProfileScript.js'></script>
+<script src='CourseProfileAssets/CourseProfileScript.js' defer></script>
 ";
 }
+//$execution_time = microtime() - $execution_time;
+//echo "time".$execution_time;
 ?>
 
 </html>

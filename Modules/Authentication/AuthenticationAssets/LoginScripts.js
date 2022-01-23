@@ -1,7 +1,7 @@
 /*Script would load when the whole page it is associated to is loaded along with its contents*/
 window.onload = function () {
 
-    /*Authentication Types*/
+    /*DIM Types*/
 
     let studentAuthBtn = document.getElementById("studentAuthenticationBtn")
     let teacherAuthBtn = document.getElementById("teacherAuthenticationBtn")
@@ -19,7 +19,7 @@ window.onload = function () {
     /*****************************************/
 
 
-    /*Student Authentication*/
+    /*Student DIM*/
 
     let batch = document.getElementById("batch")
     let batchDiv = document.getElementById("batchDiv")
@@ -43,7 +43,7 @@ window.onload = function () {
     incompletePassword = true //would be turned false when studentPassword is complete
 
 
-    /*Teacher Authentication*/
+    /*Teacher DIM*/
 
     let teacherUsernameDiv = document.getElementById("teacherUsernameDiv")
     let teacherUsername = document.getElementById("teacherUsername")
@@ -58,12 +58,12 @@ window.onload = function () {
     /*login Button*/
     teacherLoginBtn = document.getElementById("teacherLoginBtnID")
 
-    /*Admin Authentication*/
+    /*Admin DIM*/
 
     let adminUsernameDiv = document.getElementById("adminUsernameDiv")
     let adminUsername = document.getElementById("adminUsername")
     let adminPassword = document.getElementById("adminPassword")
-    let adminPasswordDiv = document.getElementById("adminPasswordDiv"), incompleteUsername
+    let adminPasswordDiv = document.getElementById("adminPasswordDiv")
 
     /*Errors*/
     adminUsernameError = document.getElementById("adminUsernameError")
@@ -74,7 +74,7 @@ window.onload = function () {
     adminLoginBtn = document.getElementById("adminLoginBtnID")
 
 
-    /*  Authentication type dropdown for mobile     */
+    /*  DIM type dropdown for mobile     */
     function dropdown() {
         iAm.innerText = "Who are you?"
         dropdownContent.classList.remove("hidden")
@@ -82,7 +82,7 @@ window.onload = function () {
 
     function checkStudentUsername() {
         incompleteUsername = false //it would be turned back to true if any one of the below conditions execute
-        if (batch.value === "") {
+        if (batch.value == "") {
             batchDiv.classList.add("select-error-input")
             incompleteUsername = true
         }
@@ -168,12 +168,15 @@ window.onload = function () {
         authBtns = [studentAuthBtn, teacherAuthBtn, adminAuthBtn]
 
         iAm.innerText = selectedAuth.innerText
+        console.log(adminAuthenticationPanel)
         for (let i = 0; i < panels.length; i++) {
             if (selectedAuth.id == authBtns[i].id) {
                 authBtns[i].classList.toggle("selected", true)
+                console.log(panels[i].id)
                 panels[i].classList.toggle("hidden", false)
             } else {
                 authBtns[i].classList.toggle("selected", false)
+                // console.log(panels[i].id)
                 panels[i].classList.toggle("hidden", true)
 
             }
@@ -199,13 +202,13 @@ window.onload = function () {
 
     /*jQuery*/
     $(document).ready(function () {
-        /*Authentication Type Switching*/
+        /*DIM Type Switching*/
 
         $(studentAuthBtn).add(teacherAuthBtn).add(adminAuthBtn).click(function (event) {
             switchPanelNormal(this)
         });
 
-        /*On Authentication Type Click from Mobile*/
+        /*On DIM Type Click from Mobile*/
         $(authenticationTypesDropdown).click(function () {
             dropdown()
         });
@@ -218,7 +221,7 @@ window.onload = function () {
         /***********************************************/
 
 
-        /*Student Authentication*/
+        /*Student DIM*/
 
         /*On Batch Input*/
         $(program).add(batch).on("input", function (e) {
@@ -236,52 +239,50 @@ window.onload = function () {
         $(rollNo).on("input", function () {
             rollNoDiv.classList.remove("select-error-input")
             removeStudentUsernameError()
-
         });
 
         /*On Username Inputs*/
         $(teacherUsername).add(adminUsername).on("input", function () {
-            if (this.id === teacherUsername.id) {
+            if (this.id == teacherUsername.id) {
                 removeUsernameError(teacherUsername, teacherUsernameDiv, teacherUsernameError)
-            } else if (this.id === adminUsername.id) {
+            } else if (this.id == adminUsername.id) {
                 removeUsernameError(adminUsername, adminUsernameDiv, adminUsernameError)
             }
-
         });
 
 
         /*On Password Input*/
         $(studentPassword).add(teacherPassword).add(adminPassword).on("input", function () {
 
-            if (this.id === studentPassword.id) {
+            if (this.id == studentPassword.id) {
                 studentPasswordDiv.classList.toggle("textField-error-input", false)
                 studentPassErrorLabel.classList.toggle("hidden", true)
-            } else if (this.id === teacherPassword.id) {
+            } else if (this.id == teacherPassword.id) {
                 teacherPasswordDiv.classList.toggle("textField-error-input", false)
                 teacherPassErrorLabel.classList.toggle("hidden", true)
-            } else if (this.id === adminPassword.id) {
+            } else if (this.id == adminPassword.id) {
                 adminPasswordDiv.classList.toggle("textField-error-input", false)
                 adminPassErrorLabel.classList.toggle("hidden", true)
             }
         });
 
 
-        $(studentLoginBtn).add(teacherLoginBtn)
-            .add(adminLoginBtn).click(function (event) {
+        $(studentLoginBtn).add(teacherLoginBtn).add(adminLoginBtn).click(function (event) {
             if (this.id == studentLoginBtn.id) {
                 checkStudentUsername()
                 checkPassword(studentPassword, studentPasswordDiv, studentPassErrorLabel)
-            } else if (this.id == teacherLoginBtn.id) {
+            }
+            else if (this.id == teacherLoginBtn.id) {
                 checkUsername(teacherUsername, teacherUsernameDiv, teacherUsernameError)
                 checkPassword(teacherPassword, teacherPasswordDiv, teacherPassErrorLabel)
-            } else {
+            }
+            else{
                 checkUsername(adminUsername, adminUsernameDiv, adminUsernameError)
                 checkPassword(adminPassword, adminPasswordDiv, adminPassErrorLabel)
             }
             if (incompleteUsername || incompletePassword) {
                 event.preventDefault()
             }
-
         });
 
     });

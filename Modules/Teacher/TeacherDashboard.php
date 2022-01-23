@@ -1,48 +1,114 @@
 <?php
+include "../../Backend/Packages/DIM/Faculty.php";
+session_start();
+$facultyCode = $_SESSION['facultyCode'];
+$showSelectorIframe = "";
+$showDashboardIframe = "hidden";
+$selectedCourse = "";
+$selectedSection = "";
+$selectedSemester = "";
+$personalDetails = array();
+
+
+$faculty = unserialize($_SESSION['facultyInstance']);
+$personalDetails = $faculty->getPersonalDetails();
+
+//$_SESSION["personalDetailsOfTeacher"] = $personalDetails;
+
+//print_r($personalDetails);
+
+if (isset($_POST['selectClass'])) {
+
+    $showSelectorIframe = "hidden";
+    $showDashboardIframe = "";
+//    echo $facultyCode;
+
+    echo "Course Code:" . $_POST['courseSelector'];
+    echo "<br>Semester Code:" . $_POST['semesterSelector'];
+    echo "<br>Section Code:" . $_POST['sectionSelector'];
+    $selectedCourse = $_POST['courseSelector'];
+    $selectedSemester = $_POST['semesterSelector'];
+    $selectedSection = $_POST['sectionSelector'];
+
+
+    $_SESSION['selectedCourse'] = $selectedCourse;
+    $_SESSION['selectedSemester'] = $selectedSemester;
+    $_SESSION['selectedSection'] = $selectedSection;
+
+//    $faculty = Faculty::getFacultyInstance();
+//    $faculty->setPersonalDetails();
+//    echo $faculty->getUserCode();
+    $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
+
+      /*  echo "<br>Total Allocations:" . sizeof($listOfAllocations);
+        for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+            $listOfAllocations[$x]->toString();
+        }*/
+}
+//Stores title of allotted courses
+//$allottedCourses = array();
+//Stores name of allotted sections
+//$allottedSections = array();
+/*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
+for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+    $listOfAllocations[$x]->toString();
+}*/
+
+//for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+//    array_push($allottedCourses, $listOfAllocations[$x]->getCourse());
+//    array_push($allottedSections, $listOfAllocations[$x]->getSection());
+//}
+
+/*echo "Allotted Courses ()";
+for ($x = 0; $x < sizeof($allottedCourses); $x++) {
+    echo "<br>".$allottedCourses[$x]->getCourseCode();
+}
+echo "Allotted Sections";
+for ($x = 0; $x < sizeof($allottedSections); $x++) {
+    echo "<br>".$allottedSections[$x]->getSectionCode();
+}*/
+
+//print_r($courses);
+//echo "<br> Sections:";
+//print_r($courseSections);
+/*for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+    array_push($courseCodes, $listOfAllocations[$x]->getCourse()->getCourseTitle());
+    array_push($courseSections, $listOfAllocations[$x]->getSection()->getSectionName());
+}*/
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
-    <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <link href="TeacherAssets/TeacherDashboardStyles.css" rel="stylesheet">
+    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
+    <link href="asset/TeacherDashboardStyles.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
-    <script src="TeacherAssets/TeacherDashScripts.js" rel="script"></script>
-    <script>
-        window.Promise ||
-        document.write(
-            '<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"><\/script>'
-        )
-        window.Promise ||
-        document.write(
-            '<script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20171210/classList.min.js"><\/script>'
-        )
-        window.Promise ||
-        document.write(
-            '<script src="https://cdn.jsdelivr.net/npm/findindex_polyfill_mdn"><\/script>'
-        )
-    </script>
-    <script src="../../../Assets/Frameworks/apexChart/apexcharts.js"></script>
+    <script src="../../Assets/Scripts/Master.js" rel="script"></script>
+    <script src="asset/TeacherDashScripts.js" rel="script"></script>
 </head>
 
 <body>
 
-<header class="text-center text-4xl p-2">
-    Dashboard
-    <div class="profilePictureDiv">
+<header class="text-center text-4xl p-2 pl-48">
+    <label id="teacherPanelTitleID">Dashboard</label>
+    <div class="profilePictureDiv" id="viewProfileID">
         <div class="flex">
-            <img src="../../../Assets/Images/profilePicAvatar.jpg" width="40">
-            <div class="flex flex-col text-xs pl-4 pt-1">
-                <a href="#">My Full Name</a>
-                <hr class="w-full">
-                <a href="#">My Full Roll Number</a>
-            </div>
+            <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
+                <img src="../../Assets/Images/profilePicAvatar.jpg" width="40">
+                <div class="flex flex-col text-xs pl-4 pt-1 cursor-pointer">
+                    <div><?php echo $personalDetails['name'] ?></div>
+                    <hr class="w-full">
+                    <div><?php echo $personalDetails['facultyCode'] ?></div>
+                </div>
+            </a>
         </div>
     </div>
 </header>
+
 
 <div class="wrapper" style="height: 90vh">
     <div class="w-48 sidePanel p-2">
@@ -123,6 +189,7 @@
 
         <div class="mt-5 relative h-full">
             <!--            Class Selector-->
+
             <div class="select-label-content classSelector w-full" id="classDiv">
                 <select class="select" name="class" value="" id="classFromSidePanel"
                         onclick="this.setAttribute('value', this.value);"
@@ -136,13 +203,14 @@
                 <label class="select-label">Class</label>
             </div>
 
+
             <!--            Dashboard-->
-            <div class="navigationItem" id="teacherDashboardID" onclick="">
+            <div class="navigationItem" id="teacherDashboardID">
                 <svg width="25" height="25" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
                     <path d="M3 15C3 11.8174 4.26428 8.76516 6.51472 6.51472C8.76516 4.26428 11.8174 3 15 3V15H27C27 18.1826 25.7357 21.2348 23.4853 23.4853C21.2348 25.7357 18.1826 27 15 27C11.8174 27 8.76516 25.7357 6.51472 23.4853C4.26428 21.2348 3 18.1826 3 15Z"/>
                     <path d="M18 3.37793C20.0754 3.91562 21.9693 4.9986 23.4853 6.51461C25.0013 8.03062 26.0843 9.92449 26.622 11.9999H18V3.37793Z"/>
                 </svg>
-                <label class=" pl-3">Dashboard</label>
+                <label class="pl-3" id="switchToDashboard">Dashboard</label>
             </div>
 
             <!--            Course Managements-->
@@ -159,12 +227,12 @@
                         <label class="pl-3">Course Management</label>
                     </div>
                     <img class="sidePanelNavigationItemDropdownIcon rotate" name="courseManagement"
-                         src="../../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
+                         src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="dropdownNavigationItemMenu menu menuClosed" id="courseManagementMenu">
-                    <div class="menuItem">Profile</div>
-                    <div class="menuItem">Weekly Topics</div>
-                    <div class="menuItem">Course Summary</div>
+                    <div class="menuItem" id="switchTocourseProfile">Profile</div>
+                    <div class="menuItem" id="switchToWeeklyTopic">Weekly Topics</div>
+                    <div class="menuItem" id="switchToCourseSummary">Course Summary</div>
                 </div>
             </div>
 
@@ -183,12 +251,12 @@
                     </div>
 
                     <img class="sidePanelNavigationItemDropdownIcon rotate"
-                         src="../../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
+                         src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
-                    <div class="menuItem">Sessional</div>
-                    <div class="menuItem">Mid Term</div>
-                    <div class="menuItem">Finals</div>
+                    <div class="menuItem" id="switchToSessional">Sessional</div>
+                    <div class="menuItem" id="switchToMidterm">Mid Term</div>
+                    <div class="menuItem" id="switchToFinalExam">Finals</div>
                 </div>
             </div>
 
@@ -198,7 +266,7 @@
                     <path d="M3 15C3 11.8174 4.26428 8.76516 6.51472 6.51472C8.76516 4.26428 11.8174 3 15 3V15H27C27 18.1826 25.7357 21.2348 23.4853 23.4853C21.2348 25.7357 18.1826 27 15 27C11.8174 27 8.76516 25.7357 6.51472 23.4853C4.26428 21.2348 3 18.1826 3 15Z"/>
                     <path d="M18 3.37793C20.0754 3.91562 21.9693 4.9986 23.4853 6.51461C25.0013 8.03062 26.0843 9.92449 26.622 11.9999H18V3.37793Z"/>
                 </svg>
-                <label class=" pl-3">Class Summary</label>
+                <label class=" pl-3" id="switchToClassSummary">Class Summary</label>
             </div>
 
             <!--            Settings-->
@@ -224,314 +292,30 @@
     </div>
     <div class="ml-48 w-full h-full" id="teacherMainContent">
         <!--        Pages to load go here through scripts-->
-        <!--        <iframe class="h-full" src="example1.php" style="width: 100%"></iframe>-->
-
-        <div class="w-full min-h-full">
-            <main class="container mx-auto py-3 max-w-7xl px-5">
-                <section class=" cprofile-grid mx-0 my-0 ">
-                    <div class="mx-2 p-4 clo-container ">
-                        <div class="grid grid-cols-4 gap-6">
-
-                            <!-- Top Section , CGPA , CS , CH , EC -->
-
-                            <div class="shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
-                                <div class="flex flex-col items-center justify-center">
-                                    <div class="rounded-full relative">
-                                        <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Student
-                                            <br>Strength</p>
-                                    </div>
-                                    <p class="text-3xl font-semibold" style="color: #003C9C">7</p>
-                                </div>
-                            </div>
-                            <div class="shadow-lg col-span-2 rounded-2xl w-full h-40  p-4 py-4 bg-white">
-                                <div class="flex flex-col items-center justify-center">
-                                    <div class="rounded-full relative">
-                                        <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-12 mt-4">
-                                            Assign Sections</p>
-                                    </div>
-                                    <p class="text-3xl font-semibold" style="color: #003C9C">15</p>
-                                </div>
-                            </div>
-                            <div class="shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
-                                <div class="flex flex-col items-center justify-center">
-                                    <div class="rounded-full relative">
-                                        <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">
-                                            ---</p>
-                                    </div>
-                                    <p class="text-3xl font-semibold" style="color: #003C9C">-</p>
-                                </div>
-                            </div>
-
-
-                            <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                                <div id="averageCLOAchievedID" class="rounded-full">
-                                    <!--                                    <apexchart type="radialBar" height="390" :options="chartOptions" :series="series"></apexchart>-->
-                                    <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
-                                        <h2 class="text-md font-bold text-center">Average Achieved CLO Score</h2>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                                <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
-                                    <h2 class="text-md font-bold text-center">CLO's List</h2>
-                                </div>
-                                <table class="table-auto w-full text-left whitespace-no-wrap">
-                                    <thead>
-                                    <tr class="text-center bg-catalystLight-f5">
-                                        <th class="capitalize px-4 w-1/6 py-3 title-font tracking-wider font-medium text-sm rounded-tl rounded-bl">
-                                            CLO No
-                                        </th>
-                                        <th class="capitalize px-4 py-3 w-full title-font tracking-wider font-medium text-sm">
-                                            Description
-                                        </th>
-                                    </tr>
-                                    </thead>
-
-                                    <tbody id="">
-                                    <tr class="text-center text-sm font-base tracking-tight">
-                                        <td class="px-4 py-3">CLO 1</td>
-                                        <td class="px-4 py-3 ">Understand the role of design and its major activities within the OO software development process, with focus on the Unified process</td>
-                                    </tr>
-
-                                    </tbody>
-                                </table>
-
-                            </div>
-
-                            <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                                <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
-                                    <h2 class="text-md font-bold text-center">Latest Assessment Created</h2>
-                                </div>
-                                <div class="px-4 py-0">
-                                    <p class="font-semibold text-based">Quizz : 2</p>
-                                    <p class="font-semibold text-based py-2">Topic:
-                                        <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2">topic detail here</span>
-                                    </p>
-                                    <div class="flex flex-col space-y-0">
-                                        <p class="font-semibold text-based py-2 text-gray-700">Weightage : <span
-                                                    class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2">3.5%</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="border-t-4">
-                                    <table class="table-auto w-full text-left whitespace-no-wrap">
-                                        <thead>
-                                        <tr class="text-center bg-catalystLight-f5">
-                                            <th class="capitalize px-4 w-1/2 py-3 title-font tracking-wider font-medium text-sm rounded-tl rounded-bl">
-                                                Question No
-                                            </th>
-                                            <th class="capitalize px-4 py-3 w-full title-font tracking-wider font-medium text-sm">
-                                                CLO
-                                            </th>
-                                        </tr>
-                                        </thead>
-
-                                        <tbody id="">
-                                        <tr class="text-center text-sm font-base tracking-tight">
-                                            <td class="px-4 py-3">Question 1</td>
-                                            <td class="px-4 py-3 ">CLO 1</td>
-                                        </tr>
-
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div>
-                            <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                                <div class="px-2 py-2 sm:px-4 border-b border-gray-200">
-                                    <h2 class="text-md font-bold text-center">Latest Created Weekly Topic</h2>
-                                </div>
-                                <!--                                    <img class="bg-catalystBlue-l6 bg-cover rounded-md w-full w-16 h-16 hover:bg-catalystBlue-l61" alt="" src="../../../Assets/Images/vectorFiles/CLO_white_svg.svg">-->
-                                <div class="px-4 py-0">
-                                    <p class="font-semibold text-based py-2">Week : 1</p>
-                                    <p class=" mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2 text-gray-700">
-                                        description here</p>
-                                    <div class="flex flex-col my-5 space-y-0">
-                                        <p class="font-semibold text-based py-2">Assessment:
-                                            <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2">enter detail of assessment here</span>
-                                        </p>
-                                        <!--                                        <p class="font-base text-gray-700 text-sm">BT-Level : <span class="font-semibold">1</span></p>-->
-                                    </div>
-                                </div>
-                                <div class="px-4 border-t-4">
-                                    <div id="" class=" flex flex-row my-5 items-center w-full text-center">
-                                        <a class="capitalize font-semibold text-base w-full">CLO-1</a>
-                                        <a class="capitalize font-semibold text-base w-full">CLO-2</a>
-                                        <a class="capitalize font-semibold text-base w-full">CLO-3</a>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <!--   Enrolled Courses.  -->
-                            <div class="col-span-4 flex flex-row border-2 border-solid rounded-md">
-
-                                <!--   register courses list left side.  -->
-                                <div class="text-black rounded-t-md rounded-b-md mt-2 w-5/12">
-                                    <h2 class="text-md pl-5 my-2 font-bold">Register Courses</h2>
-
-                                    <section class="py-4 clo-container">
-
-                                        <!--  Subjects list -->
-                                        <div class="mb-10  py-1 gap-5 grid grid-rows-6 font-medium text-sm text-gray-700">
-                                            <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                                <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt=""
-                                                     src="../../../Assets/Images/left-arrow.svg">
-                                            </div>
-                                            <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                                <p class=" px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt=""
-                                                     src="../../../Assets/Images/left-arrow.svg">
-                                            </div>
-                                            <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                                <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt=""
-                                                     src="../../../Assets/Images/left-arrow.svg">
-                                            </div>
-                                            <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                                <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt=""
-                                                     src="../../../Assets/Images/left-arrow.svg">
-                                            </div>
-                                            <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                                <p class="px-10">Operation Research</p>
-                                                <img class="w-5" id="s-arrow-r" alt=""
-                                                     src="../../../Assets/Images/left-arrow.svg">
-                                            </div>
-                                        </div>
-                                    </section>
-                                </div>
-
-
-                                <!--   selected subject table right side.  -->
-                                <div class="w-full mx-auto overflow-auto shadow-md">
-                                    <h2 class="table-head text-center text-black">Selected Course Information</h2>
-                                    <table class="table-auto w-full text-left whitespace-no-wrap">
-                                        <thead>
-                                        <tr class="text-center bg-catalystLight-f5">
-                                            <th class="capitalize px-4 w-1/4 py-3 title-font tracking-wider font-medium text-sm rounded-tl rounded-bl">
-                                                course learning outcome
-                                            </th>
-                                            <th class="capitalize px-4 py-3 w-full title-font tracking-wider font-medium text-sm">
-                                                Description
-                                            </th>
-                                            <th class="capitalize px-4 py-3 w-1/6 title-font tracking-wider font-medium text-sm">
-                                                More
-                                            </th>
-                                        </tr>
-                                        </thead>
-
-                                        <tbody id="courseTableBodyID">
-                                        <tr class="text-center text-sm font-base tracking-tight">
-                                            <td class="px-4 py-3">CLO-1</td>
-                                            <td class="px-4 py-3 ">To control the letter spacing of an element at a
-                                                specific breakpoint
-                                            </td>
-                                            <td class="px-4 py-3"><i
-                                                        class="fa text-gray-600 fa-ellipsis-v hover:text-catalystBlue-l61"></i>
-                                            </td>
-                                        </tr>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </section>
-            </main>
-        </div>
-
-
+        <iframe class="h-full <?php echo $showSelectorIframe ?>" src="CourseSelector.php" style="width: 100%"></iframe>
     </div>
+    <!--<textarea style="border: black solid"></textarea>-->
 </div>
-
 </body>
 <script>
-    const colors = ['#016ADD', '#0183FB', '#4DBFFE']
+    const sbar = [document.getElementById('teacherDashboardID'), document.getElementById('courseManagementID'), document.getElementById('classActivities'), document.getElementById('teacherClassSummary')];
 
-    ploArray = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38]; // fetch from server.
-    totalCLO = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4'];  // fetch from server
-    avgScorePerCLO = [66, 51, 33, 10];  // fetch from server
+    let hasFormCompleted = <?php echo json_encode($showSelectorIframe); ?>;
+    console.log("Form Completed Length :" ,hasFormCompleted.length)
+    if (hasFormCompleted.length === 0) {
+        console.log("bruh")
 
-    let averageCLOAchievedChart = new ApexCharts(document.querySelector("#averageCLOAchievedID"), getOverAllCloAvg(avgScorePerCLO));
-    averageCLOAchievedChart.render();
-
-    function getOverAllCloAvg(avgScorePerCLO) {
-        return {
-            series: avgScorePerCLO,
-            chart: {
-                height: 410,
-                type: 'radialBar',
-            },
-            plotOptions: {
-                radialBar: {
-                    offsetY: 0,
-                    startAngle: 0,
-                    endAngle: 270,
-                    hollow: {
-                        margin: 5,
-                        size: '30%',
-                        background: 'transparent',
-                        image: undefined,
-                    },
-                    dataLabels: {
-                        name: {
-                            show: false,
-                        },
-                        value: {
-                            show: false,
-                        }
-                    }
-                }
-            },
-
-            colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
-            labels: totalCLO,
-            legend: {
-                show: true,
-                floating: true,
-                fontSize: '14px',
-                position: 'left',
-                offsetX: 150,
-                offsetY: 15,
-                labels: {
-                    useSeriesColors: true,
-                },
-                markers: {
-                    size: 0
-                },
-                formatter: function (seriesName, opts) {
-                    return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
-                },
-                itemMargin: {
-                    vertical: 3
-                }
-            },
-            xaxis: {
-                title: {
-                    show: true,
-                    text: "Program Learning Outcome",
-                    offsetX: 0,
-                    offsetY: 0,
-                },
-
-            },
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    legend: {
-                        show: false
-                    }
-                }
-            }],
-
-        };
-
-
+        $(sbar).each((node, currentSideTag) => {
+            $(currentSideTag).addClass("pointer-events-none");
+            $(currentSideTag).children().attr("disabled", true);
+            $(currentSideTag).children().addClass("text-white text-opacity-25");
+        })
+    } else {
+        $("#teacherMainContent").html("<iframe class='h-full block' src='Dashboard/dashboard.php' style='width: 100%'></iframe>");
+        $("#teacherPanelTitleID").text("Dashboard")
+        document.title = "Catalyst | Dashboard";
     }
+
+
 </script>
 </html>
