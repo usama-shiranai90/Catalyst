@@ -154,5 +154,8 @@ function createFirstCLOMapRow(totalPlo, outcomeMapContainer) {
                        </div>`
         clo_map_row_div.innerHTML += row_data;
     }
+
+
+
 }
 

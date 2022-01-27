@@ -443,9 +443,9 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                     </button>
 
                     <script>
-                        location.href = "courseprofile_main.php?profileID="+<?php echo true?>;
-                        // $('#updateCourseProfilebtn').on('click', function () {
-                        // })
+                        $('#updateCourseProfilebtn').on('click', function () {
+                            location.href = "courseprofile_main.php?profileID=" +<?php echo true?>;
+                        })
                     </script>
                 </div>
             </section>

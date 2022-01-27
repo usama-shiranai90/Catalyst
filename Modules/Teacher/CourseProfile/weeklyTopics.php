@@ -1,6 +1,150 @@
 <?php
 
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\WeeklyTopic.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+
+if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
+    session_start();
+    $courseProfile = new CourseProfile();
+    $weeklyInfo = new WeeklyTopic();
+    $curriculum = new Curriculum();
+    $cloObject = new CLO();
+}
+
+$profileExist = $courseProfile->profileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+
+if ($profileExist) {
+    $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
+
+    //$CLOList = ['CLO-1', 'CLO-2', 'CLO-3'];
+    $CLOList = $cloObject->retrieveCLOlist($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); // array of clo-code and name.
+    foreach ($CLOList as $key => $value) {
+        $CLOList[$key][1] = removeCLODash($value[1]);;
+    }
+
+    $_SESSION['courseProfileCode'] = $courseProfile->getCourseProfileCode();
+
+    /*$WeeklyTopicsArray = array( // is a two dimension array f18-or represents the key and has the following data.
+        array('week-1', 'By default, Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
+            array('CLO-1', 'CLO-2', 'CLO-3'),
+            'CSS property here so you can make your custom column values as generic or as complicated and site-specific',
+        ),
+        array('week-2', 'Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
+            array('CLO-2', 'CLO-3'),
+            'CSS property here so you can make your custom column.......................................................'),
+    );*/
+    $WeeklyTopicsArray = $weeklyInfo->retrieveWeeklyTopic($_SESSION['courseProfileCode']);
+//    $weeklyInfo->retrieveWeeklyTopic( $_SESSION['courseProfileCode']);
+//    $WeeklyTopicsArray = array();
+
+    if (sizeof($WeeklyTopicsArray) != 0 and !empty($WeeklyTopicsArray)) {
+        function setExistingWeeklyRow($WeeklyTopicsArray, $CLOList)
+        {
+            $counter = 1;
+            if (sizeof($WeeklyTopicsArray) != 0) {
+
+                foreach ($WeeklyTopicsArray as $rowData) { ?>
+
+                    <div id="weeklyCoveredRow-<?php echo $counter ?>"
+                         class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
+                        <!--        <div id="wct-wno-r--><?php //echo $counter ?><!---c"-->
+                        <div id="wct-wno-r<?php echo $counter ?>"
+                             class="lweek-column bg-catalystBlue-l61 text-white col-start-1 col-end-2">
+                            <span class="wlearn-cell-data"
+                                  id="<?php echo $rowData[0] ?>"><?php echo $rowData[1]; ?></span>
+                        </div>
+                        <div id="wct-wdescription-r<?php echo $counter ?>" class="lweek-column col-start-2 col-end-7">
+                            <label for="detail-<?php echo $counter ?>">
+            <textarea type="text" class="pt-4 px-2 h-auto cell-input w-full font-medium text-sm" value=""
+                      placeholder="Write weekly description here..."
+                      id="detail-r-<?php echo $counter ?>" readonly="readonly"
+                      style="height: 100px;"><?php echo $rowData[2]; ?></textarea></label>
+                        </div>
+                        <div class="lweek-column  col-start-7 col-end-8">
+                            <div id="wtc-clos-r<?php echo $counter ?>" class="flex flex-col overflow-y-visible ">
+
+                                <?php
+                                weeklyCLOCheckbox($CLOList, $rowData[3], $counter);
+                                ?>
+
+                            </div>
+                        </div>
+                        <div id="wct-wassessment-r<?php echo $counter ?>" class="lweek-column  col-start-8 col-end-12">
+                            <label for="assessment-clo-<?php echo $counter ?>">
+            <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm" value=""
+                      placeholder="Write week assessment here..."
+                      id="assessment-clo-1" readonly="readonly"><?php echo $rowData[4]; ?></textarea></label>
+
+                        </div>
+                        <div class="lweek-column ">
+                            <label for="clo-1-bt-level">
+                                <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
+                                    <img class="h-10 w-6" alt=""
+                                         src="../../../../../Assets/Images/vectorFiles/Icons/add-button.svg"
+                                         data-wtc-modify='modify'>
+                                    <img class="h-10 w-6" alt=""
+                                         src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg"
+                                         data-wtc-remove='remove'>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <?php $counter = $counter + 1;
+                }
+            }
+        }
+
+        function weeklyCLOCheckbox($CLOList, $checkedClos, $rowCounter)
+        {
+            $cloCounter = 1;
+            foreach ($checkedClos as $c) {
+                $checkedClos = removeCLODash($checkedClos);
+            }
+
+            foreach ($CLOList as $cloNo) { ?>
+
+                <div id="wtc-clo-r<?php echo $rowCounter ?>-c<?php echo $cloCounter ?>">
+                    <?php if (in_array($cloNo[1], $checkedClos)) { ?>
+
+                        <input class="clo-toggle hidden"
+                               id="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>ID"
+                               value="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                               name="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                               type="checkbox" disabled checked>
+                    <?php } else { ?>
+                        <input class="clo-toggle hidden"
+                               id="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>ID"
+                               value="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                               name="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                               type="checkbox">
+                    <?php } ?>
+
+                    <label class="inside-label cprofile-cell-data capitalize"
+                           for="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>ID">
+                        <?php echo $cloNo[1] ?>
+                        <span><svg width="50px" height="15px"><use
+                                        xlink:href="#check-tick"></use></svg> </span>
+                    </label>
+                </div>
+
+                <?php $cloCounter++;
+            }
+        }
+
+    }
+}
+
+function removeCLODash($cloArray)
+{
+    return str_replace("-", "", $cloArray);
+}
+
 ?>
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -15,67 +159,11 @@
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
-    <script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>
     <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
 </head>
 <body style="background-color: #F9F8FE">
 <div class="w-full min-h-full">
-    <header class="bg-white shadow-md">
-        <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
-            <h1 class="text-3xl font-bold text-blue-800 flex-grow text-center">Weekly Covered Topics</h1>
-            <!--  Desktop view of top          -->
-            <div class="hidden md:block">
-                <div class="ml-2 flex items-center md:ml-6">
-                    <!-- Profile -->
-                    <div class="mr-3 relative">
-                        <div class="user-profile-section-desktop">
-                            <button type="button" class="max-w-6xl bg-gray-800 rounded-full flex items-center
-                            text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 focus:ring-white"
-                                    id="user-menu-button"
-                            ">
-                            <!--                            aria-expanded="false" aria-haspopup="true   -->
-                            <span class="sr-only">Open user menu</span>
-                            <img class="h-14 w-14 rounded-full"
-                                 src="../../../Assets/Images/profilePicAvatar.jpg" alt="">
-                            </button>
-                        </div>
-                        <div class="hidden origin-top-right absolute right-0 mt-2 w-48
-                                    rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col">
-                            <a href="#" class=" px-4 py-2 text-sm text-gray-700">Your Profile</a>
-                            <a href="#" class=" px-4 py-2 text-sm text-gray-700">Settings</a>
-                            <a href="#" class=" px-4 py-2 text-sm text-gray-700">Sign out</a>
-                        </div>
-                    </div>
-                    <!--                  bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none
-                                            focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white-->
-                    <div class="flex flex-col relative">
-                        <p class="text-sm  text-gray-800 text-center">2321321</p>
-                        <div class="w-full self-center border-t-2 border-gray-300 "></div>
-                        <p class="text-sm text-gray-800 text-center">Student F18-BCSE-037</p>
-                    </div>
-                </div>
-            </div>
-            <!--            Mobile View-->
-            <div class="-mr-2 flex md:hidden">
-                <!-- Mobile menu button -->
-                <button type="button"
-                        class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                        aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </header>
     <svg class="hidden tick-icon">
         <symbol id="check-tick" viewbox="0 0 12 10">
             <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
@@ -113,6 +201,11 @@
                                     <span class="wlearn-cell-data">Status</span>
                                 </div>
                             </div>
+                            <?php
+                            if ($profileExist and sizeof($WeeklyTopicsArray) != 0 and !empty($WeeklyTopicsArray)) {
+                                setExistingWeeklyRow($WeeklyTopicsArray, $CLOList);
+                            }
+                            ?>
                         </div>
                     </div>
 
@@ -137,13 +230,10 @@
 
 </body>
 <script>
-
-    $('#courseweekParentDivID').load('CourseProfileAssets/record.php');
-
-    // call existing weekly topics from Server.
-    //let fetchWeeklyCoveredRows = <?php //echo json_encode($ifExistingWeeklyData); ?>//;
-    // console.log(fetchWeeklyCoveredRows)
-
-
+    let courseCLOList = <?php echo json_encode($CLOList, JSON_HEX_TAG) ?>;
+    let courseWeeklyTopicList = <?php echo json_encode($WeeklyTopicsArray, JSON_HEX_TAG)  ?>;
+    console.log(courseCLOList, courseWeeklyTopicList)
+    // $('#courseweekParentDivID').load('CourseProfileAssets/record.php');
 </script>
+<script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>
 </html>

@@ -112,39 +112,6 @@ class CLO
             co.programCode = \"$programID\" and co.curriculumCode = \"$curriculumID\" and co.courseCode = \"$courseCode\" ORDER BY co.cloName;";
 
         $result = $this->databaseConnection->query($sql);
-        //        if (mysqli_num_rows($result) > 0) {
-        //            $cloNo = 1;
-        //            $tempArray = array();
-        //
-        //            while ($row = $result->fetch_assoc()) {
-        //                if ($row["cloName"] == "CLO-" . $cloNo) { // agr same class hai to.
-        //                    $tempArray[] = [$row["ploName"], $row["ploDescription"]];
-        //                    if ($flag != 1) {
-        //                        $CLOlist[] = [$row["cloName"], $row["description"], $row["domain"], $row["btLevel"]];
-        //                        $flag = 1;
-        //                    }
-        //                } else {
-        //                    array_push($this->mappedPLOs, $tempArray);
-        //                    $cloNo += 1;
-        //                    $flag = 0;
-        //                    $tempArray = array();
-        //                    $tempArray[] = [$row["ploName"], $row["ploDescription"]];
-        //                    array_push($this->mappedPLOs, $tempArray);
-        ////                    $flag = 1;
-        //                }
-        //                if ($flag != 1) {
-        //                    $CLOlist[] = [$row["cloName"], $row["description"], $row["domain"], $row["btLevel"]];
-        //                    echo "are you printing :".json_encode($CLOlist);
-        //                    $flag = 1;
-        //                }
-        //
-        //                /* $fld = mysqli_fetch_field($result);
-        //                 echo json_encode($row)."\n<br>". $row[];*/
-        //            }
-        ////            echo "Well the list is" . "         <br>\n" . json_encode($this->mappedPLOs);
-        //        } else
-        //            echo "Cant find clo : " . $this->databaseConnection->error;
-
         if (mysqli_num_rows($result) > 0) {
             $currentCLO = '';
             while ($row = $result->fetch_assoc()) {

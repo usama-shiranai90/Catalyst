@@ -78,6 +78,7 @@ window.onload = function (e) {
     let courseDetailFieldValue = [];
 
     $(document).ready(function () {
+        /**  Checks if fields and selectors are empty or not are empty   **/
         $('.textField , .select').on('input', function (e) {
             if (this.classList.contains("px-12")) {
                 $(this).parent().removeClass().addClass("textField-label-content w-2/5");
@@ -89,18 +90,23 @@ window.onload = function (e) {
             }
         });
 
+        /**  Course Essential Section Continue Button , checks empty fields and back-arrow pointer.   **/
         $("#coursepContinuebtn-1").on("click", function (e) {
             e.preventDefault();
             completeFlag = true;
             checkEmptyFields(fieldsArray, 1, courseEssentialFieldValue, instrumentWeight);
             arrowPositionCheck();
         });
+
+        /**  Course Detail Section Continue Button , checks empty fields and back-arrow pointer   **/
         $('#coursepContinuebtn-2').on('click', function (e) {
             e.preventDefault();
             completeFlag = true;
             checkEmptyFields(fieldsArray_2, 2, courseDetailFieldValue, null);
             arrowPositionCheck();
         });
+
+        /**  Course Profile Creation create-button create   **/
         $('#coursepContinuebtn-3').on('click', function (e) {
             e.preventDefault();
             let arrayCLO = new Array(incrementClo);

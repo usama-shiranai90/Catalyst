@@ -219,12 +219,18 @@ if (isset($_POST['saved'])) {
                                 <select class="select" name="preRequisite"
                                         onclick="this.setAttribute('value', this.value);"
                                         onchange="this.setAttribute('value', this.value);"
-                                        value="<?php echo $option = ''; ?>"
+                                        value="<?php echo $option = 'English'; ?>"
                                         id="preRequisiteID">
                                     <option value="" hidden></option>
                                     <?php
-
-                                    foreach ($courseProfile->getCoursePreRequisites() as $value) {
+                                    //                                    foreach ($courseProfile->getCoursePreRequisites() as $value) {
+                                    //                                        if ($option == $value) {
+                                    //                                            echo '<option value=' . $value . 'selected>' . $value . '</option>';
+                                    //                                            $option = $value;
+                                    //                                        } else
+                                    //                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                    //                                    }
+                                    foreach ($courseProfile->getCourse()->getPreReqList() as $value) {
                                         if ($option == $value) {
                                             echo '<option value=' . $value . 'selected>' . $value . '</option>';
                                             $option = $value;

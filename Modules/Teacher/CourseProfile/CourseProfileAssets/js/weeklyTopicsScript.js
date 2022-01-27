@@ -1,9 +1,14 @@
 window.onload = function (e) {
+    let rowCLOsWithIDList = '';
+    let weeklyRowCounter;
+    let twoDimensionalWeeklyRecord = [];
 
-    // fetchWeeklyCoveredRows = Object.values(fetchWeeklyCoveredRows);
-    // fetchedWeekRowInsertionTag(Object.values(fetchWeeklyCoveredRows).length)
+    if (courseWeeklyTopicList.length !== 0) {
+        weeklyRowCounter = 0; // counts total weekly records.
+    } else
+        weeklyRowCounter = courseWeeklyTopicList.length;
 
-    let weeklyRowCounter = 0; // counts total weekly records.
+    // console.log("weekly Row : ",)
     const parentWeeklyContainer = document.getElementById('courseweekParentDivID'); // it contains the header as well as weekly-row data.
     const addWeeklyRowBtn = document.getElementById('createWeeklyBtn');  // generate new weekly record.
 
@@ -11,30 +16,65 @@ window.onload = function (e) {
 
     $(document).ready(function () {
         // loadWeeklyData();
-
         $(addWeeklyRowBtn).on('click', function (event) {
             initialRowChecking();
         });
 
         $('#updateweeklyTopicbtn').on('click', function () {
+            let twoDimensionalWeeklyRecord = new Array(weeklyRowCounter);
+            for (let i = 0; i < weeklyRowCounter; i++) {
+                twoDimensionalWeeklyRecord[i] = [];
+            }
+
+            let counter = 0;
+            let innerCounter = 0;
             $(parentWeeklyContainer).children().each((index, node) => {
                 if (index !== 0) {
-                    const weeklyRowRecord = ['#detail-r-' + index, '#assessment-clo-' + index, '#wtc-clos-r' + index];
+                    const weeklyRowRecord = ['#wct-wno-r' + index, '#detail-r-' + index, '#assessment-clo-' + index, '#wtc-clos-r' + index];
 
                     for (let i = 0; i < weeklyRowRecord.length; i++) {
-                        if (i !== 2) // for clo list
-                            $(weeklyRowRecord[i]).attr('readonly', true).removeClass("italic").addClass("not-italic");
-                         else {
-                            $(weeklyRowRecord[i]).children().each((i, n) => {
-                                let currentCLO = '#week' + index + '-clo-' + (i + 1) + 'ID';
-                                $(currentCLO).prop('disabled', true);
-                                $(currentCLO).children().attr("disabled", true);
-                            })
+
+                        if (i === 0) {
+                            twoDimensionalWeeklyRecord[counter][innerCounter] = "Week-" + (i + 1);
+                            innerCounter++;
+                        } else {
+                            if (i !== 3) // assessment and description.
+                            {
+                                $(weeklyRowRecord[i]).attr('readonly', true).removeClass("italic").addClass("not-italic");
+                                twoDimensionalWeeklyRecord[counter][innerCounter] = $(weeklyRowRecord[i]).val();
+                                innerCounter++;
+                            } else {
+                                let tempArray = [];
+                                $(weeklyRowRecord[i]).children().each((ind, n) => { //for clo list
+                                    let currentCLO = '#week' + index + '_clo-' + (ind + 1) + 'ID';
+                                    console.log("tag is :", currentCLO);
+
+                                    $(currentCLO).prop('disabled', true);
+                                    $(currentCLO).children().attr("disabled", true);
+                                    console.log("status check ", $(currentCLO).is(":checked"), $(currentCLO).is(":selected"))
+
+                                    if ($(currentCLO).is(":checked")) {
+                                        // idxx = 'week' + index + '_clo-' + (ind+1) + 'ID';
+                                        // console.log("name is", $(idxx).attr("name")  ,  'week' + i + '_clo-' + ind + 'ID')
+
+                                        console.log("please work", $(currentCLO));
+                                        tempArray.push($(currentCLO).attr("name"));
+                                    }
+                                })
+                                twoDimensionalWeeklyRecord[counter][innerCounter] = tempArray;
+                                innerCounter = 0;
+                                counter++;
+                            }
+
                         }
+
                     }
                     $('.h-10.w-6.hidden').toggleClass("hidden");
                 }
             })
+
+            console.log("new Weekly Data : ", twoDimensionalWeeklyRecord)
+            createWeeklyData(twoDimensionalWeeklyRecord);
 
             /*$(parentWeeklyContainer).children().each((index, node) => {
                 console.log(index, node)
@@ -81,7 +121,6 @@ window.onload = function (e) {
                         let currentCLOInput = '#week' + modifiedIndex + '-clo-' + (i + 1) + 'ID';
                         $(currentCLOInput).prop('disabled', false);
                         $(currentCLOInput).children().attr("disabled", false);
-                        console.log("type of :", $(currentCLOInput).prop("tagName"), $(currentCLOInput).attr('type'))
                     })
 
                 }
@@ -155,16 +194,19 @@ window.onload = function (e) {
 
         if ($(parentWeeklyContainer).children().length === 1) {
             weeklyRowCounter++;
-            parentWeeklyContainer.appendChild(createNewWeeklyRow(1))
+            parentWeeklyContainer.appendChild(createNewWeeklyRow(1, courseCLOList))
+            weeklyCoveredCLOsRow(1);
 
         } else {
             weeklyRowCounter = $(parentWeeklyContainer).children().length;
-            parentWeeklyContainer.appendChild(createNewWeeklyRow(weeklyRowCounter))
+            parentWeeklyContainer.appendChild(createNewWeeklyRow(weeklyRowCounter, courseCLOList))
+            weeklyCoveredCLOsRow(weeklyRowCounter);
         }
     }
 
 
-    function createNewWeeklyRow(currentWeekNo) {
+    function createNewWeeklyRow(currentWeekNo, courseCLOList) {
+        console.log("current Week No", currentWeekNo)
         const str = `<div id="weeklyCoveredRow-${currentWeekNo}"
      class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
      <input class="hidden" id="s-wtc-r-${currentWeekNo}-id" value="">
@@ -179,35 +221,10 @@ window.onload = function (e) {
                       id="detail-r-${currentWeekNo}"  onkeyup="autoHeight('detail-r-${currentWeekNo}')" ></textarea></label>
 
     </div>
-    <div class="lweek-column  col-start-7 col-end-8">
-        <div id="wtc-clos-r${currentWeekNo}" class="flex flex-col overflow-y-visible ">
-            <div id="wtc-clo-r${currentWeekNo}-c1">
-            
-                <input class="clo-toggle hidden" id="week${currentWeekNo}-clo-1ID" value="week1-clo-1"
-                       name="week${currentWeekNo}-clo-1" type="checkbox"/>
-                <label class="inside-label cprofile-cell-data" for="week${currentWeekNo}-clo-1ID">
-                    CLO1<span><svg width="50px" height="15px"><use
-                                    xlink:href="#check-tick"></use></svg> </span>
-                </label>
-            </div>
-            <div id="wtc-clo-r${currentWeekNo}-c2">
-                <input class="clo-toggle hidden" id="week${currentWeekNo}-clo-2ID" value="week1-clo-2"
-                       name="week${currentWeekNo}-clo-2" type="checkbox"/>
-                <label class="inside-label cprofile-cell-data" for="week${currentWeekNo}-clo-2ID">
-                    CLO2<span><svg width="50px" height="15px"><use
-                                    xlink:href="#check-tick"></use></svg> </span>
-                </label>
-            </div>
-            <div id="wtc-clo-r${currentWeekNo}-c3">
-                <input class="clo-toggle hidden" id="week${currentWeekNo}-clo-3ID" value="week${currentWeekNo}-clo-3"
-                       name="week${currentWeekNo}-clo-3" type="checkbox"/>
-                <label class="inside-label cprofile-cell-data" for="week${currentWeekNo}-clo-3ID">
-                    CLO3<span><svg width="50px" height="15px"><use
-                                    xlink:href="#check-tick"></use></svg> </span>
-                </label>
-            </div>
-
+    <div class="lweek-column  col-start-7 col-end-8" id="wtc-clist-container-r${currentWeekNo}">
+     <div id="wtc-clos-r${currentWeekNo}" class="flex flex-col overflow-y-visible ">
         </div>
+        
     </div>
     <div id="wct-wassessment-r${currentWeekNo}" class="lweek-column  col-start-8 col-end-12">
         <label for="assessment-clo-${currentWeekNo}">
@@ -234,6 +251,24 @@ window.onload = function (e) {
         return frag;
     }
 
+    function weeklyCoveredCLOsRow(currentWeekNo) {
+        let checkBoxParentContainer = document.getElementById('wtc-clos-r' + currentWeekNo);
+        console.log(checkBoxParentContainer, currentWeekNo)
+
+        for (let i = 1; i <= courseCLOList.length; i++) {
+            let currentCloCheckBoxContainer = ` <div id="wtc-clo-r${currentWeekNo}-c${i}">
+                <input class="clo-toggle hidden" id="week${currentWeekNo}_clo-${i}ID" value="week1_clo-${i}"
+                       name="${courseCLOList[i - 1][0]}" type="checkbox"/>
+                <label class="inside-label cprofile-cell-data" for="week${currentWeekNo}_clo-${i}ID">
+                    ${courseCLOList[i - 1][1]}<span><svg width="50px" height="15px"><use
+                                    xlink:href="#check-tick"></use></svg> </span>
+                </label>
+            </div>`
+            checkBoxParentContainer.innerHTML += currentCloCheckBoxContainer;
+        }
+
+    }
+
     function fetchedWeekRowInsertionTag(size) {
         weeklyRowCounter = size;
         for (let i = 0; i < size; i++) {
@@ -244,9 +279,6 @@ window.onload = function (e) {
                                 <div id="wct-wdes-r${(i + 1)}-c" class="lweek-column col-start-2 col-end-7">
                                     <label for="detail-${(i + 1)}">
                                         <!--  cell-input-->
-                              
-     
-                                
                                 </div>
                                 <div class="lweek-column  col-start-7 col-end-8">
                                     <div id="wtc-clos-r${(i + 1)}" class="flex flex-col overflow-y-visible ">
@@ -289,13 +321,17 @@ function autoHeight(element) {
     el.style.height = (el.scrollHeight) + "px";
 }
 
-
-function loadWeeklyData() {
+function createWeeklyData(twoDimensionalWeeklyRecord) {
     $.ajax({
         type: "POST",
-        url: "WeeklyTopic/record.php",
+        url: "CourseProfileAssets/record.php?actionType=add",
+        data: {
+            "twoDimensionalWeeklyRecord": twoDimensionalWeeklyRecord,
+            creationW: true
+        },
         success: function (data) {
-            $('#courseweekParentDivID').html(data)
+
+            // $('#courseweekParentDivID').html(data)
         }
     });
 }
@@ -326,4 +362,13 @@ function deleteWeekly() {
     });
 }
 
-
+function loadWeeklyData() {
+    $.ajax({
+        type: "POST",
+        // dataType: 'JSON',
+        url: "CourseProfileAssets/record.php",
+        success: function (data) {
+            $('#courseweekParentDivID').html(data)
+        }
+    });
+}
