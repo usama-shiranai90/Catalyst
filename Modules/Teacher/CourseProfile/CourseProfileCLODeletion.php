@@ -18,7 +18,7 @@ if (isset($_POST['del'])) {
 
             $currentID = $_POST['currentCLOID'];
             $curriculum->fetchCurriculumID($_SESSION['selectedSection']);
-            $courseProfile->deleteCLORow($currentID, $_SESSION['selectedProgram'], $curriculum->getCurriculumID());
+            $courseProfile->deleteCLORow($currentID, $_SESSION['selectedProgram'], $curriculum->getCurriculumCode());
 
             echo(json_encode(array('message' => 'Deleted Successfully')));
 

@@ -10,13 +10,13 @@ class CourseInstructor
     private $instructorContactNumber;
     private $instructorPersonalEmail;
 
-
     public function __construct()
     {
 
     }
 
-    public function setAll($name, $designation, $qualification, $specialization, $contact, $personalEmail){
+    public function setAll($name, $designation, $qualification, $specialization, $contact, $personalEmail)
+    {
         $this->instructorName = $name;
         $this->instructorDesignation = $designation;
         $this->instructorQualification = $qualification;

@@ -48,7 +48,7 @@ if (isset($_POST['saved'])) {
     } else
         die(json_encode(array('message' => 'Saving data not working fine')));
 } else {
-    $hasCreated = $courseProfile->profileExit($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+    $hasCreated = $courseProfile->profileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
 
     if (count($ploArray) != 0) { // if we have plo then enter.
         $hasPlo = 1;             /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
@@ -78,7 +78,7 @@ if (isset($_POST['saved'])) {
 //                $hasCreated = false;
                 $courseProfile->loadCourseProfileData($_SESSION['cp_id']);
                 $cloObject = new CLO();
-                $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumID(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
+                $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
                 $viewCLOMapping = $cloObject->mappedPLOs;
 
             } // if in editor mode.

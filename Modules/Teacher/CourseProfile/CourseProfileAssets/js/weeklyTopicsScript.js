@@ -10,7 +10,7 @@ window.onload = function (e) {
     let deletedWeeklyID = []; // stores the id for deleted rows by saving their ID.
 
     $(document).ready(function () {
-        loadWeeklyData();
+        // loadWeeklyData();
 
         $(addWeeklyRowBtn).on('click', function (event) {
             initialRowChecking();

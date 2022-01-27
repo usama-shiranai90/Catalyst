@@ -48,7 +48,8 @@ class CourseProfile implements Persistable
     }
 
     public function setCourseInfo($courseTitle, $courseCode, $courseCreditHr, $coursePreReq, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
-                                  $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook, $courseDescription, $courseOtherReference, $pcode, $bcode)
+                                  $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook,
+                                  $courseDescription, $courseOtherReference, $pcode, $bcode)
     {
         $this->courseTitle = $courseTitle;
         $this->courseCode = $courseCode;
@@ -70,15 +71,15 @@ class CourseProfile implements Persistable
         $this->batchCode = $bcode;
     }
 
-    public function profileExit($currentCourse, $currentProgramCode, $currentCurriculum): bool
+    public function profileExist($currentCourseCode, $currentProgramCode, $currentCurriculumCode): bool
     {
-        $this->setCourseCode($currentCourse);
+        $this->setCourseCode($currentCourseCode);
         $this->setProgramCode($currentProgramCode);
-        $this->course->getCreditHourAndTitle($currentCourse);
-        $this->course->setCourseCode($currentCourse);
+        $this->course->getCreditHourAndTitle($currentCourseCode);
+        $this->course->setCourseCode($currentCourseCode);
 
         $sql = /** @lang text to fetch current batch and program */
-            "select batchCode from batch where curriculumCode = \"$currentCurriculum\" and programCode = \"$currentProgramCode\"";
+            "select batchCode from batch where curriculumCode = \"$currentCurriculumCode\" and programCode = \"$currentProgramCode\"";
 
         $result = $this->databaseConnection->query($sql);
         if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
@@ -93,7 +94,7 @@ class CourseProfile implements Persistable
         $sql = /** @lang text */
             "select courseProfileCode
         from courseprofile join batch b on b.batchCode = courseprofile.batchCode where
-        courseprofile.batchCode =" . $this->getBatchCode() . " and courseCode ='" . $currentCourse . "' and courseprofile.programCode =" . $currentProgramCode . "";
+        courseprofile.batchCode =" . $this->getBatchCode() . " and courseCode ='" . $currentCourseCode . "' and courseprofile.programCode =" . $currentProgramCode . "";
 
         $result = $this->databaseConnection->query($sql);
         if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
@@ -146,7 +147,7 @@ class CourseProfile implements Persistable
         return $courseID;
     }
 
-    private function saveAssessment($courseID)
+    private function saveAssessment($cCourseCode)
     {
 
         $c_quiz_weight = $this->assessmentInfo->getQuizWeightage();
@@ -157,7 +158,7 @@ class CourseProfile implements Persistable
 
         $sql_statement = /** @lang text */
             "INSERT INTO courseprofileassessmentinstruments (courseProfileCode, quizWeightage, assignmentWeightage, projectWeightage, midtermWeightage, finalExamWeightage)
-                VALUES (\"$courseID\",\"$c_quiz_weight\", \"$c_assignment_weight\", \"$c_project_weight\", \"$c_mid_weight\", \"$c_final_weight\")";
+                VALUES (\"$cCourseCode\",\"$c_quiz_weight\", \"$c_assignment_weight\", \"$c_project_weight\", \"$c_mid_weight\", \"$c_final_weight\")";
 
         if ($this->databaseConnection->query($sql_statement) === TRUE) {
             echo "New assessment created successfully";
@@ -166,7 +167,7 @@ class CourseProfile implements Persistable
         }
     }
 
-    private function saveCourseInstructor($courseID)
+    private function saveCourseInstructor($cCourseCode)
     {
         $instructor_name = $this->instructorInfo->getInstructorName();
         $instructor_designation = $this->instructorInfo->getInstructorDesignation();
@@ -177,7 +178,7 @@ class CourseProfile implements Persistable
 
         $sql_statement = /** @lang text */
             "INSERT INTO courseprofileinstructordetail(courseProfileCode, instructorName, designation, qualification, specialization, contactNumber, personalEmail)
-                 VALUES  (\"$courseID\",\"$instructor_name\",\"$instructor_designation\", \"$instructor_qualification\", \"$instructor_spec\", \"$instructor_contact\", \"$instructor_email\")";
+                 VALUES  (\"$cCourseCode\",\"$instructor_name\",\"$instructor_designation\", \"$instructor_qualification\", \"$instructor_spec\", \"$instructor_contact\", \"$instructor_email\")";
 
         if ($this->databaseConnection->query($sql_statement) === TRUE) {
             echo "New Instructor information  created successfully";
@@ -360,9 +361,7 @@ class CourseProfile implements Persistable
         return $this->courseProfileCode;
     }
 
-    /**
-     * @param mixed $courseProfileCode
-     */
+
     public function setCourseProfileCode($courseProfileCode): void
     {
         $this->courseProfileCode = $courseProfileCode;

@@ -1,11 +1,28 @@
 <?php
 
-// get CLO list.
-$CLOList = ['CLO-1', 'CLO-2', 'CLO-3'];
-$CLOList = removeCLODash($CLOList);
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\WeeklyTopic.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
 
-// returns perform db operation by fetching last inserted record.
-$WeeklyTopicsArray = array( // is a two dimension array f18-or represents the key and has the following data.
+if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
+    session_start();
+    $courseProfile = new CourseProfile();
+    $weeklyInfo = new WeeklyTopic();
+    $curriculum = new Curriculum();
+    $cloObject = new CLO();
+}
+
+$curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
+
+$CLOList = $cloObject->retrieveCLOlist($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
+$profileExist = $courseProfile->profileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+
+echo "before".json_encode($CLOList). "        ". sizeof($CLOList);
+//$CLOList = ['CLO-1', 'CLO-2', 'CLO-3'];
+//$CLOList = removeCLODash($CLOList);
+
+/*$WeeklyTopicsArray = array( // is a two dimension array f18-or represents the key and has the following data.
     array('week-1', 'By default, Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
         array('CLO-1', 'CLO-2', 'CLO-3'),
         'CSS property here so you can make your custom column values as generic or as complicated and site-specific',
@@ -13,9 +30,8 @@ $WeeklyTopicsArray = array( // is a two dimension array f18-or represents the ke
     array('week-2', 'Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
         array('CLO-2', 'CLO-3'),
         'CSS property here so you can make your custom column.......................................................'),
-);
-
-//$WeeklyTopicsArray = array();
+);*/
+$WeeklyTopicsArray = array();
 
 switch (@$_POST['actionType']) {
 

@@ -37,7 +37,7 @@ $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with 
 $ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO with id , name , description.
 
 $cloObject = new CLO();
-$viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumID(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
+$viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
 $viewCLOMapping = $cloObject->mappedPLOs;
 
 //var_dump($viewCLODescription);

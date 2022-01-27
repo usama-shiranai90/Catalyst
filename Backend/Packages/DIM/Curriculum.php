@@ -4,7 +4,7 @@ include "PLO.php";
 class Curriculum
 {
 
-    protected $curriculumID;
+    protected $curriculumCode;
     protected $curriculumyear;
     protected $databaseConnection;
     protected $listOfPLOs;
@@ -23,7 +23,7 @@ class Curriculum
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
-                $this->setCurriculumID($row['curriculumCode']);
+                $this->setCurriculumCode($row['curriculumCode']);
 //                echo " is this then ? ".$this->curriculumID.'          ' .$sectionCode . '            '.$row['curriculumYear'];
             }
         } else {
@@ -34,7 +34,7 @@ class Curriculum
     public function retrievePLOsList(): array
     {
         $sql = /** @lang text */
-            "select  PLOCode,ploName, ploDescription from plo p where p.curriculumCode =\"$this->curriculumID\";";
+            "select  PLOCode,ploName, ploDescription from plo p where p.curriculumCode =\"$this->curriculumCode\";";
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
@@ -46,19 +46,19 @@ class Curriculum
                 $this->listOfPLOs[] = array($plo->getPloCode(),$plo->getPloName(), $plo->getPloDescription());
             }
         } else
-            echo "No xxxxxxxxxx found".$this->curriculumID.' the fuck';
+            echo "No xxxxxxxxxx found".$this->curriculumCode.' the fuck';
 
         return $this->listOfPLOs;
     }
 
-    public function getCurriculumID()
+    public function getCurriculumCode()
     {
-        return $this->curriculumID;
+        return $this->curriculumCode;
     }
 
-    public function setCurriculumID($curriculumID): void
+    public function setCurriculumCode($curriculumCode): void
     {
-        $this->curriculumID = $curriculumID;
+        $this->curriculumCode = $curriculumCode;
     }
 
 

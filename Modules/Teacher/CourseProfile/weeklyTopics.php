@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 
 ?>
 <!doctype html>
@@ -115,7 +113,6 @@ session_start();
                                     <span class="wlearn-cell-data">Status</span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -142,7 +139,6 @@ session_start();
 <script>
 
     $('#courseweekParentDivID').load('CourseProfileAssets/record.php');
-
 
     // call existing weekly topics from Server.
     //let fetchWeeklyCoveredRows = <?php //echo json_encode($ifExistingWeeklyData); ?>//;
