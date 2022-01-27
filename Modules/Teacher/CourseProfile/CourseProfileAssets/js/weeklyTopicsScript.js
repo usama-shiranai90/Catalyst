@@ -22,27 +22,32 @@ window.onload = function (e) {
                     const weeklyRowRecord = ['#detail-r-' + index, '#assessment-clo-' + index, '#wtc-clos-r' + index];
 
                     for (let i = 0; i < weeklyRowRecord.length; i++) {
-                        if (i !== 2) { // for clo list
-
-                            $().children().each((i, n) => {
+                        if (i !== 2) // for clo list
+                            $(weeklyRowRecord[i]).attr('readonly', true).removeClass("italic").addClass("not-italic");
+                         else {
+                            $(weeklyRowRecord[i]).children().each((i, n) => {
                                 let currentCLO = '#week' + index + '-clo-' + (i + 1) + 'ID';
                                 $(currentCLO).prop('disabled', true);
                                 $(currentCLO).children().attr("disabled", true);
                             })
-
-                        } else {
-
-
                         }
-
                     }
-
-                    $().attr('readonly', true).removeClass("italic").addClass("not-italic");
-                    $().attr('readonly', true).removeClass("italic").addClass("not-italic");
-
                     $('.h-10.w-6.hidden').toggleClass("hidden");
                 }
             })
+
+            /*$(parentWeeklyContainer).children().each((index, node) => {
+                console.log(index, node)
+                if (index !== 0) {
+                    $('#detail-r-' + index).attr('readonly', true);
+                    $('#assessment-clo-' + index).attr('readonly', true);
+                    $('#wtc-clos-r' + index).children().each((i, n) => {
+                        let currentCLO = '#week' + index + '-clo-' + (i + 1) + 'ID';
+                        $(currentCLO).prop('disabled', true);
+                        $(currentCLO).children().attr("disabled", true);
+                    })
+                    $('.h-10.w-6.hidden').toggleClass("hidden")*/
+
 
             if (deletedWeeklyID.length !== 0) {
                 console.log(deletedWeeklyID)
@@ -77,8 +82,6 @@ window.onload = function (e) {
                         $(currentCLOInput).prop('disabled', false);
                         $(currentCLOInput).children().attr("disabled", false);
                         console.log("type of :", $(currentCLOInput).prop("tagName"), $(currentCLOInput).attr('type'))
-
-
                     })
 
                 }

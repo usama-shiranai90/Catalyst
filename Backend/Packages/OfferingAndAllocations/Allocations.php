@@ -50,7 +50,7 @@ class Allocations
 
     public function setCourse($courseCode, $programCode, $curriculumCode): void
     {
-        $course = new Course($courseCode);
+        $course = new Course();
         $course->setCourseName($courseCode);
         $course->setCourseCLOList($courseCode, $programCode, $curriculumCode);
         $this->course = $course;

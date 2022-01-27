@@ -5,39 +5,42 @@
 //use phpcode\CourseProfile;
 
 
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\CourseProfile\CourseProfile.php";
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\CLO.php";
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
-$_SESSION['typeOfProfile'] = 2;
-
-$course_essential = $_SESSION['currentSubjectEssential_array'];
+//$_SESSION['typeOfProfile'] = 2;
+/*$course_essential = $_SESSION['currentSubjectEssential_array'];
 $course_detail = $_SESSION['currentSubjectDetail_array'];
-
 print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
 print_r(json_encode( $_SESSION['currentSubjectDetail_array']));
-
-
-$courseAssessment = new AssessmentWeight($course_essential[11] , $course_essential[12] , $course_essential[13],
-                                         $course_essential[14],$course_essential[15]);
-
-$courseInstructor = new CourseInstructor($course_detail[4] , $course_detail[5] , $course_detail[6],
-                                         $course_detail[7],$course_detail[8] , $course_detail[9]);
-
+$courseAssessment = new AssessmentWeight($course_essential[11] , $course_essential[12] , $course_essential[13], $course_essential[14],$course_essential[15]);
+$courseInstructor = new CourseInstructor($course_detail[4] , $course_detail[5] , $course_detail[6],  $course_detail[7],$course_detail[8] , $course_detail[9]);
 $courseProfile = new CourseProfile($course_essential[0] , $course_essential[1] , $course_essential[2],$course_essential[3],
     $course_essential[4],$course_essential[5],$course_essential[6],$course_essential[7],$course_essential[8],$course_essential[9],
     $course_essential[10], $course_detail[0],$course_detail[1],$course_detail[2],$course_detail[3] , $courseAssessment , $courseInstructor);
-
-//print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
-//print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
-
-$profileID = 1;
+print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
+print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
+$profileID = 1;*/
 
 // fetch data from server.
+$courseProfile = new CourseProfile();
+$courseProfile->loadCourseProfileData($_SESSION['cp_id']);
 
+$curriculum = new Curriculum();
 
+$curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
+$ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO with id , name , description.
+
+$cloObject = new CLO();
+$viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumID(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
+$viewCLOMapping = $cloObject->mappedPLOs;
+
+//var_dump($viewCLODescription);
 
 ?>
 <!doctype html>
@@ -122,9 +125,8 @@ $profileID = 1;
             </div>
         </div>
     </header>
-
     <main class="main-content-alignment">
-        <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 h-full bg-catalystLight-f5">
+        <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 min-h-full bg-catalystLight-f5">
             <h2 class="cprofile-container-centertxt"> Course-Name Course Profile</h2>
 
             <!--    course profile whole section     -->
@@ -147,24 +149,27 @@ $profileID = 1;
                         <!--                        course Code-->
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Code:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseCodeID-view"><?php echo $courseProfile->getCourseCode() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="courseCodeID-view"><?php echo $courseProfile->getCourseCode() ?></span>
                             </p>
                         </div>
 
                         <!--                        credit Hour-->
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Credit Hour:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="creditHourID-view"><?php echo $courseProfile->getCourseCreditHr() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="creditHourID-view"><?php echo $courseProfile->getCourseCreditHr() ?></span>
                             </p>
                         </div>
-
 
 
                         <!--                        Pre requisite-->
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Pre-requisite:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="preRequisiteID-view"><?php echo $courseProfile->getCoursePreRequisities() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="preRequisiteID-view"></span>
+                                <!--                                    --><?php //echo $courseProfile->getCoursePreRequisities() ?>
                             </p>
                         </div>
 
@@ -172,7 +177,8 @@ $profileID = 1;
                         <!--                       Term (select semester )-->
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Term:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="semesterTermID-view"><?php echo $courseProfile->getCourseSemester() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="semesterTermID-view"><?php echo $courseProfile->getCourseSemester() ?></span>
                             </p>
                         </div>
 
@@ -180,7 +186,8 @@ $profileID = 1;
                         <!--                       Program level-->
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Program level:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="ProgramLevelID-view"><?php echo $courseProfile->getCourseProgramLevel() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="ProgramLevelID-view"><?php echo $courseProfile->getCourseProgramLevel() ?></span>
                             </p>
                         </div>
 
@@ -189,7 +196,8 @@ $profileID = 1;
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Program:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="programID-view"><?php echo $courseProfile->getCourseProgram() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="programID-view"><?php echo $courseProfile->getCourseProgram() ?></span>
                             </p>
                         </div>
 
@@ -197,53 +205,60 @@ $profileID = 1;
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Effective:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseEffectiveID-view"><?php echo $courseProfile->getCourseCourseEffective() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="courseEffectiveID-view"><?php echo $courseProfile->getCourseCourseEffective() ?></span>
                             </p>
                         </div>
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Coordinating Unit:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="coordinatingUnitID-view"><?php echo $courseProfile->getCourseCoordination() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="coordinatingUnitID-view"><?php echo $courseProfile->getCourseCoordination() ?></span>
                             </p>
                         </div>
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">teaching Methodology:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="teachingMethodologyID-view"><?php echo $courseProfile->getCourseTeachingMythology() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="teachingMethodologyID-view"><?php echo $courseProfile->getCourseTeachingMythology() ?></span>
                             </p>
                         </div>
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Model:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseInteractionModelID-view"><?php echo $courseProfile->getCourseModel() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="courseInteractionModelID-view"><?php echo $courseProfile->getCourseModel() ?>xxx</span>
                             </p>
                         </div>
 
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">ReferenceBooks:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="referenceBooksID-view"><?php echo $courseProfile->getCourseReferenceBook() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="referenceBooksID-view"><?php echo $courseProfile->getCourseReferenceBook() ?></span>
                             </p>
                         </div>
 
 
-
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">RecommendedTextbooks:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="recommendedTextbooksID-view"><?php echo $courseProfile->getCourseTextBook() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="recommendedTextbooksID-view"><?php echo $courseProfile->getCourseTextBook() ?></span>
                             </p>
                         </div>
 
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Description:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="courseDescriptionID-view"><?php echo $courseProfile->getCourseDescription() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="courseDescriptionID-view"><?php echo $courseProfile->getCourseDescription() ?></span>
                             </p>
                         </div>
 
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Other reference Material:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2" id="otherReferenceId-view"><?php echo $courseProfile->getCourseOtherReference() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
+                                      id="otherReferenceId-view"><?php echo $courseProfile->getCourseOtherReference() ?></span>
                             </p>
                         </div>
 
@@ -251,40 +266,46 @@ $profileID = 1;
                     </div>
                     <div class="cprofile-right-container flex-1 w-2/5 ml-20 pb-5 mr-5">
 
-                        <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 border-solid mb-10 shadow-md" style="background-color: #0284fc">
+                        <div class="text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 border-solid mb-10 shadow-md"
+                             style="background-color: #0284fc">
                             <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
                             <div class="grid bg-white border-solid border-t-2 text-center">
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
                                     <h4 class="font-semibold text-based py-2 w-1/3">Name:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="otherReferenceID-view"><?php echo $courseInstructor->getInstructorName() ?></span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="otherReferenceID-view"><?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?></span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2 ">
                                     <h4 class="font-semibold text-based py-2 w-1/3">Designation:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="DesignationDetailID-view"><?php echo $courseInstructor->getInstructorDesignation() ?></span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="DesignationDetailID-view"><?php echo $courseProfile->getInstructorInfo()->getInstructorDesignation() ?></span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
 
                                     <h4 class="font-semibold text-based py-2 w-1/3">Qualification:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="QualificationDetailID-view"><?php echo $courseInstructor->getInstructorQualification() ?></span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="QualificationDetailID-view"><?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?></span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
                                     <h4 class="font-semibold text-based py-2 w-1/3">Specialization:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="specializationID-view"><?php echo $courseInstructor->getInstructorSpecialization() ?></span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="specializationID-view"><?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?></span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
 
                                     <h4 class="font-semibold text-based py-2 w-1/3">Contacts:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="ContactsDetailID-view"><?php echo $courseInstructor->getInstructorContactNumber() ?></span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="ContactsDetailID-view"><?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?></span>
 
                                 </div>
 
@@ -292,7 +313,8 @@ $profileID = 1;
 
                                     <h4 class="font-semibold text-based py-2 w-1/3">Personal Email:&nbsp</h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="PersonalEmailDetailID-view"><?php echo $courseInstructor->getInstructorPersonalEmail() ?></span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="PersonalEmailDetailID-view"><?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?></span>
 
                                 </div>
 
@@ -306,33 +328,43 @@ $profileID = 1;
 
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
-                                    <h4 class="font-semibold text-based py-2 w-1/2">Quizzes (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Quizzes (<span
+                                                class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="quizWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getQuizWeightage() ?>%</span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="quizWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getQuizWeightage() ?>%</span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
-                                    <h4 class="font-semibold text-based py-2 w-1/2">Assignment (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Assignment (<span
+                                                class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="assignmentWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getAssignmentWeightage() ?>%</span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="assignmentWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getAssignmentWeightage() ?>%</span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
-                                    <h4 class="font-semibold text-based py-2 w-1/2">Projects (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Projects (<span
+                                                class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="projectWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getProjectWeightage()?>%</span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="projectWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getProjectWeightage() ?>%</span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
-                                    <h4 class="font-semibold text-based py-2 w-1/2">Mid-Term (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Mid-Term (<span
+                                                class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="midtermWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getMidWeightage()?>%</span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="midtermWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getMidWeightage() ?>%</span>
                                 </div>
 
                                 <div class="assessment-wrap mx-35 space-y-0 my-2">
-                                    <h4 class="font-semibold text-based py-2 w-1/2">Final-Term (<span class="font-medium text-sm">Weights</span>):&nbsp </h4>
+                                    <h4 class="font-semibold text-based py-2 w-1/2">Final-Term (<span
+                                                class="font-medium text-sm">Weights</span>):&nbsp </h4>
                                     <div class="vertical-line"></div>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="finaltermWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getFinalWeightage()?>%</span>
+                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                          id="finaltermWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getFinalWeightage() ?>%</span>
                                 </div>
 
 
@@ -406,34 +438,27 @@ $profileID = 1;
 
                 <!--   Update Button   -->
                 <div class="text-right mx-4">
-                    <button type="button" class="loginButton font-medium" name="updatecpbtn" id="updateCourseProfilebtn">Update
+                    <button type="button" class="loginButton font-medium" name="updatecpbtn"
+                            id="updateCourseProfilebtn">Update
                     </button>
 
                     <script>
-                        $('#updateCourseProfilebtn').on('click', function () {
-                            location.href = "courseprofile.php?profileID="+<?php echo $profileID?>;
-                        })
+                        location.href = "courseprofile_main.php?profileID="+<?php echo true?>;
+                        // $('#updateCourseProfilebtn').on('click', function () {
+                        // })
                     </script>
                 </div>
             </section>
         </div>
     </main>
 
-<script src="CourseProfileAssets/js/additionalWork.js"></script>
-<script>
+    <script src="CourseProfileAssets/js/additionalWork.js"></script>
+    <script>
+        clearAllStorage();
+        setLocalStorage("courseCLO_key", <?php echo json_encode($viewCLODescription, JSON_HEX_TAG)?>)
+        setLocalStorage("courseMap_key", <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)?>)
 
-    console.log(<?php echo json_encode($course_detail ,JSON_HEX_TAG)?>)
-    clearAllStorage();
-    setLocalStorage("courseCLO_key", <?php echo json_encode($_SESSION['currentSubject_outcomeDetail_array']  ,JSON_HEX_TAG)?>)
-    setLocalStorage("courseMap_key", <?php echo json_encode($_SESSION['currentSubject_cloToPlo_array']  ,JSON_HEX_TAG)?>)
-
-   /* //let curriculumID = <?php //echo json_encode($_SESSION['cpid'], JSON_HEX_TAG) ?>//)
-    //let batchID = <?php //echo json_encode($_SESSION['batchcode'], JSON_HEX_TAG) ?>//)
-    //let courseCodeID = <?php //echo json_encode($_SESSION['ccode'], JSON_HEX_TAG) ?>//)
-  */
-
-
-</script>
+    </script>
 
 </div>
 </body>

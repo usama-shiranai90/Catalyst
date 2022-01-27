@@ -69,7 +69,8 @@ switch (@$_POST['actionType']) {
                     </div>
                     <div id="wct-wdescription-r<?php echo $counter ?>" class="lweek-column col-start-2 col-end-7">
                         <label for="detail-<?php echo $counter ?>">
-            <textarea type="text" class="cell-input pt-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0" value=""
+            <textarea type="text" class="cell-input pt-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                      value=""
                       placeholder="Write weekly description here..."
                       id="detail-r-<?php echo $counter ?>" readonly="readonly"
                       style="height: 100px;"><?php echo $rowData[1]; ?></textarea></label>
@@ -109,25 +110,24 @@ switch (@$_POST['actionType']) {
 function weeklyCLOCheckbox($CLOList, $checkedClos, $rowCounter)
 {
     $cloCounter = 1;
-   $checkedClos =  removeCLODash($checkedClos);
+    $checkedClos = removeCLODash($checkedClos);
 //    print_r($checkedClos);
 
     foreach ($CLOList as $cloNo) { ?>
 
-        <div id="wtc-clo-r<?php echo $rowCounter ?>-c<?php echo $cloCounter?>">
-            <?php if (in_array($cloNo , $checkedClos)) {  ?>
+        <div id="wtc-clo-r<?php echo $rowCounter ?>-c<?php echo $cloCounter ?>">
+            <?php if (in_array($cloNo, $checkedClos)) { ?>
 
-            <input class="clo-toggle hidden"
-                   id="week<?php echo $rowCounter ?>-clo-<?php echo $cloCounter ?>ID"
-                   value="week<?php echo $rowCounter ?>-clo-<?php echo $cloCounter ?>"
-                   name="week<?php echo $rowCounter ?>-clo-<?php echo $cloCounter ?>"
-                   type="checkbox" disabled checked>
-            <?php }
-            else { ?>
                 <input class="clo-toggle hidden"
-                       id="week<?php echo $rowCounter ?>-clo-<?php echo $cloCounter ?>ID"
-                       value="week<?php echo $rowCounter ?>-clo-<?php echo $cloCounter ?>"
-                       name="week<?php echo $rowCounter ?>-clo-<?php echo $cloCounter ?>"
+                       id="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>ID"
+                       value="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                       name="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                       type="checkbox" disabled checked>
+            <?php } else { ?>
+                <input class="clo-toggle hidden"
+                       id="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>ID"
+                       value="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                       name="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
                        type="checkbox">
             <?php } ?>
 
@@ -143,8 +143,9 @@ function weeklyCLOCheckbox($CLOList, $checkedClos, $rowCounter)
 }
 
 
-function removeCLODash($cloArray){
-    return str_replace( "-", "", $cloArray );
+function removeCLODash($cloArray)
+{
+    return str_replace("-", "", $cloArray);
 }
 
 ?>

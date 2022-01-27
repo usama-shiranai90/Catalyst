@@ -1,6 +1,6 @@
 <?php
 
-class PLOs{
+class PLO{
 
     protected $ploCode;
     protected $ploName = "";

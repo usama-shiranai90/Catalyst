@@ -5,7 +5,7 @@ class DatabaseSingleton
     private static $dbName = 'catalyst';
     private static $dbHost = 'localhost';
     private static $dbUsername = 'root';
-    private static $dbUserPassword = 'osama123';
+    private static $dbUserPassword = '';
     private static $connection = null;
 
     private function __construct()

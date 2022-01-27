@@ -1,16 +1,15 @@
-
-function checkEmptyFields(fieldsArray, counter , storeValue , instrumentWeight) {  //textField-error-input
+function checkEmptyFields(fieldsArray, counter, storeValue, instrumentWeight) {  //textField-error-input
     for (let i = 0; i < fieldsArray.length; i++)
         errorInputType(fieldsArray[i]);
 
     if (counter === 1) {
         if (completeFlag) {
             // if (isWeightExceeded(instrumentWeight)) {
-                $('#cpEssentialID').addClass("hidden");
-                $('#cpDetaillID').removeClass("hidden");
-                for (let i = 0; i < fieldsArray.length; i++) {
-                    storeValue.push(fieldsArray[i].value);
-                }
+            $('#cpEssentialID').addClass("hidden");
+            $('#cpDetaillID').removeClass("hidden");
+            for (let i = 0; i < fieldsArray.length; i++) {
+                storeValue.push(fieldsArray[i].value);
+            }
             // } else {showErrorBox("Weight for assessment is exceeded");}
 
         } else {
@@ -44,9 +43,9 @@ const isWeightExceeded = (instrumentWeight) => {
     let flag = true;
     Object.keys(instrumentWeight).forEach(function (value, index) {
 
-        $(this).on('change',function (e) {
+        $(this).on('change', function (e) {
             e.stopImmediatePropagation();
-            totalWeight+= parseInt( e.target.value , 10);
+            totalWeight += parseInt(e.target.value, 10);
             if (totalWeight > 99) {
                 e.target.parentElement.classList.add("textField-error-input");
 
@@ -56,7 +55,7 @@ const isWeightExceeded = (instrumentWeight) => {
             console.log(typeof totalWeight, totalWeight)
         })
 
-        if (!flag){
+        if (!flag) {
             this.target.parentElement.classList.add("textField-error-input");
             this.target.disabled = true;
         }
@@ -104,10 +103,12 @@ function createFirstCLODetailRow() {
     while (elem.childNodes[0]) {
         frag.appendChild(elem.childNodes[0]);
     }
+
+    lastRowID = 1;
     return frag;
 }
 
-function createFirstCLOMapRow(totalPlo , outcomeMapContainer) {
+function createFirstCLOMapRow(totalPlo, outcomeMapContainer) {
 
     let container = '<div id="clo-map-div-1" class="flex w-full items-start text-black uppercase text-center text-md font-medium bg-gray-200 h-10">\n' +
         '                                        <svg class="hidden tick-icon">\n' +
@@ -130,7 +131,6 @@ function createFirstCLOMapRow(totalPlo , outcomeMapContainer) {
 
     // CLO number header.
     for (let i = 1; i <= totalPlo; i++) {
-
         //onmouseover="this.classList.remove('hidden')" onfocus="this.classList.remove('hidden')" onmouseout="this.classList.add('hidden')"
         //onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})"
         let header_number = `<div class="cprofile-column h-10 w-1/6 hover:bg-catalystLight-e4
@@ -138,17 +138,17 @@ function createFirstCLOMapRow(totalPlo , outcomeMapContainer) {
                                onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})" > 
                                       
                 <!-- tool-tip description section. -->
-                    <div id="tooltip${i}" role="tooltip" class="hidden z-20 w-64 fixed transition duration-150 ease-in-out top-1/2 right-14 ml-8 shadow-lg bg-white p-4 rounded">
-                    <p class="text-sm font-bold text-gray-800 pb-1" id="plono-${i}">${ploArray[i - 1][0]}</p>
-                    <p class="text-xs leading-4 text-gray-600 pb-3">${ploArray[i - 1][1]}</p>
+                    <div id="tooltip${i}" role="tooltip" class="hidden z-20 w-64 fixed transition duration-150 ease-in-out trans top-1/2 right-14 ml-8 shadow-lg bg-white p-4 rounded">
+                    <p class="text-sm font-bold text-gray-800 pb-1" id="plono-${i}">${ploArray[i - 1][1]}</p>
+                    <p class="text-xs leading-4 text-gray-600 pb-3">${ploArray[i - 1][2]}</p>
                     <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">Map view</button>  </div>
                                     <span class="cprofile-cell-data">${i}</span> 
                                 </div>`
         header.innerHTML += header_number;
 
         let row_data = `<div class="cprofile-column h-10 w-1/6  "> 
-                                <input class="clo-toggle hidden" id="clo-1-plo-${i}" value="clo-1-plo-${i}" name="[clo-1][plo-${i}]" type="checkbox" />
-                                <label class="inside-label cprofile-cell-data" for="clo-1-plo-${i}">
+                                <input class="clo-toggle hidden" id="clo-1_plo-${i}" value="clo-1_plo-${i}" name="[clo-1][plo-${i}]" type="checkbox" />
+                                <label class="inside-label cprofile-cell-data" for="clo-1_plo-${i}">
                                 <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>
                                 </label> 
                        </div>`

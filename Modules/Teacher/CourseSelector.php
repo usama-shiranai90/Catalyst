@@ -15,6 +15,9 @@ $allottedSectionCodes = array();
 $allottedSemesterCodes = array();
 $allottedSemesterNames = array();
 
+$allottedCurriclum = array();
+$allottedProgramCode = array();
+
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     array_push($allottedCourseNames, $listOfAllocations[$x]->getCourse()->getCourseTitle());
     array_push($allottedCourseCodes, $listOfAllocations[$x]->getCourse()->getCourseCode());
@@ -22,7 +25,15 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     array_push($allottedSectionCodes, $listOfAllocations[$x]->getSection()->getSectionCode());
     array_push($allottedSemesterNames, $listOfAllocations[$x]->getSection()->getSemester()->getSemesterName());
     array_push($allottedSemesterCodes, $listOfAllocations[$x]->getSection()->getSemester()->getSemesterCode());
+    array_push($allottedCurriclum, $listOfAllocations[$x]->getCurriculumCode());
+    array_push($allottedProgramCode, $listOfAllocations[$x]->getProgramCode());
+
 }
+
+//print_r("<br> curriculum :".$allottedCurriclum."     program".$allottedProgramCode);
+
+//var_dump($allottedCurriclum);
+
 
 /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
@@ -66,6 +77,10 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                 </div>
             </div>
             <hr class="bg-gray-500 w-full my-2">
+
+            <input class="hidden" id="programSelectorID" name="programSelector" hidden>
+            <input class="hidden" id="curriculumSelectorID" name="curriculumSelector" hidden>
+
             <div class="text-center flex flex-col w-full">
                 <label class="font-semibold text-md">Please choose your course and section</label>
 
@@ -124,6 +139,11 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
 <script>
     $(document).ready(function () {
 
+        var allottedProgramCodes = <?php echo json_encode($allottedProgramCode);?>;
+        var allottedCurriculumCodes = <?php echo json_encode($allottedCurriclum);?>;
+
+
+
         $('#courseSelectorID').on('change', function () {
             var allottedCoursesCodes = <?php echo json_encode($allottedCourseCodes);?>;
             var allottedSemesterCodes = <?php echo json_encode($allottedSemesterCodes);?>;
@@ -136,6 +156,8 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             for (let i = 0; i < allottedSemesterCodes.length; i++) {
                 if (selectedCourseCode == allottedCoursesCodes[i]) {
                     options += '<option value="' + allottedSemesterCodes[i] + '">' + allottedSemesterNames[i] + '</option>'
+                    $('#programSelectorID').val(allottedProgramCodes[i]);
+                    $('#curriculumSelectorID').val(allottedCurriculumCodes[i]);
                 }
             }
             $('#semesterSelectorID').html(options)
@@ -150,11 +172,14 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             var selectedCourseCode = $('#courseSelectorID').val();
             var selectedSemesterCode = $(this).val();
 
+
             var options = '<option value="" hidden></option>';
 
             for (let i = 0; i < allottedSectionCodes.length; i++) {
                 if (selectedCourseCode == allottedCoursesCodes[i] && selectedSemesterCode == allottedSemesterCodes[i]) {
                     options += '<option value="' + allottedSectionCodes[i] + '">' + allottedSectionNames[i] + '</option>'
+                    $('#programSelectorID').val(allottedProgramCodes[i]);
+                    $('#curriculumSelectorID').val(allottedCurriculumCodes[i]);
                 }
             }
             $('#sectionSelectorID').html(options)

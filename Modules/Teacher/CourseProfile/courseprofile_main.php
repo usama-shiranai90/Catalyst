@@ -1,5 +1,4 @@
 <?php
-//use backend\package\cp\CourseProfile as cp;
 
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
@@ -8,17 +7,22 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\Databa
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
+    $courseProfile = new CourseProfile();
+    $curriculum = new Curriculum();
 }
+$viewCLODescription = '';
+$viewCLOMapping = '';
 
-$courseProfile = new CourseProfile();
-$curriculum = new Curriculum();
 
-// Choosing input type
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//    $shotname = htmlspecialchars($_REQUEST['shot']); // Getting data from input
+$curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
+$ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO.
 
-    if (@$_GET['p'] == 'saved') {
+if (isset($_POST['saved'])) {
+
+    if ($_POST['saved']) {
+
         if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])) {
+
             $array_courseEssential = $_POST['courseEssentialFieldValue'];
             $array_courseDetail = $_POST['courseDetailFieldValue'];
             $array_cCLO = $_POST['arrayCLO'];
@@ -26,55 +30,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $courseProfile->setCourseInfo($array_courseEssential[0], $array_courseEssential[1], $array_courseEssential[2], $array_courseEssential[3], $array_courseEssential[4],
                 $array_courseEssential[5], $array_courseEssential[6], $array_courseEssential[7], $array_courseEssential[8], $array_courseEssential[9], $array_courseEssential[10],
-                $array_courseDetail[0], $array_courseDetail[1], $array_courseDetail[2], $array_courseDetail[3]);
+                $array_courseDetail[0], $array_courseDetail[1], $array_courseDetail[2], $array_courseDetail[3], $_SESSION['selectedProgram'], $_SESSION['batchCode']);
 
             $courseProfile->setAssessmentInfo($array_courseEssential[11], $array_courseEssential[12], $array_courseEssential[13], $array_courseEssential[14], $array_courseEssential[15]);
             $courseProfile->setInstructorInfo($array_courseDetail[4], $array_courseDetail[5], $array_courseDetail[6], $array_courseDetail[7], $array_courseDetail[8], $array_courseDetail[9]);
-
-            $courseProfile->saveCourseProfileData($_SESSION['selectedCourse'] , );
-
-            // apply query to create save data on server.
-            if (isset($_SESSION['currentSubjectEssential_array'])) {
-              unset( $_SESSION['currentSubjectEssential_array']);
-              unset( $_SESSION['currentSubjectDetail_array']);
-              unset( $_SESSION['currentSubject_outcomeDetail_array']);
-              unset( $_SESSION['currentSubject_cloToPlo_array']);
-              //            $_SESSION['currentSubjectEssential_array'] = $array_courseEssential;
-//            $_SESSION['currentSubjectDetail_array'] = $array_courseDetail;
-//            $_SESSION['currentSubject_outcomeDetail_array'] = $array_cCLO;
-//            $_SESSION['currentSubject_cloToPlo_array'] = $array_cMapping;
-//            die(json_encode(array('message' => 'Data Send Sucessfully')));
-            }
-
-            echo(json_encode(array('message' => 'Data Send Sucessfully')));
+            $courseProfile->saveCourseProfileData($array_cCLO, $array_cMapping, $ploArray);
+            $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
+            die((json_encode(array('message' => 'Data Send Successfully'))));
 
         } else {
+            echo $_POST['arrayCLO'];
+            echo $_POST['arrayMapping'];
+            echo $_POST['courseEssentialFieldValue'];
+            echo $_POST['courseDetailFieldValue'];
             die(json_encode(array('message' => 'ERROR')));
         }
-    } else {
-        die(json_encode(array('message' => 'Pata nahi kia Ajeeb')));
-    }
-
-
+    } else
+        die(json_encode(array('message' => 'Saving data not working fine')));
 } else {
-    $ifCreation = $courseProfile->isProfileExist($_SESSION['selectedSection'], $_SESSION['selectedCourse']);
-    // check if profile has been created or not.
-    //echo "<br>".($ifCreation === false)."fuck you";
-//echo "<br>".($ifCreation === False)."fuck you";
-//echo "<br>".($ifCreation == true)."fuck you";
-//echo "<br>".($ifCreation !== true)."fuck you";
-    $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
-    $ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLOs.
-
-    $type = ''; // agr 1 to creation else update mode.
-
-    /*foreach ($ploArray as $f)
-    echo "<br>".json_encode($f);*/
-
+    $hasCreated = $courseProfile->profileExit($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
 
     if (count($ploArray) != 0) { // if we have plo then enter.
-        $hasPlo = 1;
-        /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
+        $hasPlo = 1;             /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
             'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
             'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
             'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
@@ -87,49 +64,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
             'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
 
-        if ($ifCreation === false) // not created
+        if ($hasCreated === false) // not created
             $_SESSION['typeOfProfile'] = 1;
         else  // is created.
+        {
             $_SESSION['typeOfProfile'] = 2;
+            $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
+        }
 
-        $type = $_SESSION['typeOfProfile'];
-
-        if ($type != 1) { // in Updation Mode.
-            // curriculumID(program) , BatchCode ,  CourseCode server fetch.  if existed.
-
+        $_SESSION['batchCode'] = $courseProfile->getBatchCode();
+        if ($_SESSION['typeOfProfile'] != 1) { // in Update Mode.
             if (isset($_GET['profileID'])) {
-                $ifCreation = false;
-                echo "Updation Mode.";
-
-                if (true) { // agr SESSION MA data hai.
-                    $c_essential_existing = $_SESSION['currentSubjectEssential_array'];
-                    $course_detail = $_SESSION['currentSubjectDetail_array'];
-
-                    $c_assessment_existing = new AssessmentWeight($c_essential_existing[11], $c_essential_existing[12], $c_essential_existing[13],
-                        $c_essential_existing[14], $c_essential_existing[15]);
-
-                    $courseInstructor = new CourseInstructor($course_detail[4], $course_detail[5], $course_detail[6],
-                        $course_detail[7], $course_detail[8], $course_detail[9]);
-
-                    $courseProfile = new CourseProfile($c_essential_existing[0], $c_essential_existing[1], $c_essential_existing[2], $c_essential_existing[3],
-                        $c_essential_existing[4], $c_essential_existing[5], $c_essential_existing[6], $c_essential_existing[7], $c_essential_existing[8], $c_essential_existing[9],
-                        $c_essential_existing[10], $course_detail[0], $course_detail[1], $course_detail[2], $course_detail[3], $c_assessment_existing, $courseInstructor);
-
-                }
+//                $hasCreated = false;
+                $courseProfile->loadCourseProfileData($_SESSION['cp_id']);
+                $cloObject = new CLO();
+                $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumID(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
+                $viewCLOMapping = $cloObject->mappedPLOs;
 
             } // if in editor mode.
             else //  profile exist we move to view page. .
             {
                 header("Location: courseprofile_view.php");
             }
-        } else { // in creation mode.
-
         }
+
     } else
         $hasPlo = 0;
 }
-
+//echo "ajeeb ".$courseProfile->getCoursePreRequisites() . "    ". json_encode($courseProfile->getCourse()->getPreReqList());
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -146,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
-    <script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
+
     <script src="CourseProfileAssets/js/cpm_common.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/additionalWork.js"></script>
@@ -163,29 +127,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // writeRandomQuote();
     </script>
 
+    <script src="../asset/TeacherDashScripts.js"> pleaseWork("Course Profile Update", "Catalyst | Course Profile Update")</script>
 
 </head>
 <body>
 <div class="w-full min-h-full">
 
     <main class="main-content-alignment">
-
-        <!-- tool-tip -->
-        <!--<div class="flex-col md:flex-row flex items-center md:justify-center">
-
-            <a tabindex="0" role="link" aria-label="tooltip 1"
-               class="focus:outline-none focus:ring-gray-300 rounded-full focus:ring-offset-2 focus:ring-2 focus:bg-gray-200 relative mt-20 md:mt-0"
-               onmouseover="showTooltip(1)" onfocus="showTooltip(1)" onmouseout="hideTooltip(1)">
-                <div class=" cursor-pointer" >
-                    <img src="https://tuk-cdn.s3.amazonaws.com/can-uploader/with_steps_alternate-svg1.svg" alt="icon"/>
-                </div>
-                <div id="tooltip1" role="tooltip" class="z-20 -mt-20 w-64 absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-white p-4 rounded">
-                    <p class="text-sm font-bold text-gray-800 pb-1" id="plono-1">PLO 1</p>
-                    <p class="text-xs leading-4 text-gray-600 pb-3">Reach out to more prospects at the right moment.</p>
-                    <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">Map view</button>
-                </div>
-            </a>
-        </div>-->
 
         <div class="cprofile-grid">
 
@@ -223,17 +171,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class=" cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
                             <div class="textField-label-content w-full" id="courseTitleDivId">
                                 <label for="courseTitleID"></label>
                                 <input class="textField" type="text" placeholder=" " id="courseTitleID"
-                                       name="courseTitle" value="<?php echo $courseProfile->getCourseTitle() ?>">
+                                       name="courseTitle"
+                                       value="<?php echo $courseProfile->getCourse()->getCourseTitle() ?>">
                                 <label class="textField-label">Course Title</label>
                             </div>
-
+                            <!--                            --><?php //echo $courseProfile->getCourseTitle() ?>
                             <!--                        course Code-->
                             <div class="textField-label-content w-full" id="courseCodeDivId">
                                 <label for="courseCodeID"></label>
@@ -247,14 +196,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <label for="creditHourID"></label>
                                 <select class="select" name="creditHour"
                                         onclick="this.setAttribute('value', this.value);"
-                                        onchange="this.setAttribute('value', this.value);" value=""
+                                        onchange="this.setAttribute('value', this.value);"
+                                        value="<?php echo $courseProfile->getCourse()->getCourseCreditHour() ?>"
                                         id="creditHourID">
                                     <option value="" hidden></option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <!--                                    <option value="3" selected>-->
-                                    <?php //echo $courseProfile->getCourseCreditHr() ?><!--</option>-->
+                                    <?php
+                                    $chours = array('1', '2', '3');
+                                    foreach ($chours as $value) {
+                                        if ($value === $courseProfile->getCourse()->getCourseCreditHour())
+                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                        else
+                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                    }
+                                    ?>
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Credit Hour</label>
                             </div>
@@ -264,10 +218,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <label for="preRequisiteID"></label>
                                 <select class="select" name="preRequisite"
                                         onclick="this.setAttribute('value', this.value);"
-                                        onchange="this.setAttribute('value', this.value);" value=""
+                                        onchange="this.setAttribute('value', this.value);"
+                                        value="<?php echo $option = ''; ?>"
                                         id="preRequisiteID">
                                     <option value="" hidden></option>
-                                    <option value="Programming Fundamental">Programming Fundamental</option>
+                                    <?php
+
+                                    foreach ($courseProfile->getCoursePreRequisites() as $value) {
+                                        if ($option == $value) {
+                                            echo '<option value=' . $value . 'selected>' . $value . '</option>';
+                                            $option = $value;
+                                        } else
+                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                    }
+                                    ?>
+
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Pre-Requisites</label>
                             </div>
@@ -277,17 +242,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <label for="semesterTermID"></label>
                                 <select class="select" name="semesterTerm"
                                         onclick="this.setAttribute('value', this.value);"
-                                        onchange="this.setAttribute('value', this.value);" value=""
+                                        onchange="this.setAttribute('value', this.value);"
+                                        value="<?php echo $courseProfile->getCourseSemester() ?>"
                                         id="semesterTermID">
                                     <option value="" hidden></option>
-                                    <option value="1st Semester">1st</option>
-                                    <option value="2nd Semester">2nd</option>
-                                    <option value="3rd Semester">3rd</option>
-                                    <option value="4th Semester">4th</option>
-                                    <option value="5th Semester">5th</option>
-                                    <option value="6th Semester">6th</option>
-                                    <option value="7th Semester">7th</option>
-                                    <option value="8th Semester">8th</option>
+                                    <?php
+                                    $semesters = array('1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th');
+                                    foreach ($semesters as $value) {
+                                        $value = (int)filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                                        if ($value == $courseProfile->getCourseSemester())
+                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                        else
+                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                    }
+                                    ?>
                                 </select>
 
                                 <label class="select-label top-1/4 sm:top-3">Term</label>
@@ -306,10 +274,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <label for="programID"></label>
                                 <select class="select" name="program"
                                         onclick="this.setAttribute('value', this.value);"
-                                        onchange="this.setAttribute('value', this.value);" value="" id="programID">
+                                        onchange="this.setAttribute('value', this.value);"
+                                        value="<?php echo $courseProfile->getCourseProgram() ?>"
+                                        id="programID">
                                     <option value="" hidden></option>
-                                    <option value="BCSE">BCSE</option>
-                                    <option value="BCIT">BSIT</option>
+                                    <?php
+                                    $programs = array('BCSE', 'BSIT', 'BCCS');
+                                    foreach ($programs as $value) {
+                                        if ($value === $courseProfile->getCourseProgram())
+                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                        else
+                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                    }
+                                    ?>
+
                                 </select>
 
                                 <label class="select-label top-1/4 sm:top-3">Program</label>
@@ -320,7 +298,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <label for="courseEffectiveID"></label>
                                 <select class="select" name="courseEffective"
                                         onclick="this.setAttribute('value', this.value);"
-                                        onchange="this.setAttribute('value', this.value);" value=""
+                                        onchange="this.setAttribute('value', this.value);"
+                                        value="<?php echo $courseProfile->getCourseCourseEffective() ?>"
                                         id="courseEffectiveID">
                                     <option value="" hidden></option>
                                     <option value="Fall-16 Batch">Fall-16 Batch Onwards</option>
@@ -334,7 +313,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <label for="coordinatingUnitID"></label>
                                 <select class="select" name="courseEffective"
                                         onclick="this.setAttribute('value', this.value);"
-                                        onchange="this.setAttribute('value', this.value);" value=""
+                                        onchange="this.setAttribute('value', this.value);"
+                                        value="<?php echo $courseProfile->getCourseCoordination() ?>"
                                         id="coordinatingUnitID">
                                     <option value="" hidden></option>
                                     <option value="1st unit majid">Sajid Ali</option>
@@ -469,7 +449,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <div class="textField-label-content w-full" id="teachingMethodologyDivID">
                                     <label for="teachingMethodologyID"></label>
                                     <input class="textField" type="text" placeholder=" " id="teachingMethodologyID"
-                                           name="teachingMethodology">
+                                           name="teachingMethodology"
+                                           value="<?php echo($courseProfile->getCourseTeachingMythology()); ?>">
                                     <label class="textField-label">teaching Methodology</label>
                                 </div>
                                 <div class="textField-label-content w-full" id="courseInteractionModelDivId">
@@ -477,7 +458,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <input class="textField" type="text" placeholder="Interaction model"
                                            id="courseInteractionModelID"
                                            oninput="isNumeric(this)"
-                                           value="<?php echo $courseProfile->getCourseTeachingMythology() ?>"
+                                           value="<?php echo((string)$courseProfile->getCourseModel()); ?>"
                                            maxlength="2"
                                            name="courseInteractionModel">
                                     <label class="textField-label">Course Model</label>
@@ -521,7 +502,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <textarea class="textarea-h textField" type="text" placeholder=" "
                                           id="courseDescriptionID" name="assignmentDetail"
                                           value="<?php echo $courseProfile->getCourseDescription() ?>"
-                                          style="height: 9em"></textarea>
+                                          style="height: 9em"><?php echo $courseProfile->getCourseDescription() ?></textarea>
                                 <label class="textField-label">Course Description</label>
                             </div>
                             <!--                        OtherreferenceMaterial-->
@@ -530,7 +511,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <textarea class="textarea-h textField" type="text" placeholder=" "
                                           id="otherReferenceId" name="otherReference"
                                           value="<?php echo $courseProfile->getCourseOtherReference() ?>"
-                                          style="height: 9em"></textarea>
+                                          style="height: 9em"><?php echo $courseProfile->getCourseOtherReference() ?></textarea>
                                 <label class="textField-label">Other reference Material</label>
                             </div>
                         </div>
@@ -549,7 +530,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <label for="nameDetailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?>"
-                                                      id="nameDetailID" name="nameDetail"></textarea>
+                                                      id="nameDetailID"
+                                                      name="nameDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?></textarea>
                                             <label class="textField-label my-2">Detail</label>
                                         </div>
                                     </div>
@@ -561,7 +543,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <label for="DesignationDetailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="DesignationDetailID"
-                                                      name="DesignationDetail"></textarea>
+                                                      name="DesignationDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorDesignation() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -574,7 +556,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?>"
                                                       id="qualificationID"
-                                                      name=" QualificationDetail"></textarea>
+                                                      name=" QualificationDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -586,7 +568,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?>"
                                                       id="specializationID"
-                                                      name="SpecializationDetail"></textarea>
+                                                      name="SpecializationDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -598,7 +580,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="contactsID"
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?>"
-                                                      name="ContactsDetail"></textarea>
+                                                      name="ContactsDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -610,7 +592,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="personalEmailID"
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?>"
-                                                      name="PersonalEmailDetail"></textarea>
+                                                      name="PersonalEmailDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -627,7 +609,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">
@@ -684,6 +666,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" class="loginButton" name="profileContinue3rd"
                                     id="coursepContinuebtn-3">Finish
                             </button>
+                            <button type="submit" class="hidden loginButton" name="profileUpdationBtn"
+                                    id="courseProfileUpdationBtn">Update
+                            </button>
+
                         </div>
                     </section>
 
@@ -746,19 +732,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross"
                  class="h-12 w-12 mt-4 m-auto">
             <p class="text-gray-600 dark:text-gray-100 text-md py-2 px-6">
-                Do you wish to continue without creating any <span
+                Do you wish to delete the selected <span
                         class="text-gray-800 dark:text-white font-bold">CLO</span> and map their respective <span
-                        class="text-gray-800 dark:text-white font-bold">PLO</span>?
+                        class="text-gray-800 dark:text-white font-bold">PLOs</span>?<br>
+                <span class="text-gray-800 dark:text-white font-bold">Note : </span> It will be deleted from database.
             </p>
             <div id="aboxcontainer" class="flex items-center justify-between gap-4 w-full mt-8">
-                <button id="alertBtnCLOCreation" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
+                <button id="alertBtnNo" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
                         text-white w-full transition ease-in duration-200 text-center text-base
-                         font-semibold shadow-md rounded-lg">No, add now
+                         font-semibold shadow-md rounded-lg">No
                 </button>
 
-                <button id="alertBtnCLOContinue" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
+                <button id="alertBtndeleteCLO" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
                         text-white w-full transition ease-in duration-200 text-center text-base
-                         font-semibold shadow-md rounded-lg">Continue
+                         font-semibold shadow-md rounded-lg">Yes
                 </button>
 
             </div>
@@ -766,14 +753,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </div>
 </body>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
         type="text/javascript"></script>
 
-<?php
-//$execution_time = microtime(); // Start counting
+<script>
+    let hasPLOs, ploArray;
+    let existingCLODescription;
+    let exisitingCLOMapping;
+    let viewType;
 
-if ($_SESSION['typeOfProfile'] == 1) {
+    viewType = <?php echo json_encode($_SESSION['typeOfProfile'], JSON_HEX_TAG)  ?>;
+    ploObject = <?php echo json_encode($ploArray, JSON_HEX_TAG)  ?>;
+    ploArray = Object.values(ploObject);
+
+    if (viewType !== 1) {
+        pleaseWork("Course Profile Update", "Catalyst | Course Profile Update");
+        existingCLODescription = <?php echo json_encode($viewCLODescription, JSON_HEX_TAG) ?>;
+        exisitingCLOMapping = <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)  ?>;
+        coursTitle = <?php echo json_encode($courseProfile->getCourse()->getCourseTitle()) ?>;
+        console.log("Description", existingCLODescription);
+        console.log("Mapping", exisitingCLOMapping)
+        updationTextSet(coursTitle);
+    }
+
+    function updationTextSet(courseTitle) {
+        $('#coursepContinuebtn-3').addClass("hidden");
+        $('#courseProfileUpdationBtn').removeClass("hidden");
+        $('#subjectTopic').text("Course Profile " + courseTitle);
+        $('.min-w-full.cprofile-container-centertxt').text(courseTitle + " update");
+
+        // $('p.text-sm').text(courseTitle+" update");
+    }
+
+</script>
+<script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
+<?php
+/*if ($_SESSION['typeOfProfile'] == 1) {
 
     echo "
 <script>
@@ -781,14 +796,10 @@ if ($_SESSION['typeOfProfile'] == 1) {
         hasPLOs = " . $hasPlo . ";
         let ploObject = " . json_encode($ploArray, JSON_HEX_TAG) . ";
         ploArray = Object.values(ploObject);
-       
+        console.log(ploArray)
 </script>
-<script src='CourseProfileAssets/CourseProfileScript.js' defer></script>
 ";
 }
-//$execution_time = microtime() - $execution_time;
-//echo "time".$execution_time;
-?>
+*/ ?>
 
 </html>
-

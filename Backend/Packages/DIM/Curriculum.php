@@ -1,5 +1,5 @@
 <?php
-include "PLOs.php";
+include "PLO.php";
 
 class Curriculum
 {
@@ -18,12 +18,14 @@ class Curriculum
     public function fetchCurriculumID($sectionCode)
     {
         $sql = /** @lang text */
-            "select b.curriculumCode from section join catalyst.semester s on section.semesterCode = s.semesterCode join
+            "select b.curriculumCode , curriculumYear from section join catalyst.semester s on section.semesterCode = s.semesterCode join
              batch b on b.batchCode = s.batchCode join curriculum c on b.curriculumCode = c.curriculumCode where sectionCode =" . $sectionCode . ";";
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
-            $row = $result->fetch_assoc();
-            $this->setCurriculumID($row['curriculumCode']);
+            while ($row = $result->fetch_assoc()) {
+                $this->setCurriculumID($row['curriculumCode']);
+//                echo " is this then ? ".$this->curriculumID.'          ' .$sectionCode . '            '.$row['curriculumYear'];
+            }
         } else {
             echo "No Curriculum exist";
         }
@@ -32,21 +34,19 @@ class Curriculum
     public function retrievePLOsList(): array
     {
         $sql = /** @lang text */
-            "select ploName , ploDescription from plo p where p.curriculumCode = " . $this->getCurriculumID() . ";";
+            "select  PLOCode,ploName, ploDescription from plo p where p.curriculumCode =\"$this->curriculumID\";";
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
-                $plo = new PLOs();
+                $plo = new PLO();
+                $plo->setPloCode($row['PLOCode']);
                 $plo->setPloName($row['ploName']);
                 $plo->setPloDescription($row['ploDescription']);
-                $this->listOfPLOs[] = array($plo->getPloName(), $plo->getPloDescription());
-//                $this->listOfPLOs[] = $plo;
-//                array_push($this->listOfPLOs, $plo->getPloName(), $plo->getPloDescription());
-
+                $this->listOfPLOs[] = array($plo->getPloCode(),$plo->getPloName(), $plo->getPloDescription());
             }
         } else
-            echo "No Allocations found";
+            echo "No xxxxxxxxxx found".$this->curriculumID.' the fuck';
 
         return $this->listOfPLOs;
     }

@@ -9,11 +9,18 @@ class AssessmentWeight
     private $finalWeightage;
 
 
-    public function __construct(){
-
+    public function __construct()
+    {
+        $this->quizWeightage = "";
+        $this->projectWeightage = "";
+        $this->assignmentWeightage = "";
+        $this->midWeightage = "";
+        $this->finalWeightage = "";
     }
+
     public function setAll($assignmentWeightage, $quizWeightage,
-                           $projectWeightage, $midWeightage, $finalWeightage){
+                           $projectWeightage, $midWeightage, $finalWeightage)
+    {
         $this->assignmentWeightage = $assignmentWeightage;
         $this->quizWeightage = $quizWeightage;
         $this->projectWeightage = $projectWeightage;

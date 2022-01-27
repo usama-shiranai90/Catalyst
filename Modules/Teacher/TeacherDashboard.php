@@ -26,21 +26,36 @@ if (isset($_POST['selectClass'])) {
     echo "Course Code:" . $_POST['courseSelector'];
     echo "<br>Semester Code:" . $_POST['semesterSelector'];
     echo "<br>Section Code:" . $_POST['sectionSelector'];
+
+    echo "<br>Program Code:" . $_POST['programSelector'];
+    echo "<br>Curriculum Code:" . $_POST['curriculumSelector'];
+
+
     $selectedCourse = $_POST['courseSelector'];
     $selectedSemester = $_POST['semesterSelector'];
     $selectedSection = $_POST['sectionSelector'];
+
+    $selectedProgram = $_POST['programSelector'];
+    $selectedCurriculum = $_POST['curriculumSelector'];
 
 
     $_SESSION['selectedCourse'] = $selectedCourse;
     $_SESSION['selectedSemester'] = $selectedSemester;
     $_SESSION['selectedSection'] = $selectedSection;
 
+    $_SESSION['selectedProgram'] = $selectedProgram;
+    $_SESSION['selectedCurriculum'] = $selectedCurriculum;
+
 //    $faculty = Faculty::getFacultyInstance();
 //    $faculty->setPersonalDetails();
 //    echo $faculty->getUserCode();
-    $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
+//    $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
 
-      /*  echo "<br>Total Allocations:" . sizeof($listOfAllocations);
+
+//    var_dump( (array) $listOfAllocations );
+
+
+        /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
         for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             $listOfAllocations[$x]->toString();
         }*/
