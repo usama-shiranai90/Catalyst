@@ -188,7 +188,7 @@ class CourseProfile implements Persistable
 
     }
 
-    private function createCourseCLOs($CLOsPerCourseList, $CLOToPLOMapping, $ploArray)
+    public function createCourseCLOs($CLOsPerCourseList, $CLOToPLOMapping, $ploArray)
     {
         // creation of clos description and mapping.
         $ongoingCurriculum = $_SESSION['selectedCurriculum'];
@@ -247,9 +247,59 @@ class CourseProfile implements Persistable
             $cloCounter += 1;
         }
 
-        //
 
     }
+
+
+    public function updateCourseProfileCLODescription($cloCode, $curriculumCode, $rowData)
+    {
+        $cloName = $rowData[0];
+        $cldescription = $rowData[1];
+        $clodomain = $rowData[2];
+        $clobtlevel = $rowData[3];
+
+        $sql1 = /** @lang text */
+            "update clo set cloName = \"$cloName\", description = \"$cldescription\",domain = \"$clodomain\",btLevel =  \"$clobtlevel\"
+              where  CLOCode =\"$cloCode\" and curriculumCode = \"$curriculumCode\";";
+
+        if ($this->databaseConnection->query($sql1) === TRUE) {
+            echo "CLO description updated";
+        } else {
+            echo "Error CLO description updated : " . $this->databaseConnection->error . "<br>" . $rowData;
+        }
+
+
+
+
+        echo "\n\**************Mapping Info**********\*\n";
+        $cloCounter = 0;
+        foreach ($CLOToPLOMapping as $rowData) {
+            foreach ($rowData as $cloplo) {  // extract Mapping each row data containing multiple PLO-list
+                $headers = explode('_', $cloplo); // [0]-> clo-1 ,  [1]-> plo-1;
+                echo "Data is :" . $headers[0] . '    ' . $headers[1] . "\n";
+
+                foreach ($ploArray as $plo) {
+                    $plo[1] = str_replace(" ", "-", $plo[1]);
+                    if ($plo[1] == strtoupper($headers[1])) {
+                        echo "Current-CLO-ID:" . $cloIDList[$cloCounter] . '   and PLO-ID: ' . $plo[0] . "\n";
+
+                        $sql_statement = /** @lang text */
+                            "INSERT INTO clotoplomapping(PLOCode, CLOCode) VALUES (\"$plo[0]\",\"$cloIDList[$cloCounter]\")";
+                        $result = $this->databaseConnection->query($sql_statement);
+                        if ($result) {
+                            echo "Mapping Successfully !";
+                        } else
+                            echo "CLO-PLO Mapping Error : " . $this->databaseConnection->error;
+
+                    }
+                }
+            }
+            $cloCounter += 1;
+        }
+
+
+    }
+
 
     public function loadCourseProfileData($courseProfileID)
     {

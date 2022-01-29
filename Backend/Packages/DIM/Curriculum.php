@@ -46,7 +46,7 @@ class Curriculum
                 $this->listOfPLOs[] = array($plo->getPloCode(),$plo->getPloName(), $plo->getPloDescription());
             }
         } else
-            echo "No xxxxxxxxxx found".$this->curriculumCode.' the fuck';
+            echo "No Curriculum code found".$this->curriculumCode.'';
 
         return $this->listOfPLOs;
     }

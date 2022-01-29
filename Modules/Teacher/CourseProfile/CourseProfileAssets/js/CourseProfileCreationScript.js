@@ -132,6 +132,8 @@ window.onload = function (e) {
             let arrayCLO = new Array(incrementClo);
             let arrayMapping = new Array(incrementClo);
             storeDetailAndMappingToArray(arrayCLO, arrayMapping);
+
+            console.log(arrayCLO, arrayMapping, deletedCLODescriptionID);
             updateAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue);
         });
 
@@ -223,9 +225,19 @@ window.onload = function (e) {
         }
 
         $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61 span').each(function (node, index) {
-            // console.log(node)
             arrayCLO[node].push($(this).text())
         })
+
+        if (viewType != 1) {
+
+            $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61').each(function (node, index) {
+                if (isNum($(this).attr("id")))
+                    deletedCLODescriptionID[node] = $(this).attr("id")
+
+            })
+
+        }
+
         let extremeCounter = 0;
         let cycle = 0;
         $('#courseLearningDivID input').each(function () {
@@ -435,7 +447,10 @@ window.onload = function (e) {
 
     function overrideCLODetail_Row(index, i, currentTag) {
         if (i === 0) {
-            currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index));  // div us ka ID change ki hai.
+            // currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index));  // div us ka ID change ki hai.
+            // currentTag.setAttribute("id", '');  // div us ka ID change ki hai.
+            currentTag.removeAttribute('id');
+
             currentTag.setAttribute("data-clod-no", "c" + index + "-no");
             let span = currentTag.firstElementChild;
             span.innerHTML = "CLO-" + index;
@@ -444,7 +459,6 @@ window.onload = function (e) {
             let input = currentTag.lastElementChild;
             label.setAttribute("for", uniqueName(input.getAttribute("id"), index));
             input.setAttribute("id", uniqueName(input.getAttribute("id"), index));
-
 
             if (i === 1) {
                 input.setAttribute("name", "courseCLOs[CLO-" + index + "][Description]");
@@ -539,8 +553,8 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
 
 function updateAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue) {
 
-    console.log("Essential", courseEssentialFieldValue)
-    console.log("detail", courseDetailFieldValue)
+    // console.log("Essential", courseEssentialFieldValue)
+    // console.log("detail", courseDetailFieldValue)
     // console.log("clo", arrayCLO)
     // console.log("mapping", arrayMapping)
 
@@ -550,7 +564,7 @@ function updateAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cours
         url: 'CourseProfileCLOUpdate.php?p=update',
         data: {
             arrayCLO: arrayCLO, arrayMapping: arrayMapping,
-            courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue,
+            courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue,deletedCLODescriptionID:deletedCLODescriptionID,
             update: true
         },
         success: function (data, textStatus) {

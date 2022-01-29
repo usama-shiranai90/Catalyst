@@ -159,3 +159,7 @@ function createFirstCLOMapRow(totalPlo, outcomeMapContainer) {
 
 }
 
+function isNum(val){
+    return !isNaN(val)
+}
+

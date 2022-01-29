@@ -15,12 +15,17 @@ if (isset($_POST['update'])) {
 
     if ($_POST['update']) {
 
-        if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])) {
+        if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])
+            && isset($_POST['deletedCLODescriptionID'])) {
 
+            $curriculum->fetchCurriculumID($_SESSION['selectedSection']);
+            $ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO.
             $array_courseEssential = $_POST['courseEssentialFieldValue'];
             $array_courseDetail = $_POST['courseDetailFieldValue'];
             $array_cCLO = $_POST['arrayCLO'];
             $array_cMapping = $_POST['arrayMapping'];
+
+            $severFetchedIDs = $_POST['deletedCLODescriptionID'];
 
             $courseProfile->setCourseInfo($array_courseEssential[0], $array_courseEssential[1], $array_courseEssential[2], $array_courseEssential[3], $array_courseEssential[4],
                 $array_courseEssential[5], $array_courseEssential[6], $array_courseEssential[7], $array_courseEssential[8], $array_courseEssential[9], $array_courseEssential[10],
@@ -29,7 +34,14 @@ if (isset($_POST['update'])) {
             $courseProfile->setAssessmentInfo($array_courseEssential[11], $array_courseEssential[12], $array_courseEssential[13], $array_courseEssential[14], $array_courseEssential[15]);
             $courseProfile->setInstructorInfo($array_courseDetail[4], $array_courseDetail[5], $array_courseDetail[6], $array_courseDetail[7], $array_courseDetail[8], $array_courseDetail[9]);
 
-            $courseProfile->modifyCourseProfileData( $_SESSION['cp_id']);
+//            $courseProfile->deleteCLORow($array_cCLO, $array_cMapping, $ploArray);
+//            $courseProfile->createCourseCLOs($array_cCLO, $array_cMapping, $ploArray);
+
+            $courseProfile->modifyCourseProfileData($_SESSION['cp_id']);
+
+            foreach ($severFetchedIDs as $index => $cID) {
+                $courseProfile->updateCourseProfileCLODescription($cID, $_SESSION['selectedCurriculum'], $array_cCLO[$index]);
+            }
 
             $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
             die((json_encode(array('message' => 'Data Send Successfully'))));
@@ -41,8 +53,7 @@ if (isset($_POST['update'])) {
             echo $_POST['courseDetailFieldValue'];
             die(json_encode(array('message' => 'ERROR')));
         }
-    }
-    else
+    } else
         die(json_encode(array('message' => 'Saving data not working fine')));
 }
 ?>
