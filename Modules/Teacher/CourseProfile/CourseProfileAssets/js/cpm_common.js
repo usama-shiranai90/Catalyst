@@ -146,7 +146,7 @@ function createFirstCLOMapRow(totalPlo, outcomeMapContainer) {
                                 </div>`
         header.innerHTML += header_number;
 
-        let row_data = `<div class="cprofile-column h-10 w-1/6  "> 
+        let row_data = `<div class="cprofile-column h-10 w-1/6"> 
                                 <input class="clo-toggle hidden" id="clo-1_plo-${i}" value="clo-1_plo-${i}" name="[clo-1][plo-${i}]" type="checkbox" />
                                 <label class="inside-label cprofile-cell-data" for="clo-1_plo-${i}">
                                 <span> <svg width="50px" height="15px"><use xlink:href="#check-tick"></use></svg> </span>

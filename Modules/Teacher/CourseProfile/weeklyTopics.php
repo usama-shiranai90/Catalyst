@@ -13,7 +13,7 @@ if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     $cloObject = new CLO();
 }
 
-$profileExist = $courseProfile->profileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+$profileExist = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
 
 if ($profileExist) {
     $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.

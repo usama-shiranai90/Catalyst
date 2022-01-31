@@ -1,5 +1,7 @@
 <?php
-include "../../Backend/Packages/DIM/Faculty.php";
+include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Faculty.php";
+include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Curriculum.php";
+
 session_start();
 $facultyCode = $_SESSION['facultyCode'];
 $showSelectorIframe = "";
@@ -38,13 +40,17 @@ if (isset($_POST['selectClass'])) {
     $selectedProgram = $_POST['programSelector'];
     $selectedCurriculum = $_POST['curriculumSelector'];
 
-
     $_SESSION['selectedCourse'] = $selectedCourse;
     $_SESSION['selectedSemester'] = $selectedSemester;
     $_SESSION['selectedSection'] = $selectedSection;
 
     $_SESSION['selectedProgram'] = $selectedProgram;
     $_SESSION['selectedCurriculum'] = $selectedCurriculum;
+
+    $curriculum = new Curriculum();
+    $curriculum->fetchCurriculumID($selectedSection);   // provide with ongoing section code.
+    $_SESSION['ploList'] = $curriculum->retrievePLOsList(); // get from server // returns array of PLO.
+
 
 //    $faculty = Faculty::getFacultyInstance();
 //    $faculty->setPersonalDetails();
@@ -55,10 +61,10 @@ if (isset($_POST['selectClass'])) {
 //    var_dump( (array) $listOfAllocations );
 
 
-        /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
-        for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-            $listOfAllocations[$x]->toString();
-        }*/
+    /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
+    for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+        $listOfAllocations[$x]->toString();
+    }*/
 }
 //Stores title of allotted courses
 //$allottedCourses = array();
@@ -316,7 +322,7 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
     const sbar = [document.getElementById('teacherDashboardID'), document.getElementById('courseManagementID'), document.getElementById('classActivities'), document.getElementById('teacherClassSummary')];
 
     let hasFormCompleted = <?php echo json_encode($showSelectorIframe); ?>;
-    console.log("Form Completed Length :" ,hasFormCompleted.length)
+    console.log("Form Completed Length :", hasFormCompleted.length)
     if (hasFormCompleted.length === 0) {
         console.log("bruh")
 

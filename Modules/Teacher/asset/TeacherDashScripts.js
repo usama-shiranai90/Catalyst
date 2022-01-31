@@ -66,7 +66,7 @@ $(document).ready(function () {
 });
 
 
-function pleaseWork(text, extraText) {
+function iframeContainUpdate(text, extraText) {
     $('#teacherPanelTitleID', parent.document).text(text);
     // $('#teacherPanelTitleID', parent.document.title).text(extraText)
 }

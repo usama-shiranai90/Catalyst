@@ -19,12 +19,11 @@ class Curriculum
     {
         $sql = /** @lang text */
             "select b.curriculumCode , curriculumYear from section join catalyst.semester s on section.semesterCode = s.semesterCode join
-             batch b on b.batchCode = s.batchCode join curriculum c on b.curriculumCode = c.curriculumCode where sectionCode =" . $sectionCode . ";";
+             batch b on b.batchCode = s.batchCode join curriculum c on b.curriculumCode = c.curriculumCode where sectionCode =\"$sectionCode\";";
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
                 $this->setCurriculumCode($row['curriculumCode']);
-//                echo " is this then ? ".$this->curriculumID.'          ' .$sectionCode . '            '.$row['curriculumYear'];
             }
         } else {
             echo "No Curriculum exist";

@@ -10,7 +10,7 @@ module.exports = {
       fontFamily: {
         PoppinsRegular: ['Poppins-Regular', 'Yu Gothic UI Light', 'cursive'],
         PoppinsBold: ['Poppins-Bold', 'sans-serif'],
-        PoppinsBlack: ['Poppins-Black', 'sans-serif'],
+        PoppinsBlack: ['Poppins-Black', 'sans-serif' ],
         PoppinsBlackItalic: ['Poppins-BlackItalic', 'sans-serif'],
         PoppinsExtraBold: ['Poppins-ExtraBold', 'sans-serif'],
         PoppinsSemiBoldItalic: ['Poppins-SemiBoldItalic', 'sans-serif'],

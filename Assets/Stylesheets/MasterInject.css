@@ -1,0 +1,273 @@
+/*@import "tailwindcss/base";
+@import "./Modules/Authentication/AuthenticationAssets/LoginInject.css";
+@import "tailwindcss/components";
+@import "./Modules/Authentication/AuthenticationAssets/LoginInject.css";
+@import "tailwindcss/utilities";
+@import "./Modules/Authentication/AuthenticationAssets/LoginInject.css";*/
+
+@tailwind base;
+@tailwind components;
+
+@font-face {
+    font-family: 'Poppins-Regular';
+    src: local('Poppins-Regular'), url(../../Assets/Fonts/Poppins/Poppins-Regular.ttf) format('ttf');
+}
+
+@font-face {
+    font-family: 'Poppins-Bold';
+    src: local('Poppins-Bold'), url(../../Assets/Fonts/Poppins/Poppins-Bold.ttf) format('ttf');
+}
+
+/** todo : Design for Authentication */
+/*<editor-fold desc="Authentication Design Section">*/
+
+.login-container-label {
+    @apply text-center pt-3 pb-3
+}
+
+.rollNumberSectionMobile, .passwordSectionMobile, .usernameSectionMobile {
+    /*@apply flex flex-col items-center;*/
+    @apply flex flex-col flex-wrap content-center items-center;
+}
+
+.rollNumberSectionMobile div, .passwordSectionMobile div, .usernameSectionMobile div {
+    @apply w-2/3;
+}
+
+.rollNumberSectionMobile i, .passwordSectionMobile i, .usernameSectionMobile i {
+    @apply mb-3;
+}
+
+.rollNumberSectionNormal, .passwordSectionNormal, .usernameSectionNormal {
+    @apply sm:grid sm:grid-cols-7;
+}
+
+.rollNumberSectionNormal div, .passwordSectionNormal div, .usernameSectionNormal div {
+    @apply sm:w-full;
+}
+
+.rollNumberSelectorsNormal {
+    @apply sm:w-full sm:col-span-2;
+}
+
+.forgotPasswordNormal {
+    @apply md:inline-flex md:items-center md:justify-start md:absolute md:left-2/3 md:top-3;
+}
+
+.header-section, .footer-section {
+    @apply bg-catalystBlue-l2 shadow-2xl max-h-full;
+}
+
+/*</editor-fold>*/
+
+
+/** todo : Design for Course Profile Management */
+/*<editor-fold desc="Course Profile Management Design Section CRUD">*/
+.main-content-alignment {
+    @apply container mx-auto py-3 sm:px-3 lg:px-5  max-w-7xl
+    sm:max-w-xl md:max-w-3xl lg:max-w-7xl;
+}
+
+
+.cprofile-grid {
+    @apply max-w-full grid gap-3.5 px-4 py-6 sm:px-0;
+}
+
+.cprofile-content-head {
+    @apply row-span-2 space-y-2;
+}
+
+.cprofile-primary-border, .course-assessment-border, .clo-table-border, .weeklytopics-primary-border {
+    @apply border-solid border-2;
+    /*        @apply border-solid border-gray-300 border-t-2 border-r-2 border-l-2 border-b-2 ;*/
+}
+
+.course-assessment-border, .clo-table-border {
+    /*@apply  border-solid border-gray-300 border-b-2 border-t-2 border-r-2 border-l-2  ;*/
+    @apply rounded-t-lg;
+}
+
+.cprofile-content-box-border {
+    @apply bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4;
+}
+
+.cprofile-container-centertxt, .weekly-topic-container-centertxt {
+    @apply text-xl text-center my-2 font-bold;
+}
+
+.cprofile-left-container, .cprofile-right-container {
+    @apply flex flex-col flex-shrink-0 max-w-full;
+}
+
+.cprofile-left-container > div {
+    @apply my-2;
+}
+
+.table-head {
+    @apply text-center my-2 font-bold text-white;
+}
+
+
+.assessment-wrap, .cprofile-content-division, .row-flex {
+    @apply flex flex-row max-w-full items-center
+    mx-2;
+}
+
+.assessment-wrap > h3 {
+    @apply w-56 font-bold;
+}
+
+.vertical-line {
+    @apply border-solid border-gray-400 border-l-2 mx-5 h-2/4;
+}
+
+.flex-center {
+    @apply flex justify-center;
+}
+
+.progress-circle {
+    @apply flex items-center w-10 h-10
+    rounded-full text-lg;
+}
+
+.progress-circle-filled {
+    @apply bg-catalystBlue-dl3 text-catalystLight-b1 ;
+}
+
+.progress-circle-unfilled {
+    @apply bg-catalystBlue-dl3 text-catalystLight-b1 ;
+}
+
+.circular-span {
+    @apply text-white text-center w-full;
+}
+
+.learning-outcome-head, .learning-outcome-week-head {
+    @apply text-center font-medium uppercase text-black bg-gray-200 h-10 ;
+}
+
+.learning-week-header-dp {
+    @apply grid grid-cols-12 grid-rows-1 gap-0 w-auto;
+}
+
+.learning-outcome-row {
+    @apply capitalize text-sm text-center text-black bg-white font-medium h-10;
+
+}
+
+.lweek-column {
+    @apply border border-t-0 border-gray-300 min-w-full min-h-full;
+}
+
+.cprofile-column {
+    @apply border border-t-0 border-gray-300 self-center flex-grow overflow-hidden list-none h-10;
+}
+
+.cprofile-cell-data, .wlearn-cell-data {
+    @apply flex justify-center items-center min-h-full min-w-full;
+}
+
+.cell-input {
+    @apply text-center min-h-full outline-none;
+}
+
+/*</editor-fold>*/
+
+
+/** todo : Utilities Classes i.e. loader , error-box , confirmation box , other design */
+/*<editor-fold desc="Extra">*/
+
+.animate-loader-spinner {
+    @apply w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-violet-400;
+}
+
+/*  dot anime loader. */
+.anime-loader-circular-container {
+    @apply flex items-center justify-center space-x-2;
+}
+
+.anime-loader-circular-child {
+    @apply w-4 h-4 rounded-full animate-pulse dark:bg-violet-400;
+}
+
+
+/* pagination page. */
+
+.pag-container {
+    @apply flex justify-center space-x-1 dark:text-coolGray-100;
+}
+
+.pag-selected-child {
+    @apply inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md dark:bg-coolGray-900 dark:text-violet-400 dark:border-violet-400;
+}
+
+.pag-nonselected-child {
+    @apply inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-coolGray-900 dark:border-coolGray-800;
+}
+
+.pag-front-btn, .pag-back-btn {
+    @apply inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-coolGray-900 dark:border-coolGray-800;
+}
+
+/*  Message Shower #Snackbar */
+.message-notifier-snb-1 {
+    @apply flex items-center justify-between p-6 border-l-8 sm:py-8 dark:border-violet-400 dark:bg-coolGray-900 dark:text-coolGray-100;
+}
+
+
+/*</editor-fold>*/
+
+
+/* input custom */
+.textarea-d1 {
+    @apply block
+    w-full
+    px-5
+    py-3
+    mt-2
+    text-base text-neutral-600
+    placeholder-gray-300
+    transition
+    duration-500
+    ease-in-out
+    transform
+    border border-transparent
+    rounded-lg
+    bg-gray-50
+    focus:outline-none
+    focus:border-transparent
+    focus:ring-2
+    focus:ring-white
+    focus:ring-offset-2
+    focus:ring-offset-gray-300
+    apearance-none
+    autoexpand;
+}
+
+.signin-design{
+    @apply flex
+    items-center
+    justify-center
+    w-full
+    px-10
+    py-4
+    text-base
+    font-medium
+    text-center text-white
+    transition
+    duration-500
+    ease-in-out
+    transform
+    bg-blue-600
+    rounded-xl
+    hover:bg-blue-700
+    focus:outline-none
+    focus:ring-2
+    focus:ring-offset-2
+    focus:ring-blue-500;
+}
+
+
+@tailwind utilities;
+
+

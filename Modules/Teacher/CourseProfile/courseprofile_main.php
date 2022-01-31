@@ -1,97 +1,56 @@
 <?php
-
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
 //echo realpath(dirname(__FILE__));
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
     $courseProfile = new CourseProfile();
-    $curriculum = new Curriculum();
 }
+
 $viewCLODescription = '';
 $viewCLOMapping = '';
 
+$ploArray = $_SESSION['ploList'];
 
-$curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
-$ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO.
+if (count($ploArray) != 0) { // if we have plo then enter.
+    /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
+      'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+      'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+      'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
+      'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
+      'PLO 6' => "Use AJAX to get the data you need from the server. Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
+      'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
+      'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
+      'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
+      'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
+      'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
+      'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
+    $isProfileCreated = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+    $_SESSION['batchCode'] = $courseProfile->getBatchCode();
 
-if (isset($_POST['saved'])) {
+    // not created
+    if ($isProfileCreated === true) {
+        $_SESSION['typeOfProfile'] = 2;
+        $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
+    } else  // is created
+        $_SESSION['typeOfProfile'] = 1;
 
-    if ($_POST['saved']) {
+    if ($_SESSION['typeOfProfile'] != 1) { // in Update Mode.
+        if (isset($_GET['profileID'])) {
+            $courseProfile->loadCourseProfileData($_SESSION['cp_id']);
 
-        if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])) {
+            $cloObject = new CLO();
+            $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($_SESSION['selectedCurriculum'],
+                $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], 'PLODescription');  // add batchCode in the future.
+            $viewCLOMapping = $cloObject->mappedPLOs;
 
-            $array_courseEssential = $_POST['courseEssentialFieldValue'];
-            $array_courseDetail = $_POST['courseDetailFieldValue'];
-            $array_cCLO = $_POST['arrayCLO'];
-            $array_cMapping = $_POST['arrayMapping'];
+        } // if in editor mode.
+        else
+            header("Location: courseprofile_view.php");
+    }
 
-            $courseProfile->setCourseInfo($array_courseEssential[0], $array_courseEssential[1], $array_courseEssential[2], $array_courseEssential[3], $array_courseEssential[4],
-                $array_courseEssential[5], $array_courseEssential[6], $array_courseEssential[7], $array_courseEssential[8], $array_courseEssential[9], $array_courseEssential[10],
-                $array_courseDetail[0], $array_courseDetail[1], $array_courseDetail[2], $array_courseDetail[3], $_SESSION['selectedProgram'], $_SESSION['batchCode']);
-
-            $courseProfile->setAssessmentInfo($array_courseEssential[11], $array_courseEssential[12], $array_courseEssential[13], $array_courseEssential[14], $array_courseEssential[15]);
-            $courseProfile->setInstructorInfo($array_courseDetail[4], $array_courseDetail[5], $array_courseDetail[6], $array_courseDetail[7], $array_courseDetail[8], $array_courseDetail[9]);
-            $courseProfile->saveCourseProfileData($array_cCLO, $array_cMapping, $ploArray);
-            $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
-            die((json_encode(array('message' => 'Data Send Successfully'))));
-
-        } else {
-            echo $_POST['arrayCLO'];
-            echo $_POST['arrayMapping'];
-            echo $_POST['courseEssentialFieldValue'];
-            echo $_POST['courseDetailFieldValue'];
-            die(json_encode(array('message' => 'ERROR')));
-        }
-    } else
-        die(json_encode(array('message' => 'Saving data not working fine')));
-} else {
-    $hasCreated = $courseProfile->profileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
-
-    if (count($ploArray) != 0) { // if we have plo then enter.
-        $hasPlo = 1;             /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
-            'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-            'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-            'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
-            'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
-            'PLO 6' => "Use AJAX to get the data you need from the server. Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
-            'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
-            'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
-            'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
-            'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
-            'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
-            'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
-
-        if ($hasCreated === false) // not created
-            $_SESSION['typeOfProfile'] = 1;
-        else  // is created.
-        {
-            $_SESSION['typeOfProfile'] = 2;
-            $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
-        }
-
-        $_SESSION['batchCode'] = $courseProfile->getBatchCode();
-        if ($_SESSION['typeOfProfile'] != 1) { // in Update Mode.
-            if (isset($_GET['profileID'])) {
-//                $hasCreated = false;
-                $courseProfile->loadCourseProfileData($_SESSION['cp_id']);
-                $cloObject = new CLO();
-                $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
-                $viewCLOMapping = $cloObject->mappedPLOs;
-
-            } // if in editor mode.
-            else //  profile exist we move to view page. .
-            {
-                header("Location: courseprofile_view.php");
-            }
-        }
-
-    } else
-        $hasPlo = 0;
 }
-//echo "ajeeb ".$courseProfile->getCoursePreRequisites() . "    ". json_encode($courseProfile->getCourse()->getPreReqList());
 ?>
 
 <!doctype html>
@@ -108,7 +67,6 @@ if (isset($_POST['saved'])) {
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
-    <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
 
     <script src="CourseProfileAssets/js/cpm_common.js" rel="script"></script>
@@ -126,15 +84,13 @@ if (isset($_POST['saved'])) {
         }
         // writeRandomQuote();
     </script>
-
-    <script src="../asset/TeacherDashScripts.js"> pleaseWork("Course Profile Update", "Catalyst | Course Profile Update")</script>
+    <script src="../asset/TeacherDashScripts.js"></script>
 
 </head>
 <body>
 <div class="w-full min-h-full">
 
     <main class="main-content-alignment">
-
         <div class="cprofile-grid">
 
             <div id="errorMessageDiv"
@@ -758,27 +714,71 @@ if (isset($_POST['saved'])) {
         </div>
     </div>
 </div>
+
+<div class=" hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <!-- Heroicon name: outline/exclamation -->
+                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Deactivate account
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Are you sure you want to deactivate your account? All of your data will be permanently
+                                removed. This action cannot be undone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Deactivate
+                </button>
+                <button type="button"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
         type="text/javascript"></script>
 
 <script>
     let hasPLOs, ploArray;
-    let existingCLODescription;
-    let exisitingCLOMapping;
+    let initialCLODescription;
+    let initialCLOMapping;
     let viewType;
 
     viewType = <?php echo json_encode($_SESSION['typeOfProfile'], JSON_HEX_TAG)  ?>;
-    ploObject = <?php echo json_encode($ploArray, JSON_HEX_TAG)  ?>;
-    ploArray = Object.values(ploObject);
+    ploArray = Object.values(<?php echo json_encode($ploArray, JSON_HEX_TAG)  ?>);
 
     if (viewType !== 1) {
-        pleaseWork("Course Profile Update", "Catalyst | Course Profile Update");
-        existingCLODescription = <?php echo json_encode($viewCLODescription, JSON_HEX_TAG) ?>;
-        exisitingCLOMapping = <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)  ?>;
+        iframeContainUpdate("Course Profile Update", "Catalyst | Course Profile Update");
+        initialCLODescription = <?php echo json_encode($viewCLODescription, JSON_HEX_TAG) ?>;
+        initialCLOMapping = <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)  ?>;
         coursTitle = <?php echo json_encode($courseProfile->getCourse()->getCourseTitle()) ?>;
-        console.log("Description", existingCLODescription);
-        console.log("Mapping", exisitingCLOMapping)
+
+        console.log("Initial Values List :")
+        console.log("Description", initialCLODescription);
+        console.log("Mapping", initialCLOMapping)
         updationTextSet(coursTitle);
     }
 
@@ -787,10 +787,7 @@ if (isset($_POST['saved'])) {
         $('#courseProfileUpdationBtn').removeClass("hidden");
         $('#subjectTopic').text("Course Profile " + courseTitle);
         $('.min-w-full.cprofile-container-centertxt').text(courseTitle + " update");
-
-        // $('p.text-sm').text(courseTitle+" update");
     }
-
 </script>
 <script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
 <?php
@@ -807,5 +804,4 @@ if (isset($_POST['saved'])) {
 ";
 }
 */ ?>
-
 </html>

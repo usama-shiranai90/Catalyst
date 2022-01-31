@@ -1,0 +1,30 @@
+button{
+    background-color: #0184FC
+}
+
+html, body{
+    height: auto;
+}
+.verticalLine {
+    border-left: 2px solid lightgray;
+    height: 25px;
+    align-self: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+    /* Firefox */
+}
+
+.blurBackground{
+    filter: blur(8px);
+}
+
+.textField-label, .select-label{
+    top: 10px;
+}

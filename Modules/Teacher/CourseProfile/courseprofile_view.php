@@ -37,7 +37,8 @@ $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with 
 $ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO with id , name , description.
 
 $cloObject = new CLO();
-$viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']);
+$viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(),
+    $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], 'PLOCode');
 $viewCLOMapping = $cloObject->mappedPLOs;
 
 //var_dump($viewCLODescription);
@@ -56,7 +57,6 @@ $viewCLOMapping = $cloObject->mappedPLOs;
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
-    <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/CourseProfileView.js" rel="script"></script>
 
@@ -443,8 +443,9 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                     </button>
 
                     <script>
+                        location.href = "courseprofile_main.php?profileID=1";
                         $('#updateCourseProfilebtn').on('click', function () {
-                            location.href = "courseprofile_main.php?profileID=" +<?php echo true?>;
+
                         })
                     </script>
                 </div>
@@ -457,6 +458,8 @@ $viewCLOMapping = $cloObject->mappedPLOs;
         clearAllStorage();
         setLocalStorage("courseCLO_key", <?php echo json_encode($viewCLODescription, JSON_HEX_TAG)?>)
         setLocalStorage("courseMap_key", <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)?>)
+
+        console.log("what in the " , <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)?>);
 
     </script>
 

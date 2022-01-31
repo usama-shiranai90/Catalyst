@@ -6,12 +6,12 @@ include 'Persistable.php';
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
 
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\PLO.php";
-
-
 class CourseProfile implements Persistable
 {
     protected $course;
+    private CourseInstructor $instructorInfo; // composition
+    private AssessmentWeight $assessmentInfo; // composition
+
     private $batchCode;
     private $programCode;
 
@@ -33,8 +33,6 @@ class CourseProfile implements Persistable
     private string $courseOtherReference = '';
 
     private $coursePreRequisites;
-    private CourseInstructor $instructorInfo; // composition
-    private AssessmentWeight $assessmentInfo; // composition
 
     public function __construct()
     {
@@ -43,8 +41,6 @@ class CourseProfile implements Persistable
         $this->assessmentInfo = new AssessmentWeight();
         $this->course = new Course();
         $this->coursePreRequisites = array_values($this->course->getPreReqList());
-
-
     }
 
     public function setCourseInfo($courseTitle, $courseCode, $courseCreditHr, $coursePreReq, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
@@ -66,12 +62,11 @@ class CourseProfile implements Persistable
         $this->courseTextBook = $courseTextBook;
         $this->courseDescription = $courseDescription;
         $this->courseOtherReference = $courseOtherReference;
-        $this->courseOtherReference = $courseOtherReference;
         $this->programCode = $pcode;
         $this->batchCode = $bcode;
     }
 
-    public function profileExist($currentCourseCode, $currentProgramCode, $currentCurriculumCode): bool
+    public function isCourseProfileExist($currentCourseCode, $currentProgramCode, $currentCurriculumCode): bool
     {
         $this->setCourseCode($currentCourseCode);
         $this->setProgramCode($currentProgramCode);

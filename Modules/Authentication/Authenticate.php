@@ -445,6 +445,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </main>
 
+
+
 <footer class="footer-section bg-catalystBlue-l2 shadow-2xl max-h-full">
     <div class="px-5 py-2 mx-auto flex items-center sm:flex-row flex-col sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
 
@@ -483,6 +485,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </span>
 
     </div>
+
 </footer>
 
 

@@ -1,11 +1,27 @@
 let incrementClo = 0;
 let completeFlag = true;
 
-let deletedCLODescriptionID = [];
+/** Course Profile Container arrays */
+let courseEssentialFieldValue = [];  // contains all Essential field values.
+let courseDetailFieldValue = [];    // contains all Detail field values.
+
+let allCourseCLOsDetailValues = [];   // contains CLO Distribution CLO values.
+let allCourseCLOsMapValues = [];     // contains CLO Distribution CLO-PLO Mapping values.
+
+let initialCLOsDescriptionIDs = []; //
+
+let recentlyAddedDescriptionValues = [];
+let recentlyAddedMappingValues = [];
+
+let deletedCLOsDescriptionIDs = [];
+let deletedCLOsPLOsMapIDs = [];
+
+let updateCLOsDescription = {};
+let updateCLOsToPLOsMap = {};
 
 window.onload = function (e) {
 
-    // Course Essential:
+    /** Course Profile Input Textarea and Selectors Fields */
     const cEssentialField = {
         cTitleField: document.getElementById("courseTitleID"),
         cCodeField: document.getElementById("courseCodeID"),
@@ -30,13 +46,12 @@ window.onload = function (e) {
         mid_weight: document.getElementById('midWeightID'),
         final_weight: document.getElementById('finalWeightID')
     }
-    let fieldsArray = [cEssentialField.cTitleField, cEssentialField.cCodeField, cEssentialField.cHoursField, cEssentialField.cPreReqField,
+    let courseEssentialFieldsArray = [cEssentialField.cTitleField, cEssentialField.cCodeField, cEssentialField.cHoursField, cEssentialField.cPreReqField,
         cEssentialField.cTermField, cEssentialField.cProgramLevelField, cEssentialField.cProgramField, cEssentialField.cEffectiveField,
         cEssentialField.cCoordinationField, cEssentialField.cMethodologyField, cEssentialField.cModelField,
         instrumentWeight.quizz_weight, instrumentWeight.assignment_weight, instrumentWeight.project_weight,
         instrumentWeight.mid_weight, instrumentWeight.final_weight];
 
-    // Course Detail:
     const cDetailField = {
         cReferenceField: document.getElementById("referenceBooksID"),
         cRecommendedBooksField: document.getElementById("recommendedTextbooksID"),
@@ -49,7 +64,7 @@ window.onload = function (e) {
         cContactsField: document.getElementById("contactsID"),
         cPersonalEmailFiled: document.getElementById("personalEmailID"),
     }
-    let fieldsArray_2 = [
+    let courseDetailFieldsArray = [
         cDetailField.cReferenceField, cDetailField.cRecommendedBooksField, cDetailField.cCourseDetailField
         , cDetailField.cOtherReferenceMaterialField, cDetailField.cNameDetailField, cDetailField.cDesignationField
         , cDetailField.cQualificationField, cDetailField.cSpecializationFiled, cDetailField.cContactsField, cDetailField.cPersonalEmailFiled
@@ -63,19 +78,17 @@ window.onload = function (e) {
         pfillarray: document.querySelectorAll('.bg-gray-200.flex-1')
     }
 
-    let backArrow = document.getElementsByClassName('mx-2 h-6')[0]
-
-    const outcomeLearningContainer = document.getElementById("courseLearningDivID");
-    const outcomeMapContainer = document.getElementById("courseMappingDivID");
-
+    /** Course Profile Container ID's */
     const cEssentialSection = document.getElementById('cpEssentialID');
     const cDetailSection = document.getElementById('cpDetaillID');
     const cDistributionSection = document.getElementById('cpDistributionID');
 
-    const addOutcomeBtn = document.getElementById('add-clo-btn');
+    const outcomeLearningContainer = document.getElementById("courseLearningDivID");
+    const outcomeMapContainer = document.getElementById("courseMappingDivID");
 
-    let courseEssentialFieldValue = [];
-    let courseDetailFieldValue = [];
+    /** Course Profile Container back arrow and  */
+    const addOutcomeBtn = document.getElementById('add-clo-btn');
+    let backArrow = document.getElementsByClassName('mx-2 h-6')[0]
 
     $(document).ready(function () {
         /**  Checks if fields and selectors are empty or not are empty   **/
@@ -94,7 +107,7 @@ window.onload = function (e) {
         $("#coursepContinuebtn-1").on("click", function (e) {
             e.preventDefault();
             completeFlag = true;
-            checkEmptyFields(fieldsArray, 1, courseEssentialFieldValue, instrumentWeight);
+            checkEmptyFields(courseEssentialFieldsArray, 1, courseEssentialFieldValue, instrumentWeight);
             arrowPositionCheck();
         });
 
@@ -102,17 +115,17 @@ window.onload = function (e) {
         $('#coursepContinuebtn-2').on('click', function (e) {
             e.preventDefault();
             completeFlag = true;
-            checkEmptyFields(fieldsArray_2, 2, courseDetailFieldValue, null);
+            checkEmptyFields(courseDetailFieldsArray, 2, courseDetailFieldValue, null);
             arrowPositionCheck();
         });
 
         /**  Course Profile Creation create-button create   **/
         $('#coursepContinuebtn-3').on('click', function (e) {
             e.preventDefault();
-            let arrayCLO = new Array(incrementClo);
-            let arrayMapping = new Array(incrementClo);
-            storeDetailAndMappingToArray(arrayCLO, arrayMapping);
-            creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue);
+            allCourseCLOsDetailValues = new Array(incrementClo);
+            allCourseCLOsMapValues = new Array(incrementClo);
+            storeDetailAndMappingToArray();
+            // creationAjaxCall(allCourseCLOsDetailValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue);
 
             /*if (outcomeLearningContainer.children.length < 2) { // generate alert
                 $("main").addClass("blur-filter");
@@ -127,14 +140,14 @@ window.onload = function (e) {
             }*/
         });
 
+        /**  Course Profile Creation Update Button.   **/
         $('#courseProfileUpdationBtn').on('click', function (e) {
             e.preventDefault();
-            let arrayCLO = new Array(incrementClo);
-            let arrayMapping = new Array(incrementClo);
-            storeDetailAndMappingToArray(arrayCLO, arrayMapping);
+            allCourseCLOsDetailValues = new Array(incrementClo);
+            allCourseCLOsMapValues = new Array(incrementClo);
+            storeDetailAndMappingToArray();
 
-            console.log(arrayCLO, arrayMapping, deletedCLODescriptionID);
-            updateAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue);
+            // updateAjaxCall(courseDetailFieldValue, courseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue);
         });
 
         $(addOutcomeBtn).on('click', function (event) {
@@ -144,47 +157,37 @@ window.onload = function (e) {
                 initialCreationCLODetail_Mapping();
         });
 
+        /** removes the Selected CLO along with its mapping. */
         $(document).on('click', "img[data-clo-des='remove']", function (event) {
-            event.stopImmediatePropagation();
-            // const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');  // clo-3 ya clo-2 us ma sa 3 ya 2 ko extract kary ga.
             // const dischargedIndex = $(event.target).closest('.learning-outcome-row').index();
+            // const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');  // clo-3 ya clo-2 us ma sa 3 ya 2 ko extract kary ga.
+
+            event.stopImmediatePropagation();
             const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr("id").match(/\d+/)[0];
 
-            let currentID;
             if (viewType !== 1) {
+                const deletedOutcomeID = $(event.target).closest('.learning-outcome-row').first().children(":first").attr("id");
+                console.log("Deleted Index : ", dischargedIndex, " and S id :", deletedOutcomeID)
 
-                currentID = $(event.target).closest('.learning-outcome-row').first();
-                const s = $(currentID).children(":first").attr("id");
+                if ((typeof deletedOutcomeID != 'undefined' && deletedOutcomeID !== null) && !isCharacterALetter(deletedOutcomeID)) { // If its
+                    console.log("hello boi" + confirmationMessage());
 
-                if (!isCharacterALetter(s)) {
-                    /* do something if letters are not found in your string */
-                    $("main").addClass("blur-filter");
-                    $("#alertContainer").removeClass("hidden");
-                    $("#alertBtnNo").on('click', function () {
-                        $("main").removeClass("blur-filter");
-                        $("#alertContainer").addClass("hidden");
-
-                    })
-                    $("#alertBtndeleteCLO").on('click', function () {
-                        deleteAjaxRow(s);
-                        $("main").removeClass("blur-filter");
-                        $("#alertContainer").addClass("hidden");
-                        deletedCLODescriptionID.push(dischargedIndex);
-                        console.log("deleted QUEUE : ", deletedCLODescriptionID, s);
-                    });
+                } else { // deletedOutcome ID is undefined.
+                    $(('#CourseLearningRow-' + dischargedIndex)).remove();
+                    $('#clo-map-div-' + dischargedIndex).remove();
+                    iterateIndexDetail_Mapping(parseInt(dischargedIndex));
                 }
-                $(('#CourseLearningRow-' + dischargedIndex)).remove();
-                $('#clo-map-div-' + dischargedIndex).remove();
-                iterateIndexDetail_Mapping(parseInt(dischargedIndex));
+
+
             } else {
                 $(('#CourseLearningRow-' + dischargedIndex)).remove();
                 $('#clo-map-div-' + dischargedIndex).remove();
                 iterateIndexDetail_Mapping(parseInt(dischargedIndex));
             }
 
-
         });
 
+        /** It controls the visibility of section i.e. essential , detail and course distribution */
         $(backArrow).on("click", function (e) {
             if (!$(cDetailSection).hasClass("hidden")) {                // 2nd section to move to 1st section.
                 $(cEssentialSection).toggleClass("hidden");             // open first section.
@@ -197,149 +200,71 @@ window.onload = function (e) {
             }
         });
 
-        /* $(document).click('\'input[name="^clo"]\'', function (e) {
-     const totalChecks = $("input[name=\"clo1\"]:checked").length;
-     let flag;
-     if (totalChecks !== 3) {
-         flag = false;
-         $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
-     } else {
-         flag = true;
-         showErrorBox("Maximum limit of CLO-1 is reached")
-         $("input[name=\"clo1\"]:checkbox").not(":checked").attr("disabled", flag);
-     }
- });*/
-
-
     });
 
-    function isCharacterALetter(char) {
-        return (/[a-zA-Z]/).test(char)
-    }
 
-    function storeDetailAndMappingToArray(arrayCLO, arrayMapping) {
-        completeFlag = true;
+    function storeDetailAndMappingToArray() {
 
-        for (let i = 0; i < arrayCLO.length; i++) {
-            arrayCLO[i] = [];
-        }
+        for (let i = 0; i < allCourseCLOsDetailValues.length; i++)
+            allCourseCLOsDetailValues[i] = [];
 
         $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61 span').each(function (node, index) {
-            arrayCLO[node].push($(this).text())
+            allCourseCLOsDetailValues[node].push($(this).text())
         })
-
-        if (viewType != 1) {
-
-            $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61').each(function (node, index) {
-                if (isNum($(this).attr("id")))
-                    deletedCLODescriptionID[node] = $(this).attr("id")
-
-            })
-
-        }
 
         let extremeCounter = 0;
         let cycle = 0;
         $('#courseLearningDivID input').each(function () {
             if (extremeCounter === 0) { // des
-                arrayCLO[cycle].push($(this).val())
+                allCourseCLOsDetailValues[cycle].push($(this).val())
                 extremeCounter++;
             } else if (extremeCounter === 1) {
-                arrayCLO[cycle].push($(this).val())
+                allCourseCLOsDetailValues[cycle].push($(this).val())
                 extremeCounter++
             } else if (extremeCounter === 2) {
-                arrayCLO[cycle].push($(this).val())
+                allCourseCLOsDetailValues[cycle].push($(this).val())
                 extremeCounter = 0;
                 cycle++;
             }
         })
 
         for (let i = 0; i < incrementClo; i++) {
-            arrayMapping[i] = [];
+            allCourseCLOsMapValues[i] = [];
             $("input:checkbox[name^='[clo-" + (i + 1) + "']:checked").each(function () {
-                arrayMapping[i].push($(this).val())
+                allCourseCLOsMapValues[i].push($(this).val())
             });
         }
-    }
 
-    if (viewType !== 1) {
-        for (let i = 0; i < existingCLODescription.length; i++) {
-            initialCreationCLODetail_Mapping();
+        // existingCLODescription
+
+        if (viewType !== 1) {
+
+            $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61').each(function (node, index) {  // fetch IDs if exist.
+                // if (isNum($(this).attr("id")))
+                //     initialCLOsDescriptionIDs[node] = $(this).attr("id")
+                if (isNum($(this).attr("id"))) {
+                    // updateCLOsDescription.push(allCourseCLOsDetailValues[node]);
+                    // iWillbeIDS.push(initialCLODescription[node][0]);
+                    // allCourseCLOsDetailValues.splice(node, 1); // 2nd parameter means remove one item only
+                    updateCLOsDescription['' + initialCLODescription[node][0]] = allCourseCLOsDetailValues[node];
+
+                } else {
+                    recentlyAddedDescriptionValues.push(allCourseCLOsDetailValues[node])
+                    // console.log("hello Im not ID , " + this.id + this.target);
+                }
+
+            });
+
+            console.log("After Fetching From outcomeContainer : ", allCourseCLOsDetailValues)
+            console.log("After Fetching From MappingContainer : ", allCourseCLOsMapValues)
+
+            console.log("Recently Added Description :", recentlyAddedDescriptionValues);
+            console.log("Update Description  :", updateCLOsDescription);
+
+            // console.log("DELETED ID", initialCLOsDescriptionIDs);
         }
-        updateValuesInCLODescriptionRow();
-        updateCheckBoxInMappingRow();
 
     }
-
-    function updateValuesInCLODescriptionRow() {
-        let currentIndex = 0;
-        $(outcomeLearningContainer).children().each(function (index) {
-            if (index !== 0) {
-                // $(this).attr("id", 'CourseLearningRow-' + existingCLODescription[currentIndex][0]);
-                // incrementClo = existingCLODescription[currentIndex][0];
-                $(this).children().each(function (i) {
-
-                    if (i === 0) {
-                        $(this).attr("id", existingCLODescription[currentIndex][0]);
-                    } else if (i === 1) {
-                        let input = this.lastElementChild;
-                        $(input).val(existingCLODescription[currentIndex][i + 1]);
-
-
-                    } else if (i === 3) {
-                        let input = this.firstElementChild.firstElementChild;
-                        $(input).val(existingCLODescription[currentIndex][i + 1]);
-                        console.log(existingCLODescription[currentIndex][i + 1])
-                    }
-                });
-                currentIndex++;
-            }
-        });
-    }
-
-    function updateCheckBoxInMappingRow() {
-
-        let onlyMapping = [];
-        for (let i = 0; i < exisitingCLOMapping.length; i++) {
-            console.log(exisitingCLOMapping[i])
-            let temp = [];
-            for (let j = 0; j < exisitingCLOMapping[i].length; j++) {
-                temp.push(exisitingCLOMapping[i][j][0])
-            }
-            onlyMapping.push(temp)
-        }
-        console.log("Only mapping: ", onlyMapping)
-
-        let counter = 0;
-        $(outcomeMapContainer).children().each(function (index) { // all rows including left clo-number.
-            if (index > 0) {
-                // mapping each row..
-                // $(this).attr("id", 'clo-map-div-' + existingCLODescription[counter][0]);
-                let childIndex = 0;
-                $(this).children().each(function (secondIndex) {  // 8 blocks with 1 extra col.
-                    if (secondIndex === 1) {
-                        $(this).attr("id", 'c-' + existingCLODescription[counter][0]);
-                    }
-                    if (secondIndex > 1) { // skip extra-col
-                        console.log("size : ", onlyMapping[counter].length, secondIndex, $(this));
-
-                        if (onlyMapping[counter].length !== childIndex) { //  3 !== 0
-                            let thenum = onlyMapping[counter][childIndex].match(/\d+/)[0]
-                            let rowid = this.firstElementChild.getAttribute("id")
-
-                            if (thenum === rowid.match(/\d+/g)?.[1]) {
-                                let input = this.firstElementChild;
-                                $(input).attr('checked', true);
-                                childIndex++;
-                            }
-                        }
-                    }
-                })
-                counter++;
-            }
-        });
-    }
-
 
     function initialCreationCLODetail_Mapping() {
         if (incrementClo === 0) {
@@ -350,7 +275,7 @@ window.onload = function (e) {
             createFirstCLOMapRow(ploArray.length, outcomeMapContainer); // pass no of PLO you have per curriculum.
         } else {
             const newCLORowDetail = document.getElementById('CourseLearningRow-' + incrementClo);
-            console.log("My new clo row : ", newCLORowDetail)
+            // console.log("My new clo row : ", newCLORowDetail)
             outcomeLearningContainer.appendChild(createCLORow(newCLORowDetail, 1, incrementClo + 1));
 
             //Creates a CLO Mapping Row
@@ -360,12 +285,11 @@ window.onload = function (e) {
             incrementClo++;
             // console.log("incremental Stage :", incrementClo)
         }
-        console.log(incrementClo)
+        // console.log(incrementClo)
     }
 
     function createCLORow(replicaNode, t, CLONumber) {
 
-        console.log("CLO NUMBER : in creation of row : ", CLONumber)
         const node = replicaNode.cloneNode(true);
         let cloColumn = [];
         setTagAttribute(node, CLONumber);
@@ -492,19 +416,14 @@ window.onload = function (e) {
         }
     }
 
+    function setTagAttribute(newReplica, clono) {
+        if (newReplica.hasAttribute("id"))
+            newReplica.setAttribute("id", uniqueName(newReplica.getAttribute("id"), clono));
+    }
 
     function uniqueName(str, CLONumber) {
         return str.replace(incrementClo, CLONumber);
         //  return str.replace(/1/g, incrementClo);
-    }
-
-    function uniquePLO(str, c, CLONumber) {
-        return "clo-" + CLONumber + "_plo-" + c;
-    }
-
-    function setTagAttribute(newReplica, CLONmber) {
-        if (newReplica.hasAttribute("id"))
-            newReplica.setAttribute("id", uniqueName(newReplica.getAttribute("id"), CLONmber));
     }
 
     function progressType(c) {
@@ -524,6 +443,96 @@ window.onload = function (e) {
                 '                        </div>';
     }
 
+
+    /** Course Profile Update  */
+    if (viewType !== 1) {
+        for (let i = 0; i < initialCLODescription.length; i++) {
+            initialCreationCLODetail_Mapping();
+        }
+        updateValuesInCLODescriptionRow();
+        updateCheckBoxInMappingRow();
+    }
+
+    function updateValuesInCLODescriptionRow() {
+        let currentIndex = 0;
+        $(outcomeLearningContainer).children().each(function (index) {
+            if (index !== 0) {
+                // $(this).attr("id", 'CourseLearningRow-' + existingCLODescription[currentIndex][0]);
+                // incrementClo = existingCLODescription[currentIndex][0];
+                $(this).children().each(function (i) {
+
+                    if (i === 0) {
+                        $(this).attr("id", initialCLODescription[currentIndex][0]);
+                    } else if (i === 1) {
+                        let input = this.lastElementChild;
+                        $(input).val(initialCLODescription[currentIndex][i + 1]);
+
+
+                    } else if (i === 3) {
+                        let input = this.firstElementChild.firstElementChild;
+                        $(input).val(initialCLODescription[currentIndex][i + 1]);
+                        // console.log(existingCLODescription[currentIndex][i + 1])
+                    }
+                });
+                currentIndex++;
+            }
+        });
+    }
+
+    function updateCheckBoxInMappingRow() {
+
+        // let onlyMapping = [];
+        // for (let i = 0; i < existingCLOMapping.length; i++) {
+        //     console.log(existingCLOMapping[i])
+        //     let temp = [];
+        //     for (let j = 0; j < existingCLOMapping[i].length; j++) {
+        //         temp.push(existingCLOMapping[i][j][1])
+        //     }
+        //     onlyMapping.push(temp)
+        // }
+        // console.log("Only mapping: ", onlyMapping)
+
+        let counter = 0;
+        $(outcomeMapContainer).children().each(function (index) { // all rows including left clo-number.
+            if (index > 0) {  // mapping each row..
+                // $(this).attr("id", 'clo-map-div-' + existingCLODescription[counter][0]);
+                let childIndex = 0;
+                $(this).children().each(function (secondIndex) {  // 8 blocks with 1 extra col.
+                    if (secondIndex === 1) {
+                        $(this).attr("id", 'c-' + initialCLODescription[counter][0]);
+                    }
+                    if (secondIndex > 1) { // skip extra-col
+                        // console.log("size : ", onlyMapping[counter].length, secondIndex, $(this));
+
+                        /** check the cprofile-column for checked box */
+                        if (initialCLOMapping[counter].length !== childIndex) { //  3 !== 0
+                            /*let getMappingNumber = onlyMapping[counter][childIndex].match(/\d+/)[0] //
+                            let cloToPLOChecked_ID = this.firstElementChild.getAttribute("id")
+                            console.log("the number is that ? " , getMappingNumber  ,  onlyMapping[counter])
+                            if (getMappingNumber === cloToPLOChecked_ID.match(/\d+/g)?.[1]) {
+                                this.setAttribute("id" , 'checked-'+onlyMapping[counter][childIndex])
+                                let input = this.firstElementChild;
+                                $(input).attr('checked', true);
+                                childIndex++;
+                            }*/
+
+                            let getMappedNumber = initialCLOMapping[counter][childIndex][1].match(/\d+/)[0];
+                            let cloToPLOChecked_ID = this.firstElementChild.getAttribute("id")
+
+                            if (getMappedNumber === cloToPLOChecked_ID.match(/\d+/g)?.[1]) {
+                                this.setAttribute("id", 'clo-' + initialCLODescription[counter][0] + "_plo-" + initialCLOMapping[counter][childIndex][0])
+                                let input = this.firstElementChild;
+                                $(input).attr('checked', true);
+                                childIndex++;
+                            }
+                        }
+                    }
+                })
+                counter++;
+            }
+        });
+    }
+
 }
 
 $.fn.textNodes = function () {
@@ -533,7 +542,6 @@ $.fn.textNodes = function () {
 }
 
 function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue) {
-
 
     $.ajax({
         type: "POST",
@@ -553,18 +561,21 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
 
 function updateAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue) {
 
-    // console.log("Essential", courseEssentialFieldValue)
-    // console.log("detail", courseDetailFieldValue)
-    // console.log("clo", arrayCLO)
-    // console.log("mapping", arrayMapping)
+    console.log("Essential", courseEssentialFieldValue)
+    console.log("detail", courseDetailFieldValue)
+    console.log("clo", arrayCLO)
+    console.log("mapping", arrayMapping)
 
     $.ajax({
         type: "POST",
         // dataType: "json",
-        url: 'CourseProfileCLOUpdate.php?p=update',
+        // url: 'CourseProfileCLOUpdate.php?p=update',
         data: {
-            arrayCLO: arrayCLO, arrayMapping: arrayMapping,
-            courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue,deletedCLODescriptionID:deletedCLODescriptionID,
+            arrayCLO: arrayCLO,
+            arrayMapping: arrayMapping,
+            courseEssentialFieldValue: courseEssentialFieldValue,
+            courseDetailFieldValue: courseDetailFieldValue,
+            deletedCLODescriptionID: initialCLOsDescriptionIDs,
             update: true
         },
         success: function (data, textStatus) {
