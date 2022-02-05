@@ -41,28 +41,6 @@ function uniquePLO(str, c, CLONumber) {
     return "clo-" + CLONumber + "_plo-" + c;
 }
 
-let status = false;
-function confirmationMessage()  {
-
-    $("main").addClass("blur-filter");
-    $("#alertContainer").removeClass("hidden");
-
-    $("#alertBtndeleteCLO").on('click', function () {
-        $("main").removeClass("blur-filter");
-        $("#alertContainer").addClass("hidden");
-        // initialCLOsDescriptionIDs.push(deletedOutcomeID);
-        // console.log("deleted QUEUE : ", initialCLOsDescriptionIDs, deletedOutcomeID);
-        status =  true;
-    });
-
-    $("#alertBtnNo").on('click', function () {
-        $("main").removeClass("blur-filter");
-        $("#alertContainer").addClass("hidden");
-        status =  false;
-    })
-
-    return status;
-}
 
 function setJsonLocalStorage() {
     let simpleJson = {

@@ -8,7 +8,7 @@ let courseDetailFieldValue = [];    // contains all Detail field values.
 let allCourseCLOsDetailValues = [];   // contains CLO Distribution CLO values.
 let allCourseCLOsMapValues = [];     // contains CLO Distribution CLO-PLO Mapping values.
 
-let initialCLOsDescriptionIDs = []; //
+// let initialCLOsDescriptionIDs = []; //
 
 let recentlyAddedDescriptionValues = [];
 let recentlyAddedMappingValues = [];
@@ -157,35 +157,54 @@ window.onload = function (e) {
                 initialCreationCLODetail_Mapping();
         });
 
+
+        let dischargedIndex = 0;
+        let deletedOutcomeID = 0;
         /** removes the Selected CLO along with its mapping. */
         $(document).on('click', "img[data-clo-des='remove']", function (event) {
             // const dischargedIndex = $(event.target).closest('.learning-outcome-row').index();
             // const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');  // clo-3 ya clo-2 us ma sa 3 ya 2 ko extract kary ga.
+            // event.stopPropagation();
 
             event.stopImmediatePropagation();
-            const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr("id").match(/\d+/)[0];
+            dischargedIndex = $(event.target).closest('.learning-outcome-row').attr("id").match(/\d+/)[0];
 
             if (viewType !== 1) {
-                const deletedOutcomeID = $(event.target).closest('.learning-outcome-row').first().children(":first").attr("id");
-                console.log("Deleted Index : ", dischargedIndex, " and S id :", deletedOutcomeID)
+                deletedOutcomeID = $(event.target).closest('.learning-outcome-row').first().children(":first").attr("id");
+                // console.log("Deleted Index : ", dischargedIndex, " and S id :", deletedOutcomeID)
 
                 if ((typeof deletedOutcomeID != 'undefined' && deletedOutcomeID !== null) && !isCharacterALetter(deletedOutcomeID)) { // If its
-                    console.log("hello boi" + confirmationMessage());
 
-                } else { // deletedOutcome ID is undefined.
-                    $(('#CourseLearningRow-' + dischargedIndex)).remove();
-                    $('#clo-map-div-' + dischargedIndex).remove();
-                    iterateIndexDetail_Mapping(parseInt(dischargedIndex));
-                }
+                    $("main").addClass("blur-filter");
+                    $("#alertContainer").removeClass("hidden");
+                    /*  $('#alertBtndeleteCLO').click( function (e) {
+                          e.stopImmediatePropagation();
+                          // e.stopPropagation();
+                          // const id = $(event.target).closest('.learning-outcome-row').first().children(":first").attr("id");
+                          const id = $(event.target).closest('.learning-outcome-row').find(".bg-catalystBlue-l61").attr("id");
+                          console.log("hello bruh wtf ", id , dischargedIndex)
+                          // deletedCLOsDescriptionIDs.push(deletedOutcomeID);
+                          addToArray(deletedOutcomeID)
+                          console.log("deleted QUEUE : ", deletedCLOsDescriptionIDs, deletedOutcomeID);
+                          deleteOutcomeWithDistribution(dischargedIndex);
+                          $("main").removeClass("blur-filter");
+                          $("#alertContainer").addClass("hidden");
+                      });
 
+                      // $("#alertBtnNo").on('click', function (e) {
+                      $(document).on('click', "#alertBtnNo", function (e) {
+                          e.preventDefault();
+                          e.stopImmediatePropagation();
+                          // e.stopPropagation();
+                          $("main").removeClass("blur-filter");
+                          $("#alertContainer").addClass("hidden");
+                      })*/
 
-            } else {
-                $(('#CourseLearningRow-' + dischargedIndex)).remove();
-                $('#clo-map-div-' + dischargedIndex).remove();
-                iterateIndexDetail_Mapping(parseInt(dischargedIndex));
-            }
-
-        });
+                } else // deletedOutcome ID is undefined.
+                    deleteOutcomeWithDistribution(dischargedIndex);
+            } else
+                deleteOutcomeWithDistribution(dischargedIndex);
+        })
 
         /** It controls the visibility of section i.e. essential , detail and course distribution */
         $(backArrow).on("click", function (e) {
@@ -200,8 +219,38 @@ window.onload = function (e) {
             }
         });
 
+
+        $('#alertBtndeleteCLO').click(function (e) {
+            e.stopImmediatePropagation();
+            // e.stopPropagation();
+            // const id = $(event.target).closest('.learning-outcome-row').first().children(":first").attr("id");
+            const id = $(event.target).closest('.learning-outcome-row').find(".bg-catalystBlue-l61").attr("id");
+            console.log("hello bruh wtf ", id, dischargedIndex)
+            deletedCLOsDescriptionIDs.push(deletedOutcomeID);
+
+            console.log("deleted QUEUE : ", deletedCLOsDescriptionIDs, deletedOutcomeID);
+            deleteOutcomeWithDistribution(dischargedIndex);
+            $("main").removeClass("blur-filter");
+            $("#alertContainer").addClass("hidden");
+        });
+
+        // $("#alertBtnNo").on('click', function (e) {
+        $(document).on('click', "#alertBtnNo", function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            // e.stopPropagation();
+            $("main").removeClass("blur-filter");
+            $("#alertContainer").addClass("hidden");
+        })
+
+
     });
 
+    function deleteOutcomeWithDistribution(dischargedIndex) {
+        $(('#CourseLearningRow-' + dischargedIndex)).remove();
+        $('#clo-map-div-' + dischargedIndex).remove();
+        iterateIndexDetail_Mapping(parseInt(dischargedIndex));
+    }
 
     function storeDetailAndMappingToArray() {
 
@@ -326,6 +375,7 @@ window.onload = function (e) {
         }
 
     }
+
 
     function iterateIndexDetail_Mapping(setFromIndex) {
         --incrementClo;
@@ -575,7 +625,7 @@ function updateAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cours
             arrayMapping: arrayMapping,
             courseEssentialFieldValue: courseEssentialFieldValue,
             courseDetailFieldValue: courseDetailFieldValue,
-            deletedCLODescriptionID: initialCLOsDescriptionIDs,
+            // deletedCLODescriptionID: initialCLOsDescriptionIDs,
             update: true
         },
         success: function (data, textStatus) {

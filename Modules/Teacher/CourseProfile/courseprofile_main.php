@@ -692,7 +692,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
     <div class="w-full h-full text-center">
         <div class="flex h-full flex-col justify-between">
             <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross"
-                 class="h-12 w-12 mt-4 m-auto">
+                 class="h-12 w-12 mt-4 m-auto" id="cmimageID">
             <p class="text-gray-600 dark:text-gray-100 text-md py-2 px-6">
                 Do you wish to delete the selected <span
                         class="text-gray-800 dark:text-white font-bold">CLO</span> and map their respective <span
