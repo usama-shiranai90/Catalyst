@@ -15,43 +15,39 @@ if (isset($_POST['update'])) {
 
     if ($_POST['update']) {
 
-        if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])
-            && isset($_POST['deletedCLODescriptionID'])) {
+        if (isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue']) && isset($_POST['arrayMapping'])
+            && isset($_POST['recentlyAddedCLOsDescriptionArray']) && isset($_POST['courseCLODescriptionUpdateArray'])) {
 
             $curriculum->fetchCurriculumID($_SESSION['selectedSection']);
-            $ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO.
-            $array_courseEssential = $_POST['courseEssentialFieldValue'];
-            $array_courseDetail = $_POST['courseDetailFieldValue'];
-            $array_cCLO = $_POST['arrayCLO'];
-            $array_cMapping = $_POST['arrayMapping'];
+            $ploArray = $curriculum->retrievePLOsList();
 
-            $severFetchedIDs = $_POST['deletedCLODescriptionID'];
+            $courseEssentialArray = $_POST['courseEssentialFieldValue'];
+            $courseDetailArray = $_POST['courseDetailFieldValue'];
+            $courseMappingArray = $_POST['arrayMapping']; // mapped Clo to Plo two dimension matrix.
 
-            $courseProfile->setCourseInfo($array_courseEssential[0], $array_courseEssential[1], $array_courseEssential[2], $array_courseEssential[3], $array_courseEssential[4],
-                $array_courseEssential[5], $array_courseEssential[6], $array_courseEssential[7], $array_courseEssential[8], $array_courseEssential[9], $array_courseEssential[10],
-                $array_courseDetail[0], $array_courseDetail[1], $array_courseDetail[2], $array_courseDetail[3], $_SESSION['selectedProgram'], $_SESSION['batchCode']);
+            $cloDescriptionKeyValue = $_POST['courseCLODescriptionUpdateArray'];  // existing Clo description array.
+            $courseCloRecentDescriptionArray = $_POST['recentlyAddedCLOsDescriptionArray']; // newly created clo description array.
 
-            $courseProfile->setAssessmentInfo($array_courseEssential[11], $array_courseEssential[12], $array_courseEssential[13], $array_courseEssential[14], $array_courseEssential[15]);
-            $courseProfile->setInstructorInfo($array_courseDetail[4], $array_courseDetail[5], $array_courseDetail[6], $array_courseDetail[7], $array_courseDetail[8], $array_courseDetail[9]);
+            $courseProfile->setCourseInfo($courseEssentialArray[0], $courseEssentialArray[1], $courseEssentialArray[2], $courseEssentialArray[3], $courseEssentialArray[4],
+                $courseEssentialArray[5], $courseEssentialArray[6], $courseEssentialArray[7], $courseEssentialArray[8], $courseEssentialArray[9], $courseEssentialArray[10],
+                $courseDetailArray[0], $courseDetailArray[1], $courseDetailArray[2], $courseDetailArray[3], $_SESSION['selectedProgram'], $_SESSION['batchCode']);
 
-//            $courseProfile->deleteCLORow($array_cCLO, $array_cMapping, $ploArray);
-//            $courseProfile->createCourseCLOs($array_cCLO, $array_cMapping, $ploArray);
+            $courseProfile->setAssessmentInfo($courseEssentialArray[11], $courseEssentialArray[12], $courseEssentialArray[13], $courseEssentialArray[14], $courseEssentialArray[15]);
+            $courseProfile->setInstructorInfo($courseDetailArray[4], $courseDetailArray[5], $courseDetailArray[6], $courseDetailArray[7], $courseDetailArray[8], $courseDetailArray[9]);
 
-            $courseProfile->modifyCourseProfileData($_SESSION['cp_id']);
+            $courseProfile->modifyCourseProfileData($_SESSION['cp_id']);  /** Modifies the Course Essential and Detail page information */
 
-            foreach ($severFetchedIDs as $index => $cID) {
-                $courseProfile->updateCourseProfileCLODescription($cID, $_SESSION['selectedCurriculum'], $array_cCLO[$index]);
+            $cloCodeArrayExisting = array();
+            foreach ($cloDescriptionKeyValue as $key => $value) {
+                $courseProfile->updateCourseProfileCLODescription($key, $_SESSION['selectedCurriculum'], $value);  /** update the Course Profile Description */
+                $cloCodeArrayExisting[] = $key;
             }
 
-            $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
+            $courseProfile->createCourseCLOs($courseCloRecentDescriptionArray, $courseMappingArray, $_SESSION['ploList'], $cloCodeArrayExisting);
             die((json_encode(array('message' => 'Data Send Successfully'))));
 
         } else {
-            echo $_POST['arrayCLO'];
-            echo $_POST['arrayMapping'];
-            echo $_POST['courseEssentialFieldValue'];
-            echo $_POST['courseDetailFieldValue'];
-            die(json_encode(array('message' => 'ERROR')));
+            die(json_encode(array('message' => 'Can not update Course profile due to missing info')));
         }
     } else
         die(json_encode(array('message' => 'Saving data not working fine')));

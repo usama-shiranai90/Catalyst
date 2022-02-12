@@ -9,14 +9,12 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CL
 class CourseProfile implements Persistable
 {
     protected $course;
-    private CourseInstructor $instructorInfo; // composition
-    private AssessmentWeight $assessmentInfo; // composition
-
+    protected $courseProfileCode; // composition
+    protected $databaseConnection; // composition
+    private CourseInstructor $instructorInfo;
+    private AssessmentWeight $assessmentInfo;
     private $batchCode;
     private $programCode;
-
-    protected $courseProfileCode;
-    protected $databaseConnection;
     private string $courseCode = '';
     private string $courseTitle = '';
     private $courseCreditHr; // may change to array if multiple.
@@ -102,6 +100,19 @@ class CourseProfile implements Persistable
         return false;
     }
 
+    public function getBatchCode(): mixed
+    {
+        return $this->batchCode;
+    }
+
+    /**
+     * @param int $batchCode
+     */
+    public function setBatchCode(int $batchCode): void
+    {
+        $this->batchCode = $batchCode;
+    }
+
     public function saveCourseProfileData($CLOsPerCourseList, $CLOToPLOMapping, $ploArray)       // TODO: Implement saveCourseProfileData() method.  will save data in database and temporary in session variable.
     {
         $courseID = $this->saveEssential();
@@ -140,6 +151,16 @@ class CourseProfile implements Persistable
             echo "No Course profile found with sectionCode: " . $this->databaseConnection->error;
         }
         return $courseID;
+    }
+
+    public function getCourseProfileCode()
+    {
+        return $this->courseProfileCode;
+    }
+
+    public function setCourseProfileCode($courseProfileCode): void
+    {
+        $this->courseProfileCode = $courseProfileCode;
     }
 
     private function saveAssessment($cCourseCode)
@@ -183,18 +204,19 @@ class CourseProfile implements Persistable
 
     }
 
-    public function createCourseCLOs($CLOsPerCourseList, $CLOToPLOMapping, $ploArray)
+    public function createCourseCLOs($CLOsPerCourseList, $CLOToPLOMapping, $ploArray, $cloIDList = array())
     {
         // creation of clos description and mapping.
         $ongoingCurriculum = $_SESSION['selectedCurriculum'];
-        $cloIDList = array();
+
         foreach ($CLOsPerCourseList as $row) {
             $cloObject = new CLO();
             $cloObject->creation(0, $row[0], $row[1], $row[2], $row[3]);
 
             $sql_statement = /** @lang text */
-                "INSERT INTO clo(curriculumCode, programCode, courseCode, cloName, description, domain, btLevel)
-                values(\"$ongoingCurriculum\",\"$this->programCode\",\"$this->courseCode\", \"$cloObject->cloName\", \"$cloObject->cloDescription\", \"$cloObject->cloDomain\", \"$cloObject->cloBtLevel\")";
+                "INSERT INTO clo(curriculumCode, programCode,batchCode ,courseCode, cloName, description, domain, btLevel)
+                values(\"$ongoingCurriculum\",\"$this->programCode\",\"$this->batchCode\",\"$this->courseCode\", \"$cloObject->cloName\",
+                 \"$cloObject->cloDescription\", \"$cloObject->cloDomain\", \"$cloObject->cloBtLevel\")";
 
             if ($this->databaseConnection->query($sql_statement) === TRUE) {
 //                $cloIDList [] = mysqli_insert_id($this->databaseConnection);
@@ -245,7 +267,6 @@ class CourseProfile implements Persistable
 
     }
 
-
     public function updateCourseProfileCLODescription($cloCode, $curriculumCode, $rowData)
     {
         $cloName = $rowData[0];
@@ -262,39 +283,7 @@ class CourseProfile implements Persistable
         } else {
             echo "Error CLO description updated : " . $this->databaseConnection->error . "<br>" . $rowData;
         }
-
-
-
-
-        echo "\n\**************Mapping Info**********\*\n";
-        $cloCounter = 0;
-        foreach ($CLOToPLOMapping as $rowData) {
-            foreach ($rowData as $cloplo) {  // extract Mapping each row data containing multiple PLO-list
-                $headers = explode('_', $cloplo); // [0]-> clo-1 ,  [1]-> plo-1;
-                echo "Data is :" . $headers[0] . '    ' . $headers[1] . "\n";
-
-                foreach ($ploArray as $plo) {
-                    $plo[1] = str_replace(" ", "-", $plo[1]);
-                    if ($plo[1] == strtoupper($headers[1])) {
-                        echo "Current-CLO-ID:" . $cloIDList[$cloCounter] . '   and PLO-ID: ' . $plo[0] . "\n";
-
-                        $sql_statement = /** @lang text */
-                            "INSERT INTO clotoplomapping(PLOCode, CLOCode) VALUES (\"$plo[0]\",\"$cloIDList[$cloCounter]\")";
-                        $result = $this->databaseConnection->query($sql_statement);
-                        if ($result) {
-                            echo "Mapping Successfully !";
-                        } else
-                            echo "CLO-PLO Mapping Error : " . $this->databaseConnection->error;
-
-                    }
-                }
-            }
-            $cloCounter += 1;
-        }
-
-
     }
-
 
     public function loadCourseProfileData($courseProfileID)
     {
@@ -330,10 +319,10 @@ class CourseProfile implements Persistable
 
     }
 
-    public function deleteCLORow($currentCLOID, $programID, $CurriculumID)
+    public function deleteCLORow($currentCLOID, $programID, $CurriculumID, $batchCode)
     {
         $sql = /** @lang text */
-            "delete from clo where CLOCode = \"$currentCLOID\" and programCode =\"$programID\" and curriculumCode=\"$CurriculumID\"";
+            "delete from clo where CLOCode = \"$currentCLOID\" and programCode =\"$programID\" and curriculumCode=\"$CurriculumID\" and batchCode = \"$batchCode\"";
 
         $result = $this->databaseConnection->query($sql);
 
@@ -344,10 +333,22 @@ class CourseProfile implements Persistable
         }
     }
 
+    public function deleteCLOPLOMapping($CLOCode)
+    {
+        $sql = /** @lang text */
+            "DELETE FROM clotoplomapping WHERE CLOCode = \"$CLOCode\"";
+
+        $result = $this->databaseConnection->query($sql);
+
+        if ($result === TRUE) {
+            echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode;
+        } else {
+            echo "Error deleting record from clotoplomapping: " . $this->databaseConnection->error;
+        }
+    }
+
     public function modifyCourseProfileData($courseProfileID)
     {
-        // TODO: Implement modifyCourseProfileData() method.
-
         $sql1 = /** @lang text */
             "UPDATE courseprofile SET  courseTitle = \"$this->courseTitle\", creditHours = \"$this->courseCreditHr\", semester = \"$this->courseSemester\",
                           programName = \"$this->courseProgram\", programLevel = \"$this->courseProgramLevel\", courseEffective = \"$this->courseCourseEffective\", 
@@ -375,7 +376,7 @@ class CourseProfile implements Persistable
             personalEmail = \"$instructor_email\" WHERE courseProfileCode = \"$courseProfileID\"";
 
         if ($this->databaseConnection->query($sql2) === TRUE) {
-            echo "Record updated successfully";
+            echo "Record of courseProfile Instructor updated successfully";
         } else {
             echo "Error updating Course Profile Instructor information: " . $this->databaseConnection->error;
         }
@@ -393,23 +394,11 @@ class CourseProfile implements Persistable
             WHERE courseProfileCode = \"$courseProfileID\";";
 
         if ($this->databaseConnection->query($sql2) === TRUE) {
-            echo "Record updated successfully";
+            echo "Record  courseProfile Assessment updated successfully";
         } else {
             echo "Error updating Course Profile Assessment Info: " . $this->databaseConnection->error;
         }
 
-    }
-
-
-    public function getCourseProfileCode()
-    {
-        return $this->courseProfileCode;
-    }
-
-
-    public function setCourseProfileCode($courseProfileCode): void
-    {
-        $this->courseProfileCode = $courseProfileCode;
     }
 
     /**
@@ -419,7 +408,6 @@ class CourseProfile implements Persistable
     {
         return $this->course;
     }
-
 
     /**
      * @return string
@@ -453,7 +441,6 @@ class CourseProfile implements Persistable
         $this->courseTitle = $courseTitle;
     }
 
-
     public function getCourseCreditHr(): mixed
     {
         return $this->courseCreditHr;
@@ -466,7 +453,6 @@ class CourseProfile implements Persistable
     {
         $this->courseCreditHr = $courseCreditHr;
     }
-
 
     public function getCourseSemester(): mixed
     {
@@ -558,12 +544,10 @@ class CourseProfile implements Persistable
         $this->courseTeachingMythology = $courseTeachingMythology;
     }
 
-
     public function getCourseModel()
     {
         return $this->courseModel;
     }
-
 
     public function setCourseModel(string $courseModel): void
     {
@@ -650,21 +634,6 @@ class CourseProfile implements Persistable
         $this->coursePreRequisites = $coursePreRequisites;
     }
 
-
-    public function getBatchCode(): mixed
-    {
-        return $this->batchCode;
-    }
-
-    /**
-     * @param int $batchCode
-     */
-    public function setBatchCode(int $batchCode): void
-    {
-        $this->batchCode = $batchCode;
-    }
-
-
     public function getProgramCode(): mixed
     {
         return $this->programCode;
@@ -677,7 +646,6 @@ class CourseProfile implements Persistable
     {
         $this->programCode = $programCode;
     }
-
 
     public function getInstructorInfo(): CourseInstructor
     {
@@ -701,7 +669,6 @@ class CourseProfile implements Persistable
     {
         $this->assessmentInfo->setAll($quizWeight, $assignmentWeight, $projectWeight, $midsWeight, $finalWeight);
     }
-
 
 }
 

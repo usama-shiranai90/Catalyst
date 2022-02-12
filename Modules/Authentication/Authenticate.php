@@ -440,8 +440,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="wave-card-shape"></div>
             </div>
         </div>
-
-
     </div>
 </main>
 

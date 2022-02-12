@@ -29,8 +29,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
     $isProfileCreated = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
     $_SESSION['batchCode'] = $courseProfile->getBatchCode();
 
-    // not created
-    if ($isProfileCreated === true) {
+    if ($isProfileCreated === true) {    // not created
         $_SESSION['typeOfProfile'] = 2;
         $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
     } else  // is created
@@ -127,7 +126,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                             class=" cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -571,7 +570,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">
@@ -773,6 +772,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
     if (viewType !== 1) {
         iframeContainUpdate("Course Profile Update", "Catalyst | Course Profile Update");
         initialCLODescription = <?php echo json_encode($viewCLODescription, JSON_HEX_TAG) ?>;
+
         initialCLOMapping = <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)  ?>;
         coursTitle = <?php echo json_encode($courseProfile->getCourse()->getCourseTitle()) ?>;
 
