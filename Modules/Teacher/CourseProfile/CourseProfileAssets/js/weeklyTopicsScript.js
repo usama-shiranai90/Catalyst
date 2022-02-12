@@ -1,18 +1,19 @@
+let rowCLOsWithIDList = '';
+let recentlyAddedWeeklyTopics = [];
+let updateWeeklyTopics = {};
+let deletedWeeklyTopics = [];  // stores the id for deleted rows by saving their ID.
+let allWeeklyRecordDescriptionValues = [];
+
 window.onload = function (e) {
-    let rowCLOsWithIDList = '';
     let weeklyRowCounter;
-    let twoDimensionalWeeklyRecord = [];
 
     if (courseWeeklyTopicList.length !== 0) {
         weeklyRowCounter = 0; // counts total weekly records.
     } else
         weeklyRowCounter = courseWeeklyTopicList.length;
 
-    // console.log("weekly Row : ",)
     const parentWeeklyContainer = document.getElementById('courseweekParentDivID'); // it contains the header as well as weekly-row data.
     const addWeeklyRowBtn = document.getElementById('createWeeklyBtn');  // generate new weekly record.
-
-    let deletedWeeklyID = []; // stores the id for deleted rows by saving their ID.
 
     $(document).ready(function () {
         // loadWeeklyData();
@@ -21,60 +22,57 @@ window.onload = function (e) {
         });
 
         $('#updateweeklyTopicbtn').on('click', function () {
-            let twoDimensionalWeeklyRecord = new Array(weeklyRowCounter);
+            allWeeklyRecordDescriptionValues = new Array(weeklyRowCounter);
             for (let i = 0; i < weeklyRowCounter; i++) {
-                twoDimensionalWeeklyRecord[i] = [];
+                allWeeklyRecordDescriptionValues[i] = [];
             }
 
             let counter = 0;
             let innerCounter = 0;
             $(parentWeeklyContainer).children().each((index, node) => {
                 if (index !== 0) {
+                    /** skipping 0 for header tag */
+                    const hasID = $('#s-wtc-r' + (index + 1)).val();
+
                     const weeklyRowRecord = ['#wct-wno-r' + index, '#detail-r-' + index, '#assessment-clo-' + index, '#wtc-clos-r' + index];
-
                     for (let i = 0; i < weeklyRowRecord.length; i++) {
-
                         if (i === 0) {
-                            twoDimensionalWeeklyRecord[counter][innerCounter] = "Week-" + (i + 1);
+                            allWeeklyRecordDescriptionValues[counter][innerCounter] = "Week-" + (i + 1);
                             innerCounter++;
-                        } else {
                             if (i !== 3) // assessment and description.
                             {
                                 $(weeklyRowRecord[i]).attr('readonly', true).removeClass("italic").addClass("not-italic");
-                                twoDimensionalWeeklyRecord[counter][innerCounter] = $(weeklyRowRecord[i]).val();
+                                allWeeklyRecordDescriptionValues [counter][innerCounter] = $(weeklyRowRecord[i]).val();
                                 innerCounter++;
                             } else {
-                                let tempArray = [];
+                                let allocatedCloArray = [];
                                 $(weeklyRowRecord[i]).children().each((ind, n) => { //for clo list
-                                    let currentCLO = '#week' + index + '_clo-' + (ind + 1) + 'ID';
-                                    console.log("tag is :", currentCLO);
+                                    // console.log("tag is :", currentCLO);
+                                    // console.log("status check ", $(currentCLO).is(":checked"), $(currentCLO).is(":selected")   )
 
+                                    let currentCLO = '#week' + index + '_clo-' + (ind + 1) + 'ID';
                                     $(currentCLO).prop('disabled', true);
                                     $(currentCLO).children().attr("disabled", true);
-                                    console.log("status check ", $(currentCLO).is(":checked"), $(currentCLO).is(":selected"))
-
                                     if ($(currentCLO).is(":checked")) {
-                                        // idxx = 'week' + index + '_clo-' + (ind+1) + 'ID';
-                                        // console.log("name is", $(idxx).attr("name")  ,  'week' + i + '_clo-' + ind + 'ID')
+                                        /** get current checkbox-input and see if it's checked. */
+                                        allocatedCloArray.push($(currentCLO).attr("name"));
+                                    }   // console.log("please work", $(currentCLO));
+                                });
 
-                                        console.log("please work", $(currentCLO));
-                                        tempArray.push($(currentCLO).attr("name"));
-                                    }
-                                })
-                                twoDimensionalWeeklyRecord[counter][innerCounter] = tempArray;
+                                allWeeklyRecordDescriptionValues [counter][innerCounter] = allocatedCloArray;
+                                if (hasID) {
+                                    updateWeeklyTopics[hasID] = allWeeklyRecordDescriptionValues [counter]
+                                } else
+                                    recentlyAddedWeeklyTopics.push(allWeeklyRecordDescriptionValues [counter])
                                 innerCounter = 0;
                                 counter++;
                             }
-
+                        } else {
                         }
-
                     }
                     $('.h-10.w-6.hidden').toggleClass("hidden");
                 }
             })
-
-            console.log("new Weekly Data : ", twoDimensionalWeeklyRecord)
-            createWeeklyData(twoDimensionalWeeklyRecord);
 
             /*$(parentWeeklyContainer).children().each((index, node) => {
                 console.log(index, node)
@@ -89,18 +87,27 @@ window.onload = function (e) {
                     $('.h-10.w-6.hidden').toggleClass("hidden")*/
 
 
-            if (deletedWeeklyID.length !== 0) {
-                console.log(deletedWeeklyID)
+            console.log("All Weekly Topics List : ", allWeeklyRecordDescriptionValues)
+            console.log("Deleted Weekly Topics List : ", updateWeeklyTopics)
+            console.log("Recently Added Weekly Topics List : ", recentlyAddedWeeklyTopics)
+
+            createWeeklyData(allWeeklyRecordDescriptionValues);
+            if (deletedWeeklyTopics.length !== 0) {
+                console.log(deletedWeeklyTopics)
                 // deleteWeekly();
                 // updateWeeklyData();
             }
 
         });
 
+
+        let dischargedIndex = 0;
+        let deletedWeeklyID = 0;
+        /** removes the Selected weekly topic. */
         $(document).on('click', "img[data-wtc-remove='remove']", function (event) {
             event.stopImmediatePropagation()
-            const dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').index();
-            deletedWeeklyID.push($(('#weeklyCoveredRow-' + dischargedIndex)));
+            dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').index();
+            deletedWeeklyTopics.push($(('#weeklyCoveredRow-' + dischargedIndex)));
 
             $(('#weeklyCoveredRow-' + dischargedIndex)).remove();
             iterateWeeklyTopicsRow(parseInt(dischargedIndex));
@@ -118,7 +125,7 @@ window.onload = function (e) {
                     $('#detail-r-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");
                     $('#assessment-clo-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");
                     $('#wtc-clos-r' + modifiedIndex).children().each((i, n) => {
-                        let currentCLOInput = '#week' + modifiedIndex + '-clo-' + (i + 1) + 'ID';
+                        let currentCLOInput = '#week' + modifiedIndex + '_clo-' + (i + 1) + 'ID';
                         $(currentCLOInput).prop('disabled', false);
                         $(currentCLOInput).children().attr("disabled", false);
                     })
@@ -269,10 +276,76 @@ window.onload = function (e) {
 
     }
 
-    function fetchedWeekRowInsertionTag(size) {
-        weeklyRowCounter = size;
-        for (let i = 0; i < size; i++) {
-            let currentRow = `<div id="weeklyCoveredRow-1" class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
+    function uniqueName(str, no, toReplace) {
+        return str.replace((toReplace), no);
+    }
+}
+
+
+function autoHeight(element) {
+    const el = document.getElementById(element);
+    el.style.height = "5px";
+    el.style.height = (el.scrollHeight) + "px";
+}
+
+function createWeeklyData(twoDimensionalWeeklyRecord) {
+
+    console.log("into creation state : ", twoDimensionalWeeklyRecord)
+    $.ajax({
+        type: "POST",
+        url: "CourseProfileAssets/WeeklyTopicAjax.php?actionType=add",
+        data: {
+            "twoDimensionalWeeklyRecord": twoDimensionalWeeklyRecord,
+            creationW: true
+        },
+        success: function (data) {
+            console.log(data)
+            // $('#courseweekParentDivID').html(data)
+        }
+    });
+}
+
+function updateWeeklyData() {
+    $.ajax({
+        type: "POST",
+        url: "WeeklyTopic/WeeklyTopicAjax.php?actionType=UpdateData",
+        data: {
+            "id=": id
+        },
+        success: function (data) {
+            $('#courseweekParentDivID').html(data)
+        }
+    });
+}
+
+function deleteWeekly() {
+    $.ajax({
+        type: "POST",
+        url: "WeeklyTopic/WeeklyTopicAjax.php?actionType=DeleteData",
+        data: {
+            "deletedWeeklyID": deletedWeeklyID
+        },
+        success: function (data) {
+            $('#courseweekParentDivID').html(data)
+        }
+    });
+}
+
+function loadWeeklyData() {
+    $.ajax({
+        type: "POST",
+        // dataType: 'JSON',
+        url: "CourseProfileAssets/WeeklyTopicAjax.php",
+        success: function (data) {
+            $('#courseweekParentDivID').html(data)
+        }
+    });
+}
+
+function fetchedWeekRowInsertionTag(size) {
+    weeklyRowCounter = size;
+    for (let i = 0; i < size; i++) {
+        let currentRow = `<div id="weeklyCoveredRow-1" class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
                                 <div id="wct-wno-r${(i + 1)}-c" class="lweek-column bg-catalystBlue-l61 text-white col-start-1 col-end-2">
                                     <span class="wlearn-cell-data">${fetchWeeklyCoveredRows[i][0]}</span>
                                 </div>
@@ -302,73 +375,9 @@ window.onload = function (e) {
                                         </div>
                                 </div>
                             </div>`
-            parentWeeklyContainer.innerHTML += currentRow;
+        parentWeeklyContainer.innerHTML += currentRow;
 
-            let rowCLList = document.getElementById('wtc-clos-r' + (i + 1))
-            createRowClosList(i, rowCLList)
-        }
+        let rowCLList = document.getElementById('wtc-clos-r' + (i + 1))
+        createRowClosList(i, rowCLList)
     }
-
-    function uniqueName(str, no, toReplace) {
-        return str.replace((toReplace), no);
-    }
-}
-
-
-function autoHeight(element) {
-    const el = document.getElementById(element);
-    el.style.height = "5px";
-    el.style.height = (el.scrollHeight) + "px";
-}
-
-function createWeeklyData(twoDimensionalWeeklyRecord) {
-    $.ajax({
-        type: "POST",
-        url: "CourseProfileAssets/record.php?actionType=add",
-        data: {
-            "twoDimensionalWeeklyRecord": twoDimensionalWeeklyRecord,
-            creationW: true
-        },
-        success: function (data) {
-
-            // $('#courseweekParentDivID').html(data)
-        }
-    });
-}
-
-function updateWeeklyData() {
-    $.ajax({
-        type: "POST",
-        url: "WeeklyTopic/record.php?actionType=UpdateData",
-        data: {
-            "id=": id
-        },
-        success: function (data) {
-            $('#courseweekParentDivID').html(data)
-        }
-    });
-}
-
-function deleteWeekly() {
-    $.ajax({
-        type: "POST",
-        url: "WeeklyTopic/record.php?actionType=DeleteData",
-        data: {
-            "deletedWeeklyID": deletedWeeklyID
-        },
-        success: function (data) {
-            $('#courseweekParentDivID').html(data)
-        }
-    });
-}
-
-function loadWeeklyData() {
-    $.ajax({
-        type: "POST",
-        // dataType: 'JSON',
-        url: "CourseProfileAssets/record.php",
-        success: function (data) {
-            $('#courseweekParentDivID').html(data)
-        }
-    });
 }

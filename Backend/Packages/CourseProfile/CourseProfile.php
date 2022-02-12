@@ -13,8 +13,10 @@ class CourseProfile implements Persistable
     protected $databaseConnection; // composition
     private CourseInstructor $instructorInfo;
     private AssessmentWeight $assessmentInfo;
+
     private $batchCode;
     private $programCode;
+
     private string $courseCode = '';
     private string $courseTitle = '';
     private $courseCreditHr; // may change to array if multiple.
@@ -209,27 +211,30 @@ class CourseProfile implements Persistable
         // creation of clos description and mapping.
         $ongoingCurriculum = $_SESSION['selectedCurriculum'];
 
-        foreach ($CLOsPerCourseList as $row) {
-            $cloObject = new CLO();
-            $cloObject->creation(0, $row[0], $row[1], $row[2], $row[3]);
+        if ($CLOsPerCourseList != null){
+            foreach ($CLOsPerCourseList as $row) {
+                $cloObject = new CLO();
+                $cloObject->creation(0, $row[0], $row[1], $row[2], $row[3]);
 
-            $sql_statement = /** @lang text */
-                "INSERT INTO clo(curriculumCode, programCode,batchCode ,courseCode, cloName, description, domain, btLevel)
+                $sql_statement = /** @lang text */
+                    "INSERT INTO clo(curriculumCode, programCode,batchCode ,courseCode, cloName, description, domain, btLevel)
                 values(\"$ongoingCurriculum\",\"$this->programCode\",\"$this->batchCode\",\"$this->courseCode\", \"$cloObject->cloName\",
                  \"$cloObject->cloDescription\", \"$cloObject->cloDomain\", \"$cloObject->cloBtLevel\")";
 
-            if ($this->databaseConnection->query($sql_statement) === TRUE) {
+                if ($this->databaseConnection->query($sql_statement) === TRUE) {
 //                $cloIDList [] = mysqli_insert_id($this->databaseConnection);
-                $cloIDList [] = (int)$this->databaseConnection->insert_id;
-            } else {
-                echo sprintf("Error clo description: %s<br>%s", $sql_statement, $this->databaseConnection->error);
+                    $cloIDList [] = (int)$this->databaseConnection->insert_id;
+                } else {
+                    echo sprintf("Error clo description: %s<br>%s", $sql_statement, $this->databaseConnection->error);
+                }
+            }
+            echo "New CLO-ID List : " . json_encode($cloIDList);
+
+            foreach ($cloIDList as $row) {
+                echo "\n" . "CLO-ID is :" . $row . "\n";
             }
         }
-        echo "New CLO-ID List : " . json_encode($cloIDList);
 
-        foreach ($cloIDList as $row) {
-            echo "\n" . "CLO-ID is :" . $row . "\n";
-        }
         foreach ($ploArray as $row) {
             echo "\n" . implode("|", $row);
         }
@@ -319,13 +324,11 @@ class CourseProfile implements Persistable
 
     }
 
-    public function deleteCLORow($currentCLOID, $programID, $CurriculumID, $batchCode)
+    public function deleteCourseProfileDistributionRecord($currentCLOID, $programID, $batchCode)
     {
         $sql = /** @lang text */
-            "delete from clo where CLOCode = \"$currentCLOID\" and programCode =\"$programID\" and curriculumCode=\"$CurriculumID\" and batchCode = \"$batchCode\"";
-
+            "delete from clo where CLOCode = \"$currentCLOID\" and programCode =\"$programID\" and batchCode = \"$batchCode\"";
         $result = $this->databaseConnection->query($sql);
-
         if ($result === TRUE) {
             echo "Record deleted successfully";
         } else {
@@ -333,7 +336,7 @@ class CourseProfile implements Persistable
         }
     }
 
-    public function deleteCLOPLOMapping($CLOCode)
+    public function deleteCourseProfileCLOPLOMapping($CLOCode)
     {
         $sql = /** @lang text */
             "DELETE FROM clotoplomapping WHERE CLOCode = \"$CLOCode\"";
@@ -343,7 +346,7 @@ class CourseProfile implements Persistable
         if ($result === TRUE) {
             echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode;
         } else {
-            echo "Error deleting record from clotoplomapping: " . $this->databaseConnection->error;
+            echo "Error deleting record from clotoplomapping: " . $this->databaseConnection->error."<br>";
         }
     }
 

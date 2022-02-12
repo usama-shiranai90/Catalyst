@@ -4,7 +4,6 @@
 //use phpcode\CourseInstructor;
 //use phpcode\CourseProfile;
 
-
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
@@ -37,6 +36,8 @@ $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with 
 $ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO with id , name , description.
 
 $cloObject = new CLO();
+
+
 $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(),
     $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], 'PLOCode');
 $viewCLOMapping = $cloObject->mappedPLOs;
@@ -443,9 +444,8 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                     </button>
 
                     <script>
-                        location.href = "courseprofile_main.php?profileID=1";
                         $('#updateCourseProfilebtn').on('click', function () {
-
+                            location.href = "courseprofile_main.php?profileID=1";
                         })
                     </script>
                 </div>
@@ -459,7 +459,7 @@ $viewCLOMapping = $cloObject->mappedPLOs;
         setLocalStorage("courseCLO_key", <?php echo json_encode($viewCLODescription, JSON_HEX_TAG)?>)
         setLocalStorage("courseMap_key", <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)?>)
 
-        console.log("what in the " , <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)?>);
+        console.log("what in the ", <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)?>);
 
     </script>
 

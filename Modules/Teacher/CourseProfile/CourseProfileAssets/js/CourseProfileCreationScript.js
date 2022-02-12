@@ -270,10 +270,11 @@ window.onload = function (e) {
             console.log("Update CLO Description  :", updateCLOsDescription);
             console.log("Deleted CLO Description  :", deletedCLOsDescriptionIDs);
 
-            if (deletedCLOsDescriptionIDs.length !== 0){
-                console.log("in deletion Mode " , deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription) )
-                // deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
-            }
+            // if (deletedCLOsDescriptionIDs.length !== 0){
+            // }
+            console.log("in deletion Mode " , deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription) )
+            deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
+
             updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
 
         } else {
@@ -571,7 +572,7 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
     $.ajax({
         type: "POST",
         // dataType: "json",
-        url: 'CourseProfileAssets/Operation/CourseProfileCLOCreation.php?p=saved',
+        url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=saved',
         data: {
             arrayCLO: arrayCLO, arrayMapping: arrayMapping,
             courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue,
@@ -592,7 +593,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCo
     $.ajax({
         type: "POST",
         // dataType: "json", courseCloToPloMapping
-        url: 'CourseProfileAssets/Operation/CourseProfileCLOUpdate.php?p=update',
+        url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=update',
         data: {
             courseEssentialFieldValue: courseEssentialFieldValue,
             courseDetailFieldValue: courseDetailFieldValue,
@@ -611,7 +612,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCo
 function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) {
     $.ajax({
         type: "POST",
-        url: 'CourseProfileAssets/Operation/CourseProfileCLODeletion.php?p=delete',
+        url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=delete',
         data: {
             deletedCLOIdsArray: deletedCLOIdsArray,
             remainingCLOIds: remainingCLOIds,

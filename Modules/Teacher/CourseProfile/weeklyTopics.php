@@ -7,13 +7,16 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
-    $courseProfile = new CourseProfile();
-    $weeklyInfo = new WeeklyTopic();
-    $curriculum = new Curriculum();
-    $cloObject = new CLO();
 }
+$courseProfile = new CourseProfile();
+$weeklyInfo = new WeeklyTopic();
+$curriculum = new Curriculum();
+$cloObject = new CLO();
 
 $profileExist = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+
+$CLOList = '';
+$viewWeeklyTopics = '';
 
 if ($profileExist) {
     $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
@@ -21,39 +24,28 @@ if ($profileExist) {
     //$CLOList = ['CLO-1', 'CLO-2', 'CLO-3'];
     $CLOList = $cloObject->retrieveCLOlist($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); // array of clo-code and name.
     foreach ($CLOList as $key => $value) {
-        $CLOList[$key][1] = removeCLODash($value[1]);;
+        $CLOList[$key][1] = removeCloDash($value[1]);;
     }
 
     $_SESSION['courseProfileCode'] = $courseProfile->getCourseProfileCode();
+    $viewWeeklyTopics = $weeklyInfo->retrieveWeeklyTopic($_SESSION['courseProfileCode']);
 
-    /*$WeeklyTopicsArray = array( // is a two dimension array f18-or represents the key and has the following data.
-        array('week-1', 'By default, Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
-            array('CLO-1', 'CLO-2', 'CLO-3'),
-            'CSS property here so you can make your custom column values as generic or as complicated and site-specific',
-        ),
-        array('week-2', 'Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
-            array('CLO-2', 'CLO-3'),
-            'CSS property here so you can make your custom column.......................................................'),
-    );*/
-    $WeeklyTopicsArray = $weeklyInfo->retrieveWeeklyTopic($_SESSION['courseProfileCode']);
-//    $weeklyInfo->retrieveWeeklyTopic( $_SESSION['courseProfileCode']);
-//    $WeeklyTopicsArray = array();
-
-    if (sizeof($WeeklyTopicsArray) != 0 and !empty($WeeklyTopicsArray)) {
-        function setExistingWeeklyRow($WeeklyTopicsArray, $CLOList)
+    if (sizeof($viewWeeklyTopics) != 0 and !empty($viewWeeklyTopics)) {
+        /** fetch weekly covered data */
+        function setExistingWeeklyRow($viewWeeklyTopics, $CLOList)
         {
             $counter = 1;
-            if (sizeof($WeeklyTopicsArray) != 0) {
+            if (sizeof($viewWeeklyTopics) != 0) {
 
-                foreach ($WeeklyTopicsArray as $rowData) { ?>
+                foreach ($viewWeeklyTopics as $rowData) { ?>
 
                     <div id="weeklyCoveredRow-<?php echo $counter ?>"
                          class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
-                        <!--        <div id="wct-wno-r--><?php //echo $counter ?><!---c"-->
+
+                        <input class="hidden" id="s-wtc-r<?php echo $counter ?>" value="<?php echo $rowData[0] ?>">
                         <div id="wct-wno-r<?php echo $counter ?>"
                              class="lweek-column bg-catalystBlue-l61 text-white col-start-1 col-end-2">
-                            <span class="wlearn-cell-data"
-                                  id="<?php echo $rowData[0] ?>"><?php echo $rowData[1]; ?></span>
+                            <span class="wlearn-cell-data"><?php echo $rowData[1]; ?></span>
                         </div>
                         <div id="wct-wdescription-r<?php echo $counter ?>" class="lweek-column col-start-2 col-end-7">
                             <label for="detail-<?php echo $counter ?>">
@@ -97,11 +89,12 @@ if ($profileExist) {
             }
         }
 
+        /** Weekly covered Clos checkbox */
         function weeklyCLOCheckbox($CLOList, $checkedClos, $rowCounter)
         {
             $cloCounter = 1;
             foreach ($checkedClos as $c) {
-                $checkedClos = removeCLODash($checkedClos);
+                $checkedClos = removeCloDash($checkedClos);
             }
 
             foreach ($CLOList as $cloNo) { ?>
@@ -137,9 +130,22 @@ if ($profileExist) {
     }
 }
 
-function removeCLODash($cloArray)
+function removeCloDash($cloArray): array|string
 {
     return str_replace("-", "", $cloArray);
+}
+
+function callStaticData($viewWeeklyTopics)
+{
+    $viewWeeklyTopics = array( // is a two dimension array f18-or represents the key and has the following data.
+        array('week-1', 'By default, Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
+            array('CLO-1', 'CLO-2', 'CLO-3'),
+            'CSS property here so you can make your custom column values as generic or as complicated and site-specific',
+        ),
+        array('week-2', 'Tailwind includes grid-template-column utilities for creating basic grids with up to 12 equal width columns. You change, add,  or remove these by customizing the gridTemplateColumns section of your Tailwind theme config',
+            array('CLO-2', 'CLO-3'),
+            'CSS property here so you can make your custom column.......................................................'),
+    );
 }
 
 ?>
@@ -157,7 +163,6 @@ function removeCLODash($cloArray)
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
-    <link href="CourseProfileAssets/css/courseInject.css" rel="stylesheet">
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
     <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
@@ -202,11 +207,12 @@ function removeCLODash($cloArray)
                                 </div>
                             </div>
                             <?php
-                            if ($profileExist and sizeof($WeeklyTopicsArray) != 0 and !empty($WeeklyTopicsArray)) {
-                                setExistingWeeklyRow($WeeklyTopicsArray, $CLOList);
+                            if ($profileExist and sizeof($viewWeeklyTopics) != 0 and !empty($viewWeeklyTopics)) {
+                                setExistingWeeklyRow($viewWeeklyTopics, $CLOList);
                             }
                             ?>
                         </div>
+
                     </div>
 
                     <div class="flex justify-center">
@@ -231,8 +237,8 @@ function removeCLODash($cloArray)
 </body>
 <script>
     let courseCLOList = <?php echo json_encode($CLOList, JSON_HEX_TAG) ?>;
-    let courseWeeklyTopicList = <?php echo json_encode($WeeklyTopicsArray, JSON_HEX_TAG)  ?>;
-    console.log(courseCLOList, courseWeeklyTopicList)
+    let courseWeeklyTopicList = <?php echo json_encode($viewWeeklyTopics, JSON_HEX_TAG)  ?>;
+    console.log(courseCLOList, courseWeeklyTopicList )
     // $('#courseweekParentDivID').load('CourseProfileAssets/record.php');
 </script>
 <script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>

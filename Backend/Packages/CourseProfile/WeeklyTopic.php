@@ -84,16 +84,15 @@ class WeeklyTopic
                      on c.CLOCode = weeklytopicclo.CLOCode where weeklyTopicCode = \"$w_id\";";
                 $result2 = $this->databaseConnection->query($statmentSecond);
                 if (!empty(mysqli_num_rows($result2)) && mysqli_num_rows($result2) > 0) {
-                    $currentweek = '';
                     while ($row2 = $result2->fetch_assoc()) {
 //                        if ($currentweek != $row2["weeklyTopicCode"]) {
 //                            $currentweek = $row2["weeklyTopicCode"];
 //                        $weekCLOList[] = $row2['CLOCode'];
-                        array_push($weekCLOList, $row2['cloName']);
+                        $weekCLOList[] = $row2['cloName'];
 //                        }
                     }
                 }
-                array_push($weeklyTopicListArray, array($row['weeklyTopicCode'], $row['weeklyNo'], $row['topicDetail'], $weekCLOList, $row['assessmentCriteria']));
+                $weeklyTopicListArray[] = array($row['weeklyTopicCode'], $row['weeklyNo'], $row['topicDetail'], $weekCLOList, $row['assessmentCriteria']);
             }
         } else
             echo "No Weekly Information:" . $this->databaseConnection->error;
