@@ -102,6 +102,35 @@ window.onload = function (e) {
             }
         });
 
+        let insertedWeightLimit = 0;
+        /** weight limit check */
+        $(Object.values(instrumentWeight)).on('focus', function (e) {
+            this.oldvalue = this.value;
+        });
+        $(Object.values(instrumentWeight)).on('change', function (e) {
+
+            if (!isNaN(parseInt(this.oldvalue)))
+                insertedWeightLimit += (parseInt(e.target.value) - parseInt(this.oldvalue));
+            else
+                insertedWeightLimit += parseInt(e.target.value);
+
+            console.log("value is ", parseInt(this.oldvalue), insertedWeightLimit, this.oldvalue)
+            if (insertedWeightLimit > 99) {
+                isExceededValueWeights(true)
+                showErrorBox("Assessment Weight limit exceeded , please insert below 100.")
+            } else
+                isExceededValueWeights(false)
+        });
+        function isExceededValueWeights(flag) {
+            $(Object.values(instrumentWeight)).each(function (i, v) {
+                if (flag)
+                    $(this).parent().addClass("textField-error-input ")
+                else
+                    $(this).parent().removeClass().addClass("textField-label-content w-2/5");
+            });
+        }
+
+
         /**  Course Essential Section Continue Button , checks empty fields and back-arrow pointer.   **/
         $("#coursepContinuebtn-1").on("click", function (e) {
             e.preventDefault();
@@ -272,7 +301,7 @@ window.onload = function (e) {
 
             // if (deletedCLOsDescriptionIDs.length !== 0){
             // }
-            console.log("in deletion Mode " , deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription) )
+            console.log("in deletion Mode ", deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))
             deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
 
             updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);

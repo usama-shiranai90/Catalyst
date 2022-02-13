@@ -1,27 +1,29 @@
-let rowCLOsWithIDList = '';
 let recentlyAddedWeeklyTopics = [];
 let updateWeeklyTopics = {};
 let deletedWeeklyTopics = [];  // stores the id for deleted rows by saving their ID.
+let rowCLOsWithIDList = '';
 let allWeeklyRecordDescriptionValues = [];
 
 window.onload = function (e) {
     let weeklyRowCounter;
 
+
     if (courseWeeklyTopicList.length !== 0) {
-        weeklyRowCounter = 0; // counts total weekly records.
-    } else
         weeklyRowCounter = courseWeeklyTopicList.length;
+    } else
+        weeklyRowCounter = 0; // counts total weekly records.
 
     const parentWeeklyContainer = document.getElementById('courseweekParentDivID'); // it contains the header as well as weekly-row data.
     const addWeeklyRowBtn = document.getElementById('createWeeklyBtn');  // generate new weekly record.
 
     $(document).ready(function () {
-        // loadWeeklyData();
+
         $(addWeeklyRowBtn).on('click', function (event) {
             initialRowChecking();
         });
 
         $('#updateweeklyTopicbtn').on('click', function () {
+            console.log("well my size is :", weeklyRowCounter)
             allWeeklyRecordDescriptionValues = new Array(weeklyRowCounter);
             for (let i = 0; i < weeklyRowCounter; i++) {
                 allWeeklyRecordDescriptionValues[i] = [];
@@ -32,86 +34,102 @@ window.onload = function (e) {
             $(parentWeeklyContainer).children().each((index, node) => {
                 if (index !== 0) {
                     /** skipping 0 for header tag */
-                    const hasID = $('#s-wtc-r' + (index + 1)).val();
+
+                    const hasID = $('#s-wtc-r' + (index)).val();
+                    console.log("id is :", hasID)
 
                     const weeklyRowRecord = ['#wct-wno-r' + index, '#detail-r-' + index, '#assessment-clo-' + index, '#wtc-clos-r' + index];
                     for (let i = 0; i < weeklyRowRecord.length; i++) {
                         if (i === 0) {
                             allWeeklyRecordDescriptionValues[counter][innerCounter] = "Week-" + (i + 1);
                             innerCounter++;
+                        } else {
                             if (i !== 3) // assessment and description.
                             {
                                 $(weeklyRowRecord[i]).attr('readonly', true).removeClass("italic").addClass("not-italic");
                                 allWeeklyRecordDescriptionValues [counter][innerCounter] = $(weeklyRowRecord[i]).val();
                                 innerCounter++;
                             } else {
-                                let allocatedCloArray = [];
+                                let tempArray = [];
                                 $(weeklyRowRecord[i]).children().each((ind, n) => { //for clo list
-                                    // console.log("tag is :", currentCLO);
-                                    // console.log("status check ", $(currentCLO).is(":checked"), $(currentCLO).is(":selected")   )
-
                                     let currentCLO = '#week' + index + '_clo-' + (ind + 1) + 'ID';
+
                                     $(currentCLO).prop('disabled', true);
                                     $(currentCLO).children().attr("disabled", true);
-                                    if ($(currentCLO).is(":checked")) {
-                                        /** get current checkbox-input and see if it's checked. */
-                                        allocatedCloArray.push($(currentCLO).attr("name"));
-                                    }   // console.log("please work", $(currentCLO));
-                                });
+                                    // console.log("status check ", $(currentCLO).is(":checked"), $(currentCLO).is(":selected"))
 
-                                allWeeklyRecordDescriptionValues [counter][innerCounter] = allocatedCloArray;
-                                if (hasID) {
-                                    updateWeeklyTopics[hasID] = allWeeklyRecordDescriptionValues [counter]
-                                } else
+                                    if ($(currentCLO).is(":checked")) {
+                                        console.log("please work", $(currentCLO));
+                                        tempArray.push($(currentCLO).attr("name"));
+                                    }
+                                });
+                                allWeeklyRecordDescriptionValues [counter][innerCounter] = tempArray;
+                                if (hasID)
+                                    updateWeeklyTopics[hasID] = allWeeklyRecordDescriptionValues[counter];
+                                else
                                     recentlyAddedWeeklyTopics.push(allWeeklyRecordDescriptionValues [counter])
                                 innerCounter = 0;
                                 counter++;
                             }
-                        } else {
                         }
                     }
                     $('.h-10.w-6.hidden').toggleClass("hidden");
                 }
             })
 
-            /*$(parentWeeklyContainer).children().each((index, node) => {
-                console.log(index, node)
-                if (index !== 0) {
-                    $('#detail-r-' + index).attr('readonly', true);
-                    $('#assessment-clo-' + index).attr('readonly', true);
-                    $('#wtc-clos-r' + index).children().each((i, n) => {
-                        let currentCLO = '#week' + index + '-clo-' + (i + 1) + 'ID';
-                        $(currentCLO).prop('disabled', true);
-                        $(currentCLO).children().attr("disabled", true);
-                    })
-                    $('.h-10.w-6.hidden').toggleClass("hidden")*/
-
-
             console.log("All Weekly Topics List : ", allWeeklyRecordDescriptionValues)
-            console.log("Deleted Weekly Topics List : ", updateWeeklyTopics)
             console.log("Recently Added Weekly Topics List : ", recentlyAddedWeeklyTopics)
+            console.log("Updated  Weekly Topics List : ", updateWeeklyTopics)
+            console.log("Deleted Weekly Topics List : ", deletedWeeklyTopics, deletedWeeklyTopics.length === 0)
 
-            createWeeklyData(allWeeklyRecordDescriptionValues);
-            if (deletedWeeklyTopics.length !== 0) {
-                console.log(deletedWeeklyTopics)
-                // deleteWeekly();
-                // updateWeeklyData();
+            if (deletedWeeklyTopics.length === 0 && (typeof updateWeeklyTopics === 'object' && Object.entries(updateWeeklyTopics).length === 0)) {
+                console.log("in creation");
+                // createWeeklyTopicsAjaxCall(recentlyAddedWeeklyTopics);
+            } else {
+                console.log("in updation")
+                // deleteWeeklyTopicAjaxCall(deletedWeeklyTopics, Object.keys(updateWeeklyTopics));
+                // updateWeeklyTopicAjaxCall(updateWeeklyTopics, recentlyAddedWeeklyTopics);
             }
 
         });
-
 
         let dischargedIndex = 0;
         let deletedWeeklyID = 0;
         /** removes the Selected weekly topic. */
         $(document).on('click', "img[data-wtc-remove='remove']", function (event) {
             event.stopImmediatePropagation()
-            dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').index();
-            deletedWeeklyTopics.push($(('#weeklyCoveredRow-' + dischargedIndex)));
+            // dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').index();
+            dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').attr("id").match(/\d+/)[0];
+            deletedWeeklyID = $(event.target).closest('.learning-outcome-row.h-auto').first().children(":first").val(); // attr("id")
 
-            $(('#weeklyCoveredRow-' + dischargedIndex)).remove();
-            iterateWeeklyTopicsRow(parseInt(dischargedIndex));
+            console.log(dischargedIndex, deletedWeeklyID);
+
+            if ((typeof deletedWeeklyID != 'undefined' && deletedWeeklyID !== null) && !isCharacterALetter(deletedWeeklyID)) { // If its
+                $("main").addClass("blur-filter");
+                $("#alertContainer").removeClass("hidden");
+            } else // deletedOutcome ID is undefined.
+                deleteWeeklyRow(dischargedIndex, false);
         });
+        /** It is visible when ID is represent and user wants to delete current Weekly Record. */
+        $('#alertBtndeleteWeekly').click(function (e) {
+            e.stopImmediatePropagation();
+            const id = $(event.target).closest('.learning-outcome-row').find(".bg-catalystBlue-l61").attr("id");
+            console.log("Show when Alert-Delete Button is clicked. ", dischargedIndex)
+            deletedWeeklyTopics.push(deletedWeeklyID);
+            deleteWeeklyRow(dischargedIndex, true);
+            $("main").removeClass("blur-filter");
+            $("#alertContainer").addClass("hidden");
+
+            // deletedWeeklyTopics.push($(('#weeklyCoveredRow-' + deletedWeeklyID)));
+        });
+        /** It is visible when ID is represent and user does not want to delete current Weekly Record. */
+        $("#alertBtnNoWeekly").on('click', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $("main").removeClass("blur-filter");
+            $("#alertContainer").addClass("hidden");
+        })
+
 
         $(document).on('click', "img[data-wtc-modify='modify']", function (event) {
             event.stopImmediatePropagation()
@@ -120,7 +138,7 @@ window.onload = function (e) {
             $(event.target).toggleClass("hidden")
 
             $(this).closest(pclass).children().each((index, node) => {
-                console.log(index, node)
+                // console.log(index, node)
                 if (index > 1) {
                     $('#detail-r-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");
                     $('#assessment-clo-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");
@@ -136,6 +154,11 @@ window.onload = function (e) {
 
     });
 
+    function deleteWeeklyRow(dischargedIndex, hasKeyFlag) {
+        $(('#weeklyCoveredRow-' + dischargedIndex)).remove();
+        iterateWeeklyTopicsRow(parseInt(dischargedIndex), hasKeyFlag);
+    }
+
     function errorInputType(currentField) {
         if (currentField.value.length === 0) {
             completeFlag = false;
@@ -146,7 +169,8 @@ window.onload = function (e) {
         }
     }
 
-    function iterateWeeklyTopicsRow(setFromIndex) {
+
+    function iterateWeeklyTopicsRow(setFromIndex, hasKeyFlag) {
         --weeklyRowCounter;
 
         if (weeklyRowCounter !== 0) {
@@ -156,7 +180,7 @@ window.onload = function (e) {
                     console.log("Number of times executing")
                     this.setAttribute("id", "weeklyCoveredRow-" + index)
                     $(this).children().each(function (i) {
-                        overrideWeeklyRow(index, i, this)
+                        overrideWeeklyRow(index, i, this, hasKeyFlag)
                     });
                 }
             });
@@ -165,8 +189,14 @@ window.onload = function (e) {
         }
     }
 
-    function overrideWeeklyRow(index, i, currentTag) {
+    function overrideWeeklyRow(index, i, currentTag, hasKeyFlag = true) {
+
         // skipping 0 index child because it stores row id as input.
+        if (i === 0) {
+            if (!hasKeyFlag)
+                currentTag.removeAttribute('value');
+        }
+
         if (i === 1) {
             currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // div us ka ID change ki hai.
             let span = currentTag.firstElementChild;
@@ -288,15 +318,15 @@ function autoHeight(element) {
     el.style.height = (el.scrollHeight) + "px";
 }
 
-function createWeeklyData(twoDimensionalWeeklyRecord) {
+function createWeeklyTopicsAjaxCall(recentlyAddedWeeklyTopics) {
 
-    console.log("into creation state : ", twoDimensionalWeeklyRecord)
+    console.log("into creation state : ", recentlyAddedWeeklyTopics)
     $.ajax({
         type: "POST",
-        url: "CourseProfileAssets/WeeklyTopicAjax.php?actionType=add",
+        url: "CourseProfileAssets/Operation/WeeklyTopicAjax.php?actionType=add",
         data: {
-            "twoDimensionalWeeklyRecord": twoDimensionalWeeklyRecord,
-            creationW: true
+            "arrayWeeklyTopics": recentlyAddedWeeklyTopics,
+            creation: true
         },
         success: function (data) {
             console.log(data)
@@ -305,39 +335,34 @@ function createWeeklyData(twoDimensionalWeeklyRecord) {
     });
 }
 
-function updateWeeklyData() {
+function updateWeeklyTopicAjaxCall(updateWeeklyTopics, recentlyAddedWeeklyTopics) {
     $.ajax({
         type: "POST",
-        url: "WeeklyTopic/WeeklyTopicAjax.php?actionType=UpdateData",
+        url: "CourseProfileAssets/Operation/WeeklyTopicAjax.php?actionType=UpdateData",
         data: {
-            "id=": id
+            updateWeeklyTopics: updateWeeklyTopics,
+            recentlyAddedWeeklyTopics: recentlyAddedWeeklyTopics,
+            updation: true
         },
         success: function (data) {
-            $('#courseweekParentDivID').html(data)
+            console.log(data)
+            // $('#courseweekParentDivID').html(data)
         }
     });
 }
 
-function deleteWeekly() {
+function deleteWeeklyTopicAjaxCall(deletedWeeklyTopics, remainingWeeklyID) {
     $.ajax({
         type: "POST",
-        url: "WeeklyTopic/WeeklyTopicAjax.php?actionType=DeleteData",
+        url: "CourseProfileAssets/Operation/WeeklyTopicAjax.php?actionType=DeleteData",
         data: {
-            "deletedWeeklyID": deletedWeeklyID
+            deletedWeeklyIdsArray: deletedWeeklyTopics,
+            remainingWeeklyIds: remainingWeeklyID,
+            deletion: true
         },
         success: function (data) {
-            $('#courseweekParentDivID').html(data)
-        }
-    });
-}
-
-function loadWeeklyData() {
-    $.ajax({
-        type: "POST",
-        // dataType: 'JSON',
-        url: "CourseProfileAssets/WeeklyTopicAjax.php",
-        success: function (data) {
-            $('#courseweekParentDivID').html(data)
+            // $('#courseweekParentDivID').html(data)
+            console.log(data)
         }
     });
 }
@@ -380,4 +405,15 @@ function fetchedWeekRowInsertionTag(size) {
         let rowCLList = document.getElementById('wtc-clos-r' + (i + 1))
         createRowClosList(i, rowCLList)
     }
+}
+
+function loadWeeklyData() {
+    $.ajax({
+        type: "POST",
+        // dataType: 'JSON',
+        url: "CourseProfileAssets/WeeklyTopicAjax.php",
+        success: function (data) {
+            $('#courseweekParentDivID').html(data)
+        }
+    });
 }

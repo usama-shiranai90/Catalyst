@@ -17,7 +17,7 @@ $ploArray = $_SESSION['ploList'];
 
 $sectionCode = $_SESSION['selectedSection'];
 
-if (isset($_POST['saved']) and $_POST['saved']) {
+if (isset($_POST['saved']) and $_POST['saved']  ) {
     if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])) {
 
         $courseEssentialArray = $_POST['courseEssentialFieldValue'];
@@ -50,12 +50,11 @@ elseif (isset($_POST['del']) and $_POST['del']) {
 
         $deletedCLO = $_POST['deletedCLOIdsArray']; // outcome description IDs and CLO-PLO Mapping array
 
-        if (is_array($deletedCLO)) { // if it is empty.
+        if (is_array($deletedCLO)) // if it is empty.
             foreach ($deletedCLO as $currentCLOCode) {
                 $courseProfile->deleteCourseProfileDistributionRecord($currentCLOCode, $programCode, $batchCode);
                 $courseProfile->deleteCourseProfileCLOPLOMapping($currentCLOCode);
             }
-        }
     }
 
     if (isset($_POST['remainingCLOIds'])) {

@@ -22,9 +22,9 @@ include "User.php";
 class Faculty extends User implements UserInterface
 {
 
+    private static $instance = null;
     private $facultyCode = "";
     private $listOfAllocations;
-    private static $instance = null;
 
     private function __construct()
     {
@@ -49,7 +49,7 @@ class Faculty extends User implements UserInterface
         $this->email = $email;
         $this->password = $password;
 
-        $sql ="SELECT facultyCode FROM faculty where officialEmail = \"$this->email\" and password = \"$this->password\"";
+        $sql = "SELECT facultyCode FROM faculty where officialEmail = \"$this->email\" and password = \"$this->password\"";
 
         $authenticationResult = $this->databaseConnection->query($sql);
 
@@ -75,6 +75,29 @@ class Faculty extends User implements UserInterface
         return $this->facultyCode;
     }
 
+    public function getPersonalDetails(): array
+    {
+        return $this->personalDetails;
+    }
+
+    function updateProfile($name, $email, $showEmailStatus): bool
+    {
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+        $sql = /** @lang text */
+            "UPDATE faculty t    SET t.name = '$name', t.officialEmail = '$email', t.showEmail = $showEmailStatus
+            WHERE t.facultyCode = '$this->facultyCode'";
+
+        if ($this->databaseConnection->query($sql) === TRUE) {
+//            echo "Record updated successfully";
+            $this->setPersonalDetails();
+            return true;
+        } else {
+            return false;
+            echo "Error updating record: " . $this->databaseConnection->error;
+        }
+
+    }
+
     public function setPersonalDetails(): void
     {
         $this->databaseConnection = DatabaseSingleton:: getConnection();
@@ -93,30 +116,6 @@ class Faculty extends User implements UserInterface
 
 
         $this->personalDetails = $personalDetails;
-    }
-
-    public function getPersonalDetails(): array
-    {
-        return $this->personalDetails;
-    }
-
-
-    function updateProfile($name, $email, $showEmailStatus): bool
-    {
-        $this->databaseConnection = DatabaseSingleton:: getConnection();
-        $sql = /** @lang text */
-            "UPDATE faculty t    SET t.name = '$name', t.officialEmail = '$email', t.showEmail = $showEmailStatus
-            WHERE t.facultyCode = '$this->facultyCode'";
-
-        if ($this->databaseConnection->query($sql) === TRUE) {
-//            echo "Record updated successfully";
-            $this->setPersonalDetails();
-            return true;
-        } else {
-            return false;
-            echo "Error updating record: " . $this->databaseConnection->error;
-        }
-
     }
 
     function updatePassword($password): bool

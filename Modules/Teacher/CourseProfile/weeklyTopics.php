@@ -105,14 +105,14 @@ if ($profileExist) {
                         <input class="clo-toggle hidden"
                                id="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>ID"
                                value="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
-                               name="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
+                               name="<?php echo $cloNo[0] ?>"
                                type="checkbox" disabled checked>
                     <?php } else { ?>
                         <input class="clo-toggle hidden"
                                id="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>ID"
                                value="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
-                               name="week<?php echo $rowCounter ?>_clo-<?php echo $cloCounter ?>"
-                               type="checkbox">
+                               name="<?php echo $cloNo[0] ?>"
+                               type="checkbox" disabled>
                     <?php } ?>
 
                     <label class="inside-label cprofile-cell-data capitalize"
@@ -165,6 +165,7 @@ function callStaticData($viewWeeklyTopics)
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
     <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+    <script src="CourseProfileAssets/js/additionalWork.js"></script>
     <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
 </head>
 <body style="background-color: #F9F8FE">
@@ -233,12 +234,39 @@ function callStaticData($viewWeeklyTopics)
     </main>
 </div>
 
+<div id="alertContainer"
+     class="hidden shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
+    <div class="w-full h-full text-center">
+        <div class="flex h-full flex-col justify-between">
+            <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross"
+                 class="h-12 w-12 mt-4 m-auto" id="cmimageID">
+            <p class="text-gray-600 dark:text-gray-100 text-md py-2 px-6">
+                Do you wish to delete the selected <span
+                        class="text-gray-800 dark:text-white font-bold">Weekly Covered Topics</span>?
+                <span class="text-gray-800 dark:text-white font-bold">Note : </span> It will be deleted from database.
+            </p>
+            <div id="aboxcontainer" class="flex items-center justify-between gap-4 w-full mt-8">
+                <button id="alertBtnNoWeekly" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
+                        text-white w-full transition ease-in duration-200 text-center text-base
+                         font-semibold shadow-md rounded-lg">No
+                </button>
+
+                <button id="alertBtndeleteWeekly" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
+                        text-white w-full transition ease-in duration-200 text-center text-base
+                         font-semibold shadow-md rounded-lg">Yes
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 
 </body>
 <script>
     let courseCLOList = <?php echo json_encode($CLOList, JSON_HEX_TAG) ?>;
     let courseWeeklyTopicList = <?php echo json_encode($viewWeeklyTopics, JSON_HEX_TAG)  ?>;
-    console.log(courseCLOList, courseWeeklyTopicList )
+    console.log(courseCLOList, courseWeeklyTopicList)
     // $('#courseweekParentDivID').load('CourseProfileAssets/record.php');
 </script>
 <script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>

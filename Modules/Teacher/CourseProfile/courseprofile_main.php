@@ -604,7 +604,6 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                 </button>
                             </div>
                         </div>
-
                         <div class="mx-3 mr-5 cloMapping-container mt-5">
                             <div class="clo-table-border" style="background-color: #0284FC">
 
@@ -637,7 +636,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                 </form>
             </div>
 
-            <!--                progress status-->
+            <!-- progress status-->
             <div class="my-5">
                 <div class="flex-center pb-3">
 

@@ -22,11 +22,11 @@ class WeeklyTopic
     }
 
 
-    public function createWeeklyTopic($courseProfileCode, $twoDimensionalWeeklyRecord)
+    public function createWeeklyTopic($courseProfileCode, $arrayWeeklyTopic)
     {
-        foreach ($twoDimensionalWeeklyRecord as $key => $value) {
+        foreach ($arrayWeeklyTopic as $key => $value) {
             $weekID = '';
-            $weekNo = $value[0]; //
+            $weekNo = $value[0];
             $description = $value[1];
             $assessment = $value[2];
 
@@ -41,26 +41,77 @@ class WeeklyTopic
             } else
                 echo "Error on the wall" . $this->databaseConnection->error;
 
-            foreach ($value[3] as $va) {
+            foreach ($value[3] as $clo_id) {
                 $sql_statement1 = /** @lang text */
                     "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values
-                    (\"$weekID\",\"$va\")";
+                    (\"$weekID\",\"$clo_id\")";
 
                 $result1 = $this->databaseConnection->query($sql_statement1);
-                if ($result1) {
-//                    echo "New weeklyclomap has been added successfully !";
-                } else
-                    echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $va . "   " . $weekID;
+                if (!$result1)
+                    echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $clo_id . "   " . $weekID;
+                else
+                    echo "Checking if data of Weekly row is created : ". $clo_id . "   " . $weekID;
             }
-
 
         }
 
     }
 
-
-    public function modifyWeeklyTopic($weeklyID)
+    public function deleteWeeklyTopicRecord($weeklyCode, $courseProfileID)
     {
+        $sql = /** @lang text */
+            "delete from weeklytopics where courseProfileCode = \"$courseProfileID\" and weeklyTopicCode =\"$weeklyCode\" ";
+
+        $result = $this->databaseConnection->query($sql);
+        if ($result === TRUE) {
+            echo "Record deleted successfully";
+        } else {
+            echo "Error deleting record from Weekly Record: " . $this->databaseConnection->error;
+        }
+    }
+
+    public function deleteWeeklyTopicClosRecord($weeklyCode)
+    {
+        $sql = /** @lang text */
+            "delete from weeklytopicclo where weeklyTopicCode = \"$weeklyCode\"";
+
+        $result = $this->databaseConnection->query($sql);
+        if ($result === TRUE) {
+            echo "Record deleted successfully";
+        } else {
+            echo "Error deleting record from Weekly Allocated Clos Record: " . $this->databaseConnection->error;
+        }
+    }
+
+
+    public function updateWeeklyTopicRecord($courseProfileID, $weeklyID, $weeklyRowData)
+    {
+        $weekNo = $weeklyRowData[0];
+        $description = $weeklyRowData[1];
+        $assessment = $weeklyRowData[2];
+
+
+        $sql1 = /** @lang text */
+            "update weeklytopics set weeklyNo = \"$weekNo\",topicDetail = \"$description\",assessmentCriteria =  \"$assessment\"
+              where  courseProfileCode =\"$courseProfileID\" and weeklyTopicCode = \"$weeklyID\";";
+
+        if ($this->databaseConnection->query($sql1) === TRUE) {
+            echo " weekly topic updated";
+        } else {
+            echo "Error weekly topic updated : " . $this->databaseConnection->error . "<br>" . $weeklyRowData;
+        }
+
+        foreach ($weeklyRowData[3] as $clo_id) {
+            $sql_statement1 = /** @lang text */
+                "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values
+                    (\"$weeklyID\",\"$clo_id\")";
+
+            $result1 = $this->databaseConnection->query($sql_statement1);
+            if (!$result1)
+                echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $clo_id . "   " . $weeklyID;
+        }
+
+
     }
 
 
