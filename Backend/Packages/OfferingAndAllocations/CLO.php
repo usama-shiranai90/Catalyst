@@ -49,7 +49,7 @@ class CLO
             while ($row = $result->fetch_assoc()) {
                 if ($currentCLO != $row["cloName"]) {
                     if (sizeof($tempArray) != 0) {
-                        echo "Inserting PLOs again CLO " . $currentCLO . "<br>";
+//                        echo "Inserting PLOs again CLO " . $currentCLO . "<br>";
                         sort($tempArray);
                         array_push($this->mappedPLOs, $tempArray);
 //                        print_r("PLOs are :  " . json_encode($tempArray)."<br>");
@@ -60,7 +60,7 @@ class CLO
                 }
                 $tempArray[] = [$row['PLOCode'], $row["ploName"], $row["ploDescription"]];
             }
-            echo "Inserting PLOs again CLO " . $currentCLO . "<br>";
+//            echo "Inserting PLOs again CLO " . $currentCLO . "<br>";
             sort($tempArray);
             array_push($this->mappedPLOs, $tempArray);
         } else
@@ -74,11 +74,12 @@ class CLO
             $this->deleteFromMappedArray(2);
         }
 
-        foreach ($this->mappedPLOs as $what) {
+   /*   showing data on server page.
+     foreach ($this->mappedPLOs as $what) {
             foreach ($what as $w) {
                 print_r(json_encode($w) . "<br>");
             }
-        }
+        }*/
 
         return $CLOlist;
     }

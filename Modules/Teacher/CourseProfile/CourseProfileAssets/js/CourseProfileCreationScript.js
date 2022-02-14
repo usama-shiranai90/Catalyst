@@ -115,12 +115,13 @@ window.onload = function (e) {
                 insertedWeightLimit += parseInt(e.target.value);
 
             console.log("value is ", parseInt(this.oldvalue), insertedWeightLimit, this.oldvalue)
-            if (insertedWeightLimit > 99) {
+            if (insertedWeightLimit > 100) {
                 isExceededValueWeights(true)
                 showErrorBox("Assessment Weight limit exceeded , please insert below 100.")
             } else
                 isExceededValueWeights(false)
         });
+
         function isExceededValueWeights(flag) {
             $(Object.values(instrumentWeight)).each(function (i, v) {
                 if (flag)
@@ -147,33 +148,33 @@ window.onload = function (e) {
             arrowPositionCheck();
         });
 
-        /**  Course Profile Creation create-button create   **/
+        $(document).ajaxSend(function () {
+            $("#loader").fadeIn(1000);
+        });
+
+        /**  Course Profile Creation create-button create i.e. Finish-button  **/
         $('#coursepContinuebtn-3').on('click', function (e) {
             e.preventDefault();
-            allCourseCLOsDescriptionValues = new Array(incrementClo);
-            allCourseCLOsMapValues = new Array(incrementClo);
-            storeDetailAndMappingToArray();
-            // creationAjaxCall(allCourseCLOsDetailValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue);
-
-            /*if (outcomeLearningContainer.children.length < 2) { // generate alert
-                $("main").addClass("blur-filter");
-                $("#alertContainer").removeClass("hidden");
-                $("#alertBtnCLOCreation").add("#alertBtnCLOContinue").on('click', function () {
-                    $("main").removeClass("blur-filter");
-                    $("#alertContainer").addClass("hidden");
-                })
-            }
+            if (outcomeLearningContainer.children.length < 2)
+                showErrorBox("No Outcome Distribution", "Please provide at least one mapping, try again!")
             else {
-
-            }*/
+                allCourseCLOsDescriptionValues = new Array(incrementClo); // section 1 (outcome-description) Ka liye , two dimensional to store row data.
+                allCourseCLOsMapValues = new Array(incrementClo); // section 2 (outcome-mapping) ka liye , two-dimensional to store row data
+                storeDetailAndMappingToArray();
+            }
         });
 
         /**  Course Profile Creation Update Button.   **/
         $('#courseProfileUpdationBtn').on('click', function (e) {
             e.preventDefault();
-            allCourseCLOsDescriptionValues = new Array(incrementClo);
-            allCourseCLOsMapValues = new Array(incrementClo);
-            storeDetailAndMappingToArray();
+            if (outcomeLearningContainer.children.length < 2) // generate alert
+                showErrorBox("No Outcome Distribution", "Please provide at least one mapping, try again!")
+            else {
+                allCourseCLOsDescriptionValues = new Array(incrementClo);
+                allCourseCLOsMapValues = new Array(incrementClo);
+                storeDetailAndMappingToArray();
+            }
+
         });
 
         $(addOutcomeBtn).on('click', function (event) {
@@ -183,15 +184,18 @@ window.onload = function (e) {
                 initialCreationCLODetail_Mapping();
         });
 
-
+        /** removes the Selected CLO ( section 1 and section 2 us ki selected row) along with its mapping. */
         let dischargedIndex = 0;
         let deletedOutcomeID = 0;
-        /** removes the Selected CLO along with its mapping. */
         $(document).on('click', "img[data-clo-des='remove']", function (event) {
             // const dischargedIndex = $(event.target).closest('.learning-outcome-row').index();
             // const dischargedIndex = $(event.target).closest('.learning-outcome-row').attr('id').replace(/^\D+/g, '');  // clo-3 ya clo-2 us ma sa 3 ya 2 ko extract kary ga.
+
             event.stopImmediatePropagation();
-            dischargedIndex = $(event.target).closest('.learning-outcome-row').attr("id").match(/\d+/)[0];
+            /** jo image ka tag select kia tha , us ka parent ma jae and us ka index laa kr dy .   */
+            dischargedIndex = $(event.target).closest('.learning-outcome-row').attr("id").match(/\d+/)[0]; //  CourseLearningRow-2-> 2 , ID ma sa integer.
+
+            console.log("Deleted Index is :", dischargedIndex);
 
             if (viewType !== 1) {
                 deletedOutcomeID = $(event.target).closest('.learning-outcome-row').first().children(":first").attr("id");
@@ -204,7 +208,8 @@ window.onload = function (e) {
                     deleteOutcomeWithDistribution(dischargedIndex, false);
             } else
                 deleteOutcomeWithDistribution(dischargedIndex, false);  // if no key then false else true.
-        })
+
+        });
 
         /** It controls the visibility of section i.e. essential , detail and course distribution */
         $(backArrow).on("click", function (e) {
@@ -212,10 +217,12 @@ window.onload = function (e) {
                 $(cEssentialSection).toggleClass("hidden");             // open first section.
                 $(cDetailSection).toggleClass("hidden");                // close second section.
                 arrowPositionCheck();
+                changeProgressStatus(1);
             } else if (!$(cDistributionSection).hasClass("hidden")) {     // if on third page then go to 2nd.
                 $(cDistributionSection).toggleClass("hidden");
                 $(cDetailSection).toggleClass("hidden");
                 arrowPositionCheck();
+                changeProgressStatus(2);
             }
         });
 
@@ -241,87 +248,12 @@ window.onload = function (e) {
 
     });
 
-    function deleteOutcomeWithDistribution(dischargedIndex, hasKeyFlag) {
-        $(('#CourseLearningRow-' + dischargedIndex)).remove();
-        $('#clo-map-div-' + dischargedIndex).remove();
-        iterateIndexDetail_Mapping(parseInt(dischargedIndex), hasKeyFlag);
-    }
-
-    function storeDetailAndMappingToArray() {
-
-        for (let i = 0; i < allCourseCLOsDescriptionValues.length; i++) /** create empty two-dimensional CLO Description matrix */
-        allCourseCLOsDescriptionValues[i] = [];
-
-        $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61 span').each(function (node, index) {
-            /** create empty two-dimensional CLO Mapping matrix */
-            allCourseCLOsDescriptionValues[node].push($(this).text())
-        })
-
-
-        let extremeCounter = 0, cycle = 0;
-        $('#courseLearningDivID input').each(function () {         /** iterate and store each row CLO description data into allCourseCLOsDescriptionValues-array */
-            if (extremeCounter === 0) { // des
-                allCourseCLOsDescriptionValues[cycle].push($(this).val())
-                extremeCounter++;
-            } else if (extremeCounter === 1) {
-                allCourseCLOsDescriptionValues[cycle].push($(this).val())
-                extremeCounter++
-            } else if (extremeCounter === 2) {
-                allCourseCLOsDescriptionValues[cycle].push($(this).val())
-                extremeCounter = 0;
-                cycle++;
-            }
-        });
-
-        for (let i = 0; i < incrementClo; i++) {
-            /** iterate and store each row CLO Mapping data into allCourseCLOsMapValues-array */
-            allCourseCLOsMapValues[i] = [];
-            $("input:checkbox[name^='[clo-" + (i + 1) + "']:checked").each(function () {
-                allCourseCLOsMapValues[i].push($(this).val())
-            });
-        }
-
-        /** Execute only when in update mode i.e. existingCLODescription */
-        if (viewType !== 1) {
-            $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61').each(function (node, index) {  // fetch IDs if existed.
-                if (isNum($(this).attr("id"))) {
-                    updateCLOsDescription['' + initialCLODescription[node][0]] = allCourseCLOsDescriptionValues[node];
-                    // updateCLOsDescription.push(allCourseCLOsDescriptionValues[node]);
-                    // allCourseCLOsDetailValues.splice(node, 1); // 2nd parameter means remove one item only
-                } else {
-                    recentlyAddedCLOsDescription.push(allCourseCLOsDescriptionValues[node])
-                }
-            });
-
-            console.log("All CLO-Description Array:", allCourseCLOsDescriptionValues);
-            console.log("All CLO-PLO-Mapping Array  :", allCourseCLOsMapValues);
-            console.log("Recently Added CLO Description :", recentlyAddedCLOsDescription);
-            console.log("Update CLO Description  :", updateCLOsDescription);
-            console.log("Deleted CLO Description  :", deletedCLOsDescriptionIDs);
-
-            // if (deletedCLOsDescriptionIDs.length !== 0){
-            // }
-            console.log("in deletion Mode ", deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))
-            deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
-
-            updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
-
-        } else {
-            console.log("DETAIL Added Description :", allCourseCLOsDescriptionValues);
-            console.log("MAP Description  :", allCourseCLOsMapValues);
-
-            creationAjaxCall(allCourseCLOsDescriptionValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue)
-        }
-
-
-    }
-
+    /** is call when user wants to create new outcome-description and mapping row.
+     * when no row exist , the first condition is met true else the second condition is met true.*/
     function initialCreationCLODetail_Mapping() {
         if (incrementClo === 0) {
-            ++incrementClo;
             // outcomeLearningContainer.innerHTML += createFirstCLODetailRow();
             outcomeLearningContainer.appendChild(createFirstCLODetailRow())
-
             createFirstCLOMapRow(ploArray.length, outcomeMapContainer); // pass no of PLO you have per curriculum.
         } else {
             const newCLORowDetail = document.getElementById('CourseLearningRow-' + incrementClo);
@@ -331,13 +263,11 @@ window.onload = function (e) {
             //Creates a CLO Mapping Row
             const newCLORowMapping = document.getElementById('clo-map-div-' + incrementClo);
             outcomeMapContainer.appendChild(createCLORow(newCLORowMapping, 2, incrementClo + 1));
-
-            incrementClo++;
-            // console.log("incremental Stage :", incrementClo)
         }
-        // console.log(incrementClo)
+        ++incrementClo;
     }
 
+    /**  */
     function createCLORow(replicaNode, t, CLONumber) {
 
         const node = replicaNode.cloneNode(true);
@@ -353,7 +283,6 @@ window.onload = function (e) {
             });
             return node;
         } else {
-
             node.childNodes[3].innerHTML = "CLO-" + CLONumber;
             for (let i = 5; i < node.childNodes.length; i++) {  // length will be total no of columns i.e. divs in that row.
                 cloColumn.push(node.childNodes[i]);
@@ -377,47 +306,7 @@ window.onload = function (e) {
 
     }
 
-
-    function iterateIndexDetail_Mapping(setFromIndex, hasKeyFlag) {
-        --incrementClo;
-
-        if (incrementClo !== 0) {
-            $(outcomeLearningContainer).children().each(function (index) {
-                if (index !== 0 && setFromIndex <= index) {
-                    this.setAttribute("id", "CourseLearningRow-" + index)
-                    $(this).children().each(function (i) {
-                        overrideOutcomeDistributionTable(index, i, this, hasKeyFlag)
-                    });
-                }
-            });
-            $(outcomeMapContainer).children().each(function (index) {
-                if (index !== 0 && setFromIndex <= index) {
-                    this.setAttribute("id", "clo-map-div-" + index)
-
-                    $(this).children().each(function (i) {
-                        if (i > 1) {
-                            const c_input = this.firstElementChild;
-                            const c_label = this.lastElementChild;
-                            // console.log(c_input.getAttribute("name"), lastAvailableCLONumber)
-                            c_input.setAttribute("name", "[clo-" + (index) + "][plo-" + (i - 1) + "]");
-                            c_input.setAttribute("id", ("clo-" + index + "_plo-" + (i - 1)));
-                            c_input.setAttribute("value", ("clo-" + index + "_plo-" + (i - 1)));
-                            c_label.setAttribute("for", ("clo-" + index + "_plo-" + (i - 1)));
-                        } else if (i === 1) {
-                            this.innerHTML = "CLO-" + index;
-                        }
-                    });
-                }
-
-
-            })
-        } else {
-            $('#cloMapHeaderID').html(`<div class="cprofile-column h-10 w-1/6">
-                                            <span class="cprofile-cell-data">PLOs</span>
-                                        </div>`);
-        }
-    }
-
+    /**  */
     function overrideOutcomeDistributionTable(index, i, currentTag, hasKeyFlag = true) {
 
         if (i === 0) {
@@ -461,14 +350,137 @@ window.onload = function (e) {
         }
     }
 
+    /**  */
+    function deleteOutcomeWithDistribution(dischargedIndex, hasKeyFlag) {
+        $(('#CourseLearningRow-' + dischargedIndex)).remove(); // section 1 , to delete row.
+        $('#clo-map-div-' + dischargedIndex).remove();         // section 2 , to delete row.
+        iterateIndexDetail_Mapping(parseInt(dischargedIndex), hasKeyFlag); // to arrange the order of any deleted row on both the section 1 and 2.
+    }
+
+    function iterateIndexDetail_Mapping(setFromIndex, hasKeyFlag) { // setFromIndex = 2
+        --incrementClo;
+
+        if (incrementClo !== 0) { // 4!==0
+            $(outcomeLearningContainer).children().each(function (index) {
+
+                if (index !== 0 && setFromIndex <= index) { //   2<=2
+                    this.setAttribute("id", "CourseLearningRow-" + index)
+                    $(this).children().each(function (currentTag) {
+                        overrideOutcomeDistributionTable(index, currentTag, this, hasKeyFlag)
+                    });
+                }
+            });
+            $(outcomeMapContainer).children().each(function (index) {
+                if (index !== 0 && setFromIndex <= index) {
+                    this.setAttribute("id", "clo-map-div-" + index)
+
+                    $(this).children().each(function (i) {
+                        if (i > 1) {
+                            const c_input = this.firstElementChild;
+                            const c_label = this.lastElementChild;
+                            // console.log(c_input.getAttribute("name"), lastAvailableCLONumber)
+                            c_input.setAttribute("name", "[clo-" + (index) + "][plo-" + (i - 1) + "]");
+                            c_input.setAttribute("id", ("clo-" + index + "_plo-" + (i - 1)));
+                            c_input.setAttribute("value", ("clo-" + index + "_plo-" + (i - 1)));
+                            c_label.setAttribute("for", ("clo-" + index + "_plo-" + (i - 1)));
+                        } else if (i === 1) {
+                            this.innerHTML = "CLO-" + index;
+                        }
+                    });
+                }
+
+
+            });
+
+        } else {
+            $('#cloMapHeaderID').html(`<div class="cprofile-column h-10 w-1/6">
+                                            <span class="cprofile-cell-data">PLOs</span>
+                                        </div>`);
+        }
+    }
+
+    /** to store value of outcome description and mapping value. */
+    function storeDetailAndMappingToArray() {
+
+        for (let i = 0; i < allCourseCLOsDescriptionValues.length; i++) /** create empty two-dimensional CLO Description matrix */
+        allCourseCLOsDescriptionValues[i] = [];  // or you can simply use new Array()
+
+        $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61 span').each(function (node, index) {
+            allCourseCLOsDescriptionValues[node].push($(this).text()) // CourseLearning Row us ka span ky Text(innerText) ko i.e. CLO-1 ,2 ,3 etc wo store kary.
+        })
+
+
+        let extremeCounter = 0, cycle = 0;
+        $('#courseLearningDivID input').each(function () {         /** iterate and store each row CLO description data into allCourseCLOsDescriptionValues-array */
+            if (extremeCounter === 0) { // description column
+                allCourseCLOsDescriptionValues[cycle].push($(this).val())
+                extremeCounter++;
+            } else if (extremeCounter === 1) { // domain column data.
+                allCourseCLOsDescriptionValues[cycle].push($(this).val())
+                extremeCounter++
+            } else if (extremeCounter === 2) { // BT-Level column data.
+                allCourseCLOsDescriptionValues[cycle].push($(this).val())
+                extremeCounter = 0;
+                cycle++;
+            }
+        });
+
+
+        /** create empty two-dimensional CLO Mapping matrix and also adding the check-box value into it. */
+        for (let i = 0; i < incrementClo; i++) {
+
+            allCourseCLOsMapValues[i] = [];
+            /** iterate and store each row CLO Mapping data into allCourseCLOsMapValues-array */
+            $("input:checkbox[name^='[clo-" + (i + 1) + "']:checked").each(function () { //  input:checkbox[name^=[clo-1]:checked
+                allCourseCLOsMapValues[i].push($(this).val()) // input tag us ki value i.e. clo-1_plo-1 etc.
+            });
+        }
+
+        /** Execute only when in update mode i.e. existingCLODescription */
+        if (viewType !== 1) {
+            $('#courseLearningDivID div.cprofile-column.bg-catalystBlue-l61').each(function (node, index) {  // fetch IDs if existed.
+                if (isNum($(this).attr("id"))) {
+                    updateCLOsDescription['' + initialCLODescription[node][0]] = allCourseCLOsDescriptionValues[node];
+                    // updateCLOsDescription.push(allCourseCLOsDescriptionValues[node]);
+                    // allCourseCLOsDetailValues.splice(node, 1); // 2nd parameter means remove one item only
+                } else {
+                    recentlyAddedCLOsDescription.push(allCourseCLOsDescriptionValues[node])
+                }
+            });
+
+            console.log("All CLO-Description Array:", allCourseCLOsDescriptionValues);
+            console.log("All CLO-PLO-Mapping Array  :", allCourseCLOsMapValues);
+            console.log("Recently Added CLO Description :", recentlyAddedCLOsDescription);
+            console.log("Update CLO Description  :", updateCLOsDescription);
+            console.log("Deleted CLO Description  :", deletedCLOsDescriptionIDs);
+
+            console.log("in deletion Mode ", deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))
+            deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
+
+            updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
+
+        } else {
+            console.log("DETAIL Added Description :", allCourseCLOsDescriptionValues);
+            console.log("MAP Description  :", allCourseCLOsMapValues);
+            console.log("Essentail  :", courseEssentialFieldValue);
+
+
+            creationAjaxCall(allCourseCLOsDescriptionValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue)
+        }
+
+
+    }
+
     arrowPositionCheck();
 
     function arrowPositionCheck() {
         if (!cEssentialSection.classList.contains("hidden")) {  // doesnt contain hidden class in essential section.
             backArrow.classList.add("hidden");
+            changeProgressStatus(1);
         } else {
             if (backArrow.classList.contains("hidden"))
                 backArrow.classList.remove("hidden");
+            changeProgressStatus(3);
         }
     }
 
@@ -482,21 +494,37 @@ window.onload = function (e) {
         //  return str.replace(/1/g, incrementClo);
     }
 
-    function progressType(c) {
+    function changeProgressStatus(status) {
+        if (status === 1) {
+            $(progressSet.pCircle1).empty().append(progressType(1));
+            $(progressSet.pCircle2).empty().append(progressType(2, 2));
+            $(progressSet.pCircle3).empty().append(progressType(2, 3));
 
+        } else if (status === 2) {
+            $(progressSet.pCircle1).empty().append(progressType(3));
+            $(progressSet.pCircle2).empty().append(progressType(1));
+            $(progressSet.pCircle3).empty().append(progressType(2, 3));
+        } else if (status === 3) {
+            $(progressSet.pCircle1).empty().append(progressType(3));
+            $(progressSet.pCircle2).empty().append(progressType(3));
+            $(progressSet.pCircle3).empty().append(progressType(1));
+        }
+    }
+
+    function progressType(c, number = 0) {
+        // <div className="h-3 w-3 bg-indigo-700 rounded-full animate-ping"></div>
         if (c === 1)
-            return ' <div class="progress-circle progress-circle-filled bg-white rounded-full shadow -mr-3 animate-spin">\n' +
-                '                            <span class="circular-span "><i class="fa fa-check"></i></span>\n' +
-                '                            <!--                             <div class="h-3 w-3 bg-indigo-700 rounded-full animate-ping"></div>-->\n' +
-                '                        </div>'
+            return `<div class="progress-circle progress-circle-filled bg-white rounded-full shadow -mr-3 animate-spin">
+                                            <span class="circular-span"><i class="fa fa-check"></i></span>
+                                        </div>`;
         else if (c === 2)
-            return ' <div class="progress-circle progress-circle-unfilled">\n' +
-                '                            <span class="circular-span">1</span>\n' +
-                '                        </div>';
+            return `<div class="progress-circle progress-circle-unfilled">
+                                            <span class="circular-span">${number}</span>
+                                        </div>`;
         else
-            return ' <div class="progress-circle progress-circle-unfilled">\n' +
-                '                            <span class="circular-span"> <i class="fa fa-check"></i></span>\n' +
-                '                        </div>';
+            return `<div class="progress-circle progress-circle-unfilled">
+                                              <span class="circular-span"> <i class="fa fa-check"></i></span>
+                                        </div>`;
     }
 
 
@@ -590,38 +618,38 @@ window.onload = function (e) {
 
 }
 
-$.fn.textNodes = function () {
-    return this.contents().filter(function () {
-        return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
-    });
-}
-
 function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue) {
 
     $.ajax({
         type: "POST",
-        // dataType: "json",
         url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=saved',
         data: {
             arrayCLO: arrayCLO, arrayMapping: arrayMapping,
             courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue,
             saved: true
         },
-        success: function (data, textStatus) {
-            console.log(data)
-            location.href = "courseprofile_view.php";
-        }
+        beforeSend: function () {
+            $("main").toggleClass("blur-filter");
+            $('#loader').toggleClass('hidden')
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        complete: function () {
+            setInterval(function () {
+                $("main").toggleClass("blur-filter");
+                $('#loader').toggleClass('hidden');
+                location.href = "courseprofile_view.php";
+            }, 3000);
+        },
     });
 }
 
 function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription) {
 
-    console.log("Essential", courseEssentialFieldValue)
-    console.log("detail", courseDetailFieldValue)
-
     $.ajax({
         type: "POST",
-        // dataType: "json", courseCloToPloMapping
+        // dataType: "json",
         url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=update',
         data: {
             courseEssentialFieldValue: courseEssentialFieldValue,
@@ -631,10 +659,20 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCo
             recentlyAddedCLOsDescriptionArray: recentlyAddedCLOsDescription,
             update: true
         },
-        success: function (data, textStatus) {
-            console.log(data)
-            // location.href = "courseprofile_view.php";
-        }
+        beforeSend: function () {
+            $("main").toggleClass("blur-filter");
+            $('#loader').toggleClass('hidden')
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        complete: function () {
+            setInterval(function () {
+                $("main").toggleClass("blur-filter");
+                $('#loader').toggleClass('hidden');
+                location.href = "courseprofile_view.php";
+            }, 3000);
+        },
     });
 }
 

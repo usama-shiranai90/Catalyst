@@ -15,7 +15,17 @@
     --sidePanelColor: #108BFE;
 }
 
-html, body{
+@font-face {
+    font-family: Poppins-Regular;
+    src: url(../Fonts/Poppins/Poppins-Regular.ttf);
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url(../Fonts/Poppins/Poppins-Bold.ttf);
+}
+
+html, body {
     height: 100%;
 }
 
@@ -39,19 +49,19 @@ header {
     padding: 2px
 }
 
-.profilePictureDiv a{
+.profilePictureDiv a {
     color: #4b5563;
 }
 
 /*A wrapper which holds the side panel and main content div*/
-.wrapper{
+.wrapper {
     position: relative;
     display: flex;
     flex-direction: row;
 }
 
 /*Side Panel*/
-.wrapper .sidePanel{
+.wrapper .sidePanel {
     font-family: "Poppins-Regular", serif;
     background-color: var(--sidePanelColor);
     margin-top: -58px;
@@ -66,7 +76,7 @@ header {
     font-size: small;
 }
 
-.navigationItem{
+.navigationItem {
     display: flex;
     align-items: center;
     margin-top: 1rem;
@@ -74,7 +84,7 @@ header {
     border-radius: 5px
 }
 
-.navigationItem:hover{
+.navigationItem:hover {
     color: var(--headerTextColor);
     background-color: white;
     /*border-radius: 5px;*/
@@ -82,7 +92,7 @@ header {
     width: auto;
 }
 
-.navigationItemSelected{
+.navigationItemSelected {
     color: var(--headerTextColor);
     background-color: white;
     margin-right: -0.5rem;
@@ -91,48 +101,48 @@ header {
 }
 
 /*For turning SVGs blue on hover*/
-.turnItBlue{
+.turnItBlue {
     fill: var(--headerTextColor);
 }
 
-.turnItBlueForever{
+.turnItBlueForever {
     fill: var(--headerTextColor);
 }
 
 /*For turning SVGs white on hovering out*/
-.turnItWhite{
+.turnItWhite {
     fill: white;
 }
 
-.navigationItem label{
+.navigationItem label {
     cursor: pointer;
 }
 
-.navigationItemDropdown{
+.navigationItemDropdown {
     align-items: center;
     margin-top: 1rem;
     cursor: pointer;
 }
 
-.navDropBox:hover{
+.navDropBox:hover {
     color: var(--headerTextColor);
     background-color: white;
     border-radius: 5px;
 }
 
-.navigationItemDropdown label{
+.navigationItemDropdown label {
     cursor: pointer;
 }
 
-.navigationItemDropdown svg{
+.navigationItemDropdown svg {
     transform: rotate(0.5turn);
 }
 
-.navigationItemDropdown .menu{
+.navigationItemDropdown .menu {
     margin-left: 3rem;
 }
 
-.navigationItemDropdown .menu .menuItem{
+.navigationItemDropdown .menu .menuItem {
     display: block;
     margin-top: 0.5rem;
     width: 100%;
@@ -141,23 +151,23 @@ header {
     padding-left: 0.5rem;
 }
 
-.navigationItemDropdown .menu .menuItem:hover{
-    color:var(--headerTextColor);
+.navigationItemDropdown .menu .menuItem:hover {
+    color: var(--headerTextColor);
     background-color: white;
 }
 
-.menuClosed{
+.menuClosed {
     display: none;
 }
 
-.menuOpened{
+.menuOpened {
     /*    -moz-transition: all .5s linear;
         -webkit-transition: all .5s linear;
         transition: all .5s linear;*/
     /*transition: all 0.5s ease 0s, visibility 0s linear 0.3s, z-index 0s linear 0.01s;*/
 }
 
-.menuItemSelected{
+.menuItemSelected {
     color: var(--headerTextColor);
     background-color: white;
     width: auto !important;
@@ -172,12 +182,12 @@ header {
     -webkit-transition: all .1s linear;
     transition: all .1s linear;
 }
-.rotate.down {
-    -moz-transform:rotate(180deg);
-    -webkit-transform:rotate(180deg);
-    transform:rotate(180deg);
-}
 
+.rotate.down {
+    -moz-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
 
 
 /*Main Content Div*/
@@ -209,8 +219,13 @@ header {
 
 }
 
-.textField:placeholder-shown::-webkit-input-placeholder { color:transparent; }
-.textField:focus::-webkit-input-placeholder {  color: #9CA3AF; }
+.textField:placeholder-shown::-webkit-input-placeholder {
+    color: transparent;
+}
+
+.textField:focus::-webkit-input-placeholder {
+    color: #9CA3AF;
+}
 
 
 /*Outline*/
@@ -226,7 +241,7 @@ select.select {
 }
 
 
-.textField:not(:placeholder-shown) ~ .textField-label {    /*Selects every <tf-label> element that is preceded by a <textField> element*/
+.textField:not(:placeholder-shown) ~ .textField-label { /*Selects every <tf-label> element that is preceded by a <textField> element*/
     top: -8px;
     font-size: 13px;
 }
@@ -234,7 +249,7 @@ select.select {
 /*stopper*/
 
 
-.select:not([value=""]):valid ~ .select-label, .textField:focus ~ .textField-label {/*after it is selected*/
+.select:not([value=""]):valid ~ .select-label, .textField:focus ~ .textField-label { /*after it is selected*/
     top: -8px;
     font-size: 13px;
 }
@@ -272,10 +287,6 @@ select.select {
     -webkit-transition: 0.2s ease all;
 }
 
-.textField-label {
-    top: 13px;
-}
-
 
 /* For errors of text fields and dropdowns*/
 
@@ -303,6 +314,7 @@ body::-webkit-scrollbar {
 body::-webkit-scrollbar-track {
     background-color: #fff;
 }
+
 body::-webkit-scrollbar-track:hover {
     background-color: #f4f4f4;
 }
@@ -313,6 +325,7 @@ body::-webkit-scrollbar-thumb {
     border-radius: 16px;
     border: 2px solid #fff;
 }
+
 body::-webkit-scrollbar-thumb:hover {
     background-color: #a0a0a5;
     border: 2px solid #f4f4f4;
@@ -325,4 +338,59 @@ body::-webkit-scrollbar-button {
 
 body::-webkit-scrollbar-corner {
     background-color: transparent;
-} /* if both the vertical and the horizontal bars appear, then perhaps the right bottom corner also needs to be styled */
+}
+
+/* if both the vertical and the horizontal bars appear, then perhaps the right bottom corner also needs to be styled */
+
+
+/** Desktop Screen with 1281px to higher resolution */
+@media (min-width: 1281px) {
+    .textField-label {
+        top: 13px;
+        /*background-color: green;*/
+    }
+}
+
+
+/** Laptops, Desktops Screen B/w 1025px to 1280px to higher resolution */
+@media (min-width: 1025px) and (max-width: 1280px) {
+    .textField-label {
+        top: 13px;
+        /*background-color: yellow;*/
+    }
+}
+
+/**  Tablets, Ipads (landscape) B/w 768px to 1024px to higher resolution */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .textField-label {
+        top: 13px;
+        /*background-color: black;*/
+    }
+}
+
+
+/**  Low Resolution Tablets, Mobiles (Landscape) B/w 481px to 767px to higher resolution */
+@media (min-width: 481px) and (max-width: 767px) {
+    .textField-label {
+        top: 13px;
+        /*background-color: blue;*/
+    }
+}
+
+
+/** Tablets, Ipads (portrait) B/w 768px to 1024px to higher resolution */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .textField-label {
+        top: 13px;
+        /*background-color: red;*/
+    }
+}
+
+/**  Most of the Smartphones Mobiles (Portrait) B/w 320px to 479px to higher resolution */
+@media (min-width: 320px) and (max-width: 480px) {
+    .textField-label {
+        top: 13px;
+        /*background-color: hotpink;*/
+    }
+
+}

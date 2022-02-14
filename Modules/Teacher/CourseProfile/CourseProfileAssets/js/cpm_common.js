@@ -129,15 +129,14 @@ function createFirstCLOMapRow(totalPlo, outcomeMapContainer) {
                                 <span class="cprofile-cell-data">PLOs</span>
                             </div>`
 
-    // CLO number header.
+    // PLO number when hover show and adds it into cloMapHeaderID add as column.
     for (let i = 1; i <= totalPlo; i++) {
         //onmouseover="this.classList.remove('hidden')" onfocus="this.classList.remove('hidden')" onmouseout="this.classList.add('hidden')"
         //onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})"
-        let header_number = `<div class="cprofile-column h-10 w-1/6 hover:bg-catalystLight-e4
-                               focus:outline-none focus:ring-gray-300 relative"
+
+        let header_number = `<div class="cprofile-column h-10 w-1/6 hover:bg-catalystLight-e4 focus:outline-none focus:ring-gray-300 relative"
                                onmouseover="showTooltip(${i})" onfocus="showTooltip(${i})" onmouseout="hideTooltip(${i})" > 
-                                      
-                <!-- tool-tip description section. -->
+                   <!-- tool-tip description section. -->
                     <div id="tooltip${i}" role="tooltip" class="hidden z-20 w-64 fixed transition duration-150 ease-in-out trans top-1/2 right-14 ml-8 shadow-lg bg-white p-4 rounded">
                     <p class="text-sm font-bold text-gray-800 pb-1" id="plono-${i}">${ploArray[i - 1][1]}</p>
                     <p class="text-xs leading-4 text-gray-600 pb-3">${ploArray[i - 1][2]}</p>
@@ -156,10 +155,9 @@ function createFirstCLOMapRow(totalPlo, outcomeMapContainer) {
     }
 
 
-
 }
 
-function isNum(val){
+function isNum(val) {
     return !isNaN(val)
 }
 

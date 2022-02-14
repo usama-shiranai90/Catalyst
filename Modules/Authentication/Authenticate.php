@@ -265,7 +265,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label for="studentPassword"></label>
                         <input class="textField" type="password" placeholder=" "
                                id="studentPassword" name="studentPassword" style="margin-left: 4px ; margin-right: 4px">
-                        <label class="textField-label">Password</label>
+                        <label class="textField-label sm:top-2 md:top-4 lg:top-4">Password</label>
 
                         <!--                        forgot section for Desktop-->
                         <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal" style="width: auto">
@@ -350,7 +350,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <a class="text-red-700" href="#">Forgot Password?</a>
                 </div>
                 <label class="text-red-900 text-center hidden" id="teacherPassError"></label>
-                <label class="text-red-900 text-center <?php echo $teacherIncorrectPass; ?>" id="teacherIncorrectPass">Username or password
+                <label class="text-red-900 text-center <?php echo $teacherIncorrectPass; ?>" id="teacherIncorrectPass">Username
+                    or password
                     is incorrect</label>
 
                 <!--Login and SVG-->
@@ -442,7 +443,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </main>
-
 
 
 <footer class="footer-section bg-catalystBlue-l2 shadow-2xl max-h-full">

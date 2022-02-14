@@ -1,18 +1,12 @@
 <?php
-
 //use phpcode\AssessmentWeight;
-//use phpcode\CourseInstructor;
-//use phpcode\CourseProfile;
-
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\CLO.php";
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
-//$_SESSION['typeOfProfile'] = 2;
 /*$course_essential = $_SESSION['currentSubjectEssential_array'];
 $course_detail = $_SESSION['currentSubjectDetail_array'];
 print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
@@ -26,7 +20,6 @@ print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
 print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
 $profileID = 1;*/
 
-// fetch data from server.
 $courseProfile = new CourseProfile();
 $courseProfile->loadCourseProfileData($_SESSION['cp_id']);
 
@@ -45,6 +38,7 @@ $viewCLOMapping = $cloObject->mappedPLOs;
 //var_dump($viewCLODescription);
 
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -53,7 +47,6 @@ $viewCLOMapping = $cloObject->mappedPLOs;
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Catalyst | CP View</title>
-
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
@@ -143,7 +136,7 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                         </div>-->
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Title:&nbsp;
-                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"><?php echo $courseProfile->getCourseTitle() ?></span>
+                                <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"> <?php echo $courseProfile->getCourseTitle() ?></span>
                             </p>
                         </div>
 
@@ -169,8 +162,7 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Pre-requisite:&nbsp;
                                 <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
-                                      id="preRequisiteID-view"></span>
-                                <!--                                    --><?php //echo $courseProfile->getCoursePreRequisities() ?>
+                                      id="preRequisiteID-view"><?php echo $courseProfile->getCoursePreReq() ?></span>
                             </p>
                         </div>
 
@@ -228,7 +220,7 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                         <div class="flex flex-row my-2  w-full space-y-0">
                             <p class="font-semibold text-based py-2 text-justify">Course Model:&nbsp;
                                 <span class="mt-1 font-normal text-sm text-justify text-gray-900 sm:mt-0 sm:col-span-2"
-                                      id="courseInteractionModelID-view"><?php echo $courseProfile->getCourseModel() ?>xxx</span>
+                                      id="courseInteractionModelID-view"><?php echo $courseProfile->getCourseModel() ?></span>
                             </p>
                         </div>
 
@@ -368,58 +360,8 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                                           id="finaltermWeightID-view"><?php echo $courseProfile->getAssessmentInfo()->getFinalWeightage() ?>%</span>
                                 </div>
 
-
                             </div>
                         </div>
-
-
-                        <!--<div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"  style="background-color: #0284fc">
-                                <h3 class="text-lg leading-6 font-bold text-white text-center" >
-                                    Applicant Information
-                                </h3>
-                            </div>
-                            <div class="border-t border-gray-200">
-
-                                <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
-                                    <h4 class="font-semibold text-based w-1/3">Name:&nbsp;</h4>
-                                    <span class="w-full mt-1 font-normal text-sm text-justify text-gray-900" id="otherReferenceID-view">hello mello</span>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
-                                    <dt class="text-sm font-medium text-gray-500">
-                                        Application for
-                                    </dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        Backend Developer
-                                    </dd>
-                                </div>
-                                <div class=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
-                                    <dt class="text-sm font-medium text-gray-500">
-                                        Email address
-                                    </dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        margotfoster@example.com
-                                    </dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
-                                    <dt class="text-sm font-medium text-gray-500">
-                                        Salary expectation
-                                    </dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        $120,000
-                                    </dd>
-                                </div>
-                                <div class=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
-                                    <dt class="text-sm font-medium text-gray-500">
-                                        About
-                                    </dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu.
-                                    </dd>
-                                </div>
-
-                            </div>
-                        </div>-->
 
                     </div>
                 </div>

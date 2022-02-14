@@ -1,5 +1,8 @@
 // import('additionalWork');
+
+
 window.onload = function (e) {
+    let vrowPLOCounter = 5;
 
     const vCloMappingDivID = document.getElementById('vCloMappingDivID');
     const localStorageViewMapping = getLocalStorage('courseMap_key');
@@ -25,7 +28,7 @@ window.onload = function (e) {
                                                </div>
                                            </div>
                                            <div  class="px-4 border-t-4 border-b-4 border-catalystLight-f6_bg hover:border-catalystLight-89">
-                                               <div id="clomp-v-${i + 1}" class=" flex flex-row my-5 items-center w-full text-center">
+                                               <div id="clomp-v-${i + 1}" class="flex flex-row flex-wrap my-5 items-center w-full text-center">
                                                   
                                                </div>
                                            </div>
@@ -40,20 +43,15 @@ window.onload = function (e) {
     }
 
     function createPLOof_aTag(clomap, i) {
-        // const getmyPLO = (text) => {
-        //     return text.substring(6);
-        // }
-
         for (let j = 0; j < localStorageViewMapping[i].length; j++) {
-            // console.log("current PLO detail", localStorageViewMapping[i][j], "    ajeeb bx", localStorageViewMapping[i][j][0], localStorageViewMapping[i][j][1])
-
             let wah = `<div class="w-1/5 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110
                                 hover:text-indigo-700 hover:underline hover:text-base  
                                focus:outline-none focus:ring-gray-300 relative"
-                               onmouseover="showTooltip(${(i + 1) + (j + 1) * 2})" onfocus="showTooltip(${(i + 1) + (j + 1) * 2})" onmouseout="hideTooltip(${(i + 1) + (j + 1) * 2})" >
+                               onmouseover="showTooltip(${((i + 1) + (j + 1) * vrowPLOCounter)})" onfocus="showTooltip(${((i + 1) + (j + 1) * vrowPLOCounter)})" 
+                               onmouseout="hideTooltip(${((i + 1) + (j + 1) * vrowPLOCounter)})" >
 
                     <!-- tool-tip description section. -->
-                    <div id="tooltip${(i + 1) + (j + 1) * 2}" role="tooltip" class="hidden z-20 w-64 fixed transition duration-150 ease-in-out top-1/2 right-14 ml-8 shadow-lg bg-white p-4 rounded">
+                    <div id="tooltip${((i + 1) + (j + 1) * vrowPLOCounter)}" role="tooltip" class="hidden z-20 w-64 fixed transition duration-150 ease-in-out top-1/2 right-14 ml-8 shadow-lg bg-white p-4 rounded">
                         <p class="text-sm font-bold text-gray-800 pb-1" id="plono-${i + 1}">${localStorageViewMapping[i][j][0]}</p>
                         <p class="text-xs leading-4 text-gray-600 pb-3">${localStorageViewMapping[i][j][1]}</p>
                         <button class="focus:outline-none  focus:text-gray-400 text-xs text-gray-600 underline mr-2 cursor-pointer">Map view</button>  </div>
@@ -64,8 +62,6 @@ window.onload = function (e) {
             // let aRow = `<a class="capitalize font-semibold text-base w-full">${(localStorageViewMapping[i][j])}</a>`
             // clomap.innerHTML += aRow;
         }
-
-
+        vrowPLOCounter++;
     }
-
 }

@@ -25,12 +25,11 @@ if (isset($_POST['selectClass'])) {
     $showDashboardIframe = "";
 //    echo $facultyCode;
 
-    echo "Course Code:" . $_POST['courseSelector'];
-    echo "<br>Semester Code:" . $_POST['semesterSelector'];
-    echo "<br>Section Code:" . $_POST['sectionSelector'];
-
-    echo "<br>Program Code:" . $_POST['programSelector'];
-    echo "<br>Curriculum Code:" . $_POST['curriculumSelector'];
+//    echo "Course Code:" . $_POST['courseSelector'];
+//    echo "<br>Semester Code:" . $_POST['semesterSelector'];
+//    echo "<br>Section Code:" . $_POST['sectionSelector'];
+//    echo "<br>Program Code:" . $_POST['programSelector'];
+//    echo "<br>Curriculum Code:" . $_POST['curriculumSelector'];
 
 
     $selectedCourse = $_POST['courseSelector'];

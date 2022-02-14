@@ -3,11 +3,10 @@
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
 
-if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
+if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
-    $courseProfile = new CourseProfile();
-}
 
+$courseProfile = new CourseProfile();
 $viewCLODescription = '';
 $viewCLOMapping = '';
 
@@ -67,7 +66,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
-
+    <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/cpm_common.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/additionalWork.js"></script>
@@ -126,7 +125,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class=" cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -137,8 +136,8 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                        value="<?php echo $courseProfile->getCourse()->getCourseTitle() ?>">
                                 <label class="textField-label">Course Title</label>
                             </div>
-                            <!--                            --><?php //echo $courseProfile->getCourseTitle() ?>
-                            <!--                        course Code-->
+
+                            <!-- course Code-->
                             <div class="textField-label-content w-full" id="courseCodeDivId">
                                 <label for="courseCodeID"></label>
                                 <input class="textField" type="text" placeholder=" " id="courseCodeID"
@@ -174,22 +173,14 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                 <select class="select" name="preRequisite"
                                         onclick="this.setAttribute('value', this.value);"
                                         onchange="this.setAttribute('value', this.value);"
-                                        value="<?php echo $option = 'English'; ?>"
+                                        value="<?php echo $courseProfile->getCoursePreReq(); ?>"
                                         id="preRequisiteID">
                                     <option value="" hidden></option>
                                     <?php
-                                    //                                    foreach ($courseProfile->getCoursePreRequisites() as $value) {
-                                    //                                        if ($option == $value) {
-                                    //                                            echo '<option value=' . $value . 'selected>' . $value . '</option>';
-                                    //                                            $option = $value;
-                                    //                                        } else
-                                    //                                            echo '<option value=' . $value . '>' . $value . '</option>';
-                                    //                                    }
                                     foreach ($courseProfile->getCourse()->getPreReqList() as $value) {
-                                        if ($option == $value) {
-                                            echo '<option value=' . $value . 'selected>' . $value . '</option>';
-                                            $option = $value;
-                                        } else
+                                        if ($courseProfile->getCoursePreReq() == $value)
+                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                        else
                                             echo '<option value=' . $value . '>' . $value . '</option>';
                                     }
                                     ?>
@@ -198,7 +189,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                 <label class="select-label top-1/4 sm:top-3">Pre-Requisites</label>
                             </div>
 
-                            <!--                       Term (select semester )-->
+                            <!-- Term (select semester )-->
                             <div class="select-label-content w-full" id="TermDivId">
                                 <label for="semesterTermID"></label>
                                 <select class="select" name="semesterTerm"
@@ -218,11 +209,10 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                     }
                                     ?>
                                 </select>
-
                                 <label class="select-label top-1/4 sm:top-3">Term</label>
                             </div>
 
-                            <!--                       Program level-->
+                            <!-- Program level-->
                             <div class="textField-label-content w-full" id="programLevelDivId">
                                 <label for="ProgramLevelID"></label>
                                 <input class="textField" type="text" id="ProgramLevelID" name="ProgramLevel"
@@ -230,7 +220,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                 <label class="textField-label">Program level</label>
                             </div>
 
-                            <!--                        program-->
+                            <!-- program-->
                             <div class="textField-label-content w-full" id="programDivId">
                                 <label for="programID"></label>
                                 <select class="select" name="program"
@@ -254,7 +244,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                 <label class="select-label top-1/4 sm:top-3">Program</label>
                             </div>
 
-                            <!--                        course effective-->
+                            <!-- course effective-->
                             <div class="textField-label-content w-full" id="courseEffectiveDivId">
                                 <label for="courseEffectiveID"></label>
                                 <select class="select" name="courseEffective"
@@ -263,27 +253,43 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                         value="<?php echo $courseProfile->getCourseCourseEffective() ?>"
                                         id="courseEffectiveID">
                                     <option value="" hidden></option>
-                                    <option value="Fall-16 Batch">Fall-16 Batch Onwards</option>
-                                    <option value="Fall-18 Batch">Fall-18 Batch Onwards</option>
-                                    <option value="Fall-22 Batch">Fall-22 Batch Onwards</option>
+
+                                    <?php
+                                    $programs = array("Fall-16 Batch Onwards", 'Fall-18 Batch Onwards', 'Fall-22 Batch Onwards');
+                                    foreach ($programs as $value) {
+                                        if ($value == $courseProfile->getCourseCourseEffective())
+                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                        else
+                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                    }
+                                    ?>
+
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Course Effective</label>
                             </div>
 
+                            <!-- course coordination -->
                             <div class="textField-label-content w-full" id="coordinatingUnitDivID">
+                                <label for="coordinatingUnitID"></label>
+                                <input class="textField" type="text" placeholder=" " id="coordinatingUnitID"
+                                       name="coordinatingUnit"
+                                       value="<?php echo $courseProfile->getCourseCoordination() ?>">
+                                <label class="textField-label sm:top-2">Co-ordinating Unit</label>
+                            </div>
+
+                            <!--<div class="textField-label-content w-full" id="coordinatingUnitDivID">
                                 <label for="coordinatingUnitID"></label>
                                 <select class="select" name="courseEffective"
                                         onclick="this.setAttribute('value', this.value);"
                                         onchange="this.setAttribute('value', this.value);"
-                                        value="<?php echo $courseProfile->getCourseCoordination() ?>"
+                                        value="<?php /*echo $courseProfile->getCourseCoordination() */ ?>"
                                         id="coordinatingUnitID">
                                     <option value="" hidden></option>
                                     <option value="1st unit majid">Sajid Ali</option>
                                     <option value="2nd unit majid">Dr.Fatima</option>
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Co-ordinating Unit</label>
-                            </div>
-
+                            </div>-->
 
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 sm:ml-10 pb-5 mr-5">
@@ -570,7 +576,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">
@@ -680,9 +686,24 @@ if (count($ploArray) != 0) { // if we have plo then enter.
             </div>
 
         </div>
-
     </main>
+</div>
 
+<div id="loader" class="hidden m-auto fixed top-1/4 left-1/2 z-5">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class=" transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <!-- inline-block align-bottom bg-white rounded-lg text-center overflow-hidden-->
+            <div class=" px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <svg class="animate-spin fill-current text-catalystBlue-d2 opacity-100"
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="55" height="55" viewBox="0 0 24 24">
+                    <path d="M13.75 22c0 .966-.783 1.75-1.75 1.75s-1.75-.784-1.75-1.75.783-1.75 1.75-1.75 1.75.784 1.75 1.75zm-1.75-22c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 10.75c.689 0 1.249.561 1.249 1.25 0 .69-.56 1.25-1.249 1.25-.69 0-1.249-.559-1.249-1.25 0-.689.559-1.25 1.249-1.25zm-22 1.25c0 1.105.896 2 2 2s2-.895 2-2c0-1.104-.896-2-2-2s-2 .896-2 2zm19-8c.551 0 1 .449 1 1 0 .553-.449 1.002-1 1-.551 0-1-.447-1-.998 0-.553.449-1.002 1-1.002zm0 13.5c.828 0 1.5.672 1.5 1.5s-.672 1.501-1.502 1.5c-.826 0-1.498-.671-1.498-1.499 0-.829.672-1.501 1.5-1.501zm-14-14.5c1.104 0 2 .896 2 2s-.896 2-2.001 2c-1.103 0-1.999-.895-1.999-2s.896-2 2-2zm0 14c1.104 0 2 .896 2 2s-.896 2-2.001 2c-1.103 0-1.999-.895-1.999-2s.896-2 2-2z"/>
+                </svg>
+                <span class=" text-lg font-medium antialiased tracking-tighter">Loading</span>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <div id="alertContainer"
@@ -713,7 +734,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
     </div>
 </div>
 
-<div class=" hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>

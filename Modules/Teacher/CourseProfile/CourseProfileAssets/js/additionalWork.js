@@ -7,6 +7,7 @@ function isCharacterALetter(char) {
     return (/[a-zA-Z]/).test(char)
 }
 
+
 function showTooltip(flag) {
     const toolid = 'tooltip' + flag;
     $(`div[id='${toolid}']`).removeClass('hidden');
@@ -44,27 +45,30 @@ function uniquePLO(str, c, CLONumber) {
 
 function setJsonLocalStorage() {
     let simpleJson = {
-        fruits: [
-            {name: "Mango", color: "yellow"},
-            {name: "Apple", color: "red"},
+        t: [
+            {name: "x", color: "xo"},
         ],
-        vegetables: [
-            {name: "Potato", color: "brown"},
-        ]
+
     };
 
     console.log(simpleJson);
-    localStorage.setItem("fruitsAndVeggies", JSON.stringify(simpleJson));
+    localStorage.setItem("testing", JSON.stringify(simpleJson));
 }
 
 function getJsonLocalStorage() {
-    let fromStorage = localStorage.getItem("fruitsAndVeggies");
+    let fromStorage = localStorage.getItem("");
     let backToJson = JSON.parse(fromStorage);
     console.log(fromStorage);
     console.log(backToJson);
-    document.getElementById("localStorageValue").textContent = backToJson.fruits[4].name + ": " + backToJson.fruits[4].color;
+    document.getElementById("testing").textContent = backToJson.t[0].name;
 }
 
+
+$.fn.textNodes = function () {
+    return this.contents().filter(function () {
+        return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
+    });
+}
 
 // Extra Work-list:
 function stripFullPath(tempFileName, lastDir) {

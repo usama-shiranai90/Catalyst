@@ -3,7 +3,7 @@
 include 'AssessmentWeight.php';
 include 'CourseInstructor.php';
 include 'Persistable.php';
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
+include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\OfferingAndAllocations\Course.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
 
 class CourseProfile implements Persistable
@@ -31,8 +31,9 @@ class CourseProfile implements Persistable
     private string $courseReferenceBook = '';
     private string $courseDescription = '';
     private string $courseOtherReference = '';
+    private string $coursePreReq = '';
 
-    private $coursePreRequisites;
+//    private $coursePreRequisites;
 
     public function __construct()
     {
@@ -40,7 +41,7 @@ class CourseProfile implements Persistable
         $this->instructorInfo = new CourseInstructor();
         $this->assessmentInfo = new AssessmentWeight();
         $this->course = new Course();
-        $this->coursePreRequisites = array_values($this->course->getPreReqList());
+//        $this->coursePreRequisites = array_values($this->course->getPreReqList());
     }
 
     public function setCourseInfo($courseTitle, $courseCode, $courseCreditHr, $coursePreReq, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
@@ -50,7 +51,8 @@ class CourseProfile implements Persistable
         $this->courseTitle = $courseTitle;
         $this->courseCode = $courseCode;
         $this->courseCreditHr = $courseCreditHr;
-        $this->coursePreRequisites = $coursePreReq;  // separate class.
+//        $this->coursePreRequisites = $coursePreReq;  // separate class.
+        $this->coursePreReq = $coursePreReq;
         $this->courseSemester = $courseSemester;
         $this->courseProgramLevel = $courseProgramLevel;
         $this->courseProgram = $courseProgram;
@@ -126,10 +128,10 @@ class CourseProfile implements Persistable
     private function saveEssential(): int
     {
         $sql_statement = /** @lang text */
-            "INSERT INTO courseprofile(courseCode, programCode, batchCode, courseTitle, creditHours, semester,
+            "INSERT INTO courseprofile(courseCode, programCode, batchCode, courseTitle, creditHours,preReq ,semester,
                           programName, programLevel, courseEffective, coordinatingUnit, teachingMethodology, courseModel, recommendedBooks,
                           referenceBooks, courseDescription, otherReferences) VALUES 
-                          (\"$this->courseCode\",\"$this->programCode\",\"$this->batchCode\",\"$this->courseTitle\",\"$this->courseCreditHr\"
+                          (\"$this->courseCode\",\"$this->programCode\",\"$this->batchCode\",\"$this->courseTitle\",\"$this->courseCreditHr\",\"$this->coursePreReq\"
                           ,\"$this->courseSemester\",\"$this->courseProgram\",\"$this->courseProgramLevel\",\"$this->courseCourseEffective\",\"$this->courseCoordination\",\"$this->courseTeachingMythology\",
                           \"$this->courseModel\",\"$this->courseTextBook\",\"$this->courseOtherReference\",\"$this->courseDescription\",\"$this->courseOtherReference\")";
 
@@ -211,7 +213,7 @@ class CourseProfile implements Persistable
         // creation of clos description and mapping.
         $ongoingCurriculum = $_SESSION['selectedCurriculum'];
 
-        if ($CLOsPerCourseList != null){
+        if ($CLOsPerCourseList != null) {
             foreach ($CLOsPerCourseList as $row) {
                 $cloObject = new CLO();
                 $cloObject->creation(0, $row[0], $row[1], $row[2], $row[3]);
@@ -305,6 +307,7 @@ class CourseProfile implements Persistable
                 $this->courseCode = $row['courseCode'];
                 $this->courseTitle = $row['courseTitle'];
                 $this->courseCreditHr = $row['creditHours'];
+                $this->coursePreReq = $row['preReq'];
                 $this->courseSemester = $row['semester'];
                 $this->courseProgram = $row['programName'];
                 $this->courseProgramLevel = $row['programLevel'];
@@ -346,17 +349,18 @@ class CourseProfile implements Persistable
         if ($result === TRUE) {
             echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode;
         } else {
-            echo "Error deleting record from clotoplomapping: " . $this->databaseConnection->error."<br>";
+            echo "Error deleting record from clotoplomapping: " . $this->databaseConnection->error . "<br>";
         }
     }
 
     public function modifyCourseProfileData($courseProfileID)
     {
         $sql1 = /** @lang text */
-            "UPDATE courseprofile SET  courseTitle = \"$this->courseTitle\", creditHours = \"$this->courseCreditHr\", semester = \"$this->courseSemester\",
+            "UPDATE courseprofile SET courseTitle = \"$this->courseTitle\", creditHours = \"$this->courseCreditHr\", semester = \"$this->courseSemester\",
                           programName = \"$this->courseProgram\", programLevel = \"$this->courseProgramLevel\", courseEffective = \"$this->courseCourseEffective\", 
                           coordinatingUnit = \"$this->courseCoordination\", teachingMethodology = \"$this->courseTeachingMythology\", courseModel = \"$this->courseModel\",
                            recommendedBooks = \"$this->courseTextBook\",
+                          preReq =  \"$this->coursePreReq\",
                           referenceBooks = \"$this->courseReferenceBook\", courseDescription = \"$this->courseDescription\", otherReferences = \"$this->courseOtherReference\"
                            WHERE courseProfileCode = \"$courseProfileID\"";
 
@@ -621,21 +625,16 @@ class CourseProfile implements Persistable
         $this->courseOtherReference = $courseOtherReference;
     }
 
-    /**
-     * @return mixed
-     */
+    /*
     public function getCoursePreRequisites()
     {
         return $this->coursePreRequisites;
     }
 
-    /**
-     * @param mixed $coursePreRequisites
-     */
     public function setCoursePreRequisites($coursePreRequisites): void
     {
         $this->coursePreRequisites = $coursePreRequisites;
-    }
+    }*/
 
     public function getProgramCode(): mixed
     {
@@ -648,6 +647,22 @@ class CourseProfile implements Persistable
     public function setProgramCode($programCode): void
     {
         $this->programCode = $programCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoursePreReq(): string
+    {
+        return $this->coursePreReq;
+    }
+
+    /**
+     * @param string $coursePreReq
+     */
+    public function setCoursePreReq(string $coursePreReq): void
+    {
+        $this->coursePreReq = $coursePreReq;
     }
 
     public function getInstructorInfo(): CourseInstructor

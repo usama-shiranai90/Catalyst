@@ -1,4 +1,4 @@
-:root  {
+:root {
 
     --courseProfileHeaderTypeColor: #F4F8F9;
     --sectionSecondaryHeader: #3B3E43;
@@ -10,15 +10,15 @@
     --background-catalyst-instruments-weights: #0284FC;
 }
 
-/*@font-face {
+@font-face {
     font-family: Poppins-Regular;
-    src: url(../../../../Assets/Fonts/Poppins/Poppins-Regular.ttf);
+    src: url(../../../../../Assets/Fonts/Poppins/Poppins-Regular.ttf);
 }
 
 @font-face {
     font-family: Poppins-Bold;
-    src: url(../../../../Assets/Fonts/Poppins/Poppins-Bold.ttf);
-}*/
+    src: url(../../../../../Assets/Fonts/Poppins/Poppins-Bold.ttf);
+}
 
 .home-clo-toggle {
     background-color: #F9F8FE;
@@ -61,7 +61,7 @@
 }
 
 .clo-toggle:checked + .inside-label span svg {
-    stroke-dashoffset:0 ;
+    stroke-dashoffset: 0;
 }
 
 .inside-label {
@@ -76,12 +76,14 @@
 .inside-label:hover {
     background: rgb(240, 240, 243);
 }
+
 .inside-label span {
     position: relative;
     /*width: 100%;*/
     height: 100%;
     transition: all 0.1s ease;
 }
+
 .inside-label span svg {
     /*position: absolute;*/
     /*top: -7px;*/
@@ -105,8 +107,10 @@
     -ms-filter: blur(2px);
     filter: blur(2px);
 }
+
+
+
 /*.clo-toggle:checked + .inside-label span {
     background: var(--background-catalyst-instruments-weights);
     animation: myAnimation 0.4s ease;
 }*/
-

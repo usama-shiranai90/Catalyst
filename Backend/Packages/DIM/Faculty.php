@@ -1,20 +1,18 @@
 <?php
-//use relative paths when accessing from a different directory
-//include "../../Backend/Packages/DatabaseConnection/DatabaseSingleton.php";
-/*include "../../Backend/Packages/OfferingAndAllocations/Allocations.php";
-include "../../Backend/Packages/OfferingAndAllocations/Course.php";
-include "../../Backend/Packages/OfferingAndAllocations/CLO.php";
-include "../../Backend/Packages/DIM/Section.php";
-include "../../Backend/Packages/DIM/Student.php";
-include "../../Backend/Packages/DIM/Semester.php";*/
-
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\Allocations.php";
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\Course.php";
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\CLO.php";
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Section.php";
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Student.php";
-include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Semester.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\Allocations.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\Course.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\CLO.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Section.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Student.php";
+//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Semester.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Allocations.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Section.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Student.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Semester.php";
 
 include "UserInterface.php";
 include "User.php";
