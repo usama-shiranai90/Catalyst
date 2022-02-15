@@ -346,8 +346,11 @@ body::-webkit-scrollbar-corner {
 /** Desktop Screen with 1281px to higher resolution */
 @media (min-width: 1281px) {
     .textField-label {
-        top: 13px;
+        top: 15px;
         /*background-color: green;*/
+    }
+    .select-label{
+        top: 10px;
     }
 }
 
@@ -356,7 +359,10 @@ body::-webkit-scrollbar-corner {
 @media (min-width: 1025px) and (max-width: 1280px) {
     .textField-label {
         top: 13px;
-        /*background-color: yellow;*/
+        background-color: yellow;
+    }
+    .select-label{
+        top: 10px;
     }
 }
 
@@ -364,7 +370,7 @@ body::-webkit-scrollbar-corner {
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
     .textField-label {
         top: 13px;
-        /*background-color: black;*/
+        background-color: black;
     }
 }
 
@@ -373,7 +379,7 @@ body::-webkit-scrollbar-corner {
 @media (min-width: 481px) and (max-width: 767px) {
     .textField-label {
         top: 13px;
-        /*background-color: blue;*/
+        background-color: blue;
     }
 }
 

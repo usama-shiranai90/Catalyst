@@ -267,17 +267,20 @@ window.onload = function (e) {
         ++incrementClo;
     }
 
-    /**  */
+    /** ReplicaNode is the previous node that was created i.e. CourseLearningRow-1 us ka tag , we duplicate that tag and store it into node variable
+     *  the property and other information remains same , we manually change the info */
     function createCLORow(replicaNode, t, CLONumber) {
 
         const node = replicaNode.cloneNode(true);
         let cloColumn = [];
+        /** columns of courselearningrow data will be stored index wise . 0 index = tag of clo-number , 1 = tag of description etc. */
         setTagAttribute(node, CLONumber);
         if (t === 1) {
             for (let i = 0; i < node.childNodes.length; i++) {  // length will be total no of columns i.e. divs in that row.
                 if (i % 2 !== 0)
                     cloColumn.push(node.childNodes[i]);
             }
+            /** cloColumn iterate karwa rhye hoon , hr tag ko indivial access and modification. index=0 and currTag = cloname tag */
             cloColumn.forEach(function (currentTag, index) {
                 overrideOutcomeDistributionTable(CLONumber, index, currentTag, false)
             });
@@ -313,10 +316,10 @@ window.onload = function (e) {
             // currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index));  // div us ka ID change ki hai.
             // currentTag.setAttribute("id", '');  // div us ka ID change ki hai.
 
-            // console.log(" is current Tag :", currentTag.getAttribute("id"));
             if (!hasKeyFlag)
                 currentTag.removeAttribute('id');
 
+            /** changes the value for Clo-number of CLO-Descriptino table i.e. CLO-1 sa CLO-2 */
             currentTag.setAttribute("data-clod-no", "c" + index + "-no");
             let span = currentTag.firstElementChild;
             span.innerHTML = "CLO-" + index;

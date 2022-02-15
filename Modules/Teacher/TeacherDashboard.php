@@ -1,6 +1,6 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Faculty.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Curriculum.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Faculty.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
 
 session_start();
 $facultyCode = $_SESSION['facultyCode'];
@@ -24,7 +24,6 @@ if (isset($_POST['selectClass'])) {
     $showSelectorIframe = "hidden";
     $showDashboardIframe = "";
 //    echo $facultyCode;
-
 //    echo "Course Code:" . $_POST['courseSelector'];
 //    echo "<br>Semester Code:" . $_POST['semesterSelector'];
 //    echo "<br>Section Code:" . $_POST['sectionSelector'];
@@ -95,6 +94,8 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
     array_push($courseCodes, $listOfAllocations[$x]->getCourse()->getCourseTitle());
     array_push($courseSections, $listOfAllocations[$x]->getSection()->getSectionName());
 }*/
+//isset($_POST['toLogout'])
+
 
 ?>
 
@@ -335,6 +336,12 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
         $("#teacherPanelTitleID").text("Dashboard")
         document.title = "Catalyst | Dashboard";
     }
+
+    $("#logout").on('click', function () {
+        // location.href = 'TeacherDashboard.php?toLogout=true';
+        sessionStorage.clear();
+        location.href = '../Authentication/Authenticate.php';
+    })
 
 
 </script>

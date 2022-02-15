@@ -137,7 +137,7 @@ class Faculty extends User implements UserInterface
     public function logout()
     {
         session_destroy();
-        header("Location: ../Authentication/Authentication.php");
+        header("Location: ../Authentication/Authenticate.php");
     }
 
 
