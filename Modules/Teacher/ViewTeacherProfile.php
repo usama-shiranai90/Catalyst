@@ -2,6 +2,7 @@
 include "../../Backend/Packages/DIM/Faculty.php";
 session_start();
 
+
 $faculty = unserialize($_SESSION['facultyInstance']);
 $faculty->setPersonalDetails();
 $personalDetails = $faculty->getPersonalDetails();
@@ -13,6 +14,17 @@ $emailOfTeacher = $personalDetails['officialEmail'];
 $nameOfTeacher = $personalDetails['name'];
 $departmentCode = $personalDetails['departmentCode'];
 $showEmail = $personalDetails['showEmail'];
+$professorImage = $personalDetails['picture'];
+
+$encoded_image = base64_encode($professorImage);
+$decoded_image = base64_decode($professorImage);
+//header("Content-type: image/gif");
+//echo '<img src='data:image/jpeg;base64,{$decoded_image}' src="'.$decoded_image.'"/>';
+//echo $decoded_image;
+
+$filePath = base64_to_jpeg($professorImage, "databaseImageFile.png");
+echo "filepath is " . $filePath;
+
 
 $emailShown = "";
 if ($showEmail == '0') {
@@ -36,6 +48,26 @@ if (mysqli_num_rows($result) == 1) {
     while ($row = $result->fetch_assoc()) {
         $departmentName = $row["departmentName"];
     }
+}
+
+if (count($_FILES) > 0) {
+    if (is_uploaded_file($_FILES['userImage']['tmp_name'])) {
+        $imgData = addslashes(file_get_contents($_FILES['userImage']['tmp_name']));
+        $imageProperties = getimageSize($_FILES['userImage']['tmp_name']);
+
+        echo "Image Type" . $imageProperties['mime'] . "<br>";
+        echo "Image Properties" . $imgData;
+    }
+}
+
+function base64_to_jpeg($base64_string, $output_file)
+{
+ // file_put_contents($output_file, file_get_contents($base64_string));
+    $ifp = fopen($output_file, 'wb');    // open the output file for writing
+    $data = explode(',', $base64_string); // data:image/png;base64
+    fwrite($ifp, base64_decode($data[0]));  // we could add validation here with ensuring count( $data ) > 1
+    fclose($ifp);
+    return $output_file;
 }
 
 ?>
@@ -118,6 +150,7 @@ if (mysqli_num_rows($result) == 1) {
     </style>
 </head>
 <body class="h-auto">
+
 <main class="border border-gray-200 m-8 h-auto bg-white rounded-lg p-8 pt-2">
     <div id="tabs" class="flex justify-center my-5">
         <div id="myProfileTab" class="mx-3 cursor-pointer">
@@ -128,11 +161,15 @@ if (mysqli_num_rows($result) == 1) {
                     <label class="cursor-pointer">Password</label>
                     <div class="w-full mt-2"></div>
                 </div>-->
+
     </div>
 
     <div class="bg-blue-500 h-1/6 w-full p-3 rounded-lg grid grid-cols-8 place-items-center place-content-center">
         <div class="col-span-2">
-            <img class="rounded-full " src="../../Assets/Images/vectorFiles/Others/profilePicAvatar.jpg" width="100">
+            <?php
+
+            ?>
+            <!--            <img class="rounded-full " src="../../Assets/Images/vectorFiles/Others/profilePicAvatar.jpg" width="100">-->
         </div>
         <div class="flex flex-col justify-center items-center pl-4 pt-1 text-white col-span-4">
             <label class="my-2"><?php echo $nameOfTeacher; ?></label>
@@ -143,7 +180,6 @@ if (mysqli_num_rows($result) == 1) {
 
         </div>
     </div>
-
 
     <div class="pt-8">
         <div class="flex-col">

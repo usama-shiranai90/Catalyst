@@ -20,6 +20,11 @@ class User
         $this->databaseConnection = DatabaseSingleton:: getConnection();
     }
 
+    public function getPersonalDetails(): array
+    {
+        return $this->personalDetails;
+    }
+
     public function logout()
     {
         session_destroy();

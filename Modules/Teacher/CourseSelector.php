@@ -1,8 +1,7 @@
 <?php
-include "../../Backend/Packages/DIM/Faculty.php";
-
+//include "../../Backend/Packages/DIM/Faculty.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
-//Stores title of allotted courses
 
 $faculty = Faculty::getFacultyInstance();
 $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
@@ -15,19 +14,21 @@ $allottedSectionCodes = array();
 $allottedSemesterCodes = array();
 $allottedSemesterNames = array();
 
-$allottedCurriclum = array();
-$allottedProgramCode = array();
+$allottedCurriculumCodes = array();
+$allottedProgramCodes = array();
+$allottedBatchCodes = array();
 
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-    array_push($allottedCourseNames, $listOfAllocations[$x]->getCourse()->getCourseTitle());
-    array_push($allottedCourseCodes, $listOfAllocations[$x]->getCourse()->getCourseCode());
-    array_push($allottedSectionNames, $listOfAllocations[$x]->getSection()->getSectionName());
-    array_push($allottedSectionCodes, $listOfAllocations[$x]->getSection()->getSectionCode());
-    array_push($allottedSemesterNames, $listOfAllocations[$x]->getSection()->getSemester()->getSemesterName());
-    array_push($allottedSemesterCodes, $listOfAllocations[$x]->getSection()->getSemester()->getSemesterCode());
-    array_push($allottedCurriclum, $listOfAllocations[$x]->getCurriculumCode());
-    array_push($allottedProgramCode, $listOfAllocations[$x]->getProgramCode());
+    $allottedCourseNames[] = $listOfAllocations[$x]->getCourse()->getCourseTitle();
+    $allottedCourseCodes[] = $listOfAllocations[$x]->getCourse()->getCourseCode();
+    $allottedSectionNames[] = $listOfAllocations[$x]->getSection()->getSectionName();
+    $allottedSectionCodes[] = $listOfAllocations[$x]->getSection()->getSectionCode();
+    $allottedSemesterNames[] = $listOfAllocations[$x]->getSection()->getSemester()->getSemesterName();
+    $allottedSemesterCodes[] = $listOfAllocations[$x]->getSection()->getSemester()->getSemesterCode();
 
+    $allottedCurriculum[] = $listOfAllocations[$x]->getCurriculumCode();
+    $allottedProgramCode[] = $listOfAllocations[$x]->getProgramCode();
+    $allottedBatchCodes[] = $listOfAllocations[$x]->getBatchCode();
 }
 
 //print_r("<br> curriculum :".$allottedCurriclum."     program".$allottedProgramCode);
@@ -63,7 +64,8 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
 </head>
 <body>
 <main class="bg-blue-50  h-full">
-    <form method="post" class="w-full flex justify-center items-center h-full" action="TeacherDashboard.php" target="_parent">
+    <form method="post" class="w-full flex justify-center items-center h-full" action="TeacherDashboard.php"
+          target="_parent">
 
         <div class="flex flex-col items-center rounded-xl bg-white h-1/3 w-1/3 px-5 py-2"
              style="box-shadow: 0px 0px 20px 2px rgb(0 0 0 / 20%)">
@@ -92,8 +94,14 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                                 onchange="this.setAttribute('value', this.value);" value="" id="">
                             <option value="" hidden></option>
                             <?php
+                            $courseNamesBeingShown = array();
+
                             for ($x = 0; $x < sizeof($allottedCourseNames); $x++) {
-                                echo '<option value="' . $allottedCourseCodes[$x] . '">' . $allottedCourseNames[$x] . '</option>';
+
+                                if (!in_array($allottedCourseNames[$x], $courseNamesBeingShown)) {
+                                    echo '<option value="' . $allottedCourseCodes[$x] . '">' . $allottedCourseNames[$x] . '</option>';
+                                    array_push($courseNamesBeingShown, $allottedCourseNames[$x]);
+                                }
                             }
                             ?>
 
@@ -140,8 +148,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     $(document).ready(function () {
 
         var allottedProgramCodes = <?php echo json_encode($allottedProgramCode);?>;
-        var allottedCurriculumCodes = <?php echo json_encode($allottedCurriclum);?>;
-
+        var allottedCurriculumCodes = <?php echo json_encode($allottedCurriculum);?>;
 
 
         $('#courseSelectorID').on('change', function () {
@@ -184,9 +191,9 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             }
             $('#sectionSelectorID').html(options)
         })
-/*
-$('#courseSelectorID').on('change', function () {
-            var allottedCoursesCodes = <?php echo json_encode($allottedCourseCodes);?>;
+        /*
+        $('#courseSelectorID').on('change', function () {
+                    var allottedCoursesCodes = <?php echo json_encode($allottedCourseCodes);?>;
             var allottedSectionNames = <?php echo json_encode($allottedSectionNames);?>;
             var allottedSectionCodes = <?php echo json_encode($allottedSectionCodes);?>;
             var selectedCourseCode = $(this).val();
@@ -214,7 +221,7 @@ $('#courseSelectorID').on('change', function () {
 
             if (containsErrors) {
                 event.preventDefault()
-            }else {
+            } else {
                 window.top.location.reload();
             }
 

@@ -63,6 +63,13 @@ $(document).ready(function () {
     $("#viewProfileID").click(function () {
         $("#teacherMainContent").html("<iframe class='h-full block' src='ViewTeacherProfile.php' style='width: 100%'></iframe>");
     })
+
+    $("#classFromSidePanel").click(function () {
+        $("#teacherMainContent").html("<iframe class='h-full block' src='CourseSelector.php' style='width: 100%'></iframe>");
+        $("#teacherPanelTitleID").text("Dashboard")
+
+        document.title = "Catalyst - Select Class";
+    })
 });
 
 

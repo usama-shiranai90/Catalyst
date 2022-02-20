@@ -41,11 +41,12 @@ class Section
     public function setListOfStudentsInSectionInCourse($sectionCode, $courseCode): array
     {
         $sql = /** @lang text */
-            "select s.studentRegCode, s.name from student s join section sec on sec.sectionCode = s.sectionCode
-                join semester s2 on sec.semesterCode = s2.semesterCode
+            "select s.studentRegCode, s.name from student s 
+                join section sec on sec.sectionCode = s.sectionCode
                 join courseregistration c on s.studentRegCode = c.studentRegCode
                 join registeredcourses r on c.courseRegistrationCode = r.courseRegistrationCode
-                where s.sectionCode = \"$sectionCode\" and r.courseCode = \"$courseCode\"";
+                where s.sectionCode = \"$sectionCode\" and r.courseCode = \"$courseCode\" order by s.studentRegCode";
+
         $result = $this->databaseConnection->query($sql);
 
         if (mysqli_num_rows($result) > 0) {
@@ -53,12 +54,13 @@ class Section
             while ($row = $result->fetch_assoc()) {
 
                 $student = new Student();
-                $student->setRegistrationCode($row["studentRegCode"]);
+                $student->setStudentRegistrationCode($row["studentRegCode"]);
                 $student->setStudentName($row["name"]);
                 array_push($this->listOfStudents, $student);
             }
-        } else
-            echo "No students found for section code: " . $sectionCode . " and course code: " . $courseCode;
+        }
+//        else
+//            echo "No students found for section code: " . $sectionCode . " and course code: " . $courseCode;
         return $this->listOfStudents;
     }
 
@@ -81,7 +83,6 @@ class Section
     {
         return $this->semester;
     }
-
 
 
     public function toString()

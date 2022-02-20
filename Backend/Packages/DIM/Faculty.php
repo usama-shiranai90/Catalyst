@@ -1,21 +1,14 @@
 <?php
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\Allocations.php";
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\Course.php";
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\OfferingAndAllocations\CLO.php";
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Section.php";
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Student.php";
-//include "C:\Users\OneEyeOwl\PhpstormProjects\Catalyst\Backend\Packages\DIM\Semester.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Allocations.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Section.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Student.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Semester.php";
-
-include "UserInterface.php";
-include "User.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Allocations.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Section.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Student.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Semester.php";
+//include "UserInterface.php";
+//include "User.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 class Faculty extends User implements UserInterface
 {

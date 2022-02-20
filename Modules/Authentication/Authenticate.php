@@ -1,5 +1,7 @@
 <?php
-include "../../Backend/Packages/DIM/Faculty.php";
+//include "../../Backend/Packages/DIM/Faculty.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
+
 $user = null;
 $studentPanel = "";
 $teacherPanel = "hidden";
@@ -11,23 +13,44 @@ $studentIncorrectPass = "hidden";
 $teacherIncorrectPass = "hidden";
 $adminIncorrectPass = "hidden";
 
+
+$batch = new Batch();
+$listOfBatches = $batch->retrieveAllBatches();
+$listOfPrograms = array();
+$program = new Program();
+foreach ($listOfBatches as $batch) {
+    $listOfPrograms[] = $program->retrieveProgram($batch->getProgramCode());
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $accessGranted = false;
 
     if (isset($_POST["studentLogin"])) {
         if (!empty($_POST["batch"]) && !empty($_POST["program"]) && !empty($_POST["rollNo"]) && !empty($_POST["studentPassword"])) {
-            $_SESSION['studentUsername'] = $_POST["batch"] . "/" . $_POST["program"] . "/" . $_POST["rollNo"];
-            $_SESSION['studentPassword'] = $_POST["studentPassword"];
+            $email = $_POST["batch"] . "-" . $_POST["program"] . "-" . $_POST["rollNo"];
+            $password = $_POST["studentPassword"];
+            $user = new Student();
+            $accessGranted = $user->login($email, $password);
+
+            if (!$accessGranted) {
+                $studentIncorrectPass = "";
+                $studentPanel = "";
+
+                $studentTab = "selected";
+                $teacherTab = "";
+                $adminTab = "";
+                $teacherPanel = "hidden";
+                $adminPanel = "hidden";
+            }
         }
     } else if (isset($_POST["teacherLogin"])) {
         if (!empty($_POST["teacherUsername"]) && !empty($_POST["teacherPassword"])) {
             $email = $_POST["teacherUsername"];
             $password = $_POST["teacherPassword"];
 
-//            $user = new Faculty($email, $password);
             $user = Faculty::getFacultyInstance();
             $accessGranted = $user->login($email, $password);
-//            $faculty->retrieveAllocations();
 
             if (!$accessGranted) {
                 $teacherIncorrectPass = "";
@@ -37,7 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $adminTab = "";
                 $studentPanel = "hidden";
                 $adminPanel = "hidden";
-
             }
         }
     } else if (isset($_POST["adminLogin"])) {
@@ -56,12 +78,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['facultyInstance'] = serialize(Faculty::getFacultyInstance());
 
             header("Location: ../Teacher/TeacherDashboard.php");
+        } elseif (isset($_POST["studentLogin"])) {
+            $user->setPersonalDetails();
+            $_SESSION['studentRegistrationCode'] = $user->getUserCode();
+            $_SESSION['batchCode'] = $_POST["batchCode"];
+            $_SESSION['programCode'] = $_POST["programCode"];
+            //            Storing object in sessionVariable
+            $_SESSION['studentInstance'] = serialize($user);
+
+            header("Location: ../Student/StudentPanel.php");
+
         }
 //        echo "Access Granted";
     }
 
 }
-
 ?>
 <html lang="en">
 <head>
@@ -268,7 +299,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="textField-label sm:top-2 md:top-4 lg:top-4">Password</label>
 
                         <!--                        forgot section for Desktop-->
-                        <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal" style="width: auto">
+                        <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"
+                             style="width: auto; display: none">
                             <div class="verticalLine mr-2" style="width: auto"></div>
                             <a class="text-red-700" href="#">Forgot</a>
                         </div>
@@ -337,7 +369,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <!--  forgot section for Desktop-->
                         <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"
-                             style="width: auto">
+                             style="width: auto ; display: none">
                             <div class="verticalLine mr-2" style="width: auto"></div>
                             <a class="text-red-700" href="#">Forgot</a>
                         </div>
@@ -402,7 +434,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="textField-label">Password</label>
                         <!--  forgot section for Desktop-->
                         <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"
-                             style="width: auto">
+                             style="width: auto ; display: none">
                             <div class="verticalLine mr-2" style="width: auto"></div>
                             <a class="text-red-700" href="#">Forgot</a>
                         </div>
@@ -485,8 +517,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
 </footer>
-
-
 </body>
+<script>
+    $(document).ready(function () {
+        var listOfBatches = '<?php echo json_encode($listOfBatches);?>';
+        var listOfBatches = JSON.parse(listOfBatches);
 
+        //Setting semesters to show on course selection
+  /*      $('#batch').on('change', function () {
+            var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
+            var selectedBatch = $(this).val();
+
+            var options = '<option value="" hidden></option>';
+
+            var programsBeingShown = [];
+            for (let i = 0; i < listOfBatches.length; i++) {
+                if (selectedBatch == listOfBatches[i]["batchName"]) {
+
+                    if (!programsBeingShown.includes(listOfPrograms[i]["programName"])) {
+                        options += '<option value="' + listOfPrograms[i]["programName"] + '">' + listOfPrograms[i]["programName"] + '</option>'
+                        programsBeingShown.push(listOfPrograms[i]["programName"])
+                    }
+                }
+            }
+            $('#program').html(options)
+        })*/
+
+
+        /*Setting values of hidden batchCode and programCode fields*/
+       /* $('#program').on('change', function () {
+
+            var listOfBatches = <?php echo json_encode($listOfBatches);?>;
+            var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
+            var selectedProgram = $('#program').val();
+            let i;
+            for (i = 0; i < listOfPrograms.length; i++) {
+                if (selectedProgram == listOfPrograms[i]["programName"]) {
+                    $('input[name="programCode"]').val(listOfPrograms[i]["programCode"])
+                    $('input[name="batchCode"]').val(listOfBatches[i]["batchCode"])
+                    break;
+                }
+            }
+        })*/
+
+    })
+</script>
 </html>

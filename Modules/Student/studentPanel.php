@@ -1,124 +1,27 @@
 <?php
+
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
-$facultyCode = $_SESSION['facultyCode'];
-$showSelectorIframe = "";
-$showDashboardIframe = "hidden";
-$selectedCourse = "";
-$selectedSection = "";
-$selectedSemester = "";
+
+$studentRegCode = $_SESSION['studentRegistrationCode'];
+$batchCode = $_SESSION['batchCode'];
+$programCode = $_SESSION['programCode'];
+
 $personalDetails = array();
 
-$faculty = unserialize($_SESSION['facultyInstance']);
-$personalDetails = $faculty->getPersonalDetails();
-
-$courseTitleAcronym = "NA";
-$semesterName = "NA";
-$sectionName = "";
-
-//$_SESSION["personalDetailsOfTeacher"] = $personalDetails;
-//print_r($personalDetails);
-
-if (isset($_POST['selectClass'])) {
-
-    $showSelectorIframe = "hidden";
-    $showDashboardIframe = "";
-
-    $selectedCourse = $_POST['courseSelector'];
-    $selectedSemester = $_POST['semesterSelector'];
-    $selectedSection = $_POST['sectionSelector'];
-    $selectedProgram = $_POST['programSelector'];
-    $selectedCurriculum = $_POST['curriculumSelector'];
-    $selectedBatch = $_POST['batchCode'];
-
-    $_SESSION['selectedBatch'] = $selectedBatch;
-    $_SESSION['selectedCourse'] = $selectedCourse;
-    $_SESSION['selectedProgram'] = $selectedProgram;
-    $_SESSION['selectedSection'] = $selectedSection;
-    $_SESSION['selectedSemester'] = $selectedSemester;
-    $_SESSION['selectedCurriculum'] = $selectedCurriculum;
-
-    $curriculum = new Curriculum();
-    $curriculum->fetchCurriculumID($selectedSection);   // provide with ongoing section code.
-    $_SESSION['ploList'] = $curriculum->retrievePLOsList(); // get from server // returns array of PLO.
-
-    /*Getting Selected Semester Name to show in Side Panel*/
-    $semester = new Semester();
-    $semester->setSemesterName($selectedSemester);
-    $semesterName = $semester->getSemesterName();
-
-    /*Getting Selected Course Title then generating its acronym to show in Side Panel*/
-    $course = new Course();
-    $course->setCourseName($selectedCourse);
-    $courseTitle = preg_split("/[\s,_-]+/", $course->getCourseTitle());;
-    $courseTitleAcronym = "";
-
-    foreach ($courseTitle as $w) {
-        $courseTitleAcronym .= $w[0];
-    }
-
-    /*Getting Selected Section Name to show in Side Panel*/
-    $section = new Section();
-    $section->setSectionName($selectedSection);
-    $sectionName = $section->getSectionName();
-
-
-//    $faculty = Faculty::getFacultyInstance();
-//    $faculty->setPersonalDetails();
-//    echo $faculty->getUserCode();
-//    $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
-
-//    var_dump( (array) $listOfAllocations );
-
-    /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
-    for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-        $listOfAllocations[$x]->toString();
-    }*/
-}
-//Stores title of allotted courses
-//$allottedCourses = array();
-//Stores name of allotted sections
-//$allottedSections = array();
-/*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
-for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-    $listOfAllocations[$x]->toString();
-}*/
-
-//for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-//    array_push($allottedCourses, $listOfAllocations[$x]->getCourse());
-//    array_push($allottedSections, $listOfAllocations[$x]->getSection());
-//}
-
-/*echo "Allotted Courses ()";
-for ($x = 0; $x < sizeof($allottedCourses); $x++) {
-    echo "<br>".$allottedCourses[$x]->getCourseCode();
-}
-echo "Allotted Sections";
-for ($x = 0; $x < sizeof($allottedSections); $x++) {
-    echo "<br>".$allottedSections[$x]->getSectionCode();
-}*/
-
-//print_r($courses);
-//echo "<br> Sections:";
-//print_r($courseSections);
-/*for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-    array_push($courseCodes, $listOfAllocations[$x]->getCourse()->getCourseTitle());
-    array_push($courseSections, $listOfAllocations[$x]->getSection()->getSectionName());
-}*/
-
+$student = unserialize($_SESSION['studentInstance']);
+$personalDetails = $student->getPersonalDetails();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Teacher</title>
     <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <link href="asset/TeacherDashboardStyles.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-    <script src="asset/TeacherDashScripts.js" rel="script"></script>
+    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>
 </head>
 
 <body>
@@ -128,11 +31,11 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
     <div class="profilePictureDiv" id="viewProfileID">
         <div class="flex">
             <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
-                <img src="../../Assets/Images/profilePicAvatar.jpg" width="40">
+                <img src="../../Assets/Images/vectorFiles/Others/profilePicAvatar.jpg" width="40">
                 <div class="flex flex-col text-xs pl-4 pt-1 cursor-pointer">
                     <div><?php echo $personalDetails['name'] ?></div>
                     <hr class="w-full">
-                    <div><?php echo $personalDetails['facultyCode'] ?></div>
+                    <div><?php echo $personalDetails['studentRegCode'] ?></div>
                 </div>
             </a>
         </div>
@@ -218,56 +121,28 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
         <!--        Navigation items start-->
 
         <div class="mt-5 relative h-full">
-            <!--            Class Selector-->
-
-
-            <div class="flex justify-between text-white items-center pl-9">
-                <div class="flex justify-center items-center" style="font-size: 15px">
-                    <label><?php echo $courseTitleAcronym; ?> </label>
-                    <label>- <?php echo $semesterName . $sectionName; ?></label>
-                </div>
-                <div>
-                    <button class="rounded-md px-2 border border-transparent" id="classFromSidePanel">
-                        <img src="../../Assets/Images/vectorFiles/Icons/change.png" width="25">
-                    </button>
-                </div>
-            </div>
 
 
             <!--            Dashboard-->
-            <div class="navigationItem" id="teacherDashboardID">
+            <div class="navigationItem" id="studentDashboardID">
                 <svg width="25" height="25" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
                     <path d="M3 15C3 11.8174 4.26428 8.76516 6.51472 6.51472C8.76516 4.26428 11.8174 3 15 3V15H27C27 18.1826 25.7357 21.2348 23.4853 23.4853C21.2348 25.7357 18.1826 27 15 27C11.8174 27 8.76516 25.7357 6.51472 23.4853C4.26428 21.2348 3 18.1826 3 15Z"/>
                     <path d="M18 3.37793C20.0754 3.91562 21.9693 4.9986 23.4853 6.51461C25.0013 8.03062 26.0843 9.92449 26.622 11.9999H18V3.37793Z"/>
                 </svg>
-                <label class="pl-3" id="switchToDashboard">Dashboard</label>
+                <label class="pl-3">Dashboard</label>
             </div>
 
-            <!--            Course Managements-->
-            <div class="navigationItemDropdown" id="courseManagementID">
-                <div class="flex justify-between items-center navDropBox" id="teacherCourseManagementDropBox">
-                    <div class="flex items-center">
-                        <div>
-                            <svg width="25" height="25" viewBox="0 0 30 30"
-                                 xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
-                                <path d="M23.75 6.25V23.75H6.25V6.25H23.75ZM23.75 3.75H6.25C4.875 3.75 3.75 4.875 3.75 6.25V23.75C3.75 25.125 4.875 26.25 6.25 26.25H23.75C25.125 26.25 26.25 25.125 26.25 23.75V6.25C26.25 4.875 25.125 3.75 23.75 3.75Z"/>
-                                <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
-                            </svg>
-                        </div>
-                        <label class="pl-3">Course Management</label>
-                    </div>
-                    <img class="sidePanelNavigationItemDropdownIcon rotate" name="courseManagement"
-                         src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
-                </div>
-                <div class="dropdownNavigationItemMenu menu menuClosed" id="courseManagementMenu">
-                    <div class="menuItem" id="switchTocourseProfile">Profile</div>
-                    <div class="menuItem" id="switchToWeeklyTopic">Weekly Topics</div>
-                    <div class="menuItem" id="switchToCourseSummary">Course Summary</div>
-                </div>
+
+            <!--            Student Progress-->
+            <div class="navigationItem" id="studentProgressID">
+                <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M25.25 0H2.75C1.375 0 0.25 1.125 0.25 2.5V18.75C0.25 20.125 1.375 21.25 2.75 21.25H25.25C26.625 21.25 27.75 20.125 27.75 18.75V2.5C27.75 1.125 26.625 0 25.25 0ZM2.75 18.75V2.5H12.75V18.75H2.75ZM25.25 18.75H15.25V2.5H25.25V18.75ZM16.5 6.875H24V8.75H16.5V6.875ZM16.5 10H24V11.875H16.5V10ZM16.5 13.125H24V15H16.5V13.125Z"/>
+                </svg>
+                <label class="pl-3">Progress</label>
             </div>
 
-            <!--            Class Activities-->
-            <div class="navigationItemDropdown" id="classActivities">
+            <!--            Transcripts-->
+            <div class="navigationItemDropdown" id="studentTranscripts">
                 <div class="flex justify-between items-center navDropBox" id="teacherClassActivitiesDropBox">
                     <div class="flex items-center">
                         <div>
@@ -277,75 +152,25 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
                                 <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
                             </svg>
                         </div>
-                        <label class="pl-3">Class Activities</label>
+                        <label class="pl-3">Transcripts</label>
                     </div>
 
                     <img class="sidePanelNavigationItemDropdownIcon rotate"
                          src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
-                    <div class="menuItem" id="switchToSessional">Sessional</div>
-                    <div class="menuItem" id="switchToMidterm">Mid Term</div>
-                    <div class="menuItem" id="switchToFinalExam">Finals</div>
+                    <div class="menuItem" id="switchToOBETranscript">OBE</div>
+                    <div class="menuItem" id="switchToGPATranscript">GPA</div>
                 </div>
             </div>
 
-            <!--            Class Summary-->
-            <div class="navigationItem" id="teacherClassSummary">
-                <svg width="25" height="25" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
-                    <path d="M3 15C3 11.8174 4.26428 8.76516 6.51472 6.51472C8.76516 4.26428 11.8174 3 15 3V15H27C27 18.1826 25.7357 21.2348 23.4853 23.4853C21.2348 25.7357 18.1826 27 15 27C11.8174 27 8.76516 25.7357 6.51472 23.4853C4.26428 21.2348 3 18.1826 3 15Z"/>
-                    <path d="M18 3.37793C20.0754 3.91562 21.9693 4.9986 23.4853 6.51461C25.0013 8.03062 26.0843 9.92449 26.622 11.9999H18V3.37793Z"/>
-                </svg>
-                <label class=" pl-3" id="switchToClassSummary">Class Summary</label>
-            </div>
-
-            <!--            Settings-->
-            <div class="navigationItem" id="teacherSettings">
-                <svg width="25" height="25" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
-                    <path d="M24.2875 16.225C24.3375 15.825 24.375 15.425 24.375 15C24.375 14.575 24.3375 14.175 24.2875 13.775L26.925 11.7125C27.1625 11.525 27.225 11.1875 27.075 10.9125L24.575 6.5875C24.4625 6.3875 24.25 6.275 24.025 6.275C23.95 6.275 23.875 6.2875 23.8125 6.3125L20.7 7.5625C20.05 7.0625 19.35 6.65 18.5875 6.3375L18.1125 3.025C18.075 2.725 17.8125 2.5 17.5 2.5H12.5C12.1875 2.5 11.925 2.725 11.8875 3.025L11.4125 6.3375C10.65 6.65 9.95004 7.075 9.30004 7.5625L6.18754 6.3125C6.11254 6.2875 6.03754 6.275 5.96254 6.275C5.75004 6.275 5.53754 6.3875 5.42504 6.5875L2.92504 10.9125C2.76254 11.1875 2.83754 11.525 3.07504 11.7125L5.71254 13.775C5.66254 14.175 5.62504 14.5875 5.62504 15C5.62504 15.4125 5.66254 15.825 5.71254 16.225L3.07504 18.2875C2.83754 18.475 2.77504 18.8125 2.92504 19.0875L5.42504 23.4125C5.53754 23.6125 5.75004 23.725 5.97504 23.725C6.05004 23.725 6.12504 23.7125 6.18754 23.6875L9.30004 22.4375C9.95004 22.9375 10.65 23.35 11.4125 23.6625L11.8875 26.975C11.925 27.275 12.1875 27.5 12.5 27.5H17.5C17.8125 27.5 18.075 27.275 18.1125 26.975L18.5875 23.6625C19.35 23.35 20.05 22.925 20.7 22.4375L23.8125 23.6875C23.8875 23.7125 23.9625 23.725 24.0375 23.725C24.25 23.725 24.4625 23.6125 24.575 23.4125L27.075 19.0875C27.225 18.8125 27.1625 18.475 26.925 18.2875L24.2875 16.225ZM21.8125 14.0875C21.8625 14.475 21.875 14.7375 21.875 15C21.875 15.2625 21.85 15.5375 21.8125 15.9125L21.6375 17.325L22.75 18.2L24.1 19.25L23.225 20.7625L21.6375 20.125L20.3375 19.6L19.2125 20.45C18.675 20.85 18.1625 21.15 17.65 21.3625L16.325 21.9L16.125 23.3125L15.875 25H14.125L13.8875 23.3125L13.6875 21.9L12.3625 21.3625C11.825 21.1375 11.325 20.85 10.825 20.475L9.68754 19.6L8.36254 20.1375L6.77504 20.775L5.90004 19.2625L7.25004 18.2125L8.36254 17.3375L8.18754 15.925C8.15004 15.5375 8.12504 15.25 8.12504 15C8.12504 14.75 8.15004 14.4625 8.18754 14.0875L8.36254 12.675L7.25004 11.8L5.90004 10.75L6.77504 9.2375L8.36254 9.875L9.66254 10.4L10.7875 9.55C11.325 9.15 11.8375 8.85 12.35 8.6375L13.675 8.1L13.875 6.6875L14.125 5H15.8625L16.1 6.6875L16.3 8.1L17.625 8.6375C18.1625 8.8625 18.6625 9.15 19.1625 9.525L20.3 10.4L21.625 9.8625L23.2125 9.225L24.0875 10.7375L22.75 11.8L21.6375 12.675L21.8125 14.0875ZM15 10C12.2375 10 10 12.2375 10 15C10 17.7625 12.2375 20 15 20C17.7625 20 20 17.7625 20 15C20 12.2375 17.7625 10 15 10ZM15 17.5C13.625 17.5 12.5 16.375 12.5 15C12.5 13.625 13.625 12.5 15 12.5C16.375 12.5 17.5 13.625 17.5 15C17.5 16.375 16.375 17.5 15 17.5Z"/>
-                </svg>
-                <label class="pl-3">Settings</label>
-            </div>
-
-            <!--            Logout-->
-            <div class="flex justify-center w-full bottom-3 absolute">
-                <div class="logout rounded-md bg-white w-2/3 p-0.5 cursor-pointer" id="logout">
-                    <svg class="inline-block" width="25" height="25" viewBox="0 0 30 31" fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13.75 20.5L8.75 15.5M8.75 15.5L13.75 10.5M8.75 15.5H26.25M20 20.5V21.75C20 22.7446 19.6049 23.6984 18.9017 24.4017C18.1984 25.1049 17.2446 25.5 16.25 25.5H7.5C6.50544 25.5 5.55161 25.1049 4.84835 24.4017C4.14509 23.6984 3.75 22.7446 3.75 21.75V9.25C3.75 8.25544 4.14509 7.30161 4.84835 6.59835C5.55161 5.89509 6.50544 5.5 7.5 5.5H16.25C17.2446 5.5 18.1984 5.89509 18.9017 6.59835C19.6049 7.30161 20 8.25544 20 9.25V10.5"
-                              stroke="#01409B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <label class="pl-3 inline-block cursor-pointer" style="color: #01409B">Logout</label>
-                </div>
-            </div>
         </div>
     </div>
     <div class="ml-48 w-full h-full" id="teacherMainContent">
         <!--        Pages to load go here through scripts-->
-        <iframe class="h-full <?php echo $showSelectorIframe ?>" src="CourseSelector.php" style="width: 100%"></iframe>
+        <iframe class="h-full" src="studentDashboard.php" style="width: 100%"></iframe>
     </div>
-    <!--<textarea style="border: black solid"></textarea>-->
 </div>
 </body>
-<script>
-    const sbar = [document.getElementById('teacherDashboardID'), document.getElementById('courseManagementID'), document.getElementById('classActivities'), document.getElementById('teacherClassSummary')];
 
-    let hasFormCompleted = <?php echo json_encode($showSelectorIframe); ?>;
-    console.log("Form Completed Length :", hasFormCompleted.length)
-    if (hasFormCompleted.length === 0) {
-        console.log("bruh")
-
-        $(sbar).each((node, currentSideTag) => {
-            $(currentSideTag).addClass("pointer-events-none");
-            $(currentSideTag).children().attr("disabled", true);
-            $(currentSideTag).children().addClass("text-white text-opacity-25");
-        })
-    } else {
-        $("#teacherMainContent").html("<iframe class='h-full block' src='Dashboard/dashboard.php' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Dashboard")
-        document.title = "Catalyst | Dashboard";
-    }
-
-
-</script>
 </html>
