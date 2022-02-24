@@ -31,10 +31,10 @@ $(document).ready(function () {
         document.title = "Catalyst | Weekly Topics";
     })
 
-    $("#switchToCourseSummary").click(function () {
-        $("#teacherMainContent").html("<iframe class='h-full block' src='ClassActivities/Sessional/sessionalDashboard.php' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Course Summary")
-        document.title = "Catalyst | Course Summary";
+    $("#switchToStudentCourseProgress").click(function () {
+        $("#teacherMainContent").html("<iframe class='h-full block' src='Progress/index.php' style='width: 100%'></iframe>");
+        $("#teacherPanelTitleID").text("Student Progress")
+        document.title = "Catalyst | Student Progress";
     })
 
 

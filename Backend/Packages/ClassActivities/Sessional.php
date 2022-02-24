@@ -26,11 +26,11 @@ class Sessional extends ClassActivity
             while ($row = $result->fetch_assoc()) {
                 $newSessional = new Sessional();
                 $newSessional->activityCode = $row['assessmentCode'];
-                $newSessional->topic = $row['topic'];
+//                $newSessional->topic = $row['topic'];
                 $newSessional->title = $row['title'];
                 $newSessional->totalMarks = $row['totalMarks'];
                 $newSessional->weightage = $row['weightage'];
-                $newSessional->numberOfQuestions = $row['numberOfQuestions'];
+//                $newSessional->numberOfQuestions = $row['numberOfQuestions'];
                 $newSessional->listOfQuestions = $this->getActivityQuestionsData($row['assessmentCode']);
                 $newSessional->listOfMappedCLOs = $this->retrieveCLOList($row['assessmentCode']);
 

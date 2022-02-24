@@ -3,7 +3,7 @@
 include 'AssessmentWeight.php';
 include 'CourseInstructor.php';
 include 'Persistable.php';
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\OfferingAndAllocations\Course.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
 
 class CourseProfile implements Persistable
@@ -83,10 +83,9 @@ class CourseProfile implements Persistable
             while ($row = $result->fetch_assoc()) {
                 $currentBatchCode = (int)$row['batchCode'];
                 $this->setBatchCode($currentBatchCode);
-//                echo "my-batch is :" . $this->getBatchCode();
             }
         } else
-            echo "Cant fetch the batch ...";
+            echo sprintf("\n<br> Can not fetch batchCode: %s\n<br>%s\n<br>", mysqli_error(), $this->databaseConnection->error);
 
         $sql = /** @lang text */
             "select courseProfileCode
@@ -98,8 +97,12 @@ class CourseProfile implements Persistable
             while ($row = $result->fetch_assoc()) {
                 $cp_id = (int)$row['courseProfileCode'];
                 $this->setCourseProfileCode($cp_id);
+                echo sprintf("\n<br> CourseProfile Code got successfully: %d\n<br>", $cp_id);
                 return true;
             }
+        } else {
+            echo sprintf("\n<br> Error while fetching CourseProfile Code: %s\n<br>", $this->databaseConnection->error);
+            return false;
         }
         return false;
     }
@@ -138,10 +141,9 @@ class CourseProfile implements Persistable
         $result = $this->databaseConnection->query($sql_statement);
         if ($result) {
             $this->setCourseProfileCode((int)$this->databaseConnection->insert_id);
-            echo "New record has been added successfully !" . $this->getCourseProfileCode();
+            echo sprintf("\n<br>Course Profile record has been added successfully: %s\n<br>", (string)$this->getCourseProfileCode());
         } else
-            echo "Error on the wall" . $this->databaseConnection->error;
-
+            echo sprintf("\n<br>Error, can not create CourseProfile : %s\n<br>", $this->databaseConnection->error);
 
         $sql2 = /** @lang text */
             "select courseProfileCode from courseprofile order by courseProfileCode desc limit 1;";
@@ -151,9 +153,8 @@ class CourseProfile implements Persistable
             while ($row = $result->fetch_assoc()) {
                 $courseID = $row['courseProfileCode'];
             }
-        } else {
-            echo "No Course profile found with sectionCode: " . $this->databaseConnection->error;
-        }
+        } else
+            echo sprintf("\n<br>Error, No Course profile code found: %s\n<br>", $this->databaseConnection->error);
         return $courseID;
     }
 
@@ -169,7 +170,6 @@ class CourseProfile implements Persistable
 
     private function saveAssessment($cCourseCode)
     {
-
         $c_quiz_weight = $this->assessmentInfo->getQuizWeightage();
         $c_assignment_weight = $this->assessmentInfo->getAssignmentWeightage();
         $c_project_weight = $this->assessmentInfo->getProjectWeightage();
@@ -181,9 +181,9 @@ class CourseProfile implements Persistable
                 VALUES (\"$cCourseCode\",\"$c_quiz_weight\", \"$c_assignment_weight\", \"$c_project_weight\", \"$c_mid_weight\", \"$c_final_weight\")";
 
         if ($this->databaseConnection->query($sql_statement) === TRUE) {
-            echo "New assessment created successfully";
+            echo "\n<br> Assessment Record created successfully.\n<br>";
         } else {
-            echo sprintf("Error assessment questions: %s<br>%s", $sql_statement, $this->databaseConnection->error);
+            echo sprintf("\n<br>Error, Error, can not create assessment questions: %s.\n<br>", $this->databaseConnection->error);
         }
     }
 
@@ -201,9 +201,9 @@ class CourseProfile implements Persistable
                  VALUES  (\"$cCourseCode\",\"$instructor_name\",\"$instructor_designation\", \"$instructor_qualification\", \"$instructor_spec\", \"$instructor_contact\", \"$instructor_email\")";
 
         if ($this->databaseConnection->query($sql_statement) === TRUE) {
-            echo "New Instructor information  created successfully";
+            echo sprintf("\n<br>Instructor Information : %s.\n<br>", $this->databaseConnection->error);
         } else {
-            echo "Error Instructor information: " . $sql_statement . "<br>" . $this->databaseConnection->error;
+            echo sprintf("\n<br>Error, can not create Instructor information: %s.\n<br>", $this->databaseConnection->error);
         }
 
     }
@@ -227,25 +227,24 @@ class CourseProfile implements Persistable
 //                $cloIDList [] = mysqli_insert_id($this->databaseConnection);
                     $cloIDList [] = (int)$this->databaseConnection->insert_id;
                 } else {
-                    echo sprintf("Error clo description: %s<br>%s", $sql_statement, $this->databaseConnection->error);
+                    echo sprintf("\n<br>Error clo description: %s\n<br>%s", $sql_statement, $this->databaseConnection->error);
                 }
             }
-            echo "New CLO-ID List : " . json_encode($cloIDList);
+            echo "\n<br>New CLO-ID List : " . json_encode($cloIDList) . "\n<br>";
 
             foreach ($cloIDList as $row) {
-                echo "\n" . "CLO-ID is :" . $row . "\n";
+                echo "\n" . "CLO-ID is :" . $row . "\n<br>";
             }
         }
 
-        foreach ($ploArray as $row) {
-            echo "\n" . implode("|", $row);
-        }
+        /*        foreach ($ploArray as $row) {
+                    echo "\n" . implode("|", $row);
+                }*/
         foreach ($CLOToPLOMapping as $row) {
             echo "\n" . implode("#", $row);
-//            $headers = explode(',', $row);
         }
 
-        echo "\n\**************Mapping Info**********\*\n";
+        echo "\n<br>\n\**************Mapping Info**********\*\n";
         $cloCounter = 0;
         foreach ($CLOToPLOMapping as $rowData) {
             foreach ($rowData as $cloplo) {  // extract Mapping each row data containing multiple PLO-list
@@ -260,11 +259,10 @@ class CourseProfile implements Persistable
                         $sql_statement = /** @lang text */
                             "INSERT INTO clotoplomapping(PLOCode, CLOCode) VALUES (\"$plo[0]\",\"$cloIDList[$cloCounter]\")";
                         $result = $this->databaseConnection->query($sql_statement);
-                        if ($result) {
-                            echo "Mapping Successfully !";
-                        } else
-                            echo "CLO-PLO Mapping Error : " . $this->databaseConnection->error;
-
+                        if ($result)
+                            echo sprintf("\n<br> CLO to PLO Mapping Successfully for %s.\n<br>", $cloIDList[$cloCounter]);
+                        else
+                            echo sprintf("\n<br>Error while Mapping Relation btw CLO-PLO: %s.\n<br>", $this->databaseConnection->error);
                     }
                 }
             }
@@ -286,9 +284,9 @@ class CourseProfile implements Persistable
               where  CLOCode =\"$cloCode\" and curriculumCode = \"$curriculumCode\";";
 
         if ($this->databaseConnection->query($sql1) === TRUE) {
-            echo "CLO description updated";
+            echo "\n<br> Successfully updated CLO-Description Table.\n<br>";
         } else {
-            echo "Error CLO description updated : " . $this->databaseConnection->error . "<br>" . $rowData;
+            echo sprintf("\n<br>Error while updating CLO-Description : %s\n<br>Server Error:%s\n<br>", json_encode($rowData), $this->databaseConnection->error);
         }
     }
 
@@ -323,8 +321,7 @@ class CourseProfile implements Persistable
                 $this->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
             }
         } else
-            echo "cant find user information: ", $courseProfileID . '            ' . $this->databaseConnection->error;
-
+            echo sprintf("\n<br>Error , can not find CourseProfile Information : %s\n<br>Server Error:%s\n<br>", $courseProfileID, $this->databaseConnection->error);
     }
 
     public function deleteCourseProfileDistributionRecord($currentCLOID, $programID, $batchCode)
@@ -333,9 +330,9 @@ class CourseProfile implements Persistable
             "delete from clo where CLOCode = \"$currentCLOID\" and programCode =\"$programID\" and batchCode = \"$batchCode\"";
         $result = $this->databaseConnection->query($sql);
         if ($result === TRUE) {
-            echo "Record deleted successfully";
+            echo sprintf("\n<br>Record Deleted successfully for CourseProfile ID:%s .\n<br>", (string)$currentCLOID);
         } else {
-            echo "Error deleting record from clo-row: " . $this->databaseConnection->error;
+            echo sprintf("\n<br>Error while deleting record from CLO-Description Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($currentCLOID, $programID, $batchCode)), $this->databaseConnection->error);
         }
     }
 
@@ -347,9 +344,9 @@ class CourseProfile implements Persistable
         $result = $this->databaseConnection->query($sql);
 
         if ($result === TRUE) {
-            echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode;
+            echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode . "\n";
         } else {
-            echo "Error deleting record from clotoplomapping: " . $this->databaseConnection->error . "<br>";
+            echo sprintf("\n<br>Error while deleting record from CLO-TO-PLO Mapping Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($CLOCode)), $this->databaseConnection->error);
         }
     }
 
@@ -365,9 +362,9 @@ class CourseProfile implements Persistable
                            WHERE courseProfileCode = \"$courseProfileID\"";
 
         if ($this->databaseConnection->query($sql1) === TRUE) {
-            echo "Record updated successfully";
+            echo "Record updated successfully" . "\n<br>";
         } else {
-            echo "Error updating Course Profile basic: " . $this->databaseConnection->error;
+            echo sprintf("\n<br>Error while updating Course Profile Basic Info : %s\n<br>Server Error:%s\n<br>", json_encode(array($courseProfileID)), $this->databaseConnection->error);
         }
 
         $instructor_name = $this->instructorInfo->getInstructorName();
@@ -382,12 +379,10 @@ class CourseProfile implements Persistable
             qualification = \"$instructor_qualification\", specialization = \"$instructor_spec\", contactNumber = \"$instructor_contact\", 
             personalEmail = \"$instructor_email\" WHERE courseProfileCode = \"$courseProfileID\"";
 
-        if ($this->databaseConnection->query($sql2) === TRUE) {
-            echo "Record of courseProfile Instructor updated successfully";
-        } else {
-            echo "Error updating Course Profile Instructor information: " . $this->databaseConnection->error;
-        }
-
+        if ($this->databaseConnection->query($sql2) === TRUE)
+            echo "Record of courseProfile Instructor updated successfully" . "\n<br>";
+        else
+            echo sprintf("\n<br>Error while Updating Course Profile Instructor Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
 
         $c_quiz_weight = $this->assessmentInfo->getQuizWeightage();
         $c_assignment_weight = $this->assessmentInfo->getAssignmentWeightage();
@@ -401,10 +396,9 @@ class CourseProfile implements Persistable
             WHERE courseProfileCode = \"$courseProfileID\";";
 
         if ($this->databaseConnection->query($sql2) === TRUE) {
-            echo "Record  courseProfile Assessment updated successfully";
-        } else {
-            echo "Error updating Course Profile Assessment Info: " . $this->databaseConnection->error;
-        }
+            echo "Record  courseProfile Assessment updated successfully" . "\n<br>";
+        } else
+            echo sprintf("\n<br>Error while Updating Course Profile Assessment Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
 
     }
 

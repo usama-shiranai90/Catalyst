@@ -40,13 +40,13 @@ if (mysqli_num_rows($result) > 0) {
 $course = new Course();
 $course->setCourseCLOList($selectedCourse, $selectedProgram, $selectedCurriculum);
 
+
 $CLONameList = array();
 $CLOCodeList = array();
 foreach ($course->getCourseCLOList() as $c) {
     array_push($CLONameList, $c->getCLOName());
     array_push($CLOCodeList, $c->getCLOCode());
 }
-
 /***************************************************************************************/
 
 
@@ -273,7 +273,7 @@ function getMidtermData($midtermData, $index)
                     </div>
                     <div class="flex justify-center pt-5 pb-8">
                         <img class="cursor-pointer" id="addNewMidtermQuestionBtnID" name="addNewMidtermQuestionBtn"
-                             src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+                             src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
                     </div>
                 </div>
 

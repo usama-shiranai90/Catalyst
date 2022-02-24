@@ -29,9 +29,9 @@ if (isset($_POST['selectClass'])) {
     $selectedSection = $_POST['sectionSelector'];
     $selectedProgram = $_POST['programSelector'];
     $selectedCurriculum = $_POST['curriculumSelector'];
-    $selectedBatch = $_POST['batchCode'];
+//    $selectedBatch = $_POST['batchCode'];
 
-    $_SESSION['selectedBatch'] = $selectedBatch;
+//    $_SESSION['selectedBatch'] = $selectedBatch;
     $_SESSION['selectedCourse'] = $selectedCourse;
     $_SESSION['selectedProgram'] = $selectedProgram;
     $_SESSION['selectedSection'] = $selectedSection;
@@ -220,7 +220,6 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
         <div class="mt-5 relative h-full">
             <!--            Class Selector-->
 
-
             <div class="flex justify-between text-white items-center pl-9">
                 <div class="flex justify-center items-center" style="font-size: 15px">
                     <label><?php echo $courseTitleAcronym; ?> </label>
@@ -228,7 +227,7 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
                 </div>
                 <div>
                     <button class="rounded-md px-2 border border-transparent" id="classFromSidePanel">
-                        <img src="../../Assets/Images/vectorFiles/Icons/change.png" width="25">
+                        <img src="../../Assets/Images/vectorFiles/Icons/edit-button.svg" class="fill-current text-white" width="25">
                     </button>
                 </div>
             </div>
@@ -262,7 +261,7 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
                 <div class="dropdownNavigationItemMenu menu menuClosed" id="courseManagementMenu">
                     <div class="menuItem" id="switchTocourseProfile">Profile</div>
                     <div class="menuItem" id="switchToWeeklyTopic">Weekly Topics</div>
-                    <div class="menuItem" id="switchToCourseSummary">Course Summary</div>
+                    <div class="menuItem" id="switchToStudentCourseProgress">Student Progress</div>
                 </div>
             </div>
 

@@ -348,7 +348,8 @@ window.onload = function (e) {
             input.setAttribute("data-clod-bt", "c" + index + "-bt");
             if (!hasKeyFlag)
                 input.value = '';
-            let label = currentTag.firstElementChild.childNodes[3];
+            // let label = currentTag.firstElementChild.childNodes[3];
+            let label = currentTag.firstElementChild.childNodes[1];
             label.setAttribute("for", uniqueName(input.getAttribute("id"), index))
         }
     }
@@ -458,15 +459,16 @@ window.onload = function (e) {
             console.log("Deleted CLO Description  :", deletedCLOsDescriptionIDs);
 
             console.log("in deletion Mode ", deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))
-            deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
 
-            updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
+            if (deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))){
+                updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
+            }
+
 
         } else {
             console.log("DETAIL Added Description :", allCourseCLOsDescriptionValues);
             console.log("MAP Description  :", allCourseCLOsMapValues);
             console.log("Essentail  :", courseEssentialFieldValue);
-
 
             creationAjaxCall(allCourseCLOsDescriptionValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue)
         }
@@ -679,7 +681,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCo
     });
 }
 
-function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) {
+function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) { // deletedCLOIdsArray = 'any existing IDs' and remainingCLOIds = 'to update Exisiting IDs'
     $.ajax({
         type: "POST",
         url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=delete',
@@ -689,8 +691,10 @@ function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) {
             del: true
         },
         success: function (data, textStatus) {
-            console.log(data)
+            return true;
+            // console.log(data)
             // location.href = "courseprofile_view.php";
         }
     });
+    return true;
 }

@@ -4,13 +4,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $studentRegCode = $_SESSION['studentRegistrationCode'];
-$batchCode = $_SESSION['batchCode'];
-$programCode = $_SESSION['programCode'];
+$batchCode = $_SESSION['batchCode'] = 1;
+$programCode = $_SESSION['programCode'] = 1;
 
 $personalDetails = array();
-
 $student = unserialize($_SESSION['studentInstance']);
 $personalDetails = $student->getPersonalDetails();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +21,7 @@ $personalDetails = $student->getPersonalDetails();
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>
+<!--    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>-->
 </head>
 
 <body>
@@ -31,7 +31,7 @@ $personalDetails = $student->getPersonalDetails();
     <div class="profilePictureDiv" id="viewProfileID">
         <div class="flex">
             <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
-                <img src="../../Assets/Images/vectorFiles/Others/profilePicAvatar.jpg" width="40">
+                <img src="../../Assets/Images/vectorFiles/Others/author-at-desk.svg" width="40">
                 <div class="flex flex-col text-xs pl-4 pt-1 cursor-pointer">
                     <div><?php echo $personalDetails['name'] ?></div>
                     <hr class="w-full">
@@ -135,7 +135,8 @@ $personalDetails = $student->getPersonalDetails();
 
             <!--            Student Progress-->
             <div class="navigationItem" id="studentProgressID">
-                <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite" xmlns="http://www.w3.org/2000/svg">
+                <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite"
+                     xmlns="http://www.w3.org/2000/svg">
                     <path d="M25.25 0H2.75C1.375 0 0.25 1.125 0.25 2.5V18.75C0.25 20.125 1.375 21.25 2.75 21.25H25.25C26.625 21.25 27.75 20.125 27.75 18.75V2.5C27.75 1.125 26.625 0 25.25 0ZM2.75 18.75V2.5H12.75V18.75H2.75ZM25.25 18.75H15.25V2.5H25.25V18.75ZM16.5 6.875H24V8.75H16.5V6.875ZM16.5 10H24V11.875H16.5V10ZM16.5 13.125H24V15H16.5V13.125Z"/>
                 </svg>
                 <label class="pl-3">Progress</label>
@@ -168,9 +169,15 @@ $personalDetails = $student->getPersonalDetails();
     </div>
     <div class="ml-48 w-full h-full" id="teacherMainContent">
         <!--        Pages to load go here through scripts-->
-        <iframe class="h-full" src="studentDashboard.php" style="width: 100%"></iframe>
+        <iframe class="h-full" src="" style="width: 100%"></iframe>
     </div>
 </div>
 </body>
-
+<script>
+    $("#teacherMainContent").html("<iframe class='h-full block' src='Dashboard.php' style='width: 100%'></iframe>");
+    $("#teacherPanelTitleID").text("Dashboard")
+    document.title = "Catalyst | Dashboard";
+    $('#studentDashboardID').removeClass().addClass("navigationItem navigationItemSelected");
+    $('#studentDashboardID svg').removeClass().addClass("turnItBlueForever");
+</script>
 </html>

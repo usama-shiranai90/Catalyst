@@ -229,7 +229,7 @@ $accumulatedWeightageForSessionals = $sessional->getAccumulatedSessionalWeightag
             <!--            Adding Addition Button-->
             <div class='flex justify-center pt-8 pb-8 <?php echo $showAssignmentAddButton;?>'>
                 <img class="cursor-pointer" name="addNewSessionalBtn"
-                     src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+                     src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
             </div>
         </div>
 
@@ -246,7 +246,7 @@ $accumulatedWeightageForSessionals = $sessional->getAccumulatedSessionalWeightag
             <!--            Adding Addition Button-->
             <div class='flex justify-center pt-8 pb-8 <?php echo $showQuizAddButton?>'>
                 <img class="cursor-pointer" name="addNewSessionalBtn"
-                     src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+                     src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
             </div>
         </div>
 
@@ -263,7 +263,7 @@ $accumulatedWeightageForSessionals = $sessional->getAccumulatedSessionalWeightag
             <!--            Adding Addition Button-->
             <div class='flex justify-center pt-8 pb-8 <?php echo $showProjectAddButton?>'>
                 <img class="cursor-pointer" name="addNewSessionalBtn"
-                     src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+                     src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
             </div>
         </div>
     </div>

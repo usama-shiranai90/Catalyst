@@ -7,6 +7,8 @@ spl_autoload_register(function ($className) {
     $dim = "/Backend/Packages/DIM/";
     $offeringAndAllocations = "/Backend/Packages/OfferingAndAllocations/";
 
+//    echo "FileName List :".__NAMESPACE__."  ".$className."<br>";
+
     if (file_exists($_SERVER['DOCUMENT_ROOT'] . $dim . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $dim . str_replace('\\', "/", $className) . ".php";
 

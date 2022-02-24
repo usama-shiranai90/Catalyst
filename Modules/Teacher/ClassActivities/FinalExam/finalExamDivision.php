@@ -270,7 +270,7 @@ function getFinalExamData($finalExamData, $index)
                     </div>
                     <div class="flex justify-center pt-5 pb-8">
                         <img class="cursor-pointer" id="addNewFinalExamQuestionBtnID" name="addNewFinalExamQuestionBtn"
-                             src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+                             src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
                     </div>
                 </div>
             </div>

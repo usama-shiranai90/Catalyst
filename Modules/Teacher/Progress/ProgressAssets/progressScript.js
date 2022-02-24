@@ -1,11 +1,11 @@
 window.onload = function (e) {
+
     const selectSessionalTab = document.querySelector(".py-0.assessment-type-bg");
     const sessionalAllAssessmentTable = document.getElementById("sessionalTableDivID");
-    const courseSessionalInfoDiv = document.getElementById("courseSessionalInfoDivID");
+    const courseSessionalInfoDiv = document.getElementById("courseSessionalInfoDivID"); // assessment Table.
     const studentListTable = document.getElementById('studentTableID'); // bottom left side student table list.
     const selectStudentAssessmentTable = document.getElementById('selectedStudentTableInfoID'); // right side student assessment table list.
 
-    let v;
     fetchSessionalInfo(currentSectionAssessments, courseSessionalInfoDiv);  // for creating all assignment quiz and project box .
 
     document.querySelectorAll("span.h-10.py-2").forEach((value, key) => {
@@ -32,11 +32,11 @@ window.onload = function (e) {
                         for (let i = 0; i < studentRegNo.length; i++) {
                             rowID = "studentRow-" + (i + 1);
                             let tableRow = document.createElement('tr');
-                            tableRow.setAttribute("class","text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight");
+                            tableRow.setAttribute("class", "text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight");
                             tableRow.setAttribute("id", rowID);
                             for (let j = 0; j < 5; j++) {
                                 let td = document.createElement('td');
-                                td.setAttribute("class" , "px-1 py-1") // py-3
+                                td.setAttribute("class", "px-1 py-1") // py-3
                                 switch (j) {
                                     case 0:
                                         td.innerText = studentRegNo[i];
@@ -80,16 +80,15 @@ window.onload = function (e) {
     });
 
 
-
     $(document).ready(function (e) {
-
         $(selectSessionalTab).on('click', function () {
             const act = $(sessionalAllAssessmentTable).hasClass("hidden");
             $(sessionalAllAssessmentTable).toggle("hidden").animate({right: 0,}, "slow", changeArrowPosition());
+
             function changeArrowPosition() {
                 if (act)
                     selectSessionalTab.firstElementChild.lastElementChild.setAttribute("src", "../../../Assets/Images/bottom-arrow.svg");
-                else{
+                else {
                     selectSessionalTab.firstElementChild.lastElementChild.setAttribute("src", "../../../Assets/Images/left-arrow.svg");
                     studentListTable.classList.add("hidden");
                     selectStudentAssessmentTable.classList.add("hidden");
@@ -98,7 +97,6 @@ window.onload = function (e) {
                 return "";
             }
         });
-
     });
 }
 

@@ -124,10 +124,9 @@ $viewCLOMapping = $cloObject->mappedPLOs;
             <h2 class="cprofile-container-centertxt"> Course-Name Course Profile</h2>
 
             <!--    course profile whole section     -->
-            <section id="cpWholeDetail" class="cprofile-content-box-border cprofile-grid mx-0 my-0 ">
+            <section id="cpWholeDetail" class="cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
                 <!--   base information   -->
                 <div class="cprofile-content-division bg-white">
-
                     <div class="cprofile-left-container mx-3 w-2/5 ml-5">
                         <!--                        course title-->
                         <!--                        <div class="flex flex-row w-full" id="courseTitleDivId">
@@ -315,7 +314,7 @@ $viewCLOMapping = $cloObject->mappedPLOs;
                         </div>
 
 
-                        <div class="course-assessment-border shadow-md" style="background-color: #0284FC">
+                        <div class="course-assessment-border shadow-md " style="background-color: #0284FC">
                             <h2 class="table-head">Assessment Instrument with Weights</h2>
                             <div class="grid bg-white  border-solid border-t-2 py-3 text-center">
 
@@ -369,8 +368,10 @@ $viewCLOMapping = $cloObject->mappedPLOs;
 
                 <!--   assigned CLO with their respective PLO.   -->
                 <div class="mx-2 p-4 clo-container ">
-                    <div class="clo-table-border rounded-md shadow-sm" style="background-color: #0284FC">
+                    <!--                    style="background-color: #0284FC"-->
+                    <div class="clo-table-border rounded-md shadow-sm min-w-full" style="background-color: #0284FC">
                         <h2 class="table-head">Assigned CLO's With Mapping</h2>
+
                         <div id="vCloMappingDivID"
                              class="bg-white p-4  gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
 

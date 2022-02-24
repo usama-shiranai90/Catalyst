@@ -22,13 +22,16 @@ foreach ($listOfBatches as $batch) {
     $listOfPrograms[] = $program->retrieveProgram($batch->getProgramCode());
 }
 
+echo json_encode($listOfBatches)."<br>";
+echo json_encode($listOfPrograms);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $accessGranted = false;
 
     if (isset($_POST["studentLogin"])) {
         if (!empty($_POST["batch"]) && !empty($_POST["program"]) && !empty($_POST["rollNo"]) && !empty($_POST["studentPassword"])) {
-            $email = $_POST["batch"] . "-" . $_POST["program"] . "-" . $_POST["rollNo"];
+//            $email = $_POST["batch"] . "-" . $_POST["program"] . "-" . $_POST["rollNo"];
+            $email = "F18" . "-" . "BCSE" . "-" . "011";
             $password = $_POST["studentPassword"];
             $user = new Student();
             $accessGranted = $user->login($email, $password);
@@ -87,7 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['studentInstance'] = serialize($user);
 
             header("Location: ../Student/StudentPanel.php");
-
         }
 //        echo "Access Granted";
     }
@@ -389,7 +391,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!--Login and SVG-->
                 <div class="mt-5 sm:mt-0 sm:grid sm:grid-cols-3 sm:grid sm:gap-0 items-center mb-10 sm:mb-0 block">
                     <div class="align-middle text-center col-start-2">
-                        <button type="submit" class="loginButton sm:h-1/5 sm:w-2/3" name="teacherLogin" id="teacherLoginBtnID">Login
+                        <button type="submit" class="loginButton sm:h-1/5 sm:w-2/3" name="teacherLogin"
+                                id="teacherLoginBtnID">Login
                         </button>
                     </div>
                     <div class="align-middle text-center hidden sm:inline-block">
@@ -524,8 +527,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         var listOfBatches = JSON.parse(listOfBatches);
 
         //Setting semesters to show on course selection
-  /*      $('#batch').on('change', function () {
-            var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
+        /*      $('#batch').on('change', function () {
+                  var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
             var selectedBatch = $(this).val();
 
             var options = '<option value="" hidden></option>';
@@ -545,9 +548,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         /*Setting values of hidden batchCode and programCode fields*/
-       /* $('#program').on('change', function () {
+        /* $('#program').on('change', function () {
 
-            var listOfBatches = <?php echo json_encode($listOfBatches);?>;
+             var listOfBatches = <?php echo json_encode($listOfBatches);?>;
             var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
             var selectedProgram = $('#program').val();
             let i;

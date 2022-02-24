@@ -95,7 +95,7 @@ if($accumulatedWeightageForMidterm == 25){
             <!--            Adding Addition Button-->
             <div class='flex justify-center pt-8 pb-8 <?php echo $showAddButton;?>'>
                 <img class="cursor-pointer" name="addNewMidtermBtn"
-                     src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+                     src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
             </div>
         </div>
     </div>

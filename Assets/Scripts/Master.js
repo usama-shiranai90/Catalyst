@@ -7,7 +7,7 @@ window.onload = function () {
         //For removing focus from navigation items
         let navigators = document.querySelectorAll(".navigationItemSelected")
         navigators.forEach((item) => {
-            if (item.id != selectedItemID) {
+            if (item.id !== selectedItemID) {
                 item.classList.remove("navigationItemSelected")
 
                 //For removing focus from SVGs in navigation items

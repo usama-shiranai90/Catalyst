@@ -29,6 +29,7 @@ class CLO
         $this->cloDescription = $cloDescription;
         $this->cloDomain = $cloDomain;
         $this->cloBtLevel = $cloBtLevel;
+        $this->mappedPLOs = array();
     }
 
     public function retrieveAllCLOPerCourse($curriculumID, $programID, $courseCode, $deleteFromMappingArray): array
@@ -47,6 +48,7 @@ class CLO
             $tempArray = array(); //  plos.
             $currentCLO = '';
             while ($row = $result->fetch_assoc()) {
+//                echo "counter  ". $row['cloName'] ."<br>";
                 if ($currentCLO != $row["cloName"]) {
                     if (sizeof($tempArray) != 0) {
 //                        echo "Inserting PLOs again CLO " . $currentCLO . "<br>";
@@ -60,9 +62,11 @@ class CLO
                 }
                 $tempArray[] = [$row['PLOCode'], $row["ploName"], $row["ploDescription"]];
             }
-//            echo "Inserting PLOs again CLO " . $currentCLO . "<br>";
             sort($tempArray);
             array_push($this->mappedPLOs, $tempArray);
+
+            echo "CLO list is :".json_encode($CLOlist);
+
         } else
             echo "Cant find clo : " . $this->databaseConnection->error;
 

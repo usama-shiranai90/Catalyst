@@ -331,7 +331,7 @@ function getSessionalData($sessionalData, $index)
                     </div>
                     <div class='flex justify-center pt-5 pb-8'>
                         <img class="cursor-pointer" id="addNewSessionalQuestionBtnID" name="addNewSessionalQuestionBtn"
-                             src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+                             src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
                     </div>
                 </div>
 

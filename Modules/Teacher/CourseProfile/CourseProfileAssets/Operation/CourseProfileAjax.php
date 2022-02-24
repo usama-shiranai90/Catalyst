@@ -17,7 +17,7 @@ $ploArray = $_SESSION['ploList'];
 
 $sectionCode = $_SESSION['selectedSection'];
 
-if (isset($_POST['saved']) and $_POST['saved']  ) {
+if (isset($_POST['saved']) and $_POST['saved']) {
     if (isset($_POST['arrayCLO']) && isset($_POST['arrayMapping']) && isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue'])) {
 
         $courseEssentialArray = $_POST['courseEssentialFieldValue'];
@@ -42,8 +42,7 @@ if (isset($_POST['saved']) and $_POST['saved']  ) {
         echo $_POST['courseDetailFieldValue'];
         die(json_encode(array('message' => 'ERROR')));
     }
-}
-elseif (isset($_POST['del']) and $_POST['del']) {
+} elseif (isset($_POST['del']) and $_POST['del']) {
     $curriculum->fetchCurriculumID($sectionCode);
 
     if ($_POST['deletedCLOIdsArray'] !== "" and isset($_POST['deletedCLOIdsArray'])) {  // Undefined array key when no id for deletion is pass.
@@ -64,16 +63,13 @@ elseif (isset($_POST['del']) and $_POST['del']) {
                 $courseProfile->deleteCourseProfileCLOPLOMapping($currentCLOCode);
         }
         echo(json_encode(array('message' => 'Course Profile Description and Mapping Relation Deleted.')));
-    }
-
-    else {
+    } else {
         echo print_r(json_encode($_POST['deletedCLOIdsArray'])) . "<br>";
         echo print_r($_POST['remainingCLOIds']) . "<br>";
         die(json_encode(array('message' => 'ERROR123')));
     }
 
-}
-elseif (isset($_POST['update']) and $_POST['update']) {
+} elseif (isset($_POST['update']) and $_POST['update']) {
 
     if (isset($_POST['courseEssentialFieldValue']) && isset($_POST['courseDetailFieldValue']) && isset($_POST['arrayMapping'])
         && isset($_POST['courseCLODescriptionUpdateArray'])) {
@@ -107,8 +103,8 @@ elseif (isset($_POST['update']) and $_POST['update']) {
         if (isset($_POST['recentlyAddedCLOsDescriptionArray'])) {
             $courseCloRecentDescriptionArray = $_POST['recentlyAddedCLOsDescriptionArray']; // newly created clo description array.
             $courseProfile->createCourseCLOs($courseCloRecentDescriptionArray, $courseMappingArray, $ploArray, $cloCodeArrayExisting);
-        }
-        else{
+        } else {
+            echo "wtf im here" . json_encode($courseMappingArray);
             $courseProfile->createCourseCLOs(null, $courseMappingArray, $ploArray, $cloCodeArrayExisting);
         }
         die((json_encode(array('message' => 'Data Send Successfully'))));

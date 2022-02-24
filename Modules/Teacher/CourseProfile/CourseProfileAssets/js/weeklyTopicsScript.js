@@ -87,7 +87,7 @@ window.onload = function (e) {
             console.log("Deleted Weekly Topics List : ", deletedWeeklyTopics, deletedWeeklyTopics.length === 0)
 
             if (deletedWeeklyTopics.length === 0 && (typeof updateWeeklyTopics === 'object' && Object.entries(updateWeeklyTopics).length === 0)) {
-                console.log("in creation", recentlyAddedWeeklyTopics);
+                // console.log("in creation", recentlyAddedWeeklyTopics);
                 createWeeklyTopicsAjaxCall(recentlyAddedWeeklyTopics);
             } else {
                 console.log("in updation", deletedWeeklyTopics, Object.keys(updateWeeklyTopics), updateWeeklyTopics, recentlyAddedWeeklyTopics)
@@ -141,7 +141,7 @@ window.onload = function (e) {
             let modifiedIndex = $(event.target).closest(pclass).index()
             $(event.target).toggleClass("hidden")
 
-            console.log("My Modified Index is :", modifiedIndex , $(this).closest(pclass) )
+            console.log("My Modified Index is :", modifiedIndex, $(this).closest(pclass))
 
             $(this).closest(pclass).children().each((index, node) => {
                 console.log(index, node)
@@ -246,7 +246,6 @@ window.onload = function (e) {
         }
     }
 
-
     function createNewWeeklyRow(currentWeekNo, courseCLOList) {
         const str = `<div id="weeklyCoveredRow-${currentWeekNo}"
      class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
@@ -324,20 +323,28 @@ function autoHeight(element) {
 
 function createWeeklyTopicsAjaxCall(recentlyAddedWeeklyTopics) {
 
-    console.log("into creation state : ", recentlyAddedWeeklyTopics)
     $.ajax({
-        type: "POST",
+        // contentType: false,
+        // contentType: "application/json; charset=utf-8",
+        // dataType: "json",
         url: "CourseProfileAssets/Operation/WeeklyTopicAjax.php?actionType=add",
-        data: {
+        type: "POST",
+        timeout: 500,
+        cache: false,
+        data:{
             "arrayWeeklyTopics": recentlyAddedWeeklyTopics,
             creation: true
         },
+
         beforeSend: function () {
             $("main").toggleClass("blur-filter");
             $('#loader').toggleClass('hidden')
         },
-        success: function (data) {
-            console.log(data);
+        success: function (data, status) {
+            console.log(data, status);
+        },
+        error: function (xhr, desc, err) {
+            console.log("not working fine" + xhr + "\n" + desc + "\n" + err)
         },
         complete: function () {
             setInterval(function () {

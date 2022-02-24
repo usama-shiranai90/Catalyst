@@ -1,4 +1,18 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
+session_start();
+
+$studentRegCode = $_SESSION['studentRegistrationCode'];
+$batchCode = $_SESSION['batchCode'];
+$programCode = $_SESSION['programCode'];
+
+$personalDetails = array();
+$student = unserialize($_SESSION['studentInstance']);
+$personalDetails = $student->getPersonalDetails();
+
+echo json_encode($personalDetails);
+
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -82,7 +96,8 @@
                     <div class="shadow-lg rounded-2xl w-full h-40  p-4 py-4 bg-white">
                         <div class="flex flex-col items-center justify-center">
                             <div class="rounded-full relative">
-                                <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Current <br>Semester</p>
+                                <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Current <br>Semester
+                                </p>
                             </div>
                             <p class="text-3xl font-semibold" style="color: #003C9C">7</p>
                         </div>
@@ -90,7 +105,8 @@
                     <div class="shadow-lg rounded-2xl w-full h-40  p-4 py-4 bg-white">
                         <div class="flex flex-col items-center justify-center">
                             <div class="rounded-full relative">
-                                <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">credit<br> hour</p>
+                                <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">
+                                    credit<br> hour</p>
                             </div>
                             <p class="text-3xl font-semibold" style="color: #003C9C">15</p>
                         </div>
@@ -98,14 +114,15 @@
                     <div class="shadow-lg rounded-2xl w-full h-40  p-4 py-4 bg-white">
                         <div class="flex flex-col items-center justify-center">
                             <div class="rounded-full relative">
-                                <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Enrolled <br>Courses</p>
+                                <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">
+                                    Enrolled <br>Courses</p>
                             </div>
                             <p class="text-3xl font-semibold" style="color: #003C9C">6</p>
                         </div>
                     </div>
                     <div class="col-span-2 bg-white border-2 border-solid rounded-md">
-                            <div id="studentCurrentPLOProgress" class="rounded-full">
-                            </div>
+                        <div id="studentCurrentPLOProgress" class="rounded-full">
+                        </div>
                     </div>
                     <div class="col-span-2 bg-white border-2 border-solid rounded-md">
                         <div id="studentCurrenGPAProgress" class="rounded-full">
@@ -113,15 +130,14 @@
                     </div>
 
 
-                <!--   Enrolled Courses.  -->
+                    <!--   Enrolled Courses.  -->
                     <div class="col-span-4 flex flex-row border-2 border-solid rounded-md">
 
                         <!--   register courses list left side.  -->
                         <div class="text-black rounded-t-md rounded-b-md mt-2 w-5/12">
                             <h2 class="text-md pl-5 my-2 font-bold">Register Courses</h2>
 
-                            <section class="py-4 clo-container">
-
+                            <section class="py-4 clo-container" id="registerCourseDivID">
                                 <!--  Subjects list -->
                                 <div class="mb-10  py-1 gap-5 grid grid-rows-6 font-medium text-sm text-gray-700">
                                     <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
@@ -156,7 +172,7 @@
                                 <thead>
                                 <tr class="text-center bg-catalystLight-f5">
                                     <th class="capitalize px-4 w-1/4 py-3 title-font tracking-wider font-medium text-sm rounded-tl rounded-bl">
-                                       course learning outcome
+                                        course learning outcome
                                     </th>
                                     <th class="capitalize px-4 py-3 w-full title-font tracking-wider font-medium text-sm">
                                         Description
@@ -170,8 +186,12 @@
                                 <tbody id="courseTableBodyID">
                                 <tr class="text-center text-sm font-base tracking-tight">
                                     <td class="px-4 py-3">CLO-1</td>
-                                    <td class="px-4 py-3 ">To control the letter spacing of an element at a specific breakpoint</td>
-                                    <td class="px-4 py-3"><i class="fa text-gray-600 fa-ellipsis-v hover:text-catalystBlue-l61"></i></td>
+                                    <td class="px-4 py-3 ">To control the letter spacing of an element at a specific
+                                        breakpoint
+                                    </td>
+                                    <td class="px-4 py-3"><i
+                                                class="fa text-gray-600 fa-ellipsis-v hover:text-catalystBlue-l61"></i>
+                                    </td>
                                 </tr>
 
                                 </tbody>
@@ -188,8 +208,8 @@
 <script>
     const colors = ['#016ADD', '#0183FB', '#4DBFFE']
 
-    ploArray = [24,55,99.9,52,72,57,0 , 0 , 0 ,18,51,38]; // fetch from server.
-    semesterResultArray = [2.35 , 3.52 , 3.8 ,3.9 ,3.4];  // fetch from server
+    ploArray = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38]; // fetch from server.
+    semesterResultArray = [2.35, 3.52, 3.8, 3.9, 3.4];  // fetch from server
     let cgpaProgress = new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), getCGPA_Progress(3.45));
 
     let ploChart = new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), getStudentPLOProgress(ploArray));
@@ -201,7 +221,7 @@
 
 
     function getCGPA_Progress(currentCGPA = 2) {
-       return {
+        return {
             series: [valueToPercent(currentCGPA)],
             chart: {
                 height: 180,
@@ -250,7 +270,7 @@
                             fontSize: '24px'
                         },
                         value: {
-                            formatter: function(val) {
+                            formatter: function (val) {
                                 return currentCGPA;
                             },
                             color: '#242632',
@@ -266,19 +286,20 @@
                     shade: 'dark',
                     type: 'vertical',
                     shadeIntensity: 0.5,
-                    gradientToColors: ['#0180F7' , "#01409B" , "#0259C2"],
+                    gradientToColors: ['#0180F7', "#01409B", "#0259C2"],
                     inverseColors: true,
                     opacityFrom: 1,
                     opacityTo: 1,
-                    stops: [0,100]
+                    stops: [0, 100]
                 }
             },
             stroke: {
                 lineCap: 'round'
             },
-           labels: ["CGPA"]
+            labels: ["CGPA"]
         };
     }
+
     function getStudentPLOProgress(ploArrayList) {
         return {
             series: [{
@@ -290,7 +311,7 @@
                 type: 'bar',
                 stacked: true,
                 events: {
-                    click: function(chart, w, e) {
+                    click: function (chart, w, e) {
 
                     }
                 },
@@ -335,21 +356,21 @@
                 },
                 offsetX: 15
             },
-            subtitle:{
+            subtitle: {
                 text: 'Following graph shows current status of PLO covered so far.',
                 offsetX: 15,
                 offsetY: 22
             },
             xaxis: {
                 min: 1,
-                max : ploArrayList.size,
+                max: ploArrayList.size,
                 categories: [ // Mention each PLO  here.
                     ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12']],
 
                 labels: {
                     enabled: true,
                     style: {colors: ['#111']},
-                    background: { enabled: true, foreColor: '#fff', borderWidth: 0  },
+                    background: {enabled: true, foreColor: '#fff', borderWidth: 0},
                 },
                 title: {
                     text: "Program Learning Outcome",
@@ -362,8 +383,8 @@
                     },
                 },
             },
-            yaxis:{
-                min : 0,
+            yaxis: {
+                min: 0,
                 max: 100,
                 title: {
                     text: "Percentage",
@@ -380,9 +401,9 @@
     }
 
     function getStudentGPA(semesterArray) {
-        let totalSemester =[];
-        semesterArray.forEach(function (key , value) {
-            totalSemester.push((value+1))
+        let totalSemester = [];
+        semesterArray.forEach(function (key, value) {
+            totalSemester.push((value + 1))
         })
 
         return {
@@ -395,7 +416,7 @@
                 type: 'bar',
                 stacked: true,
                 events: {
-                    click: function(chart, w, e) {
+                    click: function (chart, w, e) {
 
                     }
                 },
@@ -437,12 +458,12 @@
             },
             xaxis: {
                 min: 1,
-                max : semesterArray.size,
+                max: semesterArray.size,
                 categories: totalSemester,
                 labels: {
                     enabled: true,
                     style: {colors: ['#111']},
-                    background: { enabled: true, foreColor: '#fff', borderWidth: 0  },
+                    background: {enabled: true, foreColor: '#fff', borderWidth: 0},
                 },
                 title: {
                     text: "Semester",
@@ -459,7 +480,7 @@
         };
     }
 
-    function valueToPercent (value) {
+    function valueToPercent(value) {
         return (value * 100) / 4
     }
 </script>

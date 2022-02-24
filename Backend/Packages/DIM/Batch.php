@@ -29,11 +29,11 @@ class Batch implements JsonSerializable{
 
             while ($row = $result->fetch_assoc()) {
                 $newBatch = new Batch();
-                $newBatch->batchCode = $row["batchCode"];
-                $newBatch->batchName = $row["batchName"];
+                self::$batchCode = $row["batchCode"];
+//                $newBatch->batchName = $row["batchName"];
                 $newBatch->curriculumCode = $row["curriculumCode"];
                 $newBatch->programCode = $row["programCode"];
-                $newBatch->year = $row["year"];
+                $newBatch->batchYear = $row["year"];
 
                 array_push($listOfBatches, $newBatch);
             }

@@ -1,9 +1,19 @@
 <?php
+include $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
+if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
+    session_start();
+
+$sessional = new Sessional();
+$assignmentSessional = $sessional->getSessionals($_SESSION['selectedSection'], $_SESSION['selectedCourse'], "Assignment");
+$quizSessional = $sessional->getSessionals($_SESSION['selectedSection'], $_SESSION['selectedCourse'], "Quiz");
+$projectSessional = $sessional->getSessionals($_SESSION['selectedSection'], $_SESSION['selectedCourse'], "Project");
+
+
 
 
 $subject = $section = "";
-$courseSessional = array("f18-os-a1"=>"Assignment 1", "f18-os-a2"=> "Assignment 2","f18-os-q1"=> "Quiz 1",
-    "f18-os-a3"=> "Assignment 3", "f18-os-a4"=> "Assignment 4", "f18-os-q2"=>"Quiz 2", "f18-os-q3"=>"Quiz 3");
+$courseSessional = array("f18-os-a1" => "Assignment 1", "f18-os-a2" => "Assignment 2", "f18-os-q1" => "Quiz 1", "f18-os-a3" => "Assignment 3", "f18-os-a4" => "Assignment 4", "f18-os-q2" => "Quiz 2", "f18-os-q3" => "Quiz 3");
+
 
 ?>
 

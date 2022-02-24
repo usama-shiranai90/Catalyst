@@ -10,6 +10,7 @@ $courseProfile = new CourseProfile();
 $viewCLODescription = '';
 $viewCLOMapping = '';
 
+
 $ploArray = $_SESSION['ploList'];
 
 if (count($ploArray) != 0) { // if we have plo then enter.
@@ -49,6 +50,13 @@ if (count($ploArray) != 0) { // if we have plo then enter.
     }
 
 }
+$mem_usage = memory_get_usage();
+$mem_peak = memory_get_peak_usage();
+
+echo 'The script is now using: <strong>' . round(memory_get_usage() / 1024) . 'KB</strong> of memory.<br>';
+echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<br><br>';
+
+
 ?>
 
 <!doctype html>
@@ -125,7 +133,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                             class=" cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -490,6 +498,8 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                  style="background-color: #0284fc">
                                 <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
                                 <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
+
+                                    <!-- Name -->
                                     <div class="assessment-wrap mx-35">
                                         <h3>Name</h3>
                                         <div class="vertical-line"></div>
@@ -498,11 +508,12 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?>"
                                                       id="nameDetailID"
-                                                      name="nameDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?></textarea>
-                                            <label class="textField-label my-2">Detail</label>
+                                                      name="nameDetail"
+                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?></textarea>
+                                            <label class="textField-label my-2 sm:my-4">Detail</label>
                                         </div>
                                     </div>
-                                    <!--                                                           Designation-->
+                                    <!-- Designation-->
                                     <div class="assessment-wrap mx-35 ">
                                         <h3>Designation</h3>
                                         <div class="vertical-line"></div>
@@ -510,7 +521,8 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                             <label for="DesignationDetailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="DesignationDetailID"
-                                                      name="DesignationDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorDesignation() ?></textarea>
+                                                      name="DesignationDetail"
+                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorDesignation() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -523,7 +535,8 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?>"
                                                       id="qualificationID"
-                                                      name=" QualificationDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?></textarea>
+                                                      name=" QualificationDetail"
+                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -535,7 +548,8 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?>"
                                                       id="specializationID"
-                                                      name="SpecializationDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?></textarea>
+                                                      name="SpecializationDetail"
+                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -547,7 +561,8 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="contactsID"
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?>"
-                                                      name="ContactsDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?></textarea>
+                                                      name="ContactsDetail"
+                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -559,7 +574,8 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="personalEmailID"
                                                       value="<?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?>"
-                                                      name="PersonalEmailDetail"><?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?></textarea>
+                                                      name="PersonalEmailDetail"
+                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -576,7 +592,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class=" hidden cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">
@@ -796,9 +812,9 @@ if (count($ploArray) != 0) { // if we have plo then enter.
         initialCLOMapping = <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)  ?>;
         coursTitle = <?php echo json_encode($courseProfile->getCourse()->getCourseTitle()) ?>;
 
-        console.log("Initial Values List :")
-        console.log("Description", initialCLODescription);
-        console.log("Mapping", initialCLOMapping)
+        // console.log("Initial Values List :")
+        // console.log("Description", initialCLODescription);
+        // console.log("Mapping", initialCLOMapping)
         updationTextSet(coursTitle);
     }
 
