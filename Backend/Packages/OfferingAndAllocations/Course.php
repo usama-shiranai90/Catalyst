@@ -2,7 +2,7 @@
 
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\db.php";
 
-class Course
+class Course implements JsonSerializable
 {
     protected $databaseConnection;
     protected $preReqList;
@@ -16,6 +16,68 @@ class Course
         $this->databaseConnection = DatabaseSingleton:: getConnection();
         $this->courseCLOList = array();
         $this->preReqList = array();
+    }
+
+    public function retrieveCourseName($courseCode): void
+    {
+        $this->setCourseCode($courseCode);
+        $sql = /** @lang text */
+            "select courseTitle from course where courseCode = \"$courseCode\"";
+        $result = $this->databaseConnection->query($sql);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $this->courseName = $row["courseTitle"];
+            }
+        } else
+            echo "No course found with course code:".$courseCode;
+    }
+    public function retreiveCourseCLOList($courseCode, $programCode, $curriculumCode, $batchCode): void
+    {
+        $sql = /** @lang text */
+            "select * from clo where courseCode = \"$courseCode\" and curriculumCode = \"$curriculumCode\" 
+            and programCode = \"$programCode\" and batchCode = \"$batchCode\"";
+        $result = $this->databaseConnection->query($sql);
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $newCLO = new CLO();
+                $newCLO->setCloCode($row["CLOCode"]);
+                $newCLO->setCloName($row["cloName"]);
+                $newCLO->setCloDescription($row["description"]);
+                array_push($this->courseCLOList, $newCLO);
+            }
+        } else{
+            echo "No CLOs found for course code: ".$courseCode;
+            echo "<br>Program Code: ".$programCode;
+            echo "<br>Curriculum Code: ".$curriculumCode;
+            echo "<br>Batch Code: ".$batchCode;
+            echo "<br>Course Code: ".$courseCode;
+        }
+    }
+
+    public function setCourseCLOList($courseCode, $programCode, $curriculumCode, $batchCode): void
+    {
+        $sql = /** @lang text */
+            "select * from clo where courseCode = \"$courseCode\" and curriculumCode = \"$curriculumCode\" 
+            and programCode = \"$programCode\" and batchCode = \"$batchCode\"";
+//            "select * from clo where courseCode = \"$courseCode\" and curriculumCode = \"$curriculumCode\" and programCode = \"$programCode\"";
+        $result = $this->databaseConnection->query($sql);
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $newCLO = new CLO();
+                $newCLO->creation($row["CLOCode"], $row["cloName"], $row["description"], $row["domain"], $row["btLevel"]);
+                array_push($this->courseCLOList, $newCLO);
+            }
+        } else {
+            echo "No CLOs found for course code: ".$courseCode;
+            echo "<br>Program Code: ".$programCode;
+            echo "<br>Curriculum Code: ".$curriculumCode;
+            echo "<br>Batch Code: ".$batchCode;
+            echo "<br>Course Code: ".$courseCode;
+        }
     }
 
     public function setCourseName($courseCode): void
@@ -82,17 +144,6 @@ class Course
         $this->preReqList = $preReqList;
     }
 
-    public function toString()
-    {
-        echo "<br>CourseTitle:" . $this->getCourseTitle() . ", ";
-        echo "<br>CourseCode:" . $this->getCourseCode() . ", ";
-        echo "<br>creditHour:" . $this->getCourseCreditHour() . ", ";
-        echo "<br>CLOList: ";
-        for ($x = 0; $x < sizeof($this->getCourseCLOList()); $x++) {
-            echo $this->getCourseCLOList()[$x]->toString();
-        }
-    }
-
     public function getCourseTitle()
     {
         return $this->courseName;
@@ -129,21 +180,21 @@ class Course
         return $this->courseCLOList;
     }
 
-    public function setCourseCLOList($courseCode, $programCode, $curriculumCode): void
+    public function toString()
     {
-        $sql = /** @lang text */
-            "select * from clo where courseCode = \"$courseCode\" and curriculumCode = \"$curriculumCode\" and programCode = \"$programCode\"";
-        $result = $this->databaseConnection->query($sql);
-
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $newCLO = new CLO();
-                $newCLO->creation($row["CLOCode"], $row["cloName"], $row["description"], $row["domain"], $row["btLevel"]);
-                array_push($this->courseCLOList, $newCLO);
-            }
-        } else {
-//            echo "No CLOs found for course code: ".$courseCode;
+        echo "<br>CourseTitle:" . $this->getCourseTitle() . ", ";
+        echo "<br>CourseCode:" . $this->getCourseCode() . ", ";
+        echo "<br>CLOList: ";
+        for ($x = 0; $x < sizeof($this->getCourseCLOList()); $x++) {
+            echo $this->getCourseCLOList()[$x]->toString();
         }
     }
 
+    public function jsonSerialize()
+    {
+        return array(
+            'courseCode'=>$this->courseCode,
+            'courseName'=>$this->courseName,
+        );
+    }
 }

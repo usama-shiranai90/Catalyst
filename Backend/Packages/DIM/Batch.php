@@ -3,11 +3,11 @@
 class Batch implements JsonSerializable{
 
     protected static int $batchCode;
-    protected string $batchYear;
-
-    private $programCode;
     private $batchName;
+
+    protected string $batchYear;
     private $curriculumCode;
+    private $programCode;
 
     protected $databaseConnection;
 
@@ -17,7 +17,7 @@ class Batch implements JsonSerializable{
     }
 
 
-    public function retrieveAllBatches()
+    public function retrieveAllBatches(): array
     {
         $sql = /** @lang text */
             "select * from batch";
@@ -30,7 +30,7 @@ class Batch implements JsonSerializable{
             while ($row = $result->fetch_assoc()) {
                 $newBatch = new Batch();
                 self::$batchCode = $row["batchCode"];
-//                $newBatch->batchName = $row["batchName"];
+                $newBatch->batchName = $row["batchName"];
                 $newBatch->curriculumCode = $row["curriculumCode"];
                 $newBatch->programCode = $row["programCode"];
                 $newBatch->batchYear = $row["year"];

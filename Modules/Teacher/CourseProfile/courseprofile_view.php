@@ -26,7 +26,7 @@ $courseProfile->loadCourseProfileData($_SESSION['cp_id']);
 $curriculum = new Curriculum();
 
 $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
-$ploArray = $curriculum->retrievePLOsList(); // get from server // returns array of PLO with id , name , description.
+$ploArray = $curriculum->retrievePLOsList($_SESSION['selectedProgram']); // get from server // returns array of PLO with id , name , description.
 
 $cloObject = new CLO();
 
@@ -119,8 +119,10 @@ $viewCLOMapping = $cloObject->mappedPLOs;
             </div>
         </div>
     </header>
+
     <main class="main-content-alignment">
-        <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 min-h-full bg-catalystLight-f5">
+        <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2
+        min-h-full bg-catalystLight-f5">
             <h2 class="cprofile-container-centertxt"> Course-Name Course Profile</h2>
 
             <!--    course profile whole section     -->

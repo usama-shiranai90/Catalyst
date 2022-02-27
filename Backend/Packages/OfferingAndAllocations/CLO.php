@@ -10,16 +10,18 @@ class CLO
     public $mappedPLOs;
     public $databaseConnection;
 
-//    public function __construct($cloCode,$cloName, $cloDescription)
+    //    public function __construct($cloCode,$cloName, $cloDescription)
 //    {
 //        $this->cloCode = $cloCode;
 //        $this->cloName = $cloName;
 //        $this->cloDescription = $cloDescription;
 //        $this->MappedPLOs = array();
 //    }
+
     public function __construct()
     {
         $this->mappedPLOs = array();
+        $this->databaseConnection = DatabaseSingleton::getConnection();
     }
 
     public function creation($cloCode, $cloName, $cloDescription, $cloDomain, $cloBtLevel)
@@ -36,7 +38,7 @@ class CLO
     {
         $CLOlist = array();
 
-        $this->databaseConnection = DatabaseSingleton::getConnection();
+
         $sql = /** @lang text */
             "select co.courseCode ,co.cloName ,co.description ,co.domain ,co.btLevel ,co.CLOCode  ,map.CLOCode,map.PLOCode , p.ploName , p.ploDescription
             from clo as co  join clotoplomapping map on co.CLOCode = map.CLOCode join plo p on map.PLOCode = p.PLOCode where 
@@ -101,11 +103,10 @@ class CLO
     }
 
 
-    public function retrieveCLOlist($curriculumID, $programID, $courseCode): array
+    public function retrieveCLOlist($curriculumID, $programID, $courseCode): ?array
     {
         $CLOlist = array();
 
-        $this->databaseConnection = DatabaseSingleton::getConnection();
         $sql = /** @lang text */
             "select co.courseCode ,co.cloName ,co.description ,co.domain ,co.btLevel ,co.CLOCode  ,map.CLOCode,map.PLOCode , p.ploName , p.ploDescription
             from clo as co  join clotoplomapping map on co.CLOCode = map.CLOCode join plo p on map.PLOCode = p.PLOCode where 
@@ -117,14 +118,73 @@ class CLO
             while ($row = $result->fetch_assoc()) {
                 if ($currentCLO != $row["cloName"]) {
                     $currentCLO = $row["cloName"];
-                    $CLOlist[] = [$row['CLOCode'], $row["cloName"]];
+                    $CLOlist[] = [$row['CLOCode'], $row["cloName"] , $row['description']];
                 }
             }
+            return $CLOlist;
 //            echo "List Of Respective CLOs :<br>";
         } else
             echo "Cant retrieve clo : " . $this->databaseConnection->error;
+        return null;
+    }
 
-        return $CLOlist;
+    public function retrieveCloName($cloCode)
+    {
+        $sql = /** @lang text */
+            "select cloName from clo where CLOCode = \"$cloCode\"";
+
+        $result = $this->databaseConnection->query($sql);
+
+        if (mysqli_num_rows($result) == 1) {
+            while ($row = $result->fetch_assoc()) {
+                $this->cloName = $row['cloName'];
+            }
+
+        } else {
+            echo "No cloName found with cloCode: " . $cloCode;
+
+        }
+        return $this->cloName;
+    }
+
+
+    public function retrieveCloCode($cloCode)
+    {
+        return $this->cloCode;
+    }
+
+    public function setCloCode($cloCode): void
+    {
+        $this->cloCode = $cloCode;
+    }
+
+    public function setCloName($cloName): void
+    {
+        $this->cloName = $cloName;
+    }
+
+    public function retrieveCloDescription($cloCode)
+    {
+        return $this->cloDescription;
+    }
+
+    public function setCloDescription($cloDescription): void
+    {
+        $this->cloDescription = $cloDescription;
+    }
+
+    public function getCloCode()
+    {
+        return $this->cloCode;
+    }
+    public function getCloName()
+    {
+        return $this->cloName;
+    }
+
+    public function getCloDescription()
+    {
+        return $this->cloDescription;
     }
 
     public function toString()
@@ -132,6 +192,8 @@ class CLO
         echo "CLOName:" . $this->cloName . ", ";
         echo "CLODescription:" . $this->cloDescription . "<br> ";
     }
-}
 
+
+
+}
 ?>

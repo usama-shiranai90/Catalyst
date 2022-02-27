@@ -1,9 +1,10 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\WeeklyTopic.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\WeeklyTopic.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
+
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
@@ -13,7 +14,7 @@ $weeklyInfo = new WeeklyTopic();
 $curriculum = new Curriculum();
 $cloObject = new CLO();
 
-$profileExist = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+$profileExist = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedBatch']);
 
 $CLOList = '';
 $viewWeeklyTopics = '';

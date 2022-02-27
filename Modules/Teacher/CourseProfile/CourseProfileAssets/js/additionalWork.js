@@ -3,6 +3,10 @@ function isNumeric(selectedInput) {
     // return selectedInput.value = selectedInput.value.replace(/[^0-9.]/g, '').replace(/(..?)\..*/g, '');
 }
 
+function isNum(val) {
+    return !isNaN(val)
+}
+
 function isCharacterALetter(char) {
     return (/[a-zA-Z]/).test(char)
 }
@@ -11,7 +15,6 @@ function isCharacterALetter(char) {
 function showTooltip(flag) {
     const toolid = 'tooltip' + flag;
     $(`div[id='${toolid}']`).removeClass('hidden');
-
 }
 
 function hideTooltip(flag) {

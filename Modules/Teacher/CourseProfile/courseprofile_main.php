@@ -1,7 +1,9 @@
 <?php
 //echo realpath(dirname(__FILE__));
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
+
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
@@ -12,6 +14,8 @@ $viewCLOMapping = '';
 
 
 $ploArray = $_SESSION['ploList'];
+echo json_encode($ploArray);
+
 
 if (count($ploArray) != 0) { // if we have plo then enter.
     /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
@@ -26,7 +30,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
       'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
       'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
       'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
-    $isProfileCreated = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedCurriculum']);
+    $isProfileCreated = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'],$_SESSION['selectedBatch']); //  $_SESSION['selectedCurriculum']
     $_SESSION['batchCode'] = $courseProfile->getBatchCode();
 
     if ($isProfileCreated === true) {    // not created

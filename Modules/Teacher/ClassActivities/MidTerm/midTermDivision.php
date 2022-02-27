@@ -1,7 +1,8 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\Midterm.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\OfferingAndAllocations\Course.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\Midterm.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\OfferingAndAllocations\Course.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 session_start();
 
@@ -9,37 +10,39 @@ $selectedCourse = $_SESSION['selectedCourse'];
 $selectedSemester = $_SESSION['selectedSemester'];
 $selectedSection = $_SESSION['selectedSection'];
 
+$selectedCurriculum = $_SESSION['selectedCurriculum'];
+$selectedProgram = $_SESSION['selectedProgram'];
+$selectedBatch = $_SESSION['selectedBatch'];
 
-/************************ Getting Program code and curriculum code for displaying CLOs*****************************/
-
-$databaseConnection = DatabaseSingleton:: getConnection();
-$sql = /** @lang text */
-    "select programCode,b.batchCode, b.curriculumCode from section 
-    join semester s on s.semesterCode = section.semesterCode 
-    join batch b on s.batchCode = b.batchCode 
-    join curriculum c on c.curriculumCode = b.curriculumCode 
-    where sectionCode = \"$selectedSection\"";
-
-$result = $databaseConnection->query($sql);
-
-$selectedProgram = "";
-$selectedCurriculum = "";
-$selectedBatch = "";
-
-if (mysqli_num_rows($result) > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $selectedProgram = $row['programCode'];
-        $selectedCurriculum = $row['curriculumCode'];
-        $selectedBatch = $row['batchCode'];
-    }
-} else
-    echo "No Curriculum Code found sectionCode: " . $selectedSection;
+///************************ Getting Program code and curriculum code for displaying CLOs*****************************/
+//
+//$databaseConnection = DatabaseSingleton:: getConnection();
+//$sql = /** @lang text */
+//    "select programCode,b.batchCode, b.curriculumCode from section
+//    join semester s on s.semesterCode = section.semesterCode
+//    join batch b on s.batchCode = b.batchCode
+//    join curriculum c on c.curriculumCode = b.curriculumCode
+//    where sectionCode = \"$selectedSection\"";
+//
+//$result = $databaseConnection->query($sql);
+//
+//$selectedProgram = "";
+//$selectedCurriculum = "";
+//$selectedBatch = "";
+//
+//if (mysqli_num_rows($result) > 0) {
+//    while ($row = $result->fetch_assoc()) {
+//        $selectedProgram = $row['programCode'];
+//        $selectedCurriculum = $row['curriculumCode'];
+//        $selectedBatch = $row['batchCode'];
+//    }
+//} else
+//    echo "No Curriculum Code found sectionCode: " . $selectedSection;
 
 //$CLOList = ['CLO-1', 'CLO-2', 'CLO-3'];
 
 $course = new Course();
-$course->setCourseCLOList($selectedCourse, $selectedProgram, $selectedCurriculum);
-
+$course->retreiveCourseCLOList($selectedCourse, $selectedProgram, $selectedCurriculum, $selectedBatch);
 
 $CLONameList = array();
 $CLOCodeList = array();
@@ -47,6 +50,7 @@ foreach ($course->getCourseCLOList() as $c) {
     array_push($CLONameList, $c->getCLOName());
     array_push($CLOCodeList, $c->getCLOCode());
 }
+
 /***************************************************************************************/
 
 
@@ -61,6 +65,7 @@ $questionIDs = [];
 if (isset($_GET['midtermID'])) {
 //    Search the DB for data with this midtermID
     $editingMode = true;
+    $title = "Edit";
     $midtermID = $_GET['midtermID'];
 
     //    Retrieving data for midterm
@@ -103,6 +108,7 @@ else {
     $editingMode = false;
     $midtermData = null;
     $midtermID = null;
+    $title = "Create New";
 }
 
 
@@ -207,7 +213,7 @@ function getMidtermData($midtermData, $index)
 
 <div id="createMidtermID" class="m-5 border border-gray-300 border-opacity-100 rounded-md">
     <div class="p-3 text-center">
-        <label class="font-bold text-lg p-5 block">Add Mid Term</label>
+        <label class="font-bold text-lg p-5 block"><?php echo $title; ?> Midterm</label>
         <form method="post" id="newMidtermForm">
             <div class="grid grid-cols-12">
                 <div class="col-span-5 pt-5">

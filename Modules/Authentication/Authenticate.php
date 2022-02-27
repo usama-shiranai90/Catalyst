@@ -22,16 +22,13 @@ foreach ($listOfBatches as $batch) {
     $listOfPrograms[] = $program->retrieveProgram($batch->getProgramCode());
 }
 
-echo json_encode($listOfBatches)."<br>";
-echo json_encode($listOfPrograms);
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $accessGranted = false;
 
     if (isset($_POST["studentLogin"])) {
         if (!empty($_POST["batch"]) && !empty($_POST["program"]) && !empty($_POST["rollNo"]) && !empty($_POST["studentPassword"])) {
-//            $email = $_POST["batch"] . "-" . $_POST["program"] . "-" . $_POST["rollNo"];
-            $email = "F18" . "-" . "BCSE" . "-" . "011";
+            $email = $_POST["batch"] . "-" . $_POST["program"] . "-" . $_POST["rollNo"];
+//            $email = "F18" . "-" . "BCSE" . "-" . "011";
             $password = $_POST["studentPassword"];
             $user = new Student();
             $accessGranted = $user->login($email, $password);
@@ -248,11 +245,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <select class="select" name="batch" onclick="this.setAttribute('value', this.value);"
                                 onchange="this.setAttribute('value', this.value);" value="" id="batch">
                             <option value="" hidden></option>
-                            <option value="Alabama">Alabama</option>
-                            <option value="Boston">Boston</option>
-                            <option value="Ohaio">Ohaio</option>
-                            <option value="New York">New York</option>
-                            <option value="Washington">Washington</option>
+
+                            <?php
+                            $batchesBeingShown = array();
+
+                            for ($i = 0; $i < sizeof($listOfBatches); $i++) {
+                                if (!in_array($listOfBatches[$i]->getBatchName(), $batchesBeingShown)) {
+                                    echo "<option value='" . $listOfBatches[$i]->getBatchName() . "'>" . $listOfBatches[$i]->getBatchName() . "</option>";
+                                    array_push($batchesBeingShown, $listOfBatches[$i]->getBatchName());
+                                }
+                            }
+                            ?>
+
+
                         </select>
                         <label class="select-label">Batch</label>
                     </div>
@@ -260,27 +265,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="select-label-content  rollNumberSelectorsNormal" id="programDiv">
                         <select class="select" name="program" onclick="this.setAttribute('value', this.value);"
                                 onchange="this.setAttribute('value', this.value);" value="" id="program">
-                            <option value="" hidden></option>
-                            <option value="Alabama">Alabama</option>
-                            <option value="Boston">Boston</option>
-                            <option value="Ohaio">Ohaio</option>
-                            <option value="New York">New York</option>
-                            <option value="Washington">Washington</option>
+
+
                         </select>
                         <label class="select-label">Program</label>
                     </div>
+                    <div class="rollNumberSelectorsNormal" id="rollNoDiv">
+                        <div class="textField-label-content">
 
-                    <div class="select-label-content rollNumberSelectorsNormal" id="rollNoDiv">
-                        <select class="select" name="rollNo" onclick="this.setAttribute('value', this.value);"
-                                onchange="this.setAttribute('value', this.value);" value="" id="rollNo">
-                            <option value="" hidden></option>
-                            <option value="Alabama">Alabama</option>
-                            <option value="Boston">Boston</option>
-                            <option value="Ohaio">Ohaio</option>
-                            <option value="New York">New York</option>
-                            <option value="Washington">Washington</option>
-                        </select>
-                        <label class="select-label">Roll No</label>
+                            <input class="textField" type="text" placeholder=" " id="rollNo"
+                                   name="rollNo" value="">
+                            <label class="textField-label">Roll No</label>
+                        </div>
                     </div>
                 </div>
 
@@ -527,8 +523,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         var listOfBatches = JSON.parse(listOfBatches);
 
         //Setting semesters to show on course selection
-        /*      $('#batch').on('change', function () {
-                  var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
+        $('#batch').on('change', function () {
+            var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
             var selectedBatch = $(this).val();
 
             var options = '<option value="" hidden></option>';
@@ -544,14 +540,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
             $('#program').html(options)
-        })*/
+        })
 
 
         /*Setting values of hidden batchCode and programCode fields*/
-        /* $('#program').on('change', function () {
+        $('#program').on('change', function () {
 
-             var listOfBatches = <?php echo json_encode($listOfBatches);?>;
+            var listOfBatches = <?php echo json_encode($listOfBatches);?>;
             var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
+
             var selectedProgram = $('#program').val();
             let i;
             for (i = 0; i < listOfPrograms.length; i++) {
@@ -561,7 +558,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     break;
                 }
             }
-        })*/
+
+            // console.log($('input[name="batchCode"]').val())
+            // console.log($('input[name="programCode"]').val())
+        })
 
     })
 </script>

@@ -1,6 +1,6 @@
 <?php
 
-class Semester
+class Semester implements JsonSerializable
 {
     public $semesterCode;
     public $semesterName;
@@ -27,7 +27,7 @@ class Semester
         return $this->semesterName;
     }
 
-    public function setSemesterName($semesterCode): void
+    public function retrieveSemesterName($semesterCode): void
     {
         $this->setSemesterCode($semesterCode);
         $sql = /** @lang text */
@@ -43,6 +43,11 @@ class Semester
             echo "No semester found";
     }
 
+    public function setSemesterName($semesterName): void
+    {
+        $this->semesterName = $semesterName;
+    }
+
 
     public function toString()
     {
@@ -50,6 +55,13 @@ class Semester
         echo "<br>Semester Code:" . $this->getSemesterCode();
     }
 
+    public function jsonSerialize()
+    {
+        return array(
+            'semesterCode' => $this->semesterCode,
+            'semesterName' => $this->semesterName
+        );
+    }
 }
 
 ?>

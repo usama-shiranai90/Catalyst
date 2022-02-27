@@ -27,11 +27,7 @@ class Faculty extends User implements UserInterface
     {
         if (self::$instance == null) {
             self::$instance = new Faculty();
-//            echo "helooooooooooooooo";
-        } else {
-//            echo "old";
         }
-
         return self::$instance;
     }
 
@@ -40,7 +36,8 @@ class Faculty extends User implements UserInterface
         $this->email = $email;
         $this->password = $password;
 
-        $sql = "SELECT facultyCode FROM faculty where officialEmail = \"$this->email\" and password = \"$this->password\"";
+        $sql = /** @lang text */
+            "SELECT facultyCode FROM faculty where officialEmail = \"$this->email\" and password = \"$this->password\"";
 
         $authenticationResult = $this->databaseConnection->query($sql);
 
@@ -66,6 +63,25 @@ class Faculty extends User implements UserInterface
         return $this->facultyCode;
     }
 
+    public function setPersonalDetails(): void
+    {
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+        $personalDetails = array();
+        $sql = /** @lang text */
+            "select * from faculty where facultyCode = '$this->facultyCode'";
+
+        $result = $this->databaseConnection->query($sql);
+
+        if (mysqli_num_rows($result) == 1) {
+            while ($row = $result->fetch_assoc()) {
+                $personalDetails = $row;
+            }
+//            echo print_r($personalDetails);
+        } else
+            echo "No details found for faculty code: " . $this->facultyCode;
+        $this->personalDetails = $personalDetails;
+    }
+
     public function getPersonalDetails(): array
     {
         return $this->personalDetails;
@@ -87,26 +103,6 @@ class Faculty extends User implements UserInterface
             echo "Error updating record: " . $this->databaseConnection->error;
         }
 
-    }
-
-    public function setPersonalDetails(): void
-    {
-        $this->databaseConnection = DatabaseSingleton:: getConnection();
-        $personalDetails = array();
-        $sql = "select * from faculty where facultyCode = '$this->facultyCode'";
-
-        $result = $this->databaseConnection->query($sql);
-
-        if (mysqli_num_rows($result) == 1) {
-            while ($row = $result->fetch_assoc()) {
-                $personalDetails = $row;
-            }
-//            echo print_r($personalDetails);
-        } else
-            echo "No details found for faculty code: " . $this->facultyCode;
-
-
-        $this->personalDetails = $personalDetails;
     }
 
     function updatePassword($password): bool

@@ -1,6 +1,7 @@
 <?php
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\FinalExam.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\FinalExam.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 
 if (isset($_POST['finalExamID']) && isset($_POST['finalExamData'])) {
@@ -9,7 +10,7 @@ if (isset($_POST['finalExamID']) && isset($_POST['finalExamData'])) {
         $finalExam = new FinalExam();
         $finalExam->updateActivity($_POST['finalExamID'], $_POST['finalExamData'],$_POST['addedQuestions'], "Insert");
 
-        echo "insert";
+//        echo "insert";
         print_r($_POST['addedQuestions']);
     }
     if (isset($_POST['update']) and $_POST['update'] === "true" && isset($_POST['updatedQuestions'])) {
@@ -17,7 +18,7 @@ if (isset($_POST['finalExamID']) && isset($_POST['finalExamData'])) {
         $finalExam = new FinalExam();
         $finalExam->updateActivity($_POST['finalExamID'], $_POST['finalExamData'],$_POST['updatedQuestions'], "Update");
 
-        echo "update";
+//        echo "update";
         print_r($_POST['updatedQuestions']);
     }
     if (isset($_POST['delete']) and $_POST['delete'] === "true" && isset($_POST['deletedQuestionIDs'])) {
@@ -26,7 +27,7 @@ if (isset($_POST['finalExamID']) && isset($_POST['finalExamData'])) {
         $finalExam = new FinalExam();
         $finalExam->updateActivity($_POST['finalExamID'], $_POST['finalExamData'],$_POST['deletedQuestionIDs'], "Delete");
 
-        echo "delete";
+//        echo "delete";
         print_r($_POST['deletedQuestionIDs']);
     }
 }

@@ -75,7 +75,7 @@ if (isset($_POST['saved']) and $_POST['saved']) {
         && isset($_POST['courseCLODescriptionUpdateArray'])) {
 
         $curriculum->fetchCurriculumID($sectionCode);
-        $ploArray = $curriculum->retrievePLOsList();
+        $ploArray = $curriculum->retrievePLOsList($_SESSION['selectedProgram']);
 
         $courseEssentialArray = $_POST['courseEssentialFieldValue'];
         $courseDetailArray = $_POST['courseDetailFieldValue'];

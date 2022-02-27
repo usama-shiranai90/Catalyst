@@ -91,7 +91,7 @@
     @apply bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4;
 }
 
-.cprofile-container-centertxt, .weekly-topic-container-centertxt {
+.cprofile-container-centertxt, .weekly-topic-container-centertxt  , .student-profile-header-text{
     @apply text-xl text-center my-2 font-bold;
 }
 
@@ -178,7 +178,7 @@
 /*<editor-fold desc="Extra">*/
 
 .animate-loader-spinner {
-    @apply w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-violet-400;
+    @apply w-16 h-16 border-4 border-dashed rounded-full animate-spin;
 }
 
 /*  dot anime loader. */
@@ -187,31 +187,31 @@
 }
 
 .anime-loader-circular-child {
-    @apply w-4 h-4 rounded-full animate-pulse dark:bg-violet-400;
+    @apply w-4 h-4 rounded-full animate-pulse;
 }
 
 
 /* pagination page. */
 
 .pag-container {
-    @apply flex justify-center space-x-1 dark:text-coolGray-100;
+    @apply flex justify-center space-x-1;
 }
 
 .pag-selected-child {
-    @apply inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md dark:bg-coolGray-900 dark:text-violet-400 dark:border-violet-400;
+    @apply inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md ;
 }
 
 .pag-nonselected-child {
-    @apply inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-coolGray-900 dark:border-coolGray-800;
+    @apply inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md  ;
 }
 
 .pag-front-btn, .pag-back-btn {
-    @apply inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-coolGray-900 dark:border-coolGray-800;
+    @apply inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md  ;
 }
 
 /*  Message Shower #Snackbar */
 .message-notifier-snb-1 {
-    @apply flex items-center justify-between p-6 border-l-8 sm:py-8 dark:border-violet-400 dark:bg-coolGray-900 dark:text-coolGray-100;
+    @apply flex items-center justify-between p-6 border-l-8 sm:py-8 ;
 }
 
 
@@ -225,7 +225,6 @@
     px-5
     py-3
     mt-2
-    text-base text-neutral-600
     placeholder-gray-300
     transition
     duration-500
@@ -239,12 +238,10 @@
     focus:ring-2
     focus:ring-white
     focus:ring-offset-2
-    focus:ring-offset-gray-300
-    apearance-none
-    autoexpand;
+    focus:ring-offset-gray-300;
 }
 
-.signin-design{
+.signin-design {
     @apply flex
     items-center
     justify-center
@@ -267,6 +264,25 @@
     focus:ring-blue-500;
 }
 
+.db-table-container{
+    @apply bg-white outline-none ring-2 bg-white ring-gray-200 rounded-md hover:shadow-lg;
+}
+.db-table-header-topic{
+    @apply px-2 py-2 bg-catalystBlue-l8  border-gray-300 shadow-md rounded-t-md rounded-b-sm;
+}
+.db-table-header-text{
+    @apply text-center font-bold text-white;
+}
+
+/* old Design references. */
+
+/** gray solid-border with rounded shape. */
+.sutareta-waku-gray-p {
+    @apply border-2 border-solid rounded-md  border-gray-300 shadow-md;
+}
+.sutareta-waku-gray-c {
+    @apply px-2 py-2 sm:px-4 border-b border-gray-200 bg-white border-2 border-solid rounded-md    border-gray-300 shadow-md;
+}
 
 @tailwind utilities;
 

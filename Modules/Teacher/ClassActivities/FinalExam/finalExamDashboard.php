@@ -1,6 +1,7 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\FinalExam.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\FinalExam.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 
 session_start();
 
@@ -29,7 +30,7 @@ $totalProposedWeightageForFinalExam = 50;
 $accumulatedWeightageForFinalExam = $finalExam->getAccumulatedFinalExamWeightage($selectedSection, $selectedCourse);
 
 $showAddButton = "";
-if($accumulatedWeightageForFinalExam == 50){
+if ($accumulatedWeightageForFinalExam == 50) {
     $showAddButton = "hidden";
 }
 ?>
@@ -92,8 +93,9 @@ if($accumulatedWeightageForFinalExam == 50){
 
 
             <!--            Adding Addition Button-->
-            <div class='flex justify-center pt-8 pb-8 <?php echo $showAddButton;?>'>
-                <img class="cursor-pointer" name="addNewFinalExamBtn" src="../../../../Assets/Images/vectorFiles/Icons/plus.svg">
+            <div class='flex justify-center pt-8 pb-8 <?php echo $showAddButton; ?>'>
+                <img class="cursor-pointer" name="addNewFinalExamBtn"
+                     src="../../../../Assets/Images/vectorFiles/Icons/add-button.svg">
             </div>
         </div>
     </div>
@@ -190,7 +192,7 @@ if($accumulatedWeightageForFinalExam == 50){
 
         $("#accumulatedWeightageForFinalExamID").text(accumulatedWeightageForFinalExam)
 
-        let percentageofProgressBarforFinalExam =( accumulatedWeightageForFinalExam / totalProposedWeightageForFinalExam) * 100;
+        let percentageofProgressBarforFinalExam = (accumulatedWeightageForFinalExam / totalProposedWeightageForFinalExam) * 100;
 
         $("#finalExamProgressBarID").width(percentageofProgressBarforFinalExam + "%")
 

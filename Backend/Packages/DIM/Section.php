@@ -1,6 +1,6 @@
 <?php
 
-class Section
+class Section implements JsonSerializable
 {
     private $sectionName;
     private $sectionCode;
@@ -19,7 +19,7 @@ class Section
         return $this->sectionName;
     }
 
-    public function setSectionName($sectionCode)
+    public function retrieveSectionName($sectionCode)
     {
         $this->setSectionCode($sectionCode);
         $sql = /** @lang text */
@@ -31,11 +31,16 @@ class Section
             while ($row = $result->fetch_assoc()) {
                 $this->sectionName = $row["sectionName"];
                 $newSemester = new Semester();
-                $newSemester->setSemesterName($row["semesterCode"]);
+                $newSemester->retrieveSemesterName($row["semesterCode"]);
                 $this->semester = $newSemester;
             }
         } else
             echo "No section found";
+    }
+
+    public function setSectionName($sectionName): void
+    {
+        $this->sectionName = $sectionName;
     }
 
     public function setListOfStudentsInSectionInCourse($sectionCode, $courseCode): array
@@ -85,6 +90,33 @@ class Section
     }
 
 
+
+    public function retrieveSectionsInSemester($semesterCode){
+        $sql = /** @lang text */
+            "select sectionCode, sectionName from section where semesterCode = \"$semesterCode\"";
+        $result = $this->databaseConnection->query($sql);
+
+        $sectionsList = array();
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $newSection = new Section();
+                $newSection->setSectionName($row["sectionName"]);
+                $newSection->setSectionCode($row["sectionCode"]);
+                array_push($sectionsList, $newSection);
+            }
+        } else{
+//            echo "No sections found for semesterCode: ".$semesterCode."<br>";
+
+        }
+
+        return $sectionsList;
+    }
+
+
+
+
     public function toString()
     {
         echo "<br>Section Name:" . $this->getSectionName();
@@ -93,5 +125,13 @@ class Section
         for ($x = 0; $x < sizeof($this->listOfStudents); $x++) {
             echo $this->getListOfStudents()[$x]->toString();
         }
+    }
+
+    public function jsonSerialize()
+    {
+        return array(
+            'sectionCode' => $this->sectionCode,
+            'sectionName' => $this->sectionName
+        );
     }
 }

@@ -1,8 +1,12 @@
 <?php
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+/*include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\UserInterface.php";
+include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\User.php";
 include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Student.php";
 include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Section.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Sessional.php";
+include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Sessional.php";*/
+
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 
 session_start();
@@ -23,7 +27,7 @@ $regNumbers = array();
 $names = array();
 
 foreach ($listOfStudents as $currentStudent) {
-    array_push($regNumbers, $currentStudent->getRegistrationCode());
+    array_push($regNumbers, $currentStudent->getStudentRegistrationCode());
     array_push($names, $currentStudent->getStudentName());
 }
 
@@ -43,7 +47,7 @@ if (isset($_GET['sessionalID'])) {
     $sessional = new Sessional();
 
     foreach ($listOfStudents as $currentStudent) {
-        array_push($studentObtainedMarks, $sessional->getStudentMarksInActivity($_GET['sessionalID'], $currentStudent->getRegistrationCode()));
+        array_push($studentObtainedMarks, $sessional->getStudentMarksInActivity($_GET['sessionalID'], $currentStudent->getStudentRegistrationCode()));
     }
 
 //    print_r($studentObtainedMarks);
@@ -53,7 +57,7 @@ if (isset($_GET['sessionalID'])) {
 
         $sessional = new Sessional();
         foreach ($regNumbers as $singleStudentRegNum) {
-            echo "Student";
+//            echo "Student";
             $sessional->updateStudentMarksInActivity($singleStudentRegNum, $_GET['sessionalID'], $sessionalObtainedMarks[$singleStudentRegNum]);
         }
 
@@ -89,8 +93,7 @@ if (isset($_POST['submitSessionalMarks'])) {
         $sessional->enterStudentMarksForActivity($singleStudentRegNum, $latestActivityCode, $sessionalObtainedMarks[$singleStudentRegNum]);
     }
 
-
-//    header("Location: sessionalDashboard.php");
+    header("Location: sessionalDashboard.php");
 }
 
 if (isset($_POST['cancelSessionalMarksUpdate'])) {
@@ -269,6 +272,7 @@ if (isset($_POST['cancelSessionalMarks'])) {
         }
     }
 
+    //Hannan's
     //This function is called when we edit marks, thi function gives autofilled marks
     function createInputsWithAutofilledMarks(rowID, numberOfQuestions, rollNo, studentMarksList) {
         for (let i = 0; i < numberOfQuestions; i++) {

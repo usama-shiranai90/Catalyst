@@ -1,6 +1,7 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 
 class WeeklyTopic
 {
@@ -50,7 +51,7 @@ class WeeklyTopic
                 if (!$result1)
                     echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $clo_id . "   " . $weekID;
                 else
-                    echo "Checking if data of Weekly row is created : ". $clo_id . "   " . $weekID;
+                    echo "Checking if data of Weekly row is created : " . $clo_id . "   " . $weekID;
             }
 
         }
@@ -126,7 +127,6 @@ class WeeklyTopic
         if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
 
             while ($row = $result->fetch_assoc()) {
-
                 $weekCLOList = array();
                 $w_id = (int)$row['weeklyTopicCode'];
 
@@ -151,6 +151,39 @@ class WeeklyTopic
         print_r("what is the result" . json_encode($weeklyTopicListArray));
 
         return $weeklyTopicListArray;
+    }
+
+
+    public function retrieveLastInsertedWeeklyTopic($courseProfileCode): ?array
+    {
+        $sql = /** @lang text */
+            "select weeklyTopicCode , weeklyNo , topicDetail , assessmentCriteria from weeklytopics
+               where courseProfileCode = \"$courseProfileCode\" order BY weeklyTopicCode desc limit 1;";
+        $result = $this->databaseConnection->query($sql);
+
+        $soloWeeklyTopic = array();
+
+        if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $weekCLOList = array();
+                $w_id = (int)$row['weeklyTopicCode'];
+
+                $statmentSecond = /** @lang text */
+                    "select weeklyTopicCode, c.CLOCode, c.cloName from weeklytopicclo join clo c 
+                     on c.CLOCode = weeklytopicclo.CLOCode where weeklyTopicCode = \"$w_id\";";
+                $result2 = $this->databaseConnection->query($statmentSecond);
+                if (!empty(mysqli_num_rows($result2)) && mysqli_num_rows($result2) > 0) {
+                    while ($row2 = $result2->fetch_assoc()) {
+                        $weekCLOList[] = $row2['cloName'];
+                    }
+                }
+                array_push($soloWeeklyTopic, $row['weeklyNo'], $row['topicDetail'], $row['assessmentCriteria'], $weekCLOList);
+                return $soloWeeklyTopic;
+            }
+        } else
+            echo "No Weekly Information:" . $this->databaseConnection->error;
+
+        return null;
     }
 
     /**

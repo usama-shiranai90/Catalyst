@@ -21,7 +21,7 @@ $personalDetails = $student->getPersonalDetails();
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-<!--    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>-->
+    <!--    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>-->
 </head>
 
 <body>

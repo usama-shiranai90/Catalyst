@@ -310,16 +310,16 @@ window.onload = function () {
             let errorLabel = $("#assignWeightageID").closest('div.mt-3.flex.flex-col.items-center').find('label.text-red-900')
             errorLabel.text("Please enter weightage")
 
-            //Validating weightages of Assignmnet
+            //Validating weightages of Assignment
             if ($("#newSessionalTypeID").val() == "Assignment") {
                 //Add the weightageForCurrentAssignment to accumulatedWeightageForAssignments and stores in totalWeightage variable
                 let totalWeightage = (parseInt(this.accumulatedWeightageForAssignments) + parseInt($(weightageForCurrentAssignment).val()));
-                //If totalWeightage and totalProposedWeightageForAssignments are not matched it gives error
 
                 if(getEditingMode() == true){
                     totalWeightage -= parseInt($(weightageForCurrentAssignment).val())
                 }
 
+                //If totalWeightage is greater than totalProposedWeightageForAssignments then it gives error
                 if (totalWeightage > parseInt(this.totalProposedWeightageForAssignments)) {
                     $("#assignWeightageID").closest('div').addClass('textField-error-input')
                     let errorLabel = $("#assignWeightageID").closest('div.mt-3.flex.flex-col.items-center').find('label.text-red-900')
@@ -445,12 +445,9 @@ window.onload = function () {
             //newQuestions array holds the newly added questions
             let allQuestionData = []; //Stores all questions present at the time of clicking update button
             let allQuestionIDs = []; //Stores IDs of all questions present at the time of clicking update button
-
             let updatedQuestions = []; //Stores questions that need to be updated
             let updatedQuestionIDs = []; //Stores IDs of questions that need to be updated
-
             let deletedQuestionIDs = []; //Stores IDs of questions that need to be added
-
             let addedQuestions = []; //Stores questions that need to be added
             let addedQuestionIDs = []; //Stores IDs of questions that need to be added
             let temp = []
@@ -530,6 +527,7 @@ window.onload = function () {
             console.log(performInsert, performUpdate, performDelete, "\n----------------")
 
             console.log(sessionalData);
+
             $.ajax({
                 type: "POST",
                 url: 'SessionalAssets/SessionalEditingAJAX.php',

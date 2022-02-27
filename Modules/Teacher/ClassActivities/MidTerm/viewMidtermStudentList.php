@@ -1,8 +1,11 @@
 <?php
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Student.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Section.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Midterm.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\UserInterface.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\User.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Student.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Section.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Midterm.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 session_start();
 
@@ -23,7 +26,7 @@ $regNumbers = array();
 $names = array();
 
 foreach ($listOfStudents as $currentStudent) {
-    array_push($regNumbers, $currentStudent->getRegistrationCode());
+    array_push($regNumbers, $currentStudent->getStudentRegistrationCode());
     array_push($names, $currentStudent->getStudentName());
 }
 
@@ -42,8 +45,8 @@ if (isset($_GET['midtermID'])) {
     $midterm = new Midterm();
 
     foreach ($listOfStudents as $currentStudent) {
-        echo "Student";
-        array_push($studentObtainedMarks, $midterm->getStudentMarksInActivity($_GET['midtermID'], $currentStudent->getRegistrationCode()));
+//        echo "Student";
+        array_push($studentObtainedMarks, $midterm->getStudentMarksInActivity($_GET['midtermID'], $currentStudent->getStudentRegistrationCode()));
 //        print_r($studentObtainedMarks);
     }
 

@@ -1,10 +1,11 @@
 <?php
 
-include 'AssessmentWeight.php';
-include 'CourseInstructor.php';
-include 'Persistable.php';
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
+//include 'AssessmentWeight.php';
+//include 'CourseInstructor.php';
+//include 'Persistable.php';
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 
 class CourseProfile implements Persistable
 {
@@ -68,14 +69,16 @@ class CourseProfile implements Persistable
         $this->batchCode = $bcode;
     }
 
-    public function isCourseProfileExist($currentCourseCode, $currentProgramCode, $currentCurriculumCode): bool
+    public function isCourseProfileExist($currentCourseCode, $currentProgramCode, $currentBatchCode): bool
     {
         $this->setCourseCode($currentCourseCode);
         $this->setProgramCode($currentProgramCode);
+        $this->setBatchCode($currentBatchCode);
         $this->course->getCreditHourAndTitle($currentCourseCode);
         $this->course->setCourseCode($currentCourseCode);
 
-        $sql = /** @lang text to fetch current batch and program */
+
+        /*        $sql =
             "select batchCode from batch where curriculumCode = \"$currentCurriculumCode\" and programCode = \"$currentProgramCode\"";
 
         $result = $this->databaseConnection->query($sql);
@@ -85,7 +88,7 @@ class CourseProfile implements Persistable
                 $this->setBatchCode($currentBatchCode);
             }
         } else
-            echo sprintf("\n<br> Can not fetch batchCode: %s\n<br>%s\n<br>", mysqli_error(), $this->databaseConnection->error);
+            echo sprintf("\n<br> Can not fetch batchCode: %s\n<br>%s\n<br>", mysqli_error(), $this->databaseConnection->error);*/
 
         $sql = /** @lang text */
             "select courseProfileCode

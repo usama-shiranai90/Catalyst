@@ -1,38 +1,40 @@
 <?php
-//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Sessional.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\Sessional.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
+
 session_start();
 
 $selectedCourse = $_SESSION['selectedCourse'];
 $selectedSemester = $_SESSION['selectedSemester'];
 $selectedSection = $_SESSION['selectedSection'];
 
-/************************ Getting Program code and curriculum code for displaying CLOs*****************************/
+$selectedCurriculum = $_SESSION['selectedCurriculum'];
+$selectedProgram = $_SESSION['selectedProgram'];
+$selectedBatch = $_SESSION['selectedBatch'];
 
-$databaseConnection = DatabaseSingleton:: getConnection();
-$sql = /** @lang text */
-    "select programCode,b.batchCode, b.curriculumCode from section 
-    join semester s on s.semesterCode = section.semesterCode 
-    join batch b on s.batchCode = b.batchCode 
-    join curriculum c on c.curriculumCode = b.curriculumCode 
-    where sectionCode = \"$selectedSection\"";
-
-$result = $databaseConnection->query($sql);
-
-$selectedProgram = "";
-$selectedCurriculum = "";
-$selectedBatch = "";
-
-if (mysqli_num_rows($result) > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $selectedProgram = $row['programCode'];
-        $selectedCurriculum = $row['curriculumCode'];
-        $selectedBatch = $row['batchCode'];
-    }
-} else
-    echo "No Curriculum Code found sectionCode: " . $selectedSection;
+///************************ Getting Program code and curriculum code for displaying CLOs*****************************/
+//
+//$databaseConnection = DatabaseSingleton:: getConnection();
+//$sql = /** @lang text */
+//    "select programCode,b.batchCode, b.curriculumCode from section
+//    join semester s on s.semesterCode = section.semesterCode
+//    join batch b on s.batchCode = b.batchCode
+//    join curriculum c on c.curriculumCode = b.curriculumCode
+//    where sectionCode = \"$selectedSection\"";
+//
+//$result = $databaseConnection->query($sql);
+//
+//$selectedProgram = "";
+//$selectedCurriculum = "";
+//$selectedBatch = "";
+//
+//if (mysqli_num_rows($result) > 0) {
+//    while ($row = $result->fetch_assoc()) {
+//        $selectedProgram = $row['programCode'];
+//        $selectedCurriculum = $row['curriculumCode'];
+//        $selectedBatch = $row['batchCode'];
+//    }
+//} else
+//    echo "No Curriculum Code found sectionCode: " . $selectedSection;
 
 
 
@@ -388,5 +390,17 @@ $accumulatedWeightageForSessionals = $sessional->getAccumulatedSessionalWeightag
 <script>
 
 </script>
-
 </html>
+
+<!--    protected $activityCode;
+    protected $activityType;
+    protected $activitySubType;
+    protected $topic;
+    protected $title;
+    protected $totalMarks;
+    protected $weightage;
+    protected $numberOfQuestions;
+    protected $listOfQuestions;
+    protected $listOfMappedCLOs;-->
+
+

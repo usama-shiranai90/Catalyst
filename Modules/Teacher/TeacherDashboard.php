@@ -1,4 +1,5 @@
 <?php
+
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 $facultyCode = $_SESSION['facultyCode'];
@@ -9,6 +10,7 @@ $selectedSection = "";
 $selectedSemester = "";
 $personalDetails = array();
 
+
 $faculty = unserialize($_SESSION['facultyInstance']);
 $personalDetails = $faculty->getPersonalDetails();
 
@@ -17,7 +19,6 @@ $semesterName = "NA";
 $sectionName = "";
 
 //$_SESSION["personalDetailsOfTeacher"] = $personalDetails;
-//print_r($personalDetails);
 
 if (isset($_POST['selectClass'])) {
 
@@ -27,29 +28,37 @@ if (isset($_POST['selectClass'])) {
     $selectedCourse = $_POST['courseSelector'];
     $selectedSemester = $_POST['semesterSelector'];
     $selectedSection = $_POST['sectionSelector'];
-    $selectedProgram = $_POST['programSelector'];
-    $selectedCurriculum = $_POST['curriculumSelector'];
-//    $selectedBatch = $_POST['batchCode'];
+    $selectedCurriculum = $_POST['curriculumCode'];
+    $selectedProgram = $_POST['programCode'];
+    $selectedBatch = $_POST['batchCode'];
 
-//    $_SESSION['selectedBatch'] = $selectedBatch;
+
     $_SESSION['selectedCourse'] = $selectedCourse;
-    $_SESSION['selectedProgram'] = $selectedProgram;
-    $_SESSION['selectedSection'] = $selectedSection;
     $_SESSION['selectedSemester'] = $selectedSemester;
+    $_SESSION['selectedSection'] = $selectedSection;
     $_SESSION['selectedCurriculum'] = $selectedCurriculum;
+    $_SESSION['selectedProgram'] = $selectedProgram;
+    $_SESSION['selectedBatch'] = $selectedBatch;
+
+//    echo "selectedCourse :".$selectedCourse."<br>";
+//    echo "selectedSemester :".$selectedSemester."<br>";
+//    echo "selectedSection :".$selectedSection."<br>";
+//    echo "selectedCurriculum :".$selectedCurriculum."<br>";
+//    echo "selectedProgram : ".$selectedProgram."<br>";
+//    echo "selectedBatch :".$selectedBatch."<br>";
 
     $curriculum = new Curriculum();
-    $curriculum->fetchCurriculumID($selectedSection);   // provide with ongoing section code.
-    $_SESSION['ploList'] = $curriculum->retrievePLOsList(); // get from server // returns array of PLO.
+    $curriculum->fetchCurriculumID($selectedSection);
+    $_SESSION['ploList'] = $curriculum->retrievePLOsList($selectedProgram);
 
     /*Getting Selected Semester Name to show in Side Panel*/
     $semester = new Semester();
-    $semester->setSemesterName($selectedSemester);
+    $semester->retrieveSemesterName($selectedSemester);
     $semesterName = $semester->getSemesterName();
 
     /*Getting Selected Course Title then generating its acronym to show in Side Panel*/
     $course = new Course();
-    $course->setCourseName($selectedCourse);
+    $course->retrieveCourseName($selectedCourse);
     $courseTitle = preg_split("/[\s,_-]+/", $course->getCourseTitle());;
     $courseTitleAcronym = "";
 
@@ -59,21 +68,27 @@ if (isset($_POST['selectClass'])) {
 
     /*Getting Selected Section Name to show in Side Panel*/
     $section = new Section();
-    $section->setSectionName($selectedSection);
+    $section->retrieveSectionName($selectedSection);
     $sectionName = $section->getSectionName();
+
+
+    /*echo "<br> Course Code: ".$_SESSION['selectedCourse'];
+    echo "<br> Semester Code: ".$_SESSION['selectedSemester'];
+    echo "<br> Section Code: ".$_SESSION['selectedSection'];
+    echo "<br> Curriculum Code: ".$_SESSION['selectedCurriculum'];
+    echo "<br> Program Code: ".$_SESSION['selectedProgram'];
+    echo "<br> Batch Code: ".$_SESSION['selectedBatch'];*/
 
 
 //    $faculty = Faculty::getFacultyInstance();
 //    $faculty->setPersonalDetails();
 //    echo $faculty->getUserCode();
-//    $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
+    /*$listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
 
-//    var_dump( (array) $listOfAllocations );
-
-    /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
-    for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-        $listOfAllocations[$x]->toString();
-    }*/
+     echo "<br>Total Allocations:" . sizeof($listOfAllocations);
+        for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+            $listOfAllocations[$x]->toString();
+        }*/
 }
 //Stores title of allotted courses
 //$allottedCourses = array();
@@ -227,7 +242,8 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
                 </div>
                 <div>
                     <button class="rounded-md px-2 border border-transparent" id="classFromSidePanel">
-                        <img src="../../Assets/Images/vectorFiles/Icons/edit-button.svg" class="fill-current text-white" width="25">
+                        <img src="../../Assets/Images/vectorFiles/Icons/edit-button.svg" class="fill-current text-white"
+                             width="25">
                     </button>
                 </div>
             </div>

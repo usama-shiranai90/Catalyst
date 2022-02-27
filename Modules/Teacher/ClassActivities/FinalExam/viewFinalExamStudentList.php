@@ -1,8 +1,11 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Student.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Section.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\FinalExam.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\UserInterface.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\User.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Student.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Section.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\FinalExam.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 session_start();
 
@@ -23,7 +26,7 @@ $regNumbers = array();
 $names = array();
 
 foreach ($listOfStudents as $currentStudent) {
-    array_push($regNumbers, $currentStudent->getRegistrationCode());
+    array_push($regNumbers, $currentStudent->getStudentRegistrationCode());
     array_push($names, $currentStudent->getStudentName());
 }
 
@@ -43,8 +46,8 @@ if (isset($_GET['finalExamID'])) {
     $finalExam = new FinalExam();
 
     foreach ($listOfStudents as $currentStudent) {
-        echo "Student";
-        array_push($studentObtainedMarks, $finalExam->getStudentMarksInActivity($_GET['finalExamID'], $currentStudent->getRegistrationCode()));
+//        echo "Student";
+        array_push($studentObtainedMarks, $finalExam->getStudentMarksInActivity($_GET['finalExamID'], $currentStudent->getStudentRegistrationCode()));
 //        print_r($studentObtainedMarks);
     }
 

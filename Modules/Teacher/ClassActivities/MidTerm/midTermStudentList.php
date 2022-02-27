@@ -1,8 +1,11 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Student.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Section.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\Midterm.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\UserInterface.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\User.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Student.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DIM\Section.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\Midterm.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 session_start();
 
@@ -20,7 +23,7 @@ $regNumbers = array();
 $names = array();
 
 foreach ($listOfStudents as $currentStudent) {
-    array_push($regNumbers, $currentStudent->getRegistrationCode());
+    array_push($regNumbers, $currentStudent->getStudentRegistrationCode());
     array_push($names, $currentStudent->getStudentName());
 }
 
@@ -40,10 +43,10 @@ if (isset($_GET['midtermID'])) {
     $midterm = new Midterm();
 
     foreach ($listOfStudents as $currentStudent) {
-        array_push($studentObtainedMarks, $midterm->getStudentMarksInActivity($_GET['midtermID'], $currentStudent->getRegistrationCode()));
+        array_push($studentObtainedMarks, $midterm->getStudentMarksInActivity($_GET['midtermID'], $currentStudent->getStudentRegistrationCode()));
     }
 
-    print_r($studentObtainedMarks);
+//    print_r($studentObtainedMarks);
 
 
     if (isset($_POST['updateMidtermMarksUpdate'])) {
@@ -52,7 +55,7 @@ if (isset($_GET['midtermID'])) {
 
         $midterm = new Midterm();
         foreach ($regNumbers as $singleStudentRegNum) {
-            echo "Student";
+//            echo "Student";
             $midterm->updateStudentMarksInActivity($singleStudentRegNum, $_GET['midtermID'], $midtermObtainedMarks[$singleStudentRegNum]);
         }
 
@@ -77,14 +80,11 @@ if (isset($_POST['submitMidtermMarks'])) {
 //    print_r($midtermObtainedMarks);
 
     foreach ($regNumbers as $singleStudentRegNum) {
-        echo "Student";
+//        echo "Student";
         $midterm->enterStudentMarksForActivity($singleStudentRegNum, $latestActivityCode, $midtermObtainedMarks[$singleStudentRegNum]);
     }
 
-
-
-
-//    header("Location: midTermDashboard.php");
+    header("Location: midTermDashboard.php");
 }
 
 

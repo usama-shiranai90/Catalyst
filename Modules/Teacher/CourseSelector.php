@@ -2,6 +2,7 @@
 //include "../../Backend/Packages/DIM/Faculty.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
+//Stores title of allotted courses
 
 $faculty = Faculty::getFacultyInstance();
 $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
@@ -19,22 +20,28 @@ $allottedProgramCodes = array();
 $allottedBatchCodes = array();
 
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-    $allottedCourseNames[] = $listOfAllocations[$x]->getCourse()->getCourseTitle();
-    $allottedCourseCodes[] = $listOfAllocations[$x]->getCourse()->getCourseCode();
-    $allottedSectionNames[] = $listOfAllocations[$x]->getSection()->getSectionName();
-    $allottedSectionCodes[] = $listOfAllocations[$x]->getSection()->getSectionCode();
-    $allottedSemesterNames[] = $listOfAllocations[$x]->getSection()->getSemester()->getSemesterName();
-    $allottedSemesterCodes[] = $listOfAllocations[$x]->getSection()->getSemester()->getSemesterCode();
+    array_push($allottedCourseNames, $listOfAllocations[$x]->getCourse()->getCourseTitle());
+    array_push($allottedCourseCodes, $listOfAllocations[$x]->getCourse()->getCourseCode());
+    array_push($allottedSectionNames, $listOfAllocations[$x]->getSection()->getSectionName());
+    array_push($allottedSectionCodes, $listOfAllocations[$x]->getSection()->getSectionCode());
+    array_push($allottedSemesterNames, $listOfAllocations[$x]->getSection()->getSemester()->getSemesterName());
+    array_push($allottedSemesterCodes, $listOfAllocations[$x]->getSection()->getSemester()->getSemesterCode());
 
-    $allottedCurriculum[] = $listOfAllocations[$x]->getCurriculumCode();
-    $allottedProgramCode[] = $listOfAllocations[$x]->getProgramCode();
-    $allottedBatchCodes[] = $listOfAllocations[$x]->getBatchCode();
+    array_push($allottedCurriculumCodes, $listOfAllocations[$x]->getCurriculumCode());
+    array_push($allottedProgramCodes, $listOfAllocations[$x]->getProgramCode());
+    array_push($allottedBatchCodes, $listOfAllocations[$x]->getBatchCode());
 }
 
-//print_r("<br> curriculum :".$allottedCurriclum."     program".$allottedProgramCode);
+echo json_encode($allottedCourseNames)."<br>";
 
-//var_dump($allottedCurriclum);
 
+
+/*echo "Curriculum: <br>" . PHP_EOL;
+print_r($allottedCurriculumCodes);
+echo "<br>Programs: <br>";
+print_r($allottedProgramCodes);
+echo "<br>Batch: <br>";
+print_r($allottedBatchCodes);*/
 
 /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
@@ -43,7 +50,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
 
 ?>
 
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -63,7 +70,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     </style>
 </head>
 <body>
-<main class="bg-blue-50  h-full">
+<main class="bg-blue-50 h-full">
     <form method="post" class="w-full flex justify-center items-center h-full" action="TeacherDashboard.php"
           target="_parent">
 
@@ -73,16 +80,12 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                 <div class="w-full text-center">
                     <label class="text-xl font-semibold">Select Course and Section</label>
                 </div>
-                <div class="pt-1">
+                <div class="pt-1 cursor-pointer">
                     <img id="closeClassSelectBtnID" width="20"
                          src="../../Assets/Images/vectorFiles/Icons/crossIcon.svg">
                 </div>
             </div>
             <hr class="bg-gray-500 w-full my-2">
-
-            <input class="hidden" id="programSelectorID" name="programSelector" hidden>
-            <input class="hidden" id="curriculumSelectorID" name="curriculumSelector" hidden>
-
             <div class="text-center flex flex-col w-full">
                 <label class="font-semibold text-md">Please choose your course and section</label>
 
@@ -94,14 +97,15 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                                 onchange="this.setAttribute('value', this.value);" value="" id="">
                             <option value="" hidden></option>
                             <?php
+
                             $courseNamesBeingShown = array();
 
                             for ($x = 0; $x < sizeof($allottedCourseNames); $x++) {
-
                                 if (!in_array($allottedCourseNames[$x], $courseNamesBeingShown)) {
                                     echo '<option value="' . $allottedCourseCodes[$x] . '">' . $allottedCourseNames[$x] . '</option>';
                                     array_push($courseNamesBeingShown, $allottedCourseNames[$x]);
                                 }
+
                             }
                             ?>
 
@@ -127,6 +131,12 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                         </select>
                         <label class="select-label">Section</label>
                     </div>
+
+                    <!--                        Hidden Fields-->
+                    <input class="hidden" type="text" id="curr" name="curriculumCode">
+                    <input class="hidden" type="text" name="programCode">
+                    <input class="hidden" type="text" name="batchCode">
+
                 </div>
 
                 <div>
@@ -147,29 +157,39 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
 <script>
     $(document).ready(function () {
 
-        var allottedProgramCodes = <?php echo json_encode($allottedProgramCode);?>;
-        var allottedCurriculumCodes = <?php echo json_encode($allottedCurriculum);?>;
-
-
+        //Setting semesters to show on course selection
         $('#courseSelectorID').on('change', function () {
             var allottedCoursesCodes = <?php echo json_encode($allottedCourseCodes);?>;
             var allottedSemesterCodes = <?php echo json_encode($allottedSemesterCodes);?>;
             var allottedSemesterNames = <?php echo json_encode($allottedSemesterNames);?>;
-            //var allottedSectionCodes = <?php //echo json_encode($allottedSectionCodes);?>//;
             var selectedCourseCode = $(this).val();
+
+            console.log(allottedCoursesCodes)
+            console.log(allottedSemesterCodes)
+            console.log(allottedSemesterNames)
+
 
             var options = '<option value="" hidden></option>';
 
+
+            /*I'll push section codes into this, because if I ush section names, then it would create confusion
+             when same section names from different programs appear, it won't show them except the first of them */
+            /*Though we are actually showing section names and not codes*/
+            var sectionCodesBeingShown = [];
+
             for (let i = 0; i < allottedSemesterCodes.length; i++) {
                 if (selectedCourseCode == allottedCoursesCodes[i]) {
-                    options += '<option value="' + allottedSemesterCodes[i] + '">' + allottedSemesterNames[i] + '</option>'
-                    $('#programSelectorID').val(allottedProgramCodes[i]);
-                    $('#curriculumSelectorID').val(allottedCurriculumCodes[i]);
+
+                    if (!sectionCodesBeingShown.includes(allottedSemesterCodes[i])) {
+                        options += '<option value="' + allottedSemesterCodes[i] + '">' + allottedSemesterNames[i] + '</option>'
+                        sectionCodesBeingShown.push(allottedSemesterCodes[i])
+                    }
                 }
             }
             $('#semesterSelectorID').html(options)
         })
 
+        //Setting sections to show on semester selection
         $('#semesterSelectorID').on('change', function () {
             var allottedCoursesCodes = <?php echo json_encode($allottedCourseCodes);?>;
             var allottedSemesterCodes = <?php echo json_encode($allottedSemesterCodes);?>;
@@ -179,36 +199,43 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             var selectedCourseCode = $('#courseSelectorID').val();
             var selectedSemesterCode = $(this).val();
 
+            console.log(selectedSemesterCode)
 
             var options = '<option value="" hidden></option>';
 
             for (let i = 0; i < allottedSectionCodes.length; i++) {
                 if (selectedCourseCode == allottedCoursesCodes[i] && selectedSemesterCode == allottedSemesterCodes[i]) {
                     options += '<option value="' + allottedSectionCodes[i] + '">' + allottedSectionNames[i] + '</option>'
-                    $('#programSelectorID').val(allottedProgramCodes[i]);
-                    $('#curriculumSelectorID').val(allottedCurriculumCodes[i]);
                 }
             }
             $('#sectionSelectorID').html(options)
         })
-        /*
-        $('#courseSelectorID').on('change', function () {
-                    var allottedCoursesCodes = <?php echo json_encode($allottedCourseCodes);?>;
-            var allottedSectionNames = <?php echo json_encode($allottedSectionNames);?>;
+
+
+        /*Setting curriculumCode, programCode and batch code of the selected class*/
+
+        $('#sectionSelectorID').on('change', function () {
+
             var allottedSectionCodes = <?php echo json_encode($allottedSectionCodes);?>;
-            var selectedCourseCode = $(this).val();
+            var allottedCurriculumCodes = <?php echo json_encode($allottedCurriculumCodes);?>;
+            var allottedProgramCodes = <?php echo json_encode($allottedProgramCodes);?>;
+            var allottedBatchCodes = <?php echo json_encode($allottedBatchCodes);?>;
 
-            var options = '<option value="" hidden></option>';
-
-            for (let i = 0; i < allottedSectionCodes.length; i++) {
-                if (selectedCourseCode == allottedCoursesCodes[i]) {
-                    options += '<option value="' + allottedSectionCodes[i] + '">' + allottedSectionNames[i] + '</option>'
+            var selectedSectionCode = $('#sectionSelectorID').val();
+            let i;
+            for (i = 0; i < allottedSectionCodes.length; i++) {
+                if (selectedSectionCode == allottedSectionCodes[i]) {
+                    $('input[name="curriculumCode"]').val(allottedCurriculumCodes[i])
+                    $('input[name="programCode"]').val(allottedProgramCodes[i])
+                    $('input[name="batchCode"]').val(allottedBatchCodes[i])
+                    break;
                 }
             }
-            $('#sectionSelectorID').html(options)
+            // console.log($('input[name="curriculumCode"]').val())
+            // console.log($('input[name="programCode"]').val())
+            // console.log("Batch Codes: ", allottedBatchCodes)
+            // console.log("Selected Batch Code", $('input[name="batchCode"]').val())
         })
-*/
-
 
         containsErrors = false
         $('button[name="selectClass"]').click(function (event) {
@@ -231,5 +258,8 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             containsErrors = false
             $(this).closest('div').removeClass('select-error-input')
         })
+
+
+
     });
 </script>

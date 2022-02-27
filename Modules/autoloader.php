@@ -6,6 +6,7 @@ spl_autoload_register(function ($className) {
     $databaseConnection = "/Backend/Packages/DatabaseConnection/";
     $dim = "/Backend/Packages/DIM/";
     $offeringAndAllocations = "/Backend/Packages/OfferingAndAllocations/";
+    $courseProfileManagement = "/Backend/Packages/CourseProfile/";
 
 //    echo "FileName List :".__NAMESPACE__."  ".$className."<br>";
 
@@ -20,8 +21,11 @@ spl_autoload_register(function ($className) {
 
     } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $offeringAndAllocations . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $offeringAndAllocations . str_replace('\\', "/", $className) . ".php";
-
     }
+    elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $courseProfileManagement . str_replace('\\', "/", $className) . ".php")) {
+        include $_SERVER['DOCUMENT_ROOT'] . $courseProfileManagement . str_replace('\\', "/", $className) . ".php";
+    }
+
 });
 
 ?>

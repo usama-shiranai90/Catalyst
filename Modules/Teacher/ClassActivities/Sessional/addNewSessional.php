@@ -2,9 +2,10 @@
 //include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
 //include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Sessional.php";
 //include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\OfferingAndAllocations\Course.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\Sessional.php";
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\OfferingAndAllocations\Course.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\Sessional.php";
+//include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\OfferingAndAllocations\Course.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 session_start();
 
@@ -12,35 +13,40 @@ $selectedCourse = $_SESSION['selectedCourse'];
 $selectedSemester = $_SESSION['selectedSemester'];
 $selectedSection = $_SESSION['selectedSection'];
 
+$selectedCurriculum = $_SESSION['selectedCurriculum'];
+$selectedProgram = $_SESSION['selectedProgram'];
+$selectedBatch = $_SESSION['selectedBatch'];
+
 //Getting Program code and curriculum code for displaying CLOs
 
-$databaseConnection = DatabaseSingleton:: getConnection();
-$sql = /** @lang text */
-    "select programCode,b.batchCode, b.curriculumCode from section 
-    join semester s on s.semesterCode = section.semesterCode 
-    join batch b on s.batchCode = b.batchCode 
-    join curriculum c on c.curriculumCode = b.curriculumCode 
-    where sectionCode = \"$selectedSection\"";
 
-$result = $databaseConnection->query($sql);
-
-$selectedProgram = "";
-$selectedCurriculum = "";
-$selectedBatch = "";
-
-if (mysqli_num_rows($result) > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $selectedProgram = $row['programCode'];
-        $selectedCurriculum = $row['curriculumCode'];
-        $selectedBatch = $row['batchCode'];
-    }
-} else
-    echo "No Curriculum Code found sectionCode: " . $selectedSection;
+//$databaseConnection = DatabaseSingleton:: getConnection();
+//$sql = /** @lang text */
+//    "select programCode,b.batchCode, b.curriculumCode from section
+//    join semester s on s.semesterCode = section.semesterCode
+//    join batch b on s.batchCode = b.batchCode
+//    join curriculum c on c.curriculumCode = b.curriculumCode
+//    where sectionCode = \"$selectedSection\"";
+//
+//$result = $databaseConnection->query($sql);
+//
+//$selectedProgram = "";
+//$selectedCurriculum = "";
+//$selectedBatch = "";
+//
+//if (mysqli_num_rows($result) > 0) {
+//    while ($row = $result->fetch_assoc()) {
+//        $selectedProgram = $row['programCode'];
+//        $selectedCurriculum = $row['curriculumCode'];
+//        $selectedBatch = $row['batchCode'];
+//    }
+//} else
+//    echo "No Curriculum Code found sectionCode: " . $selectedSection;
 
 
 //$CLOList = ['CLO-1', 'CLO-2', 'CLO-3'];
 $course = new Course();
-$course->setCourseCLOList($selectedCourse, $selectedProgram, $selectedCurriculum);
+$course->retreiveCourseCLOList($selectedCourse, $selectedProgram, $selectedCurriculum, $selectedBatch);
 
 $CLONameList = array();
 $CLOCodeList = array();
@@ -61,8 +67,7 @@ $totalProposedWeightageForQuizzes = $sessional->getProposedWeightageForParticula
 $totalProposedWeightageForAssignments = $sessional->getProposedWeightageForParticularSessional($selectedBatch, $selectedProgram, $selectedCourse, "Assignment");
 $totalProposedWeightageForProjects = $sessional->getProposedWeightageForParticularSessional($selectedBatch, $selectedProgram, $selectedCourse, "Project");
 
-
-/******************************** Editing Part *****************************************/
+/******************************** Editing Part (Hannan's) *****************************************/
 
 //Following variables would be used to set the appropriate sessional type while editing
 $project = "";
@@ -82,10 +87,9 @@ if (isset($_GET['sessionalID'])) {
 //    Search the DB for data with this sessionalID
     $editingMode = true;
     $sessionalID = $_GET['sessionalID'];
+
 //    Retrieving data for sessional
-
     $retrievedSessional = $sessional->getActivity($sessionalID);
-
 
     $sessionalData = array();
     $sessionalQuestionsData = array();
@@ -106,6 +110,7 @@ if (isset($_GET['sessionalID'])) {
 //    $sessionalQuestionsData = [["1", "Detail Detail Detail", "2", "CLO-2"], ["2", "Detail Detail Detail", "3", "CLO-3"], ["3", "Detail Detail Detail", "3", "CLO-3"]];
     $dontShowInEditing = "hidden";
     $valueEnabled = "";
+    $title = "Edit";
 
 //  Getting list of selected CLOs of each question along with questionIDs
     $selectedCLOs = array();
@@ -129,13 +134,15 @@ if (isset($_GET['sessionalID'])) {
         $quiz = "selected";
     else
         $project = "selected";
-} else {
+}
+else {
     $selectedCLOs = "";
     $sessionalID = "";
     $sessionalQuestionsData = "";
     $editingMode = false;
     $sessionalData = null;
-};
+    $title = "Add New";
+}
 
 if (isset($_POST['createSessionalOnly'])) {
     $sessionalQuestions = $_POST['sessionalQuestions'];
@@ -241,7 +248,7 @@ function getSessionalData($sessionalData, $index)
 
 <div id="createSessionalID" class="m-5 border border-gray-300 border-opacity-100 rounded-md">
     <div class="p-3 text-center">
-        <label class="font-bold text-lg p-5 block">Add New Sessional</label>
+        <label class="font-bold text-lg p-5 block"><?php echo $title;?> Sessional</label>
         <form method="post" id="newSessionalForm">
             <div class="grid grid-cols-12">
                 <div class="col-span-5 pt-5">

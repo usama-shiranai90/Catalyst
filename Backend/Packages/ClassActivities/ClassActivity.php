@@ -103,16 +103,6 @@ class ClassActivity
         $this->numberOfQuestions = $numberOfQuestions;
     }
 
-    public function getListOfQuestions(): array
-    {
-        return $this->listOfQuestions;
-    }
-
-    public function setListOfQuestions(array $listOfQuestions): void
-    {
-        $this->listOfQuestions = $listOfQuestions;
-    }
-
     public function getListOfMappedCLOs(): array
     {
         return $this->listOfMappedCLOs;
@@ -123,6 +113,33 @@ class ClassActivity
         $this->listOfMappedCLOs = $listOfMappedCLOs;
     }
 
+    public function getActivity($activityCode): ?ClassActivity
+    {
+        $sql = /** @lang text */
+            "select * from assessment where assessmentCode = \"$activityCode\"";
+
+        $result = $this->databaseConnection->query($sql);
+
+
+        $newclassActivity = new ClassActivity();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $newclassActivity->activityCode = $row['assessmentCode'];
+                $newclassActivity->activitySubType = $row['assessmentSubType'];
+                $newclassActivity->topic = $row['topic'];
+                $newclassActivity->title = $row['title'];
+                $newclassActivity->totalMarks = $row['totalMarks'];
+                $newclassActivity->weightage = $row['weightage'];
+                $newclassActivity->numberOfQuestions = $row['numberOfQuestions'];
+                $newclassActivity->listOfQuestions = $this->getActivityQuestionsData($row['assessmentCode']);
+                $newclassActivity->listOfMappedCLOs = $this->retrieveCLOList($row['assessmentCode']);
+            }
+            return $newclassActivity;
+        } else {
+            echo "No activity found with activityCode: " . $activityCode;
+            return null;
+        }
+    }
 
     public function getActivityQuestionsData($activityCode): ?array
     {
@@ -158,7 +175,6 @@ class ClassActivity
             echo "No questions found with sessionalCode: " . $activityCode;
             return null;
         }
-
     }
 
     public function retrieveCLOList($activityCode): ?array
@@ -183,41 +199,12 @@ class ClassActivity
 
     }
 
-    //    Returns a single activity
-    public function getActivity($activityCode): ?ClassActivity
-    {
-        $sql = /** @lang text */
-            "select * from assessment where assessmentCode = \"$activityCode\"";
-
-        $result = $this->databaseConnection->query($sql);
-
-
-        $newclassActivity = new ClassActivity();
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $newclassActivity->activityCode = $row['assessmentCode'];
-                $newclassActivity->activitySubType = $row['assessmentSubType'];
-                $newclassActivity->topic = $row['topic'];
-                $newclassActivity->title = $row['title'];
-                $newclassActivity->totalMarks = $row['totalMarks'];
-                $newclassActivity->weightage = $row['weightage'];
-                $newclassActivity->numberOfQuestions = $row['numberOfQuestions'];
-                $newclassActivity->listOfQuestions = $this->getActivityQuestionsData($row['assessmentCode']);
-                $newclassActivity->listOfMappedCLOs = $this->retrieveCLOList($row['assessmentCode']);
-            }
-            return $newclassActivity;
-        } else {
-            echo "No activity found with activityCode: " . $activityCode;
-            return null;
-        }
-    }
-
     public function createActivity($activity, $sectionCode, $courseCode): bool
     {
         $createdSuccessfully = false;
 
         $sql = /** @lang text */
-            "INSERT INTO catalyst.assessment (sectionCode, courseCode, assessmentType, assessmentSubType, title, totalMarks, weightage, numberOfQuestions, topic)
+            "INSERT INTO assessment (sectionCode, courseCode, assessmentType, assessmentSubType, title, totalMarks, weightage, numberOfQuestions, topic)
             VALUES (\"$sectionCode\", \"$courseCode\", \"$activity->activityType\", \"$activity->activitySubType\", \"$activity->title\", \"$activity->totalMarks\", \"$activity->weightage\", \"$activity->numberOfQuestions\", \"$activity->topic\");";
 
         if ($this->databaseConnection->query($sql) === TRUE) {
@@ -262,6 +249,8 @@ class ClassActivity
         return $createdSuccessfully;
     }
 
+    //    Returns a single activity
+
     public function updateActivity($activityID, $activityData, $activityQuestions, $actionToPerform)
     {
 
@@ -275,7 +264,6 @@ class ClassActivity
         } else {
             echo "Error updating activity with activityCode: " . $this->databaseConnection->error;
         }
-
 
 
 //        /************************ Getting previously added question marks *******************************/
@@ -506,6 +494,115 @@ class ClassActivity
         return $obtainedMarksOfQuestions;
     }
 
+    /** OneEyeOwl */
+    public function getSelectedAssessment($assessmentCode, $sectionCode, $courseCode): array
+    {
+        $sql = /** @lang text */
+            "select a2.studentRegCode , a.topic , a.totalMarks , a2.totalObtainedMarks from assessment as a join assessmentstudentmarks 
+            a2 on a.assessmentCode = a2.assessmentCode where a.assessmentCode= \"$assessmentCode\" and a.sectionCode = \"$sectionCode\" and a.courseCode = \"$courseCode\" ";
+
+        $studentsAssessmentArrayList = array();
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $studentRegCode = $row['studentRegCode'];
+                $studentsAssessment = new StudentAssessmentAverage();
+                $studentsAssessment->setStudentRegistrationNo($studentRegCode);
+                $studentsAssessment->setTopicDescription($row['topic']);
+                $studentsAssessment->setAssessmentTotalMarks($row['totalMarks']);
+                $studentsAssessment->setAssessmentObtainMarks($row['totalObtainedMarks']);
+                $studentsAssessment->setAssessmentQuestionsList(array());
+
+                // for each Student respective questions with marks.
+                $sql_statement_second = /** @lang text */
+                    "select * from assessmentquestion as aq join assessmentquestionstudentmarks a on aq.questionCode = a.questionCode 
+                    where a.studentRegCode = \"$studentRegCode\" and aq.assessmentCode = \"$assessmentCode\";";
+                $result_second = $this->databaseConnection->query($sql_statement_second);
+                if (mysqli_num_rows($result_second) > 0) {
+                    $counter = 1;
+                    while ($innerRow = $result_second->fetch_assoc()) {
+                        $questions = new AssessmentQuestion();
+                        $questions->setQuestionCode($innerRow['questionCode']);
+                        $questions->setQuestionNo('Question ' . $counter); // generate order of sequence.
+                        $questions->setQuestionDetail($innerRow['detail']);
+                        $questions->setQuestionTotalMarks($innerRow['totalQuestionMarks']);
+                        $questions->setRespectiveCLO($innerRow['cloCode']);
+                        $questions->setQuestionAchieveMarks($innerRow['obtainedMarks']);
+                        $percentage = number_format((float)($innerRow['obtainedMarks'] / $innerRow['totalQuestionMarks'] * 100), 2, '.', '');  // Outputs -> 105.00
+                        $questions->setQuestionAchievePercentage($percentage . " %");
+                        $studentsAssessment->assessmentQuestionsList[] = $questions;
+                        ++$counter;
+//                        return array($studentsAssessment->getAssessmentQuestionsList() ,  $studentsAssessment ,  $questions);
+                    }
+                }
+                /*                else{
+                                    return array($studentRegCode , $assessmentCode , mysqli_num_rows($result_second));
+                                }*/
+                $studentsAssessmentArrayList[] = $studentsAssessment;
+            }
+        }
+
+        return $studentsAssessmentArrayList;
+    }
+
+    public function getLatestCourseSpecificAssessment($sectionCode, $courseCode): ?ClassActivity
+    {
+        $storeAssessmentCode = 0;
+        $counter = 1;
+        $activity = new ClassActivity();
+        $sql = /** @lang text */
+            "select * from assessment where sectionCode = \"$sectionCode\"  and courseCode = \"$courseCode\" order by assessmentCode desc limit 1;";
+
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $storeAssessmentCode = $row['assessmentCode'];
+                $activity->setActivityType($row['assessmentType']);
+                $activity->setActivitySubType($row['assessmentSubType']);
+                $activity->setTitle($row['title']);
+                $activity->setWeightage($row['weightage']);
+                $activity->setTopic($row['topic']);
+                $activity->setListOfQuestions(array());
+
+                $statement_second = /** @lang text */
+                    "select questionCode , c.cloName , detail , totalMarks
+                     from assessment as a join assessmentquestion a2 on a.assessmentCode = a2.assessmentCode join clo c on a2.cloCode = c.CLOCode where
+                     sectionCode = 7 and a.courseCode = 'SEN-32' and a.assessmentCode = 63";
+
+                $result_second = $this->databaseConnection->query($statement_second);
+                if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+                    while ($r = $result_second->fetch_assoc()) {
+                        $temp = array(
+                            "questionNo" => 'Question ' . $counter,
+                            "questionDetail" => $r['detail'],
+                            "questionClo" => $r['cloName']
+                        );
+                        $activity->listOfQuestions[] = $temp;
+                        $counter++;
+                    }
+                } else {
+                    echo "exuse me " . $sectionCode . "    " . $courseCode . "      " . $storeAssessmentCode;
+                }
+                break;
+            }
+            return $activity;
+        } else {
+            echo "No assessmentCode found with sectionCode: " . $sectionCode . " and courseCode: " . $courseCode;
+            return null;
+        }
+    }
+
+    public function getListOfQuestions(): array
+    {
+        return $this->listOfQuestions;
+    }
+
+    public function setListOfQuestions(array $listOfQuestions): void
+    {
+        $this->listOfQuestions = $listOfQuestions;
+    }
+
     public function updateStudentMarksInActivity($studentRegNumber, $activityCode, $obtainedQuestionMarks)
     {
 
@@ -556,7 +653,7 @@ class ClassActivity
                 VALUES (\"$studentRegNumber\", \"$activityQuestionsCodes[$i]\", \"$obtainedQuestionMarks[$index]\")";
 
                 if ($this->databaseConnection->query($sql) === TRUE) {
-                    echo "Marks entered successfully for student ". $studentRegNumber;
+                    echo "Marks entered successfully for student " . $studentRegNumber;
                     $insertedSuccessfully = true;
                 } else {
                     echo "Error inserting marks for activity: " . $activityCode . "******" . $sql . "<br>" . $this->databaseConnection->error;
@@ -582,9 +679,7 @@ class ClassActivity
             }
 
 
-
-        }
-        elseif ($marksExist == true) {
+        } elseif ($marksExist == true) {
             /***************************** Updating marks obtained for questions ****************************/
 
             for ($i = 0; $i < sizeof($activityQuestionsCodes); $i++) {
@@ -620,6 +715,19 @@ class ClassActivity
                 $insertedSuccessfully = false;
             }
         }
+    }
+
+    public function __toString(): string
+    {
+        // TODO: Implement __toString() method.
+
+        return "Topic :" . $this->topic . "<br>" .
+            "title :" . $this->title . "<br>" .
+            "total marks :" . $this->totalMarks . "<br>" .
+            "weightage :" . $this->weightage . "<br>" .
+            "numberOfQuestion :" . $this->numberOfQuestions . "<br>" .
+            "list of questions:" . json_encode($this->listOfQuestions) . "<br>" .
+            "list of Mapped CLOs:" . json_encode($this->listOfMappedCLOs) . "<br>";
     }
 
 

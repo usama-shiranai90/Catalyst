@@ -1,12 +1,15 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Student.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Section.php";
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\ClassActivities\FinalExam.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\UserInterface.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\User.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Student.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Section.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\ClassActivities\FinalExam.php";
 //include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
 //include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Student.php";
 //include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Section.php";
 //include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\FinalExam.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
 
 session_start();
 
@@ -26,7 +29,7 @@ $regNumbers = array();
 $names = array();
 
 foreach ($listOfStudents as $currentStudent) {
-    array_push($regNumbers, $currentStudent->getRegistrationCode());
+    array_push($regNumbers, $currentStudent->getStudentRegistrationCode());
     array_push($names, $currentStudent->getStudentName());
 }
 
@@ -49,7 +52,7 @@ if (isset($_GET['finalExamID'])) {
     $finalExam = new FinalExam();
 
     foreach ($listOfStudents as $currentStudent) {
-        array_push($studentObtainedMarks, $finalExam->getStudentMarksInActivity($_GET['finalExamID'], $currentStudent->getRegistrationCode()));
+        array_push($studentObtainedMarks, $finalExam->getStudentMarksInActivity($_GET['finalExamID'], $currentStudent->getStudentRegistrationCode()));
     }
 
 //    print_r($studentObtainedMarks);
@@ -94,12 +97,12 @@ if (isset($_POST['submitFinalExamMarks'])) {
 //    print_r($finalExamObtainedMarks);
 
     foreach ($regNumbers as $singleStudentRegNum) {
-        echo "Student";
+//        echo "Student";
         $finalExam->enterStudentMarksForActivity($singleStudentRegNum, $latestActivityCode, $finalExamObtainedMarks[$singleStudentRegNum]);
     }
 
 
-//    header("Location: midTermDashboard.php");
+    header("Location: finalExamDashboard.php");
 }
 
 if (isset($_POST['cancelFinalExamMarksUpdate'])) {
@@ -268,8 +271,8 @@ if (isset($_POST['cancelFinalExamMarks'])) {
     //function createQuestionNumberInputInaRow creates inputs for each question for all students
     //This function is called when we enter marks immediately after creating midterm
     function createQuestionNumberInputInaRow(rowID, numberOfQuestions, rollNo) {
-        alert(marksOfEachQuestion)
-        alert(detailOfEachQuestion)
+        // alert(marksOfEachQuestion)
+        // alert(detailOfEachQuestion)
 
         for (let i = 0; i < numberOfQuestions; i++) {
             document.getElementById(rowID).innerHTML += "<td class='mt-3 mb-2'>"

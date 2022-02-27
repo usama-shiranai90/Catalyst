@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/Backend/Packages/CourseProfile/CourseProfile.php" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Backend/Packages/DIM/Curriculum.php" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Backend/Packages/OfferingAndAllocations/Course.php" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/DB Queries/MyQueryList.sql" dialect="GenericSQL" />
   </component>
 </project>

@@ -62,7 +62,7 @@ if (count($_FILES) > 0) {
 
 function base64_to_jpeg($base64_string, $output_file)
 {
- // file_put_contents($output_file, file_get_contents($base64_string));
+    // file_put_contents($output_file, file_get_contents($base64_string));
     $ifp = fopen($output_file, 'wb');    // open the output file for writing
     $data = explode(',', $base64_string); // data:image/png;base64
     fwrite($ifp, base64_decode($data[0]));  // we could add validation here with ensuring count( $data ) > 1
@@ -407,7 +407,7 @@ function base64_to_jpeg($base64_string, $output_file)
             });
 
 
-            if ($("input[name='emailToShowToStudents']").val() != "" && !validateEmail($("input[name='emailToShowToStudents']").val())) {
+            if ($("input[name='emailToShowToStudents']").val() !== "" && !validateEmail($("input[name='emailToShowToStudents']").val())) {
                 $("input[name='emailToShowToStudents']").closest('div').addClass('textField-error-input');
                 $("input[name='emailToShowToStudents']").closest("div.mt-3").find("label").removeClass("hidden")
                 containsErrors = true

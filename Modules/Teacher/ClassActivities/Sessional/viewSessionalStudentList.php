@@ -1,8 +1,12 @@
 <?php
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Student.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Section.php";
-include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Sessional.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\UserInterface.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\User.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Student.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\DIM\Section.php";
+//include "D:\University\FYP\Catalyst\Development\Catalyst\Backend\Packages\ClassActivities\Sessional.php";
+require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
+
 session_start();
 
 
@@ -19,7 +23,7 @@ $regNumbers = array();
 $names = array();
 
 foreach ($listOfStudents as $currentStudent) {
-    array_push($regNumbers, $currentStudent->getRegistrationCode());
+    array_push($regNumbers, $currentStudent->getStudentRegistrationCode());
     array_push($names, $currentStudent->getStudentName());
 }
 
@@ -37,8 +41,8 @@ if (isset($_GET['sessionalID'])) {
     $sessional = new Sessional();
 
     foreach ($listOfStudents as $currentStudent) {
-        echo "Student";
-        array_push($studentObtainedMarks, $sessional->getStudentMarksInActivity($_GET['sessionalID'], $currentStudent->getRegistrationCode()));
+//        echo "Student";
+        array_push($studentObtainedMarks, $sessional->getStudentMarksInActivity($_GET['sessionalID'], $currentStudent->getStudentRegistrationCode()));
 //        print_r($studentObtainedMarks);
     }
 //    Run a query to get marks of each student, it should return a 2D array of student roll numbers and marks in each question
@@ -148,7 +152,7 @@ if (isset($_POST['editSessionalMarks'])) {
                 + "</td>";
 
             studentRegNo = document.getElementById(sessionalRegNoID).innerText; //returns F18-BCSE-018
-            let rollNo = studentRegNo.slice(studentRegNo.length - 3) //returns018
+            // let rollNo = studentRegNo.slice(studentRegNo.length - 3) //returns018
 
             createQuestionNumberLabelsInaRow(rowID, numberOfQuestions, studentMarksList[i]) + "</tr>";
         }

@@ -2,14 +2,13 @@
 
 class Allocations
 {
-    private $course;
-    private $section;
+        protected $databaseConnection; // composition of Course-object.
+    private $course;// composition of section-object.
+private $section;
     private $programCode;
-    private $curriculumCode;
-    private $allocations;
+        private $curriculumCode; // array list of allocations.
+private $allocations;
     private $batchCode;
-
-    protected $databaseConnection;
 
     public function __construct()
     {
@@ -19,8 +18,6 @@ class Allocations
 
     public function retrieveAllocations($facultyCode): array
     {
-//        $sql = /** @lang text */
-//            "select fa.sectionCode, ca.courseCode from facultyallocations fa join courseallocation ca on ca.allocationCode = fa.allocationCode where fa.facultyCode = \"$facultyCode\" and fa.seasonCode = (select seasonCode from season order by seasonCode desc limit 1)";
         $sql = /** @lang text */
             "select fa.sectionCode, ca.courseCode,ca.batchCode,ca.programCode, co.curriculumCode from facultyallocations fa join courseallocation ca on 
             ca.allocationCode = fa.allocationCode join courseoffering co on co.offeringCode = ca.offeringCode where 
@@ -45,6 +42,16 @@ class Allocations
         return $this->allocations;
     }
 
+    public function toString()
+    {
+        echo "<br>Allocations: \n";
+        echo $this->getCourse()->toString();
+        echo $this->getSection()->toString() . "<br>";
+        echo "<br>Curriculum: " . $this->getCurriculumCode();
+        echo "<br>Program: " . $this->getProgramCode();
+        echo "<br>Batch: " . $this->getBatchCode();
+    }
+
     public function getCourse()
     {
         return $this->course;
@@ -53,8 +60,8 @@ class Allocations
     public function setCourse($courseCode, $programCode, $curriculumCode, $batchCode): void
     {
         $course = new Course();
-        $course->setCourseName($courseCode);
-        $course->setCourseCLOList($courseCode, $programCode, $curriculumCode, $batchCode);
+        $course->retrieveCourseName($courseCode);// title of the course.
+        $course->retreiveCourseCLOList($courseCode, $programCode, $curriculumCode, $batchCode);
         $this->course = $course;
 //        $course->toString();
     }
@@ -67,20 +74,10 @@ class Allocations
     public function setSection($sectionCode, $courseCode): void
     {
         $section = new Section($sectionCode);
-        $section->setSectionName($sectionCode);
+        $section->retrieveSectionName($sectionCode);
         $section->setListOfStudentsInSectionInCourse($sectionCode, $courseCode);
 
         $this->section = $section;
-    }
-
-    public function getProgramCode()
-    {
-        return $this->programCode;
-    }
-
-    public function setProgramCode($programCode): void
-    {
-        $this->programCode = $programCode;
     }
 
     public function getCurriculumCode()
@@ -93,6 +90,16 @@ class Allocations
         $this->curriculumCode = $curriculumCode;
     }
 
+    public function getProgramCode()
+    {
+        return $this->programCode;
+    }
+
+    public function setProgramCode($programCode): void
+    {
+        $this->programCode = $programCode;
+    }
+
     public function getBatchCode()
     {
         return $this->batchCode;
@@ -101,16 +108,6 @@ class Allocations
     public function setBatchCode($batchCode): void
     {
         $this->batchCode = $batchCode;
-    }
-
-    public function toString()
-    {
-        echo "<br>Allocations: \n";
-        echo $this->getCourse()->toString();
-        echo $this->getSection()->toString() . "<br>";
-        echo "<br>Curriculum: ". $this->getCurriculumCode();
-        echo "<br>Program: ". $this->getProgramCode();
-        echo "<br>Batch: ". $this->getBatchCode();
     }
 
 }
