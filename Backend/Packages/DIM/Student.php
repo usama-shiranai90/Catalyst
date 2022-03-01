@@ -1,6 +1,7 @@
 <?php
 
-class Student extends User implements UserInterface{
+class Student extends User implements UserInterface
+{
     private $studentRegistrationCode;
     private $studentName;
 
@@ -29,9 +30,10 @@ class Student extends User implements UserInterface{
         $this->studentName = $studentName;
     }
 
-    public function toString(){
-        echo "Student Name: ".$this->studentName;
-        echo "Student Roll No: ".$this->studentRegistrationCode;
+    public function toString()
+    {
+        echo "Student Name: " . $this->studentName;
+        echo "Student Roll No: " . $this->studentRegistrationCode;
     }
 
 
@@ -60,6 +62,23 @@ class Student extends User implements UserInterface{
         return $this->studentRegistrationCode;
     }
 
+    function updateProfileInfo($name, $email, $showEmailStatus): bool
+    {
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+        $sql = /** @lang text */
+            "UPDATE faculty t    SET t.name = '$name', t.officialEmail = '$email', t.showEmail = $showEmailStatus
+            WHERE t.facultyCode = '$this->facultyCode'";
+
+        if ($this->databaseConnection->query($sql) === TRUE) {
+            $this->setPersonalDetails();
+            return true;
+        } else {
+            return false;
+            echo "Error updating record: " . $this->databaseConnection->error;
+        }
+
+    }
+
     public function setPersonalDetails(): void
     {
         $personalDetails = array();
@@ -78,5 +97,22 @@ class Student extends User implements UserInterface{
 
         $this->personalDetails = $personalDetails;
     }
+
+    function updatePassword($password, $idk): bool
+    {
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+        $sql = /** @lang text */
+            "UPDATE student t SET t.password = '$password' WHERE t.studentRegCode = '$idk'";
+
+        if ($this->databaseConnection->query($sql) === TRUE) {
+            $this->setPersonalDetails();
+            return true;
+        } else {
+            echo "Error updating Password: " . $this->databaseConnection->error;
+            return false;
+        }
+
+    }
+
 
 }

@@ -1,7 +1,22 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
+session_start();
+
+$studentRegCode = $_SESSION['studentRegistrationCode'];
+$batchCode = $_SESSION['batchCode'];
+$programCode = $_SESSION['programCode'];
+
+$personalDetails = array();
+$student = unserialize($_SESSION['studentInstance']);
+$personalDetails = $student->getPersonalDetails();
+
+//echo json_encode($personalDetails) . "<br><br>";
+$personalDetails = str_replace('\\', '', $personalDetails);
+echo json_encode($personalDetails) . "<br><br>";
+
+$securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
+
 ?>
-
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -58,8 +73,8 @@
 
             <!-- MY PROFILE -->
             <section id="studentMyProfileSectionID"
-                     class="hidden cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
-                <div class="container px-5 mx-auto flex flex-wrap flex-col">
+                     class=" cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
+                <div class="container px-5 mx-auto flex flex-col">
                     <!-- Image , student name , department/ reg number. -->
                     <div class="grid grid-cols-8 items-center place-content-center p-3 my-5 bg-catalystBlue-l2 rounded-md">
                         <div class="col-span-2">
@@ -67,73 +82,73 @@
                                  width="100" alt="User profile">
                         </div>
                         <div class="flex flex-col justify-center items-center pl-4 pt-1 text-white col-span-4 text-base font-medium">
-                            <label class="my-2">Syed Usama Hussain Shah Bukhari</label>
+                            <label class="my-2"><?php echo $personalDetails['name'] ?></label>
                             <hr class="w-96 h-0.5  bg-white">
-                            <label class="my-2">Fall-18 BCSE-040</label>
+                            <label class="my-2"><?php echo $personalDetails['studentRegCode'] ?></label>
                         </div>
                     </div>
 
                     <div class="bg-white overflow-hidden sm:rounded-lg">
                         <div class=" border-2 border-gray-200" id="smpViewSectionId">
                             <!-- editable info -->
-                            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Student Name:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="smpStudentNameId-view">what</span>
+                                      id="smpStudentNameId-view"><?php echo $personalDetails['name'] ?></span>
                             </div>
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Personal Email:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="smpStudentEmailId-view">what</span>
+                                      id="smpStudentEmailId-view"><?php echo $personalDetails['personalEmail'] ?></span>
                             </div>
-                            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Contact:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="smpStudentContactId-view">what</span>
+                                      id="smpStudentContactId-view"><?php echo $personalDetails['contactNumber'] ?></span>
                             </div>
 
                             <!-- static personal info -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Father Name:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="otherReferenceID-view">what</span>
+                                      id="otherReferenceID-view"><?php echo $personalDetails['fatherName'] ?></span>
                             </div>
-                            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Blood Group:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="otherReferenceID-view">what</span>
+                                      id="otherReferenceID-view"><?php echo $personalDetails['bloodGroup'] ?></span>
                             </div>
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Date Of Birth:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="otherReferenceID-view">what</span>
+                                      id="otherReferenceID-view"><?php echo $personalDetails['dateOfBirth'] ?></span>
                             </div>
-                            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
+                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Official Email:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="otherReferenceID-view">what</span>
+                                      id="otherReferenceID-view"><?php echo $personalDetails['officialEmail'] ?></span>
                             </div>
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Home Address:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                      id="otherReferenceID-view">what</span>
+                                      id="otherReferenceID-view"><?php echo $personalDetails['address'] ?></span>
                             </div>
                         </div>
                         <div id="smpUpdateSectionId" class="hidden w-full flex pl-10">
                             <form method="post" class="w-full flex flex-col justify-center">
                                 <div class="mt-3 w-3/6 flex flex-col">
-                                    <div class="textField-label-content w-full pb-3">
+                                    <div class="textField-label-content w-full">
                                         <input class="textField" type="text" placeholder=" " id="studentNameFieldID"
                                                name="studentNameField" value="">
                                         <label class="textField-label">Student Name</label>
                                     </div>
-                                    <div class="textField-label-content w-full pb-3">
+                                    <div class="textField-label-content w-full">
                                         <input class="textField" type="email" placeholder=" "
                                                name="studentPersonalEmailField" id="studentPersonalEmailFieldID"
                                                value="">
                                         <label class="textField-label">Personal Email</label>
                                     </div>
-                                    <div class="textField-label-content w-full pb-3">
+                                    <div class="textField-label-content w-full">
                                         <input class="textField" type="email" placeholder=" "
                                                name="studentContactField" id="studentContactFieldID"
                                                value="">
@@ -167,10 +182,6 @@
                             </div>
                         </div>
                         <div class="text-right mx-0 my-2">
-                            <button type="button"
-                                    class="text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-10 py-2"
-                                    name="viewStudentProfileBtn" id="viewStudentProfileBtn">Update Profile
-                            </button><!--style=" padding: 0.5% 4%"-->
 
                             <button type="button"
                                     class="hidden text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-10 py-2"
@@ -183,12 +194,87 @@
 
             <!-- CURRICULUM -->
             <section id="studentCurriculumSectionID"
-                     class="cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
+                     class="hidden cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
 
+                <h2 class="px-5 font-semibold text-base"> Following are the Program Curriculum Outcome which you are
+                    following.</h2>
+                <div class="container px-5 mx-auto flex flex-col sm:rounded-sm">
+                    <div class=" border-2 border-gray-200 rounded">
+                        <div class="learning-outcome-head row-flex w-full mx-0 ">
+                            <div class="cprofile-column h-10 w-24 border-0 border-r-2">
+                                <span class="cprofile-cell-data">PLO #</span>
+                            </div>
+                            <div class="cprofile-column h-10 w-3/4 border-0">
+                                <span class="cprofile-cell-data">Description</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-row w-full bg-white border-solid">
+                            <div class="text-md text-gray-500 text-left font-semibold border-0 w-48 border-r-2">
+                                <span class="cprofile-cell-data">PLO-1</span>
+                            </div>
+                            <div class="col-span-1 w-10/12 border-0 p-2">
+                           <span class="w-full font-normal text-sm text-justify text-gray-900"
+                                 id="smpStudentEmailId-view">This forces the writer to use creativity to complete one of three common writing challenges. The writer can use the paragraph as the first one of a short story
+                           This forces the writer to use creativity to complete one of three common writing challenges. The writer can use the paragraph as the first one of a short story
+                           </span>
+                            </div>
+                        </div>
+
+
+                        <!--<div class="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 border-solid">
+                            <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Home Address:</h4>
+                            <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
+                                  id="otherReferenceID-view">what</span>
+                        </div>-->
+                    </div>
             </section>
 
             <!-- PASSWORD -->
-            <section id="studentPasswordSectionID">
+            <section id="studentPasswordSectionID"
+                     class="hidden cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
+                <div class="container px-5 mx-auto flex flex-col">
+                    <div class="bg-white overflow-hidden sm:rounded-lg">
+                        <div class=" w-full pl-10">
+                            <h2 class="px-3 font-semibold text-base"> Following are the Program Curriculum Outcome which
+                                you are following.</h2>
+                            <form method="post" class="w-full flex flex-col justify-center">
+                                <div class="mt-3 flex flex-col w-4/12">
+                                    <div class="textField-label-content w-full">
+                                        <input class="textField" type="password" placeholder=" "
+                                               id="studentOldPasswordFieldID"
+                                               name="studentOldPasswordField" value=""
+                                               data-ref="<?php echo $securePass ?>">
+                                        <label class="textField-label">Old Password</label>
+                                    </div>
+                                    <div class="textField-label-content w-full">
+                                        <input class="textField" type="password" placeholder=" "
+                                               name="studentNewPasswordField" id="studentNewPasswordFieldID"
+                                               value="">
+                                        <label class="textField-label">New Password</label>
+                                    </div>
+                                    <div class="textField-label-content w-full">
+                                        <label for="studentConfirmPasswordFieldID"></label>
+                                        <input class="textField" type="password" placeholder=" "
+                                               name="studentConfirmPasswordField" id="studentConfirmPasswordFieldID"
+                                               value="">
+                                        <label class="textField-label">Confirm Password</label>
+
+                                    </div>
+
+                                </div>
+                            </form>
+
+                        </div>
+                        <div class="text-right mx-0 my-2">
+                            <button type="button"
+                                    class="text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-10 py-2"
+                                    name="updateStudentPasswordProfileBtn" id="updateStudentPasswordProfileBtn">Update
+                                Password
+                            </button><!--style=" padding: 0.5% 4%"-->
+                        </div>
+                    </div>
+                </div>
 
             </section>
 
@@ -222,7 +308,6 @@
         humblebrag.</p>
 </div>
 
-</body>
 <script>
     // const studentProfileViewSectionViewSection = document.getElementById('registerCourseDivID'); // .
     // const studentProfileViewSectionUpdatableSection = document.getElementById('registerCourseDivID'); // .
@@ -235,11 +320,22 @@
     let newStudentPersonalEmail = "";
     let newStudentContact = "";
 
+    let ops = '';
+    let oldPass = '';
+    let newPass = '';
+    let confirmPass = '';
+
+
     window.onload = function () {
 
-        const tabs = [document.getElementById('myProfileSettingTabID'), document.getElementById('curriculumSettingTabID'),
+        const tabsArray = [document.getElementById('myProfileSettingTabID'), document.getElementById('curriculumSettingTabID'),
             document.getElementById('passwordSettingTabID'), document.getElementById('loginHistorySettingTabID')];
 
+        const sectionsArray = [document.getElementById('studentMyProfileSectionID'), document.getElementById('studentCurriculumSectionID'),
+            document.getElementById('studentPasswordSectionID'), document.getElementById('studentloginHistorySectionID')]
+
+
+        /** My Profile */
         const studentProfileViewSectionSection = document.getElementById('smpViewSectionId');
         const studentProfileInputSectionSection = document.getElementById('smpUpdateSectionId');
 
@@ -251,11 +347,20 @@
         const studentProfileStudentEmailField = document.getElementById('studentPersonalEmailFieldID');
         const studentProfileStudentContactField = document.getElementById('studentContactFieldID');
 
-        const fieldsArray = [studentProfileStudentNameField, studentProfileStudentEmailField, studentProfileStudentContactField];
+        const myprofileArray = [studentProfileStudentNameField, studentProfileStudentEmailField, studentProfileStudentContactField];
 
         const viewStudentProfileButton = document.getElementById('viewStudentProfileBtn');
         const updateStudentProfileButton = document.getElementById('updateStudentProfileBtn');
 
+        /** Password */
+
+        let oldPasswordField = document.getElementById('studentOldPasswordFieldID');
+        let newPasswordField = document.getElementById('studentNewPasswordFieldID');
+        let confirmNewPasswordField = document.getElementById('studentConfirmPasswordFieldID');
+        const passwordArray = [oldPasswordField, newPasswordField, confirmNewPasswordField];
+        ops = $(oldPasswordField).attr("data-ref");
+
+        let studentPassBtn = document.getElementById('updateStudentPasswordProfileBtn');
 
         $(document).ready(function () {
             /** click to hide view section and show input section. */
@@ -267,7 +372,7 @@
                 $(studentProfileInputSectionSection).removeClass("hidden");
             });
 
-            $(fieldsArray).each(function () {
+            $(myprofileArray).add(passwordArray).each(function () {
                 $(this).on("input", function () {
                     $(this).closest('div').removeClass('textField-error-input')
                     $(this).closest("div.mt-3").find("label.text-red-900").addClass("hidden")
@@ -276,7 +381,7 @@
             })
 
             $(updateStudentProfileButton).on('click', function () {
-                $(fieldsArray).each(function () {
+                $(myprofileArray).each(function () {
                     checkEmptyField(this)
                     if ($(this).attr("name") === 'studentPersonalEmailField')
                         isValidMail = validateEmail(this)
@@ -290,29 +395,56 @@
                     newStudentPersonalEmail = $(studentProfileStudentEmailField).val();
                     updateStudentProfileAjax(newStudentName, newStudentContact, newStudentPersonalEmail)
                 }
-
             });
 
+            $(studentPassBtn).on('click', function (e) {
+                e.stopPropagation();
+                $(passwordArray).each(function () {
+                    checkEmptyField(this)
+                });
 
-            $(tabs).each(function (index, node) {
+                if (($(newPasswordField).val() !== $(confirmNewPasswordField).val()) && containsError) {
+                    $(newPasswordField).closest('div').addClass('textField-error-input')
+                    $(confirmNewPasswordField).closest('div').addClass('textField-error-input')
+                    showErrorBox("Password mismatch", "please check your new password.")
+
+                } else if ($(oldPasswordField).val() === '' && $(newPasswordField).val() === '' && $(confirmNewPasswordField).val() === '') {
+                    showErrorBox("Empty Field ", 'please complete all fields to continue.')
+                } else {
+                    oldPass = $(oldPasswordField).val();
+                    newPass = $(newPasswordField).val();
+                    confirmPass = $(confirmNewPasswordField).val();
+                    updateStudentPasswordAjax(oldPass, newPass)
+                }
+
+            })
+
+            $(tabsArray).each(function (index, node) {
                 $(this).on('click', function (e) {
                     e.stopImmediatePropagation();
-                    navigateStudentSettingTabs(index , tabs);
+                    navigateStudentSettingTabs(index, tabsArray, sectionsArray);
                 })
             });
 
         });
+
+        $(document).ajaxSend(function () {
+            $("#loader").fadeIn(1000);
+        });
     }
 
-    function navigateStudentSettingTabs(i , tabs) {
+    function navigateStudentSettingTabs(i, tabs, sectionsArray) {
 
         $(tabs).each(function (index, node) {
-            if (index === i )
+            if (index === i) {
                 $(this).removeClass().addClass('sm:px-6 sm:w-auto sm:justify-start cursor-pointer inline-flex justify-center items-center py-3 w-1/2 rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none student-profile-header-text my-0 ')
-            else
+                tabsSectionVisibility(sectionsArray[index], true)
+            } else {
                 $(this).removeClass().addClass("sm:px-6 sm:w-auto cursor-pointer inline-flex justify-center items-center py-3 w-1/2 rounded-t border-b-2 text-gray-400 font-semibold tracking-normal leading-none student-profile-header-text my-0 transform transition ease-out duration-300 hover:scale-100 hover:-translate-y-0 hover:translate-x-0 hover:text-black hover:font-normal hover:border-black")
-        });
+                tabsSectionVisibility(sectionsArray[index], false)
+            }
 
+        });
     }
 
     function checkEmptyField(currentField) {
@@ -320,6 +452,13 @@
             $(currentField).closest('div').addClass('textField-error-input')
             containsError = true
         }
+    }
+
+    function tabsSectionVisibility(currentSection, visibility) {
+        if (visibility)
+            $(currentSection).removeClass("hidden") //transform transition ease-out duration-500 scale-100 -translate-y-0 translate-x-0 text-black font-normal border-black
+        else
+            $(currentSection).addClass("hidden");
     }
 
     function validateEmail(currentField) {
@@ -344,8 +483,71 @@
             });
     }
 
-    function updateStudentProfileAjax() {
+    function updateStudentProfileAjax(newStudentName, newStudentContact, newStudentPersonalEmail) {
+        $.ajax({
+            type: "POST",
+            url: 'assets/studentProfileAjax.php',
+            timeout: 500,
+            cache: false,
+            data: {
+                stuName: newStudentName,
+                stuContact: newStudentContact,
+                stuEmail: newStudentPersonalEmail,
+                update_student_p: true
+            },
+            beforeSend: function () {
+                $("main").toggleClass("blur-filter");
+                $('#loader').toggleClass('hidden')
+            },
+            error: function (xhr, desc, err) {
+                console.log("not working fine" + xhr + "\n" + desc + "\n" + err)
+            },
+            success: function (data, status) {
+                console.log(data);
+            },
+            complete: function () {
+                setInterval(function () {
+                    $("main").toggleClass("blur-filter");
+                    $('#loader').toggleClass('hidden');
+                    location.href = "StudentProfile.php";
+                }, 2000);
+            },
+        });
+    }
 
+    function updateStudentPasswordAjax(oldPass, newPass) {
+        $.ajax({
+            type: "POST",
+            url: 'assets/studentProfileAjax.php',
+            timeout: 500,
+            cache: false,
+            data: {
+                ops: ops,
+                oldpass: oldPass,
+                newpass: newPass,
+                update_p: true
+            },
+            beforeSend: function () {
+                $("main").toggleClass("blur-filter");
+                $('#loader').toggleClass('hidden')
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+            },
+            success: function (data, status) {
+                const result = JSON.parse(data)
+                console.log(result)
+            },
+            complete: function (data) {
+                console.log(data['responseText'])
+
+                // setInterval(function () {
+                //     $("main").toggleClass("blur-filter");
+                //     $('#loader').toggleClass('hidden');
+                //     location.href = "StudentProfile.php";
+                // }, 2000);
+            },
+        });
     }
 
     $.fn.textNodes = function () {
@@ -354,4 +556,5 @@
         });
     }
 </script>
+</body>
 </html>

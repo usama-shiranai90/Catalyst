@@ -21,14 +21,14 @@ $personalDetails = $student->getPersonalDetails();
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-    <!--    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>-->
+        <script src="assets/dashboardscript.js" rel="script"></script>
 </head>
 
 <body>
 
 <header class="text-center text-4xl p-2 pl-48">
     <label id="teacherPanelTitleID">Dashboard</label>
-    <div class="profilePictureDiv" id="viewProfileID">
+    <div class="profilePictureDiv" id="viewStuProfileID">
         <div class="flex">
             <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
                 <img src="../../Assets/Images/vectorFiles/Others/author-at-desk.svg" width="40">

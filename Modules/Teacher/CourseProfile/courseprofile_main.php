@@ -137,7 +137,7 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
 
                     <!--     course essential section            -->
                     <section id="cpEssentialID"
-                             class=" cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -596,7 +596,7 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                     </section>
 
                     <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class=" hidden cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">

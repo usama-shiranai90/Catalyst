@@ -335,7 +335,6 @@ function createWeeklyTopicsAjaxCall(recentlyAddedWeeklyTopics) {
             "arrayWeeklyTopics": recentlyAddedWeeklyTopics,
             creation: true
         },
-
         beforeSend: function () {
             $("main").toggleClass("blur-filter");
             $('#loader').toggleClass('hidden')
