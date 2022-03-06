@@ -2,7 +2,7 @@
 
 class Batch implements JsonSerializable{
 
-    protected static int $batchCode;
+    private $batchCode;
     private $batchName;
 
     protected string $batchYear;
@@ -16,11 +16,15 @@ class Batch implements JsonSerializable{
         $this->databaseConnection = DatabaseSingleton::getConnection();
     }
 
-
-    public function retrieveAllBatches(): array
+//    Return batches of last 6 years
+    public function retrieveAllEligibleBatches()
     {
         $sql = /** @lang text */
-            "select * from batch";
+            "select * from batch where year between
+    (select YEAR(DATE_SUB((select dateCreated from batch order by dateCreated desc limit 1), INTERVAL 5 year )))
+    and
+    (select year from batch order by year desc limit 1) order by dateCreated
+";
         $result = $this->databaseConnection->query($sql);
 
         $listOfBatches = array();
@@ -29,7 +33,7 @@ class Batch implements JsonSerializable{
 
             while ($row = $result->fetch_assoc()) {
                 $newBatch = new Batch();
-                self::$batchCode = $row["batchCode"];
+                $newBatch->batchCode = $row["batchCode"];
                 $newBatch->batchName = $row["batchName"];
                 $newBatch->curriculumCode = $row["curriculumCode"];
                 $newBatch->programCode = $row["programCode"];
@@ -43,15 +47,16 @@ class Batch implements JsonSerializable{
         return $listOfBatches;
     }
 
-    public static function getBatchCode(): int
+    public function getBatchCode()
     {
-        return self::$batchCode;
+        return $this->batchCode;
     }
 
-    public static function setBatchCode(int $batchCode): void
+    public function getBatchName()
     {
-        self::$batchCode = $batchCode;
+        return $this->batchName;
     }
+
 
     public function getBatchYear(): string
     {
@@ -73,10 +78,6 @@ class Batch implements JsonSerializable{
         $this->programCode = $programCode;
     }
 
-    public function getBatchName()
-    {
-        return $this->batchName;
-    }
 
     public function setBatchName($batchName): void
     {
@@ -100,7 +101,7 @@ class Batch implements JsonSerializable{
         return array(
             'programCode'=>$this->programCode,
             'batchName'=>$this->batchName,
-            'batchCode'=>self::$batchCode
+            'batchCode'=>$this->batchCode
         );
     }
 }

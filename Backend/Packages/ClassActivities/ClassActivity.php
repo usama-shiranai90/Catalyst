@@ -568,7 +568,7 @@ class ClassActivity
                 $statement_second = /** @lang text */
                     "select questionCode , c.cloName , detail , totalMarks
                      from assessment as a join assessmentquestion a2 on a.assessmentCode = a2.assessmentCode join clo c on a2.cloCode = c.CLOCode where
-                     sectionCode = 7 and a.courseCode = 'SEN-32' and a.assessmentCode = 63";
+                     sectionCode = \"$sectionCode\" and a.courseCode = \"$courseCode\" and a.assessmentCode = \"$storeAssessmentCode\" ";
 
                 $result_second = $this->databaseConnection->query($statement_second);
                 if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {

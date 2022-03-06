@@ -13,9 +13,10 @@ $studentIncorrectPass = "hidden";
 $teacherIncorrectPass = "hidden";
 $adminIncorrectPass = "hidden";
 
+$adminType = "";
 
 $batch = new Batch();
-$listOfBatches = $batch->retrieveAllBatches();
+$listOfBatches = $batch->retrieveAllEligibleBatches();
 $listOfPrograms = array();
 $program = new Program();
 foreach ($listOfBatches as $batch) {
@@ -64,8 +65,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else if (isset($_POST["adminLogin"])) {
         if (!empty($_POST["adminUsername"]) && !empty($_POST["adminPassword"])) {
-            $_SESSION['adminUsername'] = $_POST["adminUsername"];
-            $_SESSION['adminPassword'] = $_POST["adminPassword"];
+            $email = $_POST["adminUsername"];
+            $password = $_POST["adminPassword"];
+
+            $user = new Admin();
+            $adminType = $user->login($email, $password);
+
+            if ($adminType == null) {
+                $adminIncorrectPass = "";
+
+                $adminTab = "selected";
+                $adminPanel = "";
+
+                $teacherTab = "";
+                $studentTab = "";
+                $studentPanel = "hidden";
+                $teacherPanel = "hidden";
+            } else
+                $accessGranted = true;
         }
     }
 
@@ -78,7 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['facultyInstance'] = serialize(Faculty::getFacultyInstance());
 
             header("Location: ../Teacher/TeacherDashboard.php");
-        } elseif (isset($_POST["studentLogin"])) {
+        }
+        elseif (isset($_POST["studentLogin"])) {
             $user->setPersonalDetails();
             $_SESSION['studentRegistrationCode'] = $user->getUserCode();
             $_SESSION['batchCode'] = $_POST["batchCode"];
@@ -88,7 +106,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             header("Location: ../Student/StudentPanel.php");
         }
+        elseif (isset($_POST["adminLogin"])) {
+            $user->setPersonalDetails();
+            $_SESSION['adminCode'] = $user->getUserCode();
+            $_SESSION['departmentCode'] = $user->getDepartmentCode();
+            $_SESSION['adminInstance'] = serialize($user);
+            if ($adminType == "HOD") {
+                header("Location: ../HeadOfDepartment/hodPanel.php");
+            } elseif ($adminType == "PM") {
+                header("Location: ../ProgramManager/pmPanel.php");
+            }
+
+
+        }
+
 //        echo "Access Granted";
+    } else {
+        echo "not working";
     }
 
 }
@@ -234,7 +268,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!--        Student Authentication body-->
         <div class="studentAuthentication px-5 pt-4 pb-4 <?php echo $studentPanel; ?>" id="studentAuthenticationPanel">
             <label class="login-container-label">Please login to continue</label>
-
             <form method="post">
                 <!--                Roll Number Generating Portion-->
                 <div class="mt-3 rollNumberSectionMobile rollNumberSectionNormal">
@@ -315,6 +348,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label class="text-red-900 text-center hidden" id="studentIncorrectPass">Username or password
                     is incorrect</label>
 
+
+                <!--                        Hidden Fields                   -->
+                <input class="hidden" type="text" id="curr" name="curriculumCode">
+                <input class="hidden" type="text" name="programCode">
+                <input class="hidden" type="text" name="batchCode">
+
                 <!--Login and SVG-->
                 <div class="mt-5 sm:mt-0 sm:grid sm:grid-cols-3 sm:grid sm:gap-0 items-center mb-10 sm:mb-0 block">
                     <div class="align-middle text-center col-start-2">
@@ -343,7 +382,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="textField-label-content col-span-6" id="teacherUsernameDiv">
                         <label for="teacherUsername"></label>
                         <input class="textField" type="email" placeholder=" " id="teacherUsername"
-                               name="teacherUsername" value="maqeelIqbal@fui.edu.pk">
+                               name="teacherUsername" value="asif@fui.edu.pk">
                         <label class="textField-label">Email</label>
                     </div>
                 </div>
@@ -410,9 +449,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!--                Username Portion-->
                 <div class="mt-3 usernameSectionMobile usernameSectionNormal">
                     <i class="fa-1x w-1/2 text-center far fa-user"></i>
-
+                    <!--hodse@fui.edu.pk-->
                     <div class="textField-label-content col-span-6" id="adminUsernameDiv">
-                        <input class="textField" type="email" placeholder=" " id="adminUsername"
+                        <input class="textField" type="email" value="pmse@fui.edu.pk" placeholder=" "
+                               id="adminUsername"
                                name="adminUsername">
                         <label class="textField-label">Email</label>
                     </div>
@@ -429,7 +469,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="textField-label-content md:col-start-2 col-span-6" id="adminPasswordDiv">
 
                         <input class="textField" type="password" placeholder=" " id="adminPassword"
-                               name="adminPassword">
+                               name="adminPassword" value="123456789">
                         <label class="textField-label">Password</label>
                         <!--  forgot section for Desktop-->
                         <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"
@@ -450,8 +490,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!--Login and SVG-->
                 <div class="mt-5 sm:mt-0 sm:grid sm:grid-cols-3 sm:grid sm:gap-0 items-center mb-10 sm:mb-0 block">
                     <div class="align-middle text-center col-start-2">
-                        <button type="submit" class="loginButton sm:h-1/5 sm:w-2/3" name="studentLogin"
-                                id="studentLoginBtnID">Login
+                        <button type="submit" class="loginButton sm:h-1/5 sm:w-2/3" name="adminLogin"
+                                id="adminLoginBtnID">Login
                         </button>
                     </div>
                     <div class="align-middle text-center hidden sm:inline-block">
@@ -520,9 +560,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script>
     $(document).ready(function () {
         var listOfBatches = '<?php echo json_encode($listOfBatches);?>';
-        var listOfBatches = JSON.parse(listOfBatches);
+        listOfBatches = JSON.parse(listOfBatches);
 
-        //Setting semesters to show on course selection
+        //Setting programs to show on batch selection
         $('#batch').on('change', function () {
             var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
             var selectedBatch = $(this).val();
@@ -539,29 +579,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                 }
             }
+            //setting value in the hidden input for batch code
+            $('input[name="batchCode"]').val($('option:selected', this).attr('batchCode'))
             $('#program').html(options)
         })
 
 
         /*Setting values of hidden batchCode and programCode fields*/
         $('#program').on('change', function () {
-
-            var listOfBatches = <?php echo json_encode($listOfBatches);?>;
             var listOfPrograms = <?php echo json_encode($listOfPrograms);?>;
 
             var selectedProgram = $('#program').val();
-            let i;
-            for (i = 0; i < listOfPrograms.length; i++) {
-                if (selectedProgram == listOfPrograms[i]["programName"]) {
+            for (let i = 0; i < listOfPrograms.length; i++) {
+                if (selectedProgram === listOfPrograms[i]["programName"]) {
                     $('input[name="programCode"]').val(listOfPrograms[i]["programCode"])
-                    $('input[name="batchCode"]').val(listOfBatches[i]["batchCode"])
                     break;
                 }
             }
 
-            // console.log($('input[name="batchCode"]').val())
-            // console.log($('input[name="programCode"]').val())
-        })
+            console.log($('input[name="programCode"]').val())
+            console.log($('input[name="batchCode"]').val())
+        });
 
     })
 </script>

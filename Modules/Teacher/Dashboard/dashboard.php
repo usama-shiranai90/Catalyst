@@ -3,6 +3,8 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
+echo $_SESSION['selectedCourse']."   ".$_SESSION['selectedBatch']."   ".$_SESSION['selectedCurriculum']."   ".$_SESSION['selectedSection'];
+
 $clo = new CLO();
 $fetchCloList = $clo->retrieveCLOlist($_SESSION['selectedCurriculum'], $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); //
 //$fetchCloList1 = $clo->retrieveCLOlist($_SESSION['selectedCurriculum'], $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); //
@@ -19,7 +21,7 @@ $listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
 
 $allottedCourseNames = array();
 $courseNamesBeingShown = array();
-for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+for ($x = 0; $x < sizeof($listOfAllocations);$x++) {
     $allottedCourseNames[] = $listOfAllocations[$x]->getCourse()->getCourseTitle();
     if (!in_array($allottedCourseNames[$x], $courseNamesBeingShown))
         $courseNamesBeingShown[] = $allottedCourseNames[$x];
@@ -45,7 +47,7 @@ $fetchAssessment = array(
     $assessmentObject->getTopic(),
     $assessmentObject->getListOfQuestions(),
 );
-sleep(0.5)
+//sleep(2)
 
 ?>
 
@@ -57,7 +59,7 @@ sleep(0.5)
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <link href="../asset/TeacherDashboardStyles.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="../../../Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
     <script src="../asset/TeacherDashScripts.js" rel="script"></script>
 
@@ -92,7 +94,7 @@ sleep(0.5)
                                 <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Student
                                     <br>Strength</p>
                             </div>
-                            <p class="text-3xl font-semibold" style="color: #003C9C">7</p>
+                            <p id="teacherDashboardTotalStudentID" class="text-3xl font-semibold" style="color: #003C9C"></p>
                         </div>
                     </div>
                     <div class="shadow-lg col-span-2 rounded-2xl w-full h-40  p-4 py-4 bg-white">
@@ -101,7 +103,7 @@ sleep(0.5)
                                 <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-12 mt-4">
                                     Assign Sections</p>
                             </div>
-                            <p class="text-3xl font-semibold" style="color: #003C9C">15</p>
+                            <p class="text-3xl font-semibold" style="color: #003C9C"></p>
                         </div>
                     </div>
                     <div class="shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
@@ -130,7 +132,7 @@ sleep(0.5)
                             <h2 class="db-table-header-text">CLO's List</h2>
                         </div>
 
-                        <table class="table-fixed w-full text-left whitespace-no-wrap min-h-0 max-h-40 h-5/6">
+                        <table class="table-fixed w-full text-left whitespace-no-wrap min-h-0 REMOVED-h-5/6">
                             <thead>
                             <tr class="text-center bg-catalystLight-f5">
                                 <th class="capitalize px-4 w-1/5 py-3  tracking-wider font-medium text-sm rounded-tl rounded-bl">
@@ -224,7 +226,9 @@ sleep(0.5)
 
                                 <tbody id="studentPerformanceDashboardBodyID"
                                        class="transition transform duration-500 ease-in-out">
-                                <!--                                    <td class="px-1 py-3 w-full font-medium ">
+                                <!-- <td class="px-1 py-3 w-full font-medium text-green-500">100.00 %</td>
+
+                                                                    <td class="px-1 py-3 w-full font-medium ">
                                                             <div class="flex flex-row flex-wrap space-x-2 justify-between items-center">
                                                                 <p class="ordinal slashed-zero tabular-nums font-semibold text-base">1st</p>
                                                                 <p class="ordinal font-semibold text-base">2nd</p>
@@ -232,24 +236,9 @@ sleep(0.5)
 
                                                         </td>
                     -->
-                                <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight"
-                                    id="FUI/FURC-SP-18-BCSE-018" data-assessment="4">
-                                    <td class="px-1 py-3 w-full">FUI/FURC-SP-18-BCSE-018</td>
-                                    <td class="px-1 py-3 w-full">1st</td>
-                                    <td class="px-1 py-3 w-full">2nd</td>
-                                </tr>
-                                <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight"
-                                    id="FUI/FURC-SP-18-BCSE-018" data-assessment="4">
-                                    <td class="px-1 py-3 w-full">FUI/FURC-SP-18-BCSE-018</td>
-                                    <td class="px-1 py-3 w-full">1st</td>
-                                    <td class="px-1 py-3 w-full">2nd</td>
-                                </tr>
+<!--                                <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight" data-assessment="4"></tr>-->
 
-                                <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight"
-                                    id="FUI/FURC-SP-18-BCSE-011" data-assessment="4">
-                                    <td class="px-1 py-3 w-full">FUI/FURC-SP-18-BCSE-011</td>
-                                    <td class="px-1 py-3 w-full font-medium text-green-500">100.00 %</td>
-                                </tr>
+
 
                                 </tbody>
                             </table>
@@ -358,8 +347,8 @@ sleep(0.5)
 </body>
 <script>
     // ploArray = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38]; // fetch from server.
-    totalCLO = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4'];  // fetch from server
-    avgScorePerCLO = [66, 51, 33, 10];  // fetch from server
+    // totalCLO = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4'];  // fetch from server
+    // avgScorePerCLO = [66, 51, 33, 10];  // fetch from server
 
     const courseLearningArray =<?php echo json_encode($fetchCloList);?>;
     const recentWeeklyCoveredTopic =<?php echo json_encode($fetchWeeklyTopic);?>;

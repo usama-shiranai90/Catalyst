@@ -1,12 +1,41 @@
 <?php
 
-class PLO{
+class PLO implements JsonSerializable
+{
 
     protected $ploCode;
     protected $ploName = "";
     protected $ploDescription = "";
 
-    public function __construct(){
+    protected $databaseConnection;
+
+    public function __construct()
+    {
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+    }
+
+    public function retreivePLOsOfProgram($programCode){
+        $sql = /** @lang text */
+            "select PLOCode, ploName, ploDescription from plo join batch b on plo.curriculumCode = b.curriculumCode where batchCode = 7 and plo.programCode = \"$programCode\"";
+        $result = $this->databaseConnection->query($sql);
+
+        $PLOList = array();
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $newPLO = new PLO();
+                $newPLO->setPloCode($row["PLOCode"]);
+                $newPLO->setPloName($row["ploName"]);
+                $newPLO->setPloDescription($row["ploDescription"]);
+                $PLOList[] = $newPLO;
+            }
+        } else{
+            echo "No PLOs found for program code: ".$programCode;
+            return null;
+        }
+
+        return $PLOList;
     }
 
     /**
@@ -57,7 +86,14 @@ class PLO{
         $this->ploDescription = $ploDescription;
     }
 
-
+    public function jsonSerialize()
+    {
+        return array(
+            'ploCode'=>$this->ploCode,
+            'ploName'=>$this->ploName,
+            'ploDescription'=>$this->ploDescription
+        );
+    }
 
 }
 

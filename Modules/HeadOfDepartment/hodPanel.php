@@ -3,14 +3,14 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
-$studentRegCode = $_SESSION['studentRegistrationCode'];
-$batchCode = $_SESSION['batchCode'] = 1;
-$programCode = $_SESSION['programCode'] = 1;
+$adminCode = $_SESSION['adminCode'];
+//$batchCode = $_SESSION['batchCode'];
+//$programCode = $_SESSION['programCode'];
 
 $personalDetails = array();
-$student = unserialize($_SESSION['studentInstance']);
-$personalDetails = $student->getPersonalDetails();
 
+$admin = unserialize($_SESSION['adminInstance']);
+$personalDetails = $admin->getPersonalDetails();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,25 +19,23 @@ $personalDetails = $student->getPersonalDetails();
     <title>Teacher</title>
     <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
-
-    <script async rel="script" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-    <script async src="assets/js/dashboardscript.js"></script>
-
+    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>
 </head>
+
 <body>
 
 <header class="text-center text-4xl p-2 pl-48">
     <label id="teacherPanelTitleID">Dashboard</label>
-    <div class="profilePictureDiv" id="viewStuProfileID">
+    <div class="profilePictureDiv" id="viewProfileID">
         <div class="flex">
             <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
-                <img src="../../Assets/Images/vectorFiles/Others/author-at-desk.svg" width="40">
+                <img src="../../Assets/Images/vectorFiles/Others/profilePicAvatar.jpg" width="40">
                 <div class="flex flex-col text-xs pl-4 pt-1 cursor-pointer">
                     <div><?php echo $personalDetails['name'] ?></div>
                     <hr class="w-full">
-                    <div><?php echo $personalDetails['studentRegCode'] ?></div>
+                    <div><?php echo $personalDetails['facultyCode'] ?></div>
                 </div>
             </a>
         </div>
@@ -136,16 +134,15 @@ $personalDetails = $student->getPersonalDetails();
 
 
             <!--            Student Progress-->
-            <div class="navigationItem" id="studentProgressID">
-                <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite"
-                     xmlns="http://www.w3.org/2000/svg">
+            <div class="navigationItem" id="academicIssueTrackerID">
+                <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite" xmlns="http://www.w3.org/2000/svg">
                     <path d="M25.25 0H2.75C1.375 0 0.25 1.125 0.25 2.5V18.75C0.25 20.125 1.375 21.25 2.75 21.25H25.25C26.625 21.25 27.75 20.125 27.75 18.75V2.5C27.75 1.125 26.625 0 25.25 0ZM2.75 18.75V2.5H12.75V18.75H2.75ZM25.25 18.75H15.25V2.5H25.25V18.75ZM16.5 6.875H24V8.75H16.5V6.875ZM16.5 10H24V11.875H16.5V10ZM16.5 13.125H24V15H16.5V13.125Z"/>
                 </svg>
-                <label class="pl-3">Progress</label>
+                <label class="pl-3">Academic Issue Tracker</label>
             </div>
 
-            <!--            Transcripts-->
-            <div class="navigationItemDropdown" id="studentTranscripts">
+            <!--            Admin Management-->
+            <div class="navigationItemDropdown" id="adminManagementID">
                 <div class="flex justify-between items-center navDropBox" id="teacherClassActivitiesDropBox">
                     <div class="flex items-center">
                         <div>
@@ -155,31 +152,45 @@ $personalDetails = $student->getPersonalDetails();
                                 <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
                             </svg>
                         </div>
-                        <label class="pl-3">Transcripts</label>
+                        <label class="pl-3">Admin Management</label>
                     </div>
 
                     <img class="sidePanelNavigationItemDropdownIcon rotate"
                          src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
-                    <div class="menuItem" id="switchToOBETranscript">OBE</div>
-                    <div class="menuItem" id="switchToGPATranscript">GPA</div>
+                    <div class="menuItem" id="assignRoleID">Assign Role</div>
+                    <div class="menuItem" id="viewRoleID">View Role</div>
                 </div>
             </div>
+            <!--            Faculty Management-->
+            <div class="navigationItem pr-5" id="facultyManagementID">
+                <svg width="25" height="25" viewBox="0 0 30 30"
+                     xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
+                    <path d="M23.75 6.25V23.75H6.25V6.25H23.75ZM23.75 3.75H6.25C4.875 3.75 3.75 4.875 3.75 6.25V23.75C3.75 25.125 4.875 26.25 6.25 26.25H23.75C25.125 26.25 26.25 25.125 26.25 23.75V6.25C26.25 4.875 25.125 3.75 23.75 3.75Z"/>
+                    <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
+                </svg>
+                <label class="pl-3">Faculty Management</label>
+            </div>
 
+            <!--            Logout-->
+            <div class="flex justify-center w-full bottom-3 absolute">
+                <div class="logout rounded-md bg-white w-2/3 p-0.5 cursor-pointer" id="logout">
+                    <svg class="inline-block" width="25" height="25" viewBox="0 0 30 31" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.75 20.5L8.75 15.5M8.75 15.5L13.75 10.5M8.75 15.5H26.25M20 20.5V21.75C20 22.7446 19.6049 23.6984 18.9017 24.4017C18.1984 25.1049 17.2446 25.5 16.25 25.5H7.5C6.50544 25.5 5.55161 25.1049 4.84835 24.4017C4.14509 23.6984 3.75 22.7446 3.75 21.75V9.25C3.75 8.25544 4.14509 7.30161 4.84835 6.59835C5.55161 5.89509 6.50544 5.5 7.5 5.5H16.25C17.2446 5.5 18.1984 5.89509 18.9017 6.59835C19.6049 7.30161 20 8.25544 20 9.25V10.5"
+                              stroke="#01409B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <label class="pl-3 inline-block cursor-pointer" style="color: #01409B">Logout</label>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="ml-48 w-full h-full" id="teacherMainContent">
+    <div class="ml-48 w-full h-full" id="headOfDepMainContent">
         <!--        Pages to load go here through scripts-->
-        <iframe class="h-full" src="" style="width: 100%"></iframe>
+        <iframe class="h-full" src="headOfDepDashboard.php" style="width: 100%"></iframe>
     </div>
 </div>
 </body>
-<script>
-    $("#teacherMainContent").html("<iframe class='h-full block' src='Dashboard.php' style='width: 100%'></iframe>");
-    $("#teacherPanelTitleID").text("Dashboard")
-    document.title = "Catalyst | Dashboard";
-    $('#studentDashboardID').removeClass().addClass("navigationItem navigationItemSelected");
-    $('#studentDashboardID svg').removeClass().addClass("turnItBlueForever");
-</script>
+
 </html>

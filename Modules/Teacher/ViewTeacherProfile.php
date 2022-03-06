@@ -79,7 +79,7 @@ function base64_to_jpeg($base64_string, $output_file)
     <title>Title</title>
     <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="../../Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
     <style>
 

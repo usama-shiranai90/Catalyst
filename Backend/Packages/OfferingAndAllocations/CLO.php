@@ -1,6 +1,6 @@
 <?php
 
-class CLO
+class CLO implements JsonSerializable
 {
     public $cloCode;
     public $cloName;
@@ -34,7 +34,8 @@ class CLO
         $this->mappedPLOs = array();
     }
 
-    public function retrieveAllCLOPerCourse($curriculumID, $programID, $courseCode, $deleteFromMappingArray): array
+    /**OneEyeOwl */
+    public function retrieveAllCLOPerCourse($curriculumID, $programID, $courseCode,$batchCode, $deleteFromMappingArray): array
     {
         $CLOlist = array();
 
@@ -42,7 +43,7 @@ class CLO
         $sql = /** @lang text */
             "select co.courseCode ,co.cloName ,co.description ,co.domain ,co.btLevel ,co.CLOCode  ,map.CLOCode,map.PLOCode , p.ploName , p.ploDescription
             from clo as co  join clotoplomapping map on co.CLOCode = map.CLOCode join plo p on map.PLOCode = p.PLOCode where 
-            co.programCode = \"$programID\" and co.curriculumCode = \"$curriculumID\" and co.courseCode = \"$courseCode\" ORDER BY co.cloName;";
+            co.programCode = \"$programID\" and co.curriculumCode = \"$curriculumID\" and co.courseCode = \"$courseCode\" and co.batchCode = \"$batchCode\" ORDER BY co.cloName;";
 
         $result = $this->databaseConnection->query($sql);
 
@@ -67,7 +68,7 @@ class CLO
             sort($tempArray);
             array_push($this->mappedPLOs, $tempArray);
 
-            echo "CLO list is :".json_encode($CLOlist);
+            echo "CLO list is :" . json_encode($CLOlist);
 
         } else
             echo "Cant find clo : " . $this->databaseConnection->error;
@@ -79,14 +80,12 @@ class CLO
         } elseif (strcmp($deleteFromMappingArray, 'PLODescription') == 0) {
             $this->deleteFromMappedArray(2);
         }
-
-   /*   showing data on server page.
-     foreach ($this->mappedPLOs as $what) {
-            foreach ($what as $w) {
-                print_r(json_encode($w) . "<br>");
-            }
-        }*/
-
+        /*   showing data on server page.
+          foreach ($this->mappedPLOs as $what) {
+                 foreach ($what as $w) {
+                     print_r(json_encode($w) . "<br>");
+                 }
+             }*/
         return $CLOlist;
     }
 
@@ -101,7 +100,6 @@ class CLO
 
         }
     }
-
 
     public function retrieveCLOlist($curriculumID, $programID, $courseCode): ?array
     {
@@ -118,7 +116,7 @@ class CLO
             while ($row = $result->fetch_assoc()) {
                 if ($currentCLO != $row["cloName"]) {
                     $currentCLO = $row["cloName"];
-                    $CLOlist[] = [$row['CLOCode'], $row["cloName"] , $row['description']];
+                    $CLOlist[] = [$row['CLOCode'], $row["cloName"], $row['description']];
                 }
             }
             return $CLOlist;
@@ -147,8 +145,88 @@ class CLO
         return $this->cloName;
     }
 
+    public function retrieveCLOAveragePerCourse($courseCode, $sectionCode, $batchCode, $curriculumCode): ?array
+    {
+        $cloDataSet = array();
+        $dbStatement = /** @lang text */
+            "select cloName,
+         sum(totalQuestionMarks)                                             as total,
+         sum(obtainedMarks)                                                  as obtain,
+         CAST(sum(obtainedMarks) / sum(totalQuestionMarks) * 100 as INTEGER) as result,
+         sum(obtainedMarks) / count(totalQuestionMarks)                         avg
+         from assessment as a
+         join assessmentquestion a2 on a.assessmentCode = a2.assessmentCode
+         join assessmentquestionstudentmarks a3 on a2.questionCode = a3.questionCode
+         join clo c on c.CLOCode = a2.cloCode
+        where c.courseCode = \"$courseCode\" and sectionCode = \"$sectionCode\" and 
+        c.batchCode = \"$batchCode\" and c.curriculumCode = \"$curriculumCode\" group by a2.cloCode;";
+
+        $result = $this->databaseConnection->query($dbStatement);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    "cloName" => $row['cloName'],
+                    "totalMarks" => $row['total'],
+                    "obtainMarks" => $row['obtain'],
+                    "result" => $row['result'],
+                    "otherAvg" => $row['avg'],
+                );
+                array_push($cloDataSet, $temp);
+            }
+            return $cloDataSet;
+        } else {
+            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  wtf";
+            return null;
+        }
+    }
+
+    public function retrieveCLOAveragePerStudent($courseCode, $sectionCode): ?array
+    {
+        $cloDataSet = array();
+        $dbStatement = /** @lang text */
+            "select cloName, studentRegCode,
+       sum(totalQuestionMarks)                                              tQMarks,
+       sum(obtainedMarks)                                              obtainMarks,
+       CAST(sum(obtainedMarks) / sum(totalQuestionMarks) * 100 as INTEGER) as result
+        from assessment as a
+         join assessmentquestion a2 on a.assessmentCode = a2.assessmentCode
+         join assessmentquestionstudentmarks a3 on a2.questionCode = a3.questionCode
+         join clo c on c.CLOCode = a2.cloCode
+        where c.courseCode = \"$courseCode\"
+          and sectionCode = \"$sectionCode\"
+        group by a3.studentRegCode,a2.cloCode;";
+
+        $result = $this->databaseConnection->query($dbStatement);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    "cloName"    => $row['cloName'],
+                    "regNumber"  => $row['studentRegCode'],
+                    "totalMarks" => $row['tQMarks'],
+                    "ObtainMarks"=> $row['obtainMarks'],
+                    "result"     => $row['result']
+                );
+                array_push($cloDataSet, $temp);
+            }
+            return $cloDataSet;
+        } else {
+            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  wtf";
+            return null;
+        }
+    }
+
 
     public function retrieveCloCode($cloCode)
+    {
+        return $this->cloCode;
+    }
+
+    public function retrieveCloDescription($cloCode)
+    {
+        return $this->cloDescription;
+    }
+
+    public function getCloCode()
     {
         return $this->cloCode;
     }
@@ -158,12 +236,17 @@ class CLO
         $this->cloCode = $cloCode;
     }
 
+    public function getCloName()
+    {
+        return $this->cloName;
+    }
+
     public function setCloName($cloName): void
     {
         $this->cloName = $cloName;
     }
 
-    public function retrieveCloDescription($cloCode)
+    public function getCloDescription()
     {
         return $this->cloDescription;
     }
@@ -173,27 +256,21 @@ class CLO
         $this->cloDescription = $cloDescription;
     }
 
-    public function getCloCode()
-    {
-        return $this->cloCode;
-    }
-    public function getCloName()
-    {
-        return $this->cloName;
-    }
-
-    public function getCloDescription()
-    {
-        return $this->cloDescription;
-    }
-
     public function toString()
     {
         echo "CLOName:" . $this->cloName . ", ";
         echo "CLODescription:" . $this->cloDescription . "<br> ";
     }
 
-
+    public function jsonSerialize()
+    {
+        return array(
+            'cloCode' => $this->cloCode,
+            'cloName' => $this->cloName,
+            'cloDescription' => $this->cloDescription
+        );
+    }
 
 }
+
 ?>

@@ -31,15 +31,13 @@ $(document).ready(function () {
         document.title = "Catalyst | Student Progress";
     })
 
-
     $("#viewStuProfileID").click(function () {
         $("#teacherMainContent").html("<iframe class='h-full block' src='../Student/StudentProfile.php' style='width: 100%'></iframe>");
-
         $("#teacherPanelTitleID").text("Sessional")
-
         document.title = "Catalyst - Sessional Dashboard";
     })
 
 
 });
+
 

@@ -8,12 +8,12 @@ class User
     protected $personalDetails;
     protected $databaseConnection;
 
-/*    public function __construct($email, $password)
-    {
-        $this->databaseConnection = DatabaseSingleton:: getConnection();
-        $this->email = $email;
-        $this->password = $password;
-    }*/
+    /*    public function __construct($email, $password)
+        {
+            $this->databaseConnection = DatabaseSingleton:: getConnection();
+            $this->email = $email;
+            $this->password = $password;
+        }*/
 
     public function __construct()
     {

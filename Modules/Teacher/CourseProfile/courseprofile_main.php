@@ -45,7 +45,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
 
             $cloObject = new CLO();
             $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($_SESSION['selectedCurriculum'],
-                $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], 'PLODescription');  // add batchCode in the future.
+                $_SESSION['selectedProgram'], $_SESSION['selectedCourse'],$_SESSION['selectedBatch'], 'PLODescription');  // add batchCode in the future.
             $viewCLOMapping = $cloObject->mappedPLOs;
 
         } // if in editor mode.

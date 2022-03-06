@@ -124,7 +124,7 @@ class WeeklyTopic
             from weeklytopics where courseProfileCode = \"$courseProfileCode\";";
 
         $result = $this->databaseConnection->query($sql);
-        if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
             while ($row = $result->fetch_assoc()) {
                 $weekCLOList = array();

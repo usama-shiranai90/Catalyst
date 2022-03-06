@@ -32,7 +32,7 @@ $cloObject = new CLO();
 
 
 $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(),
-    $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], 'PLOCode');
+    $_SESSION['selectedProgram'], $_SESSION['selectedCourse'],$_SESSION['selectedBatch'] ,'PLOCode');
 $viewCLOMapping = $cloObject->mappedPLOs;
 
 //var_dump($viewCLODescription);

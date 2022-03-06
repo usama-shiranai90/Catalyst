@@ -28,15 +28,18 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
     <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="../../Assets/Scripts/Master.js" rel="script"></script>
+    <!--    <script src="../../Assets/Scripts/Master.js" rel="script"></script>-->
+    <!--    <script src="../Teacher/CourseProfile/CourseProfileAssets/js/additionalWork.js"></script>-->
 </head>
 <body>
 <div class="w-full min-h-full">
     <main class="main-content-alignment">
-        <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 min-h-full bg-catalystLight-f5">
+        <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 bg-catalystLight-f5 deleted-min-full-height">
             <div class="flex mx-auto flex-wrap justify-center">
                 <a id="myProfileSettingTabID"
-                   class="sm:px-6 sm:w-auto sm:justify-start cursor-pointer inline-flex justify-center items-center py-3 w-1/2 rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none student-profile-header-text my-0 ">
+                   class="sm:px-6 sm:w-auto sm:justify-start cursor-pointer inline-flex justify-center
+                   items-center py-3 w-1/2 rounded-t border-b-2 border-indigo-500 text-black
+                   tracking-wide leading-none student-profile-header-text my-0 ">
                     <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                          stroke-width="2" class="w-5 h-5 mr-3" viewBox="0 0 24 24">
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
@@ -73,7 +76,7 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
 
             <!-- MY PROFILE -->
             <section id="studentMyProfileSectionID"
-                     class=" cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
+                     class="cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
                 <div class="container px-5 mx-auto flex flex-col">
                     <!-- Image , student name , department/ reg number. -->
                     <div class="grid grid-cols-8 items-center place-content-center p-3 my-5 bg-catalystBlue-l2 rounded-md">
@@ -139,19 +142,22 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
                                 <div class="mt-3 w-3/6 flex flex-col">
                                     <div class="textField-label-content w-full">
                                         <input class="textField" type="text" placeholder=" " id="studentNameFieldID"
-                                               name="studentNameField" value="">
+                                               name="studentNameField" value="<?php echo $personalDetails['name'] ?>">
                                         <label class="textField-label">Student Name</label>
                                     </div>
                                     <div class="textField-label-content w-full">
                                         <input class="textField" type="email" placeholder=" "
                                                name="studentPersonalEmailField" id="studentPersonalEmailFieldID"
-                                               value="">
+                                               value="<?php echo $personalDetails['personalEmail'] ?>">
                                         <label class="textField-label">Personal Email</label>
                                     </div>
+                                    <!-- onkeyup="this.value=this.value.replace(/(\d{4})(\d{4})/, '$1-$2')"-->
                                     <div class="textField-label-content w-full">
                                         <input class="textField" type="email" placeholder=" "
                                                name="studentContactField" id="studentContactFieldID"
-                                               value="">
+                                               oninput="isNumeric(this);
+                                                this.value=this.value.replace(/(\d{4})(\d{0})/, '$1-$2')"
+                                               value="<?php echo $personalDetails['contactNumber'] ?>">
                                         <label class="textField-label">Contact</label>
 
                                     </div>
@@ -184,9 +190,14 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
                         <div class="text-right mx-0 my-2">
 
                             <button type="button"
+                                    class="text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-10 py-2"
+                                    name="viewStudentProfileBtn" id="viewStudentProfileBtn">Update Profile
+                            </button><!--style=" padding: 0.5% 4%"-->
+
+                            <button type="button"
                                     class="hidden text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-10 py-2"
                                     name="updateStudentProfileBtn" id="updateStudentProfileBtn">Continue
-                            </button><!--style=" padding: 0.5% 4%"-->
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -288,13 +299,13 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
 </div>
 
 <div id="errorMessageDiv"
-     class="hidden fixed bottom-0 right-0 z-50 flex p-4 mb-4 text-md w-2/12 font-sm text-red-700 bg-red-100 rounded-lg">
+     class="hidden fixed bottom-0 right-0 z-50 flex p-4 mb-4 text-md w-auto font-sm text-red-700 bg-red-100 rounded-lg">
     <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
          xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
                      001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
     </svg>
-    <div id="errorID">
+    <div id="errorID" class="w-11/12">
         <span class="font-medium">missing field alert!</span><br>try submitting again.
     </div>
 </div>
@@ -312,6 +323,10 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
     // const studentProfileViewSectionViewSection = document.getElementById('registerCourseDivID'); // .
     // const studentProfileViewSectionUpdatableSection = document.getElementById('registerCourseDivID'); // .
     // const studentProfileStaticOtherDataSection = document.getElementById('smpViewStaticDataSectionId'); // .
+
+    // let studentProfileViewLabelStudentName = document.getElementById('smpStudentNameId-view');
+    // let studentProfileViewLabelStudentEmail = document.getElementById('smpStudentEmailId-view');
+    // let studentProfileViewLabelStudentContact = document.getElementById('smpStudentContactId-view');
     /*Script would load when the whole page it is associated to is loaded along with its contents*/
 
     let containsError = false;
@@ -325,7 +340,6 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
     let newPass = '';
     let confirmPass = '';
 
-
     window.onload = function () {
 
         const tabsArray = [document.getElementById('myProfileSettingTabID'), document.getElementById('curriculumSettingTabID'),
@@ -334,14 +348,9 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
         const sectionsArray = [document.getElementById('studentMyProfileSectionID'), document.getElementById('studentCurriculumSectionID'),
             document.getElementById('studentPasswordSectionID'), document.getElementById('studentloginHistorySectionID')]
 
-
         /** My Profile */
         const studentProfileViewSectionSection = document.getElementById('smpViewSectionId');
         const studentProfileInputSectionSection = document.getElementById('smpUpdateSectionId');
-
-        let studentProfileViewLabelStudentName = document.getElementById('smpStudentNameId-view');
-        let studentProfileViewLabelStudentEmail = document.getElementById('smpStudentEmailId-view');
-        let studentProfileViewLabelStudentContact = document.getElementById('smpStudentContactId-view');
 
         const studentProfileStudentNameField = document.getElementById('studentNameFieldID');
         const studentProfileStudentEmailField = document.getElementById('studentPersonalEmailFieldID');
@@ -361,7 +370,6 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
         ops = $(oldPasswordField).attr("data-ref");
 
         let studentPassBtn = document.getElementById('updateStudentPasswordProfileBtn');
-
         $(document).ready(function () {
             /** click to hide view section and show input section. */
             $(viewStudentProfileButton).on('click', function () {
@@ -408,9 +416,13 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
                     $(confirmNewPasswordField).closest('div').addClass('textField-error-input')
                     showErrorBox("Password mismatch", "please check your new password.")
 
+                } else if (!checkEmptyField($(newPasswordField)) && $(newPasswordField).val().length <= 8) {
+                    $(newPasswordField).closest('div').addClass('textField-error-input')
+                    showErrorBox("Invalid Password Length", "Password should be greater than 8 characters.")
                 } else if ($(oldPasswordField).val() === '' && $(newPasswordField).val() === '' && $(confirmNewPasswordField).val() === '') {
                     showErrorBox("Empty Field ", 'please complete all fields to continue.')
                 } else {
+                    console.log("working fine now.")
                     oldPass = $(oldPasswordField).val();
                     newPass = $(newPasswordField).val();
                     confirmPass = $(confirmNewPasswordField).val();
@@ -431,6 +443,7 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
         $(document).ajaxSend(function () {
             $("#loader").fadeIn(1000);
         });
+
     }
 
     function navigateStudentSettingTabs(i, tabs, sectionsArray) {
@@ -451,7 +464,9 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
         if ($(currentField).val() === '') {
             $(currentField).closest('div').addClass('textField-error-input')
             containsError = true
+            return true;
         }
+        return false;
     }
 
     function tabsSectionVisibility(currentSection, visibility) {
@@ -479,14 +494,17 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
         $('#errorID').textNodes().first().replaceWith(message);
         $("#errorMessageDiv").toggle("hidden").animate(
             {right: 0,}, 3000, function () {
-                $(this).delay(500).fadeOut();
+                $(this).delay(1000).fadeOut();
             });
     }
 
     function updateStudentProfileAjax(newStudentName, newStudentContact, newStudentPersonalEmail) {
+
+        console.log(newStudentName, newStudentContact, newStudentPersonalEmail)
+
         $.ajax({
             type: "POST",
-            url: 'assets/studentProfileAjax.php',
+            url: 'Operation/assets/studentProfileAjax.php',
             timeout: 500,
             cache: false,
             data: {
@@ -503,14 +521,33 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
                 console.log("not working fine" + xhr + "\n" + desc + "\n" + err)
             },
             success: function (data, status) {
-                console.log(data);
+                const result = JSON.parse(data)
+                console.log(result)
+
+                if (result.status === 1 && result.errors === 'none') {
+                    alert("updated successfully.");
+                    $('#smpStudentNameId-view').html(newStudentName);
+                    $('#smpStudentEmailId-view').html(newStudentPersonalEmail);
+                    $('#smpStudentContactId-view').html(newStudentContact);
+
+                    // navigateStudentSettingTabs(0, tabsArray, sectionsArray);
+                    $(studentProfileViewSectionSection).removeClass("hidden");
+                    $(viewStudentProfileButton).removeClass("hidden");
+                    $(updateStudentProfileButton).addClass("hidden");
+                    $(studentProfileInputSectionSection).addClass("hidden");
+
+
+                } else if (result.status === 0 && result.errors === "wrong-password") {
+                    $("#studentNameFieldID , #studentPersonalEmailFieldID , #studentContactFieldID").closest('div').addClass('textField-error-input');
+                    showErrorBox("Server Problem", "Something went wrong.")
+                }
             },
             complete: function () {
-                setInterval(function () {
-                    $("main").toggleClass("blur-filter");
-                    $('#loader').toggleClass('hidden');
-                    location.href = "StudentProfile.php";
-                }, 2000);
+                // setInterval(function () {
+                //     $("main").toggleClass("blur-filter");
+                //     $('#loader').toggleClass('hidden');
+                //     location.href = "StudentProfile.php";
+                // }, 2000);
             },
         });
     }
@@ -518,7 +555,7 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
     function updateStudentPasswordAjax(oldPass, newPass) {
         $.ajax({
             type: "POST",
-            url: 'assets/studentProfileAjax.php',
+            url: 'Operation/assets/studentProfileAjax.php',
             timeout: 500,
             cache: false,
             data: {
@@ -537,6 +574,14 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
             success: function (data, status) {
                 const result = JSON.parse(data)
                 console.log(result)
+
+                if (result.status === 1 && result.errors === 'none') {
+                    alert("Please Logout for change password to work.")
+                } else if (result.status === 0 && result.errors === "wrong-password") {
+                    $("#studentOldPasswordFieldID").closest('div').addClass('textField-error-input');
+                    showErrorBox("Incorrect password", "please check your old password and make sure its correct.")
+                    console.log("hello ?")
+                }
             },
             complete: function (data) {
                 console.log(data['responseText'])

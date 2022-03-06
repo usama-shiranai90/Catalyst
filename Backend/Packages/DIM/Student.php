@@ -62,23 +62,6 @@ class Student extends User implements UserInterface
         return $this->studentRegistrationCode;
     }
 
-    function updateProfileInfo($name, $email, $showEmailStatus): bool
-    {
-        $this->databaseConnection = DatabaseSingleton:: getConnection();
-        $sql = /** @lang text */
-            "UPDATE faculty t    SET t.name = '$name', t.officialEmail = '$email', t.showEmail = $showEmailStatus
-            WHERE t.facultyCode = '$this->facultyCode'";
-
-        if ($this->databaseConnection->query($sql) === TRUE) {
-            $this->setPersonalDetails();
-            return true;
-        } else {
-            return false;
-            echo "Error updating record: " . $this->databaseConnection->error;
-        }
-
-    }
-
     public function setPersonalDetails(): void
     {
         $personalDetails = array();
@@ -91,21 +74,38 @@ class Student extends User implements UserInterface
             while ($row = $result->fetch_assoc()) {
                 $personalDetails = $row;
             }
-
         } else
             echo "No details found for Student Registration Code: " . $this->studentRegistrationCode;
 
         $this->personalDetails = $personalDetails;
     }
 
+    function updateProfileInfo($name, $email, $contact , $regCode): bool
+    {
+        $this->studentRegistrationCode = $regCode;
+
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+        $sql = /** @lang text */
+            "UPDATE student stu    SET stu.name = '$name', stu.personalEmail = '$email', stu.contactNumber = '$contact'
+            WHERE stu.studentRegCode = '$this->studentRegistrationCode'";
+
+        if ($this->databaseConnection->query($sql) === TRUE) {
+            $this->setPersonalDetails();
+            return true;
+        } else {
+            echo "Error updating record: " . $this->databaseConnection->error;
+            return false;
+        }
+
+    }
+
     function updatePassword($password, $idk): bool
     {
         $this->databaseConnection = DatabaseSingleton:: getConnection();
         $sql = /** @lang text */
-            "UPDATE student t SET t.password = '$password' WHERE t.studentRegCode = '$idk'";
+            "UPDATE student stu SET stu.password = '$password' WHERE stu.studentRegCode = '$idk'";
 
         if ($this->databaseConnection->query($sql) === TRUE) {
-            $this->setPersonalDetails();
             return true;
         } else {
             echo "Error updating Password: " . $this->databaseConnection->error;

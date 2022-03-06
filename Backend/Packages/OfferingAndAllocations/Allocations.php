@@ -21,8 +21,8 @@ private $allocations;
         $sql = /** @lang text */
             "select fa.sectionCode, ca.courseCode,ca.batchCode,ca.programCode, co.curriculumCode from facultyallocations fa join courseallocation ca on 
             ca.allocationCode = fa.allocationCode join courseoffering co on co.offeringCode = ca.offeringCode where 
-            fa.facultyCode = \"$facultyCode\" and fa.seasonCode = (select seasonCode from season order by seasonCode desc limit 1);";
-
+            fa.facultyCode = \"$facultyCode\" and fa.seasonCode = 4;";
+//(select seasonCode from season order by seasonCode desc limit 1)
         $result = $this->databaseConnection->query($sql);
 //        $allocatedCourseCodes = array();
         if (mysqli_num_rows($result) > 0) {

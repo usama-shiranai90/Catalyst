@@ -5,13 +5,13 @@ $listOfCLOs = ['CLO-1', 'CLO-2', 'CLO-3'];
 //Tables would be generated through ajax
 ?>
 
-<html>
+<html lang="">
 <head>
     <meta charset="UTF-8">
     <title>Catalyst - Summary Viewer</title>
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="../../../Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
     <script src="../../../Assets/Scripts/Master.js"></script>
     <link href="Assets/summaryViewerStyles.css" rel="stylesheet">
     <script src="Assets/summaryViewerScripts.js"></script>

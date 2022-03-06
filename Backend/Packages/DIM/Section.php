@@ -115,8 +115,6 @@ class Section implements JsonSerializable
     }
 
 
-
-
     public function toString()
     {
         echo "<br>Section Name:" . $this->getSectionName();

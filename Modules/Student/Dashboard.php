@@ -3,14 +3,38 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $studentRegCode = $_SESSION['studentRegistrationCode'];
-$batchCode = $_SESSION['batchCode'];
+//$batchCode = $_SESSION['batchCode'];
+$_SESSION['batchCode'] = 4;
+$batchCode = 4;
 $programCode = $_SESSION['programCode'];
 
 $personalDetails = array();
 $student = unserialize($_SESSION['studentInstance']);
 $personalDetails = $student->getPersonalDetails();
 
-echo json_encode($personalDetails);
+$totalEnrolledCourses = 0;
+$totalCreditHour = 0;
+
+$currentSemester = new Semester();
+$isPromotedToNewSemester = $currentSemester->retrieveCurrentSemester($batchCode);
+
+//echo sprintf("%s    %d    %s<br>", $studentRegCode, $batchCode, $programCode);
+//echo $currentSemester->getSemesterName()."th  ".$currentSemester->getSemesterCode();
+
+if ($isPromotedToNewSemester) {
+    $enrolledCourses = new Course();
+    $enrolledCourseWithOutcomeArray = $enrolledCourses->getEnrolledCourses($studentRegCode, $currentSemester->getSemesterCode() , $batchCode , $programCode);
+    /*    echo json_encode($enrolledCourseWithOutcomeArray);
+        echo json_encode($enrolledCourseWithOutcomeArray[0]->getCourseCLOList())."<br>";
+        echo json_encode($enrolledCourseWithOutcomeArray[0]->getCourseCLOList()[0]['cloName'])."<br>";*/
+
+    foreach ($enrolledCourseWithOutcomeArray as $course) {
+        $totalCreditHour += (int)$course->getCourseCreditHour();
+        $totalEnrolledCourses++;
+    }
+} else {
+    echo "Not promoted to next Semester Error.";
+}
 
 
 ?>
@@ -26,7 +50,10 @@ echo json_encode($personalDetails);
     <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script rel="script" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+
+    <script async rel="script" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script async src="../../Assets/Frameworks/apexChart/apexcharts.js"></script>
+    <script async src="assets/js/DashboardGraphicalData.js"></script>
     <script>
         window.Promise ||
         document.write(
@@ -41,10 +68,6 @@ echo json_encode($personalDetails);
             '<script src="https://cdn.jsdelivr.net/npm/findindex_polyfill_mdn"><\/script>'
         )
     </script>
-
-    <script src="../../Assets/Frameworks/apexChart/apexcharts.js"></script>
-
-    <script src="assets/dashboardscript.js"></script>
 </head>
 <body>
 
@@ -99,7 +122,10 @@ echo json_encode($personalDetails);
                                 <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Current <br>Semester
                                 </p>
                             </div>
-                            <p class="text-3xl font-semibold" style="color: #003C9C">7</p>
+                            <p class="text-3xl font-semibold"
+                               style="color: #003C9C"><?php
+                                echo $currentSemester->getSemesterName()
+                                ?></p>
                         </div>
                     </div>
                     <div class="shadow-lg rounded-2xl w-full h-40  p-4 py-4 bg-white">
@@ -108,7 +134,7 @@ echo json_encode($personalDetails);
                                 <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">
                                     credit<br> hour</p>
                             </div>
-                            <p class="text-3xl font-semibold" style="color: #003C9C">15</p>
+                            <p class="text-3xl font-semibold" style="color: #003C9C"><?php echo $totalCreditHour ?></p>
                         </div>
                     </div>
                     <div class="shadow-lg rounded-2xl w-full h-40  p-4 py-4 bg-white">
@@ -117,7 +143,8 @@ echo json_encode($personalDetails);
                                 <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">
                                     Enrolled <br>Courses</p>
                             </div>
-                            <p class="text-3xl font-semibold" style="color: #003C9C">6</p>
+                            <p class="text-3xl font-semibold"
+                               style="color: #003C9C"><?php echo $totalEnrolledCourses ?></p>
                         </div>
                     </div>
                     <div class="col-span-2 bg-white border-2 border-solid rounded-md">
@@ -131,44 +158,31 @@ echo json_encode($personalDetails);
 
 
                     <!--   Enrolled Courses.  -->
-                    <div class="col-span-4 flex flex-row border-2 border-solid rounded-md">
+                    <div class="col-span-4 flex flex-row db-table-container">
 
                         <!--   register courses list left side.  -->
                         <div class="text-black rounded-t-md rounded-b-md mt-2 w-5/12">
                             <h2 class="text-md pl-5 my-2 font-bold">Register Courses</h2>
 
-                            <section class="py-4 clo-container" id="registerCourseDivID">
+                            <section class="py-4 clo-container hidden">
                                 <!--  Subjects list -->
                                 <div class="mb-10  py-1 gap-5 grid grid-rows-6 font-medium text-sm text-gray-700">
                                     <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
                                         <p class="px-10">Operation Research</p>
                                         <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
                                     </div>
-                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                        <p class=" px-10">Operation Research</p>
-                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
-                                    </div>
-                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                        <p class="px-10">Operation Research</p>
-                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
-                                    </div>
-                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                        <p class="px-10">Operation Research</p>
-                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
-                                    </div>
-                                    <div class="flex flex-row py-2 justify-start border-b-2 border-solid border-catalystLight-e1 hover:bg-catalystLight-e3">
-                                        <p class="px-10">Operation Research</p>
-                                        <img class="w-5" id="s-arrow-r" alt="" src="../../Assets/Images/left-arrow.svg">
-                                    </div>
                                 </div>
                             </section>
-                        </div>
 
+                            <section class="flex flex-col mx-auto justify-center gap-5" id="registerCourseDivID">
+
+                            </section>
+                        </div>
 
                         <!--   selected subject table right side.  -->
                         <div class="w-full mx-auto overflow-auto shadow-md">
                             <h2 class="table-head text-center text-black">Selected Course Information</h2>
-                            <table class="table-auto w-full text-left whitespace-no-wrap">
+                            <table id="courseTableID" class="table-auto w-full text-left whitespace-no-wrap">
                                 <thead>
                                 <tr class="text-center bg-catalystLight-f5">
                                     <th class="capitalize px-4 w-1/4 py-3 title-font tracking-wider font-medium text-sm rounded-tl rounded-bl">
@@ -177,24 +191,9 @@ echo json_encode($personalDetails);
                                     <th class="capitalize px-4 py-3 w-full title-font tracking-wider font-medium text-sm">
                                         Description
                                     </th>
-                                    <th class="capitalize px-4 py-3 w-1/6 title-font tracking-wider font-medium text-sm">
-                                        More
-                                    </th>
                                 </tr>
                                 </thead>
 
-                                <tbody id="courseTableBodyID">
-                                <tr class="text-center text-sm font-base tracking-tight">
-                                    <td class="px-4 py-3">CLO-1</td>
-                                    <td class="px-4 py-3 ">To control the letter spacing of an element at a specific
-                                        breakpoint
-                                    </td>
-                                    <td class="px-4 py-3"><i
-                                                class="fa text-gray-600 fa-ellipsis-v hover:text-catalystBlue-l61"></i>
-                                    </td>
-                                </tr>
-
-                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -206,283 +205,10 @@ echo json_encode($personalDetails);
 </div>
 
 <script>
-    const colors = ['#016ADD', '#0183FB', '#4DBFFE']
 
-    ploArray = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38]; // fetch from server.
-    semesterResultArray = [2.35, 3.52, 3.8, 3.9, 3.4];  // fetch from server
-    let cgpaProgress = new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), getCGPA_Progress(3.45));
+    let courseWithOutcomeArray = JSON.parse('<?php echo json_encode($enrolledCourseWithOutcomeArray); ?>');
+    console.log(courseWithOutcomeArray)
 
-    let ploChart = new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), getStudentPLOProgress(ploArray));
-    let gpaChart = new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), getStudentGPA(semesterResultArray));
-    cgpaProgress.render();
-
-    ploChart.render();
-    gpaChart.render();
-
-
-    function getCGPA_Progress(currentCGPA = 2) {
-        return {
-            series: [valueToPercent(currentCGPA)],
-            chart: {
-                height: 180,
-                type: 'radialBar',
-                toolbar: {show: false}
-            },
-            plotOptions: {
-                radialBar: {
-                    startAngle: -135,
-                    endAngle: 225,
-                    hollow: {
-                        margin: 0,
-                        size: '70%',
-                        background: '#fff',
-                        image: undefined,
-                        imageOffsetX: 0,
-                        imageOffsetY: 0,
-                        position: 'front',
-                        dropShadow: {
-                            enabled: true,
-                            top: 3,
-                            left: 0,
-                            blur: 4,
-                            opacity: 0.24
-                        }
-                    },
-                    track: {
-                        background: '#89DEFD',
-                        strokeWidth: '100%',
-                        margin: 0, // margin is in pixels
-                        dropShadow: {
-                            enabled: true,
-                            top: 2,
-                            left: 0,
-                            blur: 4,
-                            opacity: 0.15
-                        }
-                    },
-
-                    dataLabels: {   // will set data inside the radial.
-                        show: true,
-                        name: {
-                            offsetY: -10,
-                            show: true,
-                            color: '#011D6F',
-                            fontSize: '24px'
-                        },
-                        value: {
-                            formatter: function (val) {
-                                return currentCGPA;
-                            },
-                            color: '#242632',
-                            fontSize: '30px',
-                            show: true,
-                        }
-                    }
-                }
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'dark',
-                    type: 'vertical',
-                    shadeIntensity: 0.5,
-                    gradientToColors: ['#0180F7', "#01409B", "#0259C2"],
-                    inverseColors: true,
-                    opacityFrom: 1,
-                    opacityTo: 1,
-                    stops: [0, 100]
-                }
-            },
-            stroke: {
-                lineCap: 'round'
-            },
-            labels: ["CGPA"]
-        };
-    }
-
-    function getStudentPLOProgress(ploArrayList) {
-        return {
-            series: [{
-                name: 'PLO',
-                data: ploArrayList,  // data we fetch from php of students overall PLOs score.
-            }],
-            chart: {
-                height: 400,
-                type: 'bar',
-                stacked: true,
-                events: {
-                    click: function (chart, w, e) {
-
-                    }
-                },
-                toolbar: {
-                    /*tools: {
-                        // download: '<img src="../../assets/images/1101098.png" width="20" height="20" />',
-                        customIcons: [{
-                            html: '<i class="fa fa-angle-down">xxxx</i>',
-                            onClick: function(e, chartContext) {
-                                console.log(e) },
-                            appendTo: 'left' // left / top means the button will be appended to the left most or right most position
-                        }]
-                    }*/
-                    show: false
-                }
-            },
-            colors: colors,
-            plotOptions: {
-                bar: {
-                    borderRadius: 6,
-                    columnWidth: '30%',
-                    distributed: true,
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                show: false,
-            },
-            title: {
-                text: 'Outcome Based Chart',
-                floating: true,
-                enabled: true,
-                style: {
-                    colors: ['#111']
-                },
-                background: {
-                    enabled: true,
-                    foreColor: '#fff',
-                    borderWidth: 0
-                },
-                offsetX: 15
-            },
-            subtitle: {
-                text: 'Following graph shows current status of PLO covered so far.',
-                offsetX: 15,
-                offsetY: 22
-            },
-            xaxis: {
-                min: 1,
-                max: ploArrayList.size,
-                categories: [ // Mention each PLO  here.
-                    ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12']],
-
-                labels: {
-                    enabled: true,
-                    style: {colors: ['#111']},
-                    background: {enabled: true, foreColor: '#fff', borderWidth: 0},
-                },
-                title: {
-                    text: "Program Learning Outcome",
-                    offsetX: 0,
-                    offsetY: 0,
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        cssClass: 'apexcharts-xaxis-title',
-                    },
-                },
-            },
-            yaxis: {
-                min: 0,
-                max: 100,
-                title: {
-                    text: "Percentage",
-                    offsetX: 0,
-                    offsetY: 0,
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        cssClass: 'apexcharts-xaxis-title',
-                    },
-                }
-            }
-        };
-    }
-
-    function getStudentGPA(semesterArray) {
-        let totalSemester = [];
-        semesterArray.forEach(function (key, value) {
-            totalSemester.push((value + 1))
-        })
-
-        return {
-            series: [{
-                name: 'PLO',
-                data: semesterArray,  // data we fetch from php of students overall PLOs score.
-            }],
-            chart: {
-                height: 400,
-                type: 'bar',
-                stacked: true,
-                events: {
-                    click: function (chart, w, e) {
-
-                    }
-                },
-                toolbar: {
-                    /*tools: {
-                        // download: '<img src="../../assets/images/1101098.png" width="20" height="20" />',
-                        customIcons: [{
-                            html: '<i class="fa fa-angle-down">xxxx</i>',
-                            onClick: function(e, chartContext) {
-                                console.log(e) },
-                            appendTo: 'left' // left / top means the button will be appended to the left most or right most position
-                        }]
-                    }*/
-                    show: false
-                }
-            },
-            colors: colors,
-            plotOptions: {
-                bar: {
-                    borderRadius: 6,
-                    columnWidth: '30%',
-                    distributed: true,
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                show: false,
-            },
-            title: {
-                text: 'GPA Based Chart',
-                floating: true,
-                enabled: true,
-                style: {
-                    colors: ['#111']
-                },
-                offsetX: 15
-            },
-            xaxis: {
-                min: 1,
-                max: semesterArray.size,
-                categories: totalSemester,
-                labels: {
-                    enabled: true,
-                    style: {colors: ['#111']},
-                    background: {enabled: true, foreColor: '#fff', borderWidth: 0},
-                },
-                title: {
-                    text: "Semester",
-                    offsetX: 0,
-                    offsetY: 0,
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        cssClass: '',
-                    },
-                },
-            },
-
-        };
-    }
-
-    function valueToPercent(value) {
-        return (value * 100) / 4
-    }
 </script>
 </body>
 </html>

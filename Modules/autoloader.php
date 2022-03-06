@@ -8,6 +8,8 @@ spl_autoload_register(function ($className) {
     $offeringAndAllocations = "/Backend/Packages/OfferingAndAllocations/";
     $courseProfileManagement = "/Backend/Packages/CourseProfile/";
 
+    $transcript = "/Backend/Packages/Transcript/";
+
 //    echo "FileName List :".__NAMESPACE__."  ".$className."<br>";
 
     if (file_exists($_SERVER['DOCUMENT_ROOT'] . $dim . str_replace('\\', "/", $className) . ".php")) {
@@ -21,9 +23,10 @@ spl_autoload_register(function ($className) {
 
     } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $offeringAndAllocations . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $offeringAndAllocations . str_replace('\\', "/", $className) . ".php";
-    }
-    elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $courseProfileManagement . str_replace('\\', "/", $className) . ".php")) {
+    } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $courseProfileManagement . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $courseProfileManagement . str_replace('\\', "/", $className) . ".php";
+    } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $transcript . str_replace('\\', "/", $className) . ".php")) {
+        include $_SERVER['DOCUMENT_ROOT'] . $transcript . str_replace('\\', "/", $className) . ".php";
     }
 
 });

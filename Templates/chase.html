@@ -1,71 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Chase</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
-          integrity="sha512-wnea99uKIC3TJF7v4eKk4Y+lMz2Mklv18+r4na2Gn1abDRPPOeef95xTzdwGD9e6zXJBteMIhZ1+68QC5byJZw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
-
-<style>
-p{
-font-size: 12px;
-}
-
-</style>
-
+    <title>CSV upload</title>
 </head>
-<body class="container h-screen mx-auto sm:w-11/12 lg:w-8/12">
+<body>
 
-<div class="bg-white px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-    <div class="" style="display: flex;">
 
-        <div class="space-y-5">
-            <div class="border rounded shadow-sm">
-                <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none">
-                    <p class="text-lg font-medium">Course Essential</p>
-                    <div class="flex items-center justify-center w-8 h-8 border rounded-full rotate-1" style="
-    offset-rotate: -30;
-">
-                        <!-- Add "transform rotate-180" classes on svg, if is open" -->
-                        <svg viewBox="0 0 24 24" class="w-3 rotate-1 text-gray-600 transition-transform duration-200">
-                            <polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
-                        </svg>
-                    </div>
-                </button>
+<input type="file" name="filename" id="filename">
+<button id="upload">upload</button>
+<div class="csv"></div>
 
+
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+        integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"></script>
+<!--<script>
+    //this is the 1st way.
+    $(document).ready(function () {
+        $('#upload').click(function () {
+
+            var csv = $('#filename');
+            var csvFile = csv[0].files[0];
+            var ext = csv.val().split(".").pop().toLowerCase();
+
+            if ($.inArray(ext, ["csv"]) === -1) {
+                alert('upload csv');
+                return false;
+            }
+            if (csvFile != undefined) {
+                reader = new FileReader();
+                reader.onload = function (e) {
+
+                    csvResult = e.target.result.split(/\r|\n|\r\n/);
+                    $('.csv').append(csvResult);
+                }
+                reader.readAsText(csvFile);
+            }
+        });
+    });
+</script>-->
+
+<!--<script>
+    //2nd way upload csv with jquery.
+    $("#filename").change(function(e){
+        var ext = $("#filename").val().split(".").pop().toLowerCase();
+
+        if($.inArray(ext, ["csv"]) == -1) {
+            alert('Upload CSV');
+            return false;
+        }
+
+        if(e.target.files != undefined){
+            var reader = new FileReader();
+            reader.onload = function(e){
+                csvResult = e.target.result.split(/\r|\n|\r\n/);
+                $('.csv').append(csvResult);
+            }
+            reader.readAsText(e.target.files.item(0));
+        }
+    });
+</script>-->
+
+<section id="upload-data-panel">
+    <form id="upload-form" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Upload Data</legend>
+            <div>
+                <!-- The name here is important, and will be used later to reference the data -->
+                <input type="file" name="csvdata" accept="text/cvs">
             </div>
-            <div class="border rounded shadow-sm">
-                <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none">
-                    <p class="text-lg font-medium">Course Instructor Information</p>
-                    <div class="flex items-center justify-center w-8 h-8 border rounded-full">
-                        <svg viewBox="0 0 24 24" class="w-3 text-gray-600 transition-transform duration-200 transform rotate-180">
-                            <polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
-                        </svg>
-                    </div>
-                </button>
-                <!-- Show content if is open
-                <div class="p-4 pt-0"><p class="text-gray-700">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque rem aperiam, eaque ipsa quae.</p></div>
-                -->
+            <div>
+                <input type="submit" value="Submit"/>
             </div>
-            <div class="border rounded shadow-sm">
-                <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none">
-                    <p class="text-lg font-medium">CLO Distribution</p>
-                    <div class="flex items-center justify-center w-8 h-8 border rounded-full">
-                        <svg viewBox="0 0 24 24" class="w-3 text-gray-600 transition-transform duration-200 transform rotate-180">
-                            <polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
-                        </svg>
-                    </div>
-                </button>
-                <!-- Show content if is open
-                <div class="p-4 pt-0"><p class="text-gray-700">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque rem aperiam, eaque ipsa quae.</p></div>
-                -->
-            </div>
-
-        </div>
-    </div>
-</div>
+        </fieldset>
+    </form>
+</section>
 
 
 </body>
+
+<script>
+    var request = require("request"),
+        csv = require("csv");
+
+    module.exports = function (app) {
+        // accepts the POST form submit of the CSV file
+        app.post("/upload/data", function (req, res) {
+            // the name under "files" must correspond to the name of the
+            // file input field in the submitted form (here: "csvdata")
+            csv().from.path(req.files.csvdata.path, {
+                delimiter: ",",
+                escape: '"'
+            })
+                // when a record is found in the CSV file (a row)
+                .on("record", function (row, index) {
+                    var firstName, lastName;
+
+                    // skip the header row
+                    if (index === 0) {
+                        return;
+                    }
+
+                    // read in the data from the row
+                    firstName = row[0].trim();
+                    lastName = row[1].trim();
+
+                    // perform some operation with the data
+                    // ...
+                })
+                // when the end of the CSV document is reached
+                .on("end", function () {
+                    // redirect back to the root
+                    res.redirect("/");
+                })
+                // if any errors occur
+                .on("error", function (error) {
+                    console.log(error.message);
+                });
+        });
+    };
+</script>
 </html>

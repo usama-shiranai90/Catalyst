@@ -6,16 +6,25 @@ if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
 $resultBackServer = array("status" => -1, "message" => 'no message', "errors" => 'no error');
 $student = new Student();
 
-$studentObject = unserialize($_SESSION['studentInstance']);
-$personalDetails = $studentObject->getPersonalDetails();
-$personalDetails = str_replace('\\', '', $personalDetails);
+//$studentObject = unserialize($_SESSION['studentInstance']);
+//$personalDetails = $studentObject->getPersonalDetails();
+//$personalDetails = str_replace('\\', '', $personalDetails);
 
 
 if (isset($_POST['update_student_p']) and $_POST['update_student_p']) {
 
-    if (isset($_POST['stuName']) and isset($_POST['stuContact'])
-        and isset($_POST['stuEmail'])) {
+    if (isset($_POST['stuName']) and isset($_POST['stuContact']) and isset($_POST['stuEmail'])) {
+        $studentName = $_POST['stuName'];
+        $studentEmail = $_POST['stuEmail'];
+        $studentContact = $_POST['stuContact'];
 
+        $flag = $student->updateProfileInfo($studentName, $studentEmail, $studentContact, $_SESSION['studentRegistrationCode']);
+        if ($flag)
+            $resultBackServer = updateServer(1, "Data Was Inserted Successfully ".$studentContact, "none");
+        else
+            $resultBackServer = updateServer(0, "Some-time went wrong ,try again.", "registration-error");
+
+        die(json_encode($resultBackServer));
     }
 
 } elseif (isset($_POST['update_p']) and $_POST['update_p']) {
@@ -25,10 +34,10 @@ if (isset($_POST['update_student_p']) and $_POST['update_student_p']) {
         $oldPassword = $_POST['oldpass'];
         $password = $_POST['newpass'];
 
-        if (password_verify($oldPassword, $encryptedPassword) === false) {
+        if (password_verify($oldPassword, $encryptedPassword) === false)
             $resultBackServer = updateServer(0, "please check your old password , incorrect", "wrong-password");
-        } else {
-            $flag = $student->updatePassword($password, $personalDetails['studentRegCode']);
+        else {
+            $flag = $student->updatePassword($password, $_SESSION['studentRegistrationCode']);
             if ($flag)
                 $resultBackServer = updateServer(1, "Data Was Inserted Successfully", "none");
             else
