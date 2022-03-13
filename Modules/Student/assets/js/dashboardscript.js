@@ -11,13 +11,11 @@ $(document).ready(function () {
         document.title = "Catalyst | Dashboard";
     })
 
-
     $("#studentProgressID").click(function () {
         $("#teacherMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
         $("#teacherPanelTitleID").text("Course Profile Creation")
         document.title = "Catalyst | Course Profile Creation";
     })
-
 
     $("#switchToOBETranscript").click(function () {
         $("#teacherMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");

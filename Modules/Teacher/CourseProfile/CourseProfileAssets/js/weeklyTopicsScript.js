@@ -114,6 +114,8 @@ window.onload = function (e) {
             } else // deletedOutcome ID is undefined.
                 deleteWeeklyRow(dischargedIndex, false);
         });
+
+
         /** It is visible when ID is represent and user wants to delete current Weekly Record. */
         $('#alertBtndeleteWeekly').click(function (e) {
             e.stopImmediatePropagation();
@@ -126,6 +128,7 @@ window.onload = function (e) {
 
             // deletedWeeklyTopics.push($(('#weeklyCoveredRow-' + deletedWeeklyID)));
         });
+
         /** It is visible when ID is represent and user does not want to delete current Weekly Record. */
         $("#alertBtnNoWeekly").on('click', function (e) {
             e.preventDefault();
@@ -237,12 +240,12 @@ window.onload = function (e) {
         if ($(parentWeeklyContainer).children().length === 1) {
             weeklyRowCounter++;
             parentWeeklyContainer.appendChild(createNewWeeklyRow(1, courseCLOList))
-            weeklyCoveredCLOsRow(1);
+            weeklyRecordCheckBoxCreation(1);
 
         } else {
             weeklyRowCounter = $(parentWeeklyContainer).children().length;
             parentWeeklyContainer.appendChild(createNewWeeklyRow(weeklyRowCounter, courseCLOList))
-            weeklyCoveredCLOsRow(weeklyRowCounter);
+            weeklyRecordCheckBoxCreation(weeklyRowCounter);
         }
     }
 
@@ -291,7 +294,7 @@ window.onload = function (e) {
         return frag;
     }
 
-    function weeklyCoveredCLOsRow(currentWeekNo) {
+    function weeklyRecordCheckBoxCreation(currentWeekNo) {
         let checkBoxParentContainer = document.getElementById('wtc-clos-r' + currentWeekNo);
         console.log(checkBoxParentContainer, currentWeekNo)
 

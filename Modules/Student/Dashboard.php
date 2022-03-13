@@ -47,13 +47,14 @@ if ($isPromotedToNewSemester) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
-    <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
-    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
-    <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-
-    <script async rel="script" src="../../node_modules/jquery/dist/jquery.min.js"></script>
-    <script async src="../../Assets/Frameworks/apexChart/apexcharts.js"></script>
+    <link href="/Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
+    <script async src="/Assets/Frameworks/apexChart/apexcharts.js"></script>
     <script async src="assets/js/DashboardGraphicalData.js"></script>
+    <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+
     <script>
         window.Promise ||
         document.write(

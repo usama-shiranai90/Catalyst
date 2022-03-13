@@ -1,3 +1,18 @@
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
+session_start();
+
+$adminCode = $_SESSION['adminCode'];
+$departmentCode = $_SESSION['departmentCode'];
+
+//$personalDetails = array();
+//$admin = unserialize($_SESSION['adminInstance']);
+//$personalDetails = $admin->getPersonalDetails();
+
+echo json_encode($curriculumList);
+
+?>
+
 <!doctype html>
 <html lang="en">
 <head>

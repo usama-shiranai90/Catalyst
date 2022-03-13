@@ -77,10 +77,12 @@ function base64_to_jpeg($base64_string, $output_file)
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
-    <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="../../Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
-    <script src="../../Assets/Scripts/Master.js" rel="script"></script>
+    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
+    <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
+    <script src="/Assets/Scripts/Master.js" rel="script"></script>
+    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+
     <style>
 
         .switch {

@@ -1,27 +1,29 @@
 <?php
-
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $adminCode = $_SESSION['adminCode'];
-//$batchCode = $_SESSION['batchCode'];
-//$programCode = $_SESSION['programCode'];
-
+$departmentCode = $_SESSION['departmentCode'];
 $personalDetails = array();
-
 $admin = unserialize($_SESSION['adminInstance']);
 $personalDetails = $admin->getPersonalDetails();
+
+echo $adminCode . "  " . $departmentCode;
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Teacher</title>
-    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <!--    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+        <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
+        <script src="../../Assets/Scripts/Master.js" rel="script"></script>
+        <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>-->
+    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>
+    <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
+    <script src="/Assets/Scripts/Master.js" rel="script"></script>
+    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>
 
 <body>
@@ -41,7 +43,6 @@ $personalDetails = $admin->getPersonalDetails();
         </div>
     </div>
 </header>
-
 
 <div class="wrapper" style="height: 90vh">
     <div class="w-48 sidePanel p-2">

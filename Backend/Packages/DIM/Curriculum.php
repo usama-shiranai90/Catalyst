@@ -50,6 +50,28 @@ class Curriculum
         return $this->listOfPLOs;
     }
 
+
+    public function getPreviousFewCurriculumYear(): ?array
+    {
+        $curriculumYearList = array();
+
+        $sql = /** @lang text */
+            "select * from curriculum order by curriculumCode desc limit 4;";
+
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                  "code"=>$row['curriculumCode'],
+                  "year"=>$row['curriculumYear']
+                );
+                array_push($curriculumYearList, $temp);
+            }
+            return $curriculumYearList;
+        } else
+            return null;
+    }
+
     public function getCurriculumCode()
     {
         return $this->curriculumCode;

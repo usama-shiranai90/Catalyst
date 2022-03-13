@@ -242,11 +242,11 @@ function getStudentPLOProgress(ploArrayList) {
             bar: {
                 borderRadius: 6,
                 columnWidth: '30%',
-                distributed: true,
+                distributed: false,
             }
         },
         dataLabels: {
-            enabled: false
+            enabled: true
         },
         legend: {
             show: false,

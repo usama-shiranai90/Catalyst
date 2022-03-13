@@ -25,6 +25,8 @@ $personalDetails = $student->getPersonalDetails();
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
     <script async src="assets/js/dashboardscript.js"></script>
 
+    <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>
 <body>
 
