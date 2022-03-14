@@ -13,7 +13,8 @@
        })*/
 window.onload = function (e) {
     let curriculumCounter = 0;
-    let recentlyCreatedCurriculumArray;
+    let recentlyCreatedCurriculumPloArray;
+    let assignCurriculumYear;
 
     const selectedProgramField = document.getElementById('curriculumProgramId');
     const selectedCurriculumProgramYearField = document.getElementById('curriculumAllocationYearId');
@@ -62,7 +63,8 @@ window.onload = function (e) {
         });
 
         $(saveButtonCurriculumBtn).on('click', function () {
-            recentlyCreatedCurriculumArray = [];
+            assignCurriculumYear = $(selectedCurriculumProgramYearField).val();
+            recentlyCreatedCurriculumPloArray = [];
             let counter = 0;
             $(parentFormCurriculumContainer).children().each((index, node) => {
                 if (index !== 0) {
@@ -77,15 +79,20 @@ window.onload = function (e) {
                                 temp.setploNumber = $(curriculumRowRecordList[i]).val()
                         } else {
                             temp.setploDescription = $(curriculumRowRecordList[i]).val()
-                            recentlyCreatedCurriculumArray.push(temp)
+                            recentlyCreatedCurriculumPloArray.push(temp)
                             counter++;
                         }
                         console.log("Data is :", $(curriculumRowRecordList[i]).val())
                     }
-                    // $('.h-10.w-6.hidden').toggleClass("hidden");
                 }
             })
-            console.log("All Curriculum List : ", recentlyCreatedCurriculumArray)
+
+
+            console.log("All Curriculum List : ", recentlyCreatedCurriculumPloArray)
+
+            createCurriculumAjaxCall(recentlyCreatedCurriculumPloArray, assignCurriculumYear);
+
+
         });
     });
 
@@ -205,7 +212,6 @@ window.onload = function (e) {
         return str.replace((toReplace), no);
     }
 
-
     let isEmpty;
 
     function containsEmptyField(fieldsArray) {
@@ -224,4 +230,38 @@ window.onload = function (e) {
             isEmpty = false;
         }
     }
+
+    function createCurriculumAjaxCall(recentlyCreatedCurriculumArray, assignCurriculumYear) {
+        $.ajax({
+            type: "POST",
+            url: 'assets/CurriculumAjax.php',
+            timeout: 500,
+            cache: false,
+            data: {
+                creation: true,
+                curriculumPloArray: recentlyCreatedCurriculumArray,
+                assignCurriculumYear: assignCurriculumYear,
+            },
+            beforeSend: function () {
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+            },
+            success: function (data, status) {
+                const reponseText = JSON.parse(data)
+                console.log(reponseText)
+                if (reponseText.status === 1 && reponseText.errors === 'none') {
+                    const cgpa = reponseText.message.CGPA;
+                    console.log(reponseText.message.CGPA)
+                    let cgpaProgress = new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), getCGPA_Progress(cgpa));
+                    cgpaProgress.render();
+                }
+            },
+            complete: function (data) {
+
+            },
+        });
+    }
+
+
 }

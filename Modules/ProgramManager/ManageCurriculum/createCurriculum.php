@@ -30,7 +30,7 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
     <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="/Assets/Scripts/Master.js" rel="script"></script>
-    <script src="asset/js/uploader.js" type="text/javascript"></script>
+    <script src="assets/js/uploader.js" type="text/javascript"></script>
     <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
     <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>

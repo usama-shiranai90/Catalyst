@@ -15,6 +15,21 @@ class Curriculum
         $this->listOfPLOs = array();
     }
 
+    public function createCurriculum($assignYear): bool
+    {
+        $sql_statement = /** @lang text */
+            "insert into curriculum(curriculumYear) VALUE (\"$assignYear\")";
+
+        $result = $this->databaseConnection->query($sql_statement);
+        if ($result) {
+            $this->setCurriculumCode((int)$this->databaseConnection->insert_id);
+//            echo sprintf("\n<br>Course Profile record has been added successfully: %s\n<br>", (string)$this->getCurriculumCode());
+            return true;
+        } else
+            return false;
+//            echo sprintf("\n<br>Error, can not create CourseProfile : %s\n<br>", $this->databaseConnection->error);
+    }
+
     public function fetchCurriculumID($sectionCode)
     {
         $sql = /** @lang text */
@@ -50,7 +65,6 @@ class Curriculum
         return $this->listOfPLOs;
     }
 
-
     public function getPreviousFewCurriculumYear(): ?array
     {
         $curriculumYearList = array();
@@ -62,8 +76,8 @@ class Curriculum
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
                 $temp = array(
-                  "code"=>$row['curriculumCode'],
-                  "year"=>$row['curriculumYear']
+                    "code" => $row['curriculumCode'],
+                    "year" => $row['curriculumYear']
                 );
                 array_push($curriculumYearList, $temp);
             }
@@ -81,6 +95,5 @@ class Curriculum
     {
         $this->curriculumCode = $curriculumCode;
     }
-
 
 }

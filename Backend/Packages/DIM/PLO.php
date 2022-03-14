@@ -14,7 +14,22 @@ class PLO implements JsonSerializable
         $this->databaseConnection = DatabaseSingleton:: getConnection();
     }
 
-    public function retreivePLOsOfProgram($programCode){
+    public function createProgramOutcomeCurriculum($programCode, $curriculumId, $curriculumRelatedPlo): bool
+    {
+        $ErrorFlag = false;
+        foreach ($curriculumRelatedPlo as $plo) {
+            $sql_statement = /** @lang text */
+                "insert into plo(curriculumCode, programCode, ploName, ploDescription) VALUE (\"$programCode\" ,  \"$curriculumId\" ,\"$plo\" )";
+
+            $result = $this->databaseConnection->query($sql_statement);
+            if (!$result)
+                $ErrorFlag = true;
+        }
+        return $ErrorFlag;
+    }
+
+    public function retrievePLOOsOfProgram($programCode): ?array
+    {
         $sql = /** @lang text */
             "select PLOCode, ploName, ploDescription from plo join batch b on plo.curriculumCode = b.curriculumCode where batchCode = 7 and plo.programCode = \"$programCode\"";
         $result = $this->databaseConnection->query($sql);
@@ -30,8 +45,8 @@ class PLO implements JsonSerializable
                 $newPLO->setPloDescription($row["ploDescription"]);
                 $PLOList[] = $newPLO;
             }
-        } else{
-            echo "No PLOs found for program code: ".$programCode;
+        } else {
+            echo "No PLOs found for program code: " . $programCode;
             return null;
         }
 
@@ -89,9 +104,9 @@ class PLO implements JsonSerializable
     public function jsonSerialize()
     {
         return array(
-            'ploCode'=>$this->ploCode,
-            'ploName'=>$this->ploName,
-            'ploDescription'=>$this->ploDescription
+            'ploCode' => $this->ploCode,
+            'ploName' => $this->ploName,
+            'ploDescription' => $this->ploDescription
         );
     }
 

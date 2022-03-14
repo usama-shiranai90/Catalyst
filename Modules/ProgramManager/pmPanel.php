@@ -25,9 +25,7 @@ echo $adminCode . "  " . $departmentCode;
     <script src="/Assets/Scripts/Master.js" rel="script"></script>
     <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>
-
 <body>
-
 <header class="text-center text-4xl p-2 pl-48">
     <label id="teacherPanelTitleID">Academic Issue Tracker</label>
     <div class="profilePictureDiv" id="viewProfileID">
@@ -175,5 +173,4 @@ echo $adminCode . "  " . $departmentCode;
     </div>
 </div>
 </body>
-
 </html>
