@@ -1,11 +1,6 @@
 <?php
-
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
-
-$studentRegCode = $_SESSION['studentRegistrationCode'];
-$batchCode = $_SESSION['batchCode'] = 1;
-$programCode = $_SESSION['programCode'] = 1;
 
 $personalDetails = array();
 $student = unserialize($_SESSION['studentInstance']);
@@ -17,13 +12,12 @@ $personalDetails = $student->getPersonalDetails();
 <head>
     <meta charset="UTF-8">
     <title>Teacher</title>
-    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
 
-    <script async rel="script" src="../../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-    <script async src="assets/js/dashboardscript.js"></script>
+    <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/Assets/Scripts/Master.js" rel="script"></script>
 
     <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
@@ -31,7 +25,7 @@ $personalDetails = $student->getPersonalDetails();
 <body>
 
 <header class="text-center text-4xl p-2 pl-48">
-    <label id="teacherPanelTitleID">Dashboard</label>
+    <label id="studentPanelTitleID">Dashboard</label>
     <div class="profilePictureDiv" id="viewStuProfileID">
         <div class="flex">
             <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
@@ -147,7 +141,7 @@ $personalDetails = $student->getPersonalDetails();
             </div>
 
             <!--            Transcripts-->
-            <div class="navigationItemDropdown" id="studentTranscripts">
+            <div class="navigationItemDropdown" id="studentTranscriptsId">
                 <div class="flex justify-between items-center navDropBox" id="teacherClassActivitiesDropBox">
                     <div class="flex items-center">
                         <div>
@@ -164,22 +158,22 @@ $personalDetails = $student->getPersonalDetails();
                          src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
-                    <div class="menuItem" id="switchToOBETranscript">OBE</div>
-                    <div class="menuItem" id="switchToGPATranscript">GPA</div>
+                    <div class="menuItem" id="switchToOBETranscriptId">OBE</div>
+                    <div class="menuItem" id="switchToGPATranscriptId">GPA</div>
                 </div>
             </div>
 
         </div>
     </div>
-    <div class="ml-48 w-full h-full" id="teacherMainContent">
+    <div class="ml-48 w-full h-full" id="studentMainContent">
         <!--        Pages to load go here through scripts-->
         <iframe class="h-full" src="" style="width: 100%"></iframe>
     </div>
 </div>
 </body>
 <script>
-    $("#teacherMainContent").html("<iframe class='h-full block' src='Dashboard.php' style='width: 100%'></iframe>");
-    $("#teacherPanelTitleID").text("Dashboard")
+    $("#studentMainContent").html("<iframe class='h-full block' src='Dashboard.php' style='width: 100%'></iframe>");
+    $("#studentPanelTitleID").text("Dashboard")
     document.title = "Catalyst | Dashboard";
     $('#studentDashboardID').removeClass().addClass("navigationItem navigationItemSelected");
     $('#studentDashboardID svg').removeClass().addClass("turnItBlueForever");

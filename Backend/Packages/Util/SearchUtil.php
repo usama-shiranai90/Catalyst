@@ -22,4 +22,30 @@ function generateCurriculumYearSelector($earliestYear , $currentOnGoingYear , $c
     }
 }
 
+function compareProgramType($programType)
+{
+    $programType = strtolower($programType);
+    $data = array(strtolower("Bachelors of Computer in Software Engineering"), strtolower("Bachelors of Computer in Computer Science"), strtolower("Bachelors in Social Science"));
+    $toCompareWith = array(strtolower("BCSE"), strtolower("BCCS"), strtolower("IDK"));
+
+    $counter = 0 ;
+    foreach ($toCompareWith as $type) {
+        if (str_contains($programType, $type)){
+            return $data[$counter];
+        }
+        $counter++;
+    }
+    return "";
+}
+
+
+function updateServer($status, $message, $error): array
+{
+    $resultBackServer['status'] = $status;
+    $resultBackServer['message'] = $message;
+    $resultBackServer['errors'] = $error;
+    return $resultBackServer;
+}
+
+
 ?>

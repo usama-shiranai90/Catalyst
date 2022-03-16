@@ -103,7 +103,7 @@ window.onload = function (e) {
         $(document).on('click', "img[data-wtc-remove='remove']", function (event) {
             event.stopImmediatePropagation()
             // dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').index();
-            dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').attr("id").match(/\d+/)[0];
+            dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').attr("id").match(/\d+/)[0]; // weeklyCovered-1
             deletedWeeklyID = $(event.target).closest('.learning-outcome-row.h-auto').first().children(":first").val(); // attr("id")
 
             console.log(dischargedIndex, deletedWeeklyID);

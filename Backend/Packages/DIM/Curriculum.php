@@ -65,12 +65,16 @@ class Curriculum
         return $this->listOfPLOs;
     }
 
-    public function getPreviousFewCurriculumYear(): ?array
+    public function getPreviousFewCurriculumYear($hasLimit): ?array
     {
         $curriculumYearList = array();
+        $format = "desc limit 4";
+        if (!$hasLimit)
+            $format = "";
 
         $sql = /** @lang text */
-            "select * from curriculum order by curriculumCode desc limit 4;";
+            "select * from curriculum order by curriculumCode $format
+           ";
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {

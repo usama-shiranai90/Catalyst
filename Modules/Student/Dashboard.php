@@ -3,9 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $studentRegCode = $_SESSION['studentRegistrationCode'];
-//$batchCode = $_SESSION['batchCode'];
-$_SESSION['batchCode'] = 4;
-$batchCode = 4;
+$batchCode = $_SESSION['batchCode'];
 $programCode = $_SESSION['programCode'];
 
 $personalDetails = array();
@@ -23,7 +21,7 @@ $isPromotedToNewSemester = $currentSemester->retrieveCurrentSemester($batchCode)
 
 if ($isPromotedToNewSemester) {
     $enrolledCourses = new Course();
-    $enrolledCourseWithOutcomeArray = $enrolledCourses->getEnrolledCourses($studentRegCode, $currentSemester->getSemesterCode() , $batchCode , $programCode);
+    $enrolledCourseWithOutcomeArray = $enrolledCourses->getEnrolledCourses($studentRegCode, $currentSemester->getSemesterCode(), $batchCode, $programCode);
     /*    echo json_encode($enrolledCourseWithOutcomeArray);
         echo json_encode($enrolledCourseWithOutcomeArray[0]->getCourseCLOList())."<br>";
         echo json_encode($enrolledCourseWithOutcomeArray[0]->getCourseCLOList()[0]['cloName'])."<br>";*/
@@ -47,13 +45,13 @@ if ($isPromotedToNewSemester) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
-    <link href="/Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script async src="/Assets/Frameworks/apexChart/apexcharts.js"></script>
-    <script async src="assets/js/DashboardGraphicalData.js"></script>
     <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+    <script src="/Assets/Frameworks/apexChart/apexcharts.js"></script>
+    <link href="/Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <script async src="assets/js/DashboardGraphicalData.js"></script>
+    <script async src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 
     <script>
         window.Promise ||
@@ -206,10 +204,8 @@ if ($isPromotedToNewSemester) {
 </div>
 
 <script>
-
     let courseWithOutcomeArray = JSON.parse('<?php echo json_encode($enrolledCourseWithOutcomeArray); ?>');
     console.log(courseWithOutcomeArray)
-
 </script>
 </body>
 </html>

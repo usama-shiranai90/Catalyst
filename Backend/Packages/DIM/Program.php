@@ -15,8 +15,6 @@ class Program implements JsonSerializable
 
     }
 
-
-
     public function retrieveProgram($programCode): Program
     {
         $sql = /** @lang text */
@@ -35,17 +33,31 @@ class Program implements JsonSerializable
                 $programNameAcronym = "";
 
                 foreach ($programName as $w) {
-                    if(ctype_upper($w[0]))
+                    if (ctype_upper($w[0]))
                         $programNameAcronym .= $w[0];
                 }
                 $newProgram->programName = $programNameAcronym;
             }
         } else
-            echo "No program found for program code: ".$programCode;
+            echo "No program found for program code: " . $programCode;
 
         return $newProgram;
     }
 
+
+    public function createProgram($curriculumCode, $departmentCode, $programName): bool
+    {
+        $sqlStatement = /** @lang text */
+            "insert into program(curriculumCode, departmentCode, programName) VALUE (\"$curriculumCode\" , \"$departmentCode\" ,\"$programName\");";
+
+        if ($this->databaseConnection->query($sqlStatement) === TRUE) {
+            $this->programCode = ((int)$this->databaseConnection->insert_id);
+            return true;
+        } else
+//            echo "Error inserting marks for activity: " . $activityCode . "******" . $sql . "<br>" . $this->databaseConnection->error;
+            return false;
+
+    }
 
     public function getProgramName()
     {
@@ -61,8 +73,8 @@ class Program implements JsonSerializable
     public function jsonSerialize()
     {
         return array(
-            'programCode'=>$this->programCode,
-            'programName'=>$this->programName
+            'programCode' => $this->programCode,
+            'programName' => $this->programName
         );
     }
 }

@@ -1,41 +1,36 @@
-// window.onload = function () {
-
+// Mock Data Set.
+/*
 const colors = ['#016ADD', '#0183FB', '#4DBFFE']
-
 ploArray = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38]; // fetch from server.
-semesterResultArray = [2.35, 3.52, 3.8, 3.9, 3.4];  // fetch from server
+let semesterResultArray = [2.35, 3.52, 3.8, 3.9, 3.4];  // fetch from server
+*/
 
+const colors = ['#016ADD', '#0183FB', '#4DBFFE', '#FF0000', '#02DFDE', '#acc426'];
+let semesterResultArray = ploArray = [];
 
-/** DOM */
 const registerCourseSection = document.getElementById('registerCourseDivID');
 const courseCLOTable = document.getElementById('courseTableID');
 // const selectedCourseCLOTableBody = document.getElementById('courseTableBodyID');
 
-
 $(document).ready(function () {
 
-    let ploChart = new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), getStudentPLOProgress(ploArray));
-    let gpaChart = new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), getStudentGPA(semesterResultArray));
+    loadRadialBarGraphAccumulatedCgpa();
+    loadBarChartSemesterWise();
+    loadBarChartProgramOutcomeScore();
+    setRegisterCoursesDashboard();
 
-    ploChart.render();
-    gpaChart.render();
-
-    setRegisterCourses();
-    loadCGPAGraph();
-
-    let openIndex = 0;
+    let clickedIndex = 0;
     $(document).on('click', "img[data-reg-course='ico']", function (event) {
         event.stopImmediatePropagation();
-        openIndex = parseInt($(event.target).closest('.student-profile-header-text').attr("id").match(/\d+/)[0]); //  daregcor-2-> 2 , ID ma sa integer.
+        clickedIndex = parseInt($(event.target).closest('.student-profile-header-text').attr("id").match(/\d+/)[0]); //  daregcor-2-> 2 , ID ma sa integer.
         $(this).attr("src", "../../Assets/Images/bottom-arrow.svg");
 
-        // console.log($(event.target).closest('.student-profile-header-text'), openIndex)
-
+        // console.log($(event.target).closest('.student-profile-header-text'), clickedIndex)
         $("tbody[id^='courseTableBodyID']").each(function (index, node) {
             const bodyID = $(node).attr("id").match(/\d+/)[0];
             const courseDivID = document.getElementById("daregcor-" + bodyID);
 
-            if (bodyID == openIndex) {
+            if (bodyID == clickedIndex) {
                 // $(node).attr("class","").removeClass("hidden")
                 $(courseDivID).removeClass().addClass("sm:px-6 sm:w-auto sm:justify-center cursor-pointer inline-flex justify-center items-center py-5 w-1/2 rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none student-profile-header-text my-0 font-medium text-base")
                 if ($(node).hasClass("hidden"))
@@ -47,29 +42,87 @@ $(document).ready(function () {
             }
         });
     });
-
 });
 
-function setOutcomeDescription(index) {
-    let tableBody = document.createElement("tbody");
-    tableBody.setAttribute("id", "courseTableBodyID-" + (index + 1))
-
-    if ((index) !== 0) {
-        tableBody.setAttribute("class", "hidden");
-    }
-    for (let i = 0; i < courseWithOutcomeArray[index].CourseCLOList.length; i++) {
-        const outcomeRow = `<tr class="text-center text-sm font-base tracking-tight">
-                                    <td class="px-4 py-3">${courseWithOutcomeArray[index].CourseCLOList[i].cloName}</td>
-                                    <td class="px-4 py-3 ">${courseWithOutcomeArray[index].CourseCLOList[i].description}
-                                    </td>
-                                </tr>`;
-        $(tableBody).append(outcomeRow);
-    }
-    $(courseCLOTable).append(tableBody)
+/** Graph Section */
+// Student Radial Bar Chart For Accumulated CGPA.
+function loadRadialBarGraphAccumulatedCgpa() {
+    $.ajax({
+        type: "POST",
+        url: 'assets/Operation/DashboardAjax.php',
+        data: {toLoadCgpa: true},
+        beforeSend: function () {
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+        },
+        success: function (data, status) {
+            const responseText = JSON.parse(data)
+            if (responseText.status === 1 && responseText.errors === 'none') {
+                const cgpa = responseText.message.CGPA;
+                new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(cgpa)).render();
+            } else if (responseText.status === 0 && responseText.errors === 'no-record')
+                new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(0)).render();
+        },
+        complete: function (data) {
+        },
+    });
 }
 
-function setRegisterCourses() {
+// Student Semester Wise GPA Line Bar Chart.
+function loadBarChartSemesterWise() {
+    $.ajax({
+        type: "POST",
+        url: 'assets/Operation/DashboardAjax.php',
+        data: {toLoadSemesterBar: true},
+        beforeSend: function () {
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+        },
+        success: function (data, status) {
+            const responseText = JSON.parse(data);
+            console.log(responseText)
+            if (responseText.status === 1 && responseText.errors === 'none') {
+                semesterResultArray = responseText.message;
+                console.log("Semester Array : ", semesterResultArray);
+                new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), createSemesterGpaLineChartStructure(semesterResultArray)).render();
+            } else if (responseText.status === 0 && responseText.errors === 'no-record')
+                new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), createSemesterGpaLineChartStructure([])).render();
+        },
+        complete: function (data) {
+        },
+    });
+}
 
+function loadBarChartProgramOutcomeScore() {
+    $.ajax({
+        type: "POST",
+        url: 'assets/Operation/DashboardAjax.php',
+        data: {toLoadPloBar: true},
+        beforeSend: function () {
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+        },
+        success: function (data, status) {
+            const responseText = JSON.parse(data);
+            console.log(responseText)
+            if (responseText.status === 1 && responseText.errors === 'none') {
+                semesterResultArray = responseText.message;
+                console.log("PLO Array : ", semesterResultArray);
+                new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure(semesterResultArray)).render();
+            } else if (responseText.status === 0 && responseText.errors === 'no-record')
+                new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure([])).render();
+            new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure([])).render();
+        },
+        complete: function (data) {
+        },
+    });
+}
+
+/** TABLE: Registered Course along with Respective CLO's. */
+function setRegisterCoursesDashboard() {
     if (courseWithOutcomeArray != null) {
         let $withH = `sm:px-6 sm:w-auto sm:justify-center cursor-pointer inline-flex justify-center items-center py-3 w-1/2
                       rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none student-profile-header-text my-0 font-medium text-base`;
@@ -99,37 +152,27 @@ function setRegisterCourses() {
     }
 }
 
-function loadCGPAGraph() {
-    $.ajax({
-        type: "POST",
-        url: 'assets/Operation/DashboardAjax.php',
-        timeout: 500,
-        cache: false,
-        data: {
-            toLoadCgpa: true
-        },
-        beforeSend: function () {},
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
-        },
-        success: function (data, status) {
-            const reponseText = JSON.parse(data)
-            console.log(reponseText)
-            if (reponseText.status === 1 && reponseText.errors === 'none') {
-                const cgpa  = reponseText.message.CGPA;
-                console.log(reponseText.message.CGPA)
-                let cgpaProgress = new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), getCGPA_Progress(cgpa));
-                cgpaProgress.render();
-            }
-        },
-        complete: function (data) {
+function setOutcomeDescription(index) {
+    let tableBody = document.createElement("tbody");
+    tableBody.setAttribute("id", "courseTableBodyID-" + (index + 1))
 
-        },
-    });
+    if ((index) !== 0) {
+        tableBody.setAttribute("class", "hidden");
+    }
+    for (let i = 0; i < courseWithOutcomeArray[index].CourseCLOList.length; i++) {
+        const outcomeRow = `<tr class="text-center text-sm font-base tracking-tight">
+                                    <td class="px-4 py-3">${courseWithOutcomeArray[index].CourseCLOList[i].cloName}</td>
+                                    <td class="px-4 py-3 ">${courseWithOutcomeArray[index].CourseCLOList[i].description}
+                                    </td>
+                                </tr>`;
+        $(tableBody).append(outcomeRow);
+    }
+    $(courseCLOTable).append(tableBody)
 }
 
-/** Dashboard Charts CGPA. */
-function getCGPA_Progress(currentCGPA = 2) {
+
+/** Apex Chart Graph Plotting with Structure... */
+function createCgpRadialChartStructure(currentCGPA, message = "CGPA") {
     return {
         series: [valueToPercent(currentCGPA)],
         chart: {
@@ -151,9 +194,9 @@ function getCGPA_Progress(currentCGPA = 2) {
                     position: 'front',
                     dropShadow: {
                         enabled: true,
-                        top: 3,
-                        left: 0,
-                        blur: 4,
+                        top: 20,
+                        left: 10,
+                        blur: 10,
                         opacity: 0.24
                     }
                 },
@@ -205,11 +248,13 @@ function getCGPA_Progress(currentCGPA = 2) {
         stroke: {
             lineCap: 'round'
         },
-        labels: ["CGPA"]
+        labels: [message]
     };
 }
 
-function getStudentPLOProgress(ploArrayList) {
+function createOverallPLOLinearChartStructure(ploArrayList) {
+    // ploArrayList = [{"score": 24, "plodescription": "xxxxxxxxxxxxxxxxxx"}, {"score": 24, "plodescription": "xxxxxxxxxxxxxxxxxx"},]; // fetch from server.
+    ploArrayList = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38];
     return {
         series: [{
             name: 'PLO',
@@ -224,29 +269,40 @@ function getStudentPLOProgress(ploArrayList) {
 
                 }
             },
-            toolbar: {
-                /*tools: {
-                    // download: '<img src="../../assets/images/1101098.png" width="20" height="20" />',
-                    customIcons: [{
-                        html: '<i class="fa fa-angle-down">xxxx</i>',
-                        onClick: function(e, chartContext) {
-                            console.log(e) },
-                        appendTo: 'left' // left / top means the button will be appended to the left most or right most position
-                    }]
-                }*/
-                show: false
+            // toolbar: {show: false}
+            tooltip: {
+              /*  enabled: true,
+                custom: function ({series, seriesIndex, dataPointIndex, w}) {
+                    var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                    console.log(series, seriesIndex, dataPointIndex, w , data);
+                    // return '<ul>' +
+                    //     '<li><b>PLO</b>: ' + data.x + '</li>' +
+                    //     '</ul>';
+                },*/
             }
         },
-        colors: colors,
+        noData: {
+            text: "Program Outcome Result is not updated."
+        },
+        colors: [
+            function ({value, seriesIndex, w}) {
+                if (value < 50)
+                    return colors[3]
+                else if (value > 50 && value < 75)
+                    return colors[0]
+                else
+                    return colors[5]
+            }
+        ],
         plotOptions: {
             bar: {
                 borderRadius: 6,
                 columnWidth: '30%',
-                distributed: false,
+                distributed: true,
             }
         },
         dataLabels: {
-            enabled: true
+            enabled: false
         },
         legend: {
             show: false,
@@ -309,28 +365,31 @@ function getStudentPLOProgress(ploArrayList) {
     };
 }
 
-function getStudentGPA(semesterArray) {
+function createSemesterGpaLineChartStructure(semesterArray) {
     let totalSemester = [];
     semesterArray.forEach(function (key, value) {
         totalSemester.push((value + 1))
-    })
+    });
 
     return {
         series: [{
-            name: 'PLO',
-            data: semesterArray,  // data we fetch from php of students overall PLOs score.
+            name: "Semester No ", data: semesterArray,
         }],
         chart: {
             height: 400,
             type: 'bar',
             stacked: true,
+            offsetY: 15,
             events: {
                 click: function (chart, w, e) {
-
+                    console.log(chart, w, e);
                 }
             },
-            toolbar: {
-                /*tools: {
+            dataLabels: {
+                enabled: false
+            },
+            /*toolbar: {
+                tools: {
                     // download: '<img src="../../assets/images/1101098.png" width="20" height="20" />',
                     customIcons: [{
                         html: '<i class="fa fa-angle-down">xxxx</i>',
@@ -338,15 +397,26 @@ function getStudentGPA(semesterArray) {
                             console.log(e) },
                         appendTo: 'left' // left / top means the button will be appended to the left most or right most position
                     }]
-                }*/
-                show: false
-            }
+                },
+                show: true
+            }*/
         },
-        colors: colors,
+        colors: [
+            function ({value, seriesIndex, w}) {
+                if (value < 1.9)
+                    return colors[3]
+                else if (value > 1.9 && value < 2.9)
+                    return colors[0]
+                else if (value > 2.9 && value < 3.5)
+                    return colors[2]
+                else
+                    return colors[5];
+            }
+        ],
         plotOptions: {
             bar: {
                 borderRadius: 6,
-                columnWidth: '30%',
+                columnWidth: '20%',
                 distributed: true,
             }
         },
@@ -361,12 +431,18 @@ function getStudentGPA(semesterArray) {
             floating: true,
             enabled: true,
             style: {
-                colors: ['#111']
+                colors: ['#111'],
+                fontSize: 18,
             },
-            offsetX: 15
+            align: 'center',
+            // offsetX:100,
+            offsetY: -6,
+        },
+        noData: {
+            text: "No Previous Record Exist.",
         },
         xaxis: {
-            min: 1,
+            min: 0,
             max: semesterArray.size,
             categories: totalSemester,
             labels: {
@@ -379,7 +455,7 @@ function getStudentGPA(semesterArray) {
                 offsetX: 0,
                 offsetY: 0,
                 style: {
-                    fontSize: '11px',
+                    fontSize: '12px',
                     fontWeight: 800,
                     cssClass: '',
                 },
@@ -394,3 +470,4 @@ function valueToPercent(value) {
 }
 
 // }
+

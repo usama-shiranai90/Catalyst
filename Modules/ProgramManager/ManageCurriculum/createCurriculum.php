@@ -11,7 +11,7 @@ $adminCode = $_SESSION['adminCode'];
 
 
 $curriculum = new Curriculum();
-$curriculumList = $curriculum->getPreviousFewCurriculumYear();
+$curriculumList = $curriculum->getPreviousFewCurriculumYear(true);
 
 $currentOnGoingYear = date('Y');
 $earliestYear = ($curriculumList === null ? date('Y', strtotime("-4 year")) : reset($curriculumList)['year']); // 016
@@ -30,7 +30,7 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
     <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="/Assets/Scripts/Master.js" rel="script"></script>
-    <script src="assets/js/uploader.js" type="text/javascript"></script>
+    <script src="assets/js/creationJs.js" type="text/javascript"></script>
     <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
     <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>
@@ -163,25 +163,22 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
             </div>
             <section
                     class="hidden bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0 cprofile-grid">
-
-<!--                <div class="ring-2 ring-catalystLight-e1 rounded-md shadow-none">-->
-                    <form id="curriculumFormCreationId" method="post" class="flex flex-col overflow-hidden border-solid border-2 border-catalystLight-e1 rounded-md shadow-none">
-                        <div id="cCurriculumHeaderId"
-                             class="learning-outcome-head learning-week-header-dp overflow-hidden">
-                            <div class="lweek-column border-l-0 bg-catalystLight-f5 col-start-1 col-span-1 rounded-tl-md">
-                                <span class="wlearn-cell-data">PLO No</span>
-                            </div>
-                            <div class="lweek-column col-start-2 col-span-10">
-                                <span class="wlearn-cell-data">Description</span>
-                            </div>
-                            <div class="lweek-column border-r-0 col-start-12 col-span-1">
-                                <span class="wlearn-cell-data">Status</span>
-                            </div>
+                <form id="curriculumFormCreationId" method="post"
+                      class="flex flex-col overflow-hidden border-solid border-2 border-catalystLight-e1 rounded-md shadow-none">
+                    <div id="cCurriculumHeaderId"
+                         class="learning-outcome-head learning-week-header-dp overflow-hidden">
+                        <div class="lweek-column border-l-0 bg-catalystLight-f5 col-start-1 col-span-1 rounded-tl-md">
+                            <span class="wlearn-cell-data">PLO No</span>
                         </div>
+                        <div class="lweek-column col-start-2 col-span-10">
+                            <span class="wlearn-cell-data">Description</span>
+                        </div>
+                        <div class="lweek-column border-r-0 col-start-12 col-span-1">
+                            <span class="wlearn-cell-data">Status</span>
+                        </div>
+                    </div>
 
-                    </form>
-<!--                </div>-->
-
+                </form>
                 <div class="flex justify-center">
                     <button type="button" aria-label="add_clos_button_label" class="max-w-2xl rounded-full"
                             id="add-clo-btn" aria-expanded="false" aria-haspopup="true">

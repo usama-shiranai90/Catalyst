@@ -19,11 +19,19 @@ if (isset($_POST['toLoadCgpa']) and $_POST['toLoadCgpa']) {
         $resultBackServer = updateServer(1, $cgpa, "none");
     die(json_encode($resultBackServer));
 
-} elseif (isset($_POST['']) and $_POST['']) {
+}
+elseif (isset($_POST['toLoadSemesterBar']) and $_POST['toLoadSemesterBar']) {
+        $studentSemesterGpaArray = $cgpa->studentAllSemesterGPA($studentRegCode);
+        if ($studentSemesterGpaArray !== null)
+            $resultBackServer = updateServer(1, $studentSemesterGpaArray , "none");
+        else
+            $resultBackServer = updateServer(0, "Error While Fetching Students Semesters" , "no-record");
 
+        die(json_encode($resultBackServer));
 }
 
 
+die(json_encode($resultBackServer));
 function updateServer($status, $message, $error): array
 {
     $resultBackServer['status'] = $status;

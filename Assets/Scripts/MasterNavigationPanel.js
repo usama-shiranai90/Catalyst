@@ -5,29 +5,29 @@ $(document).ready(function () {
 
     /** Student Panel Section */
     $("#studentDashboardID").click(function () {
-        $("#teacherMainContent").html("<iframe class='h-full block' src='../Student/Dashboard.php' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Dashboard")
+        $("#studentMainContent").html("<iframe class='h-full block' src='../Student/Dashboard.php' style='width: 100%'></iframe>");
+        $("#studentPanelTitleID").text("Dashboard")
         document.title = "Catalyst | Dashboard";
     })
     $("#studentProgressID").click(function () {
-        $("#teacherMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Course Profile Creation")
-        document.title = "Catalyst | Course Profile Creation";
-    })
-    $("#switchToOBETranscript").click(function () {
-        $("#teacherMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Weekly Covered Topic")
-        document.title = "Catalyst | Weekly Topics";
-    })
-    $("#switchToGPATranscript").click(function () {
-        $("#teacherMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Student Progress")
+        $("#studentMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
+        $("#studentPanelTitleID").text("Student Progress")
         document.title = "Catalyst | Student Progress";
     })
+    $("#switchToOBETranscriptId").click(function () {
+        $("#studentMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
+        $("#studentPanelTitleID").text("OBE Transcript")
+        document.title = "Catalyst | OBE Transcript";
+    })
+    $("#switchToGPATranscriptId").click(function () {
+        $("#studentMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
+        $("#studentPanelTitleID").text("GPA Transcript")
+        document.title = "Catalyst | GPA Transcript";
+    })
     $("#viewStuProfileID").click(function () {
-        $("#teacherMainContent").html("<iframe class='h-full block' src='../Student/StudentProfile.php' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Sessional")
-        document.title = "Catalyst - Sessional Dashboard";
+        $("#studentMainContent").html("<iframe class='h-full block' src='../Student/StudentProfile.php' style='width: 100%'></iframe>");
+        $("#studentPanelTitleID").text("Setting")
+        document.title = "Catalyst | Setting";
     })
 
 
@@ -106,9 +106,9 @@ $(document).ready(function () {
         document.title = "Catalyst | Curriculum Creation";
     })
     $("#viewCurriculumID").click(function () {
-        $("#programManagerMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
-        $("#teacherPanelTitleID").text("Weekly Covered Topic")
-        document.title = "Catalyst | Weekly Topics";
+        $("#programManagerMainContent").html("<iframe class='h-full block' src='ManageCurriculum/manageCurriculum.php' style='width: 100%'></iframe>");
+        $("#teacherPanelTitleID").text("Curriculum View")
+        document.title = "Catalyst | Curriculum View";
     })
 
 });

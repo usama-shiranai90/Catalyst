@@ -82,15 +82,15 @@ window.onload = function (e) {
                             recentlyCreatedCurriculumPloArray.push(temp)
                             counter++;
                         }
-                        console.log("Data is :", $(curriculumRowRecordList[i]).val())
                     }
                 }
             })
 
+            console.log("All Curriculum List : ", recentlyCreatedCurriculumPloArray, assignCurriculumYear)
 
-            console.log("All Curriculum List : ", recentlyCreatedCurriculumPloArray)
+            const programName = selectedProgramField.getAttribute("value");
 
-            createCurriculumAjaxCall(recentlyCreatedCurriculumPloArray, assignCurriculumYear);
+            createCurriculumAjaxCall(recentlyCreatedCurriculumPloArray, assignCurriculumYear, programName);
 
 
         });
@@ -231,7 +231,7 @@ window.onload = function (e) {
         }
     }
 
-    function createCurriculumAjaxCall(recentlyCreatedCurriculumArray, assignCurriculumYear) {
+    function createCurriculumAjaxCall(recentlyCreatedCurriculumArray, assignCurriculumYear, programName) {
         $.ajax({
             type: "POST",
             url: 'assets/CurriculumAjax.php',
@@ -241,6 +241,7 @@ window.onload = function (e) {
                 creation: true,
                 curriculumPloArray: recentlyCreatedCurriculumArray,
                 assignCurriculumYear: assignCurriculumYear,
+                programType: programName
             },
             beforeSend: function () {
             },

@@ -4,6 +4,7 @@ session_start();
 
 $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];
+
 $personalDetails = array();
 $admin = unserialize($_SESSION['adminInstance']);
 $personalDetails = $admin->getPersonalDetails();

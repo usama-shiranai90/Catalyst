@@ -1,4 +1,5 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
 
 class PLO implements JsonSerializable
 {
@@ -16,16 +17,19 @@ class PLO implements JsonSerializable
 
     public function createProgramOutcomeCurriculum($programCode, $curriculumId, $curriculumRelatedPlo): bool
     {
-        $ErrorFlag = false;
+        $errorFlag = false;
         foreach ($curriculumRelatedPlo as $plo) {
+            $ploName = $plo['plo_number'];
+            $ploDescription = $plo['plo_description'];
             $sql_statement = /** @lang text */
-                "insert into plo(curriculumCode, programCode, ploName, ploDescription) VALUE (\"$programCode\" ,  \"$curriculumId\" ,\"$plo\" )";
-
-            $result = $this->databaseConnection->query($sql_statement);
-            if (!$result)
-                $ErrorFlag = true;
+                "insert into plo(curriculumCode, programCode, ploName, ploDescription) VALUE (\"$programCode\" ,  \"$curriculumId\" ,\" $ploName\"  ,\" $ploDescription\" )";
+            if ($this->databaseConnection->query($sql_statement) == TRUE)
+                $errorFlag = true;
         }
-        return $ErrorFlag;
+        if ($errorFlag == true)
+            return true;
+        else
+            return false;
     }
 
     public function retrievePLOOsOfProgram($programCode): ?array
@@ -52,6 +56,30 @@ class PLO implements JsonSerializable
 
         return $PLOList;
     }
+
+
+    public function retrieveSelectedCurriculumPlo($curriculumCode, $programType): ?array
+    {
+        $programName = compareProgramType($programType);
+        $sql = /** @lang text */
+            "select * from plo join program p on plo.programCode = p.programCode 
+            where programName = \"$programName\" and p.curriculumCode = \"$curriculumCode\"; ";
+
+        $result = $this->databaseConnection->query($sql);
+        $PLOList = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $newPLO = new PLO();
+                $newPLO->setPloCode($row["PLOCode"]);
+                $newPLO->setPloName($row["ploName"]);
+                $newPLO->setPloDescription($row["ploDescription"]);
+                $PLOList[] = $newPLO;
+            }
+            return $PLOList;
+        } else
+            return array($programName);
+    }
+
 
     /**
      * @return int

@@ -131,15 +131,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <link href="../../Assets/Frameworks/Tailwind/tailwind.css" rel="stylesheet">
+    <link href="/Assets/Frameworks/Tailwind/tailwind.css" rel="stylesheet">
     <link href="AuthenticationAssets/LoginStyles.css" rel="stylesheet">
     <script src="AuthenticationAssets/LoginScripts.js" rel="script"></script>
-
-    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
-    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <title>Catalyst - Login</title>
 
@@ -284,7 +282,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             for ($i = 0; $i < sizeof($listOfBatches); $i++) {
                                 if (!in_array($listOfBatches[$i]->getBatchName(), $batchesBeingShown)) {
-                                    echo "<option value='" . $listOfBatches[$i]->getBatchName() . "'>" . $listOfBatches[$i]->getBatchName() . "</option>";
+                                    echo "<option value='" . $listOfBatches[$i]->getBatchName() . "' batchCode='" . $listOfBatches[$i]->getBatchCode() . "'>" . $listOfBatches[$i]->getBatchName() . "</option>";
                                     array_push($batchesBeingShown, $listOfBatches[$i]->getBatchName());
                                 }
                             }
@@ -318,24 +316,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            id="studentUsernameError">Please select the required fields</label>
                 </div>
 
-                <!--                Password Portion-->
-                <div class="mt-3 passwordSectionMobile passwordSectionNormal ">
+                <!--Password Portion-->      <!--   <div class="mt-3 passwordSectionMobile passwordSectionNormal ">
                     <i class="fas fa-lock fa-1x mt-3 w-1/2 text-center col-span-1"></i>
 
                     <div class="textField-label-content md:col-start-2 col-span-6" id="studentPasswordDiv">
-                        <!--                        <div class="relative sm:w-full sm:w-screen md:w-full md:w-screen ">-->
-                        <label for="studentPassword"></label>
+                      <label for="studentPassword"></label>
                         <input class="textField" type="password" placeholder=" "
                                id="studentPassword" name="studentPassword" style="margin-left: 4px ; margin-right: 4px">
                         <label class="textField-label sm:top-2 md:top-4 lg:top-4">Password</label>
 
-                        <!--                        forgot section for Desktop-->
-                        <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"
+                       <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"
                              style="width: auto; display: none">
                             <div class="verticalLine mr-2" style="width: auto"></div>
                             <a class="text-red-700" href="#">Forgot</a>
                         </div>
 
+                    </div>
+                </div>-->
+                <div class="mt-3 passwordSectionMobile passwordSectionNormal">
+                    <i class="fas fa-lock fa-1x mt-3 w-1/2 text-center col-span-1"></i>
+                    <div class="textField-label-content col-span-4" id="studentPasswordDiv">
+
+                        <input class="textField" type="password" placeholder=" " id="studentPassword"
+                               name="studentPassword">
+                        <label class="textField-label">Password</label>
                     </div>
                 </div>
 
@@ -345,14 +349,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <label class="text-red-900 text-center hidden" id="studentPassError"></label>
-                <label class="text-red-900 text-center hidden" id="studentIncorrectPass">Username or password
+                <label class="text-red-900 text-center <?php echo $studentIncorrectPass; ?>" id="studentIncorrectPass">Username
+                    or password
                     is incorrect</label>
-
 
                 <!--                        Hidden Fields                   -->
                 <input class="hidden" type="text" id="curr" name="curriculumCode">
                 <input class="hidden" type="text" name="programCode">
                 <input class="hidden" type="text" name="batchCode">
+
 
                 <!--Login and SVG-->
                 <div class="mt-5 sm:mt-0 sm:grid sm:grid-cols-3 sm:grid sm:gap-0 items-center mb-10 sm:mb-0 block">
@@ -560,7 +565,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script>
     $(document).ready(function () {
         var listOfBatches = '<?php echo json_encode($listOfBatches);?>';
-        listOfBatches = JSON.parse(listOfBatches);
+         listOfBatches = JSON.parse(listOfBatches);
 
         //Setting programs to show on batch selection
         $('#batch').on('change', function () {
@@ -591,15 +596,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             var selectedProgram = $('#program').val();
             for (let i = 0; i < listOfPrograms.length; i++) {
-                if (selectedProgram === listOfPrograms[i]["programName"]) {
+                if (selectedProgram == listOfPrograms[i]["programName"]) {
                     $('input[name="programCode"]').val(listOfPrograms[i]["programCode"])
                     break;
                 }
             }
-
             console.log($('input[name="programCode"]').val())
             console.log($('input[name="batchCode"]').val())
-        });
+        })
 
     })
 </script>
