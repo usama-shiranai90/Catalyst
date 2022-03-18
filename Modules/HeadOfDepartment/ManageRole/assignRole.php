@@ -9,7 +9,7 @@ $departmentCode = $_SESSION['departmentCode'];
 //$admin = unserialize($_SESSION['adminInstance']);
 //$personalDetails = $admin->getPersonalDetails();
 
-echo json_encode($curriculumList);
+//echo json_encode($curriculumList);
 
 ?>
 

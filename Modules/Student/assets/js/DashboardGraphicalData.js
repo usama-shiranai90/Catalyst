@@ -51,10 +51,12 @@ function loadRadialBarGraphAccumulatedCgpa() {
         type: "POST",
         url: 'assets/Operation/DashboardAjax.php',
         data: {toLoadCgpa: true},
+        //The beforeSend() function is use to set the custom headers and it is
+        // an Ajax event that triggers before an Ajax request is started.
         beforeSend: function () {
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+            console.log("Not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
         },
         success: function (data, status) {
             const responseText = JSON.parse(data)

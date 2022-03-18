@@ -2,12 +2,12 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
-$studentRegCode = $_SESSION['studentRegistrationCode'];
-$batchCode = $_SESSION['batchCode'];
+$studentRegCode = $_SESSION['studentRegistrationCode'];// FUR/12/2019-BSE-0-030
+$batchCode = $_SESSION['batchCode']; // 4
 $programCode = $_SESSION['programCode'];
 
 $personalDetails = array();
-$student = unserialize($_SESSION['studentInstance']);
+$student = unserialize($_SESSION['studentInstance']); //
 $personalDetails = $student->getPersonalDetails();
 
 $totalEnrolledCourses = 0;
@@ -33,7 +33,6 @@ if ($isPromotedToNewSemester) {
 } else {
     echo "Not promoted to next Semester Error.";
 }
-
 
 ?>
 <!doctype html>

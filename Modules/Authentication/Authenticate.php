@@ -456,7 +456,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fa-1x w-1/2 text-center far fa-user"></i>
                     <!--hodse@fui.edu.pk-->
                     <div class="textField-label-content col-span-6" id="adminUsernameDiv">
-                        <input class="textField" type="email" value="pmse@fui.edu.pk" placeholder=" "
+                        <input class="textField" type="email" value="hodse@fui.edu.pk" placeholder=" "
                                id="adminUsername"
                                name="adminUsername">
                         <label class="textField-label">Email</label>
