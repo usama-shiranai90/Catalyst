@@ -3,13 +3,19 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $adminCode = $_SESSION['adminCode'];
+$programCode = $_SESSION['programCode'];
 $departmentCode = $_SESSION['departmentCode'];
+
+$program = new Program();
+$programName = $program->getProgramAbbreviation($programCode);
+$_SESSION['programName'] = $programName;
 
 $personalDetails = array();
 $admin = unserialize($_SESSION['adminInstance']);
-$personalDetails = $admin->getPersonalDetails();
+$personalDetails = $admin->getInstance();
 
-echo $adminCode . "  " . $departmentCode;
+//print_r(sprintf("%s  ,  %s  ,  %s  , %s <br>", $adminCode, $programCode , $departmentCode , $programName));
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

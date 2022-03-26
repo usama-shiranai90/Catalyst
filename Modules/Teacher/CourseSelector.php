@@ -32,8 +32,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     array_push($allottedBatchCodes, $listOfAllocations[$x]->getBatchCode());
 }
 
-echo json_encode($allottedCourseNames)."<br>";
-
+echo json_encode($allottedCourseNames) . "<br>";
 
 
 /*echo "Curriculum: <br>" . PHP_EOL;
@@ -57,7 +56,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="/Assets/Scripts/Master.js" rel="script"></script>
-    <script src=/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
     <style>
         .select-label {
@@ -98,18 +97,14 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                                 onchange="this.setAttribute('value', this.value);" value="" id="">
                             <option value="" hidden></option>
                             <?php
-
                             $courseNamesBeingShown = array();
-
                             for ($x = 0; $x < sizeof($allottedCourseNames); $x++) {
                                 if (!in_array($allottedCourseNames[$x], $courseNamesBeingShown)) {
                                     echo '<option value="' . $allottedCourseCodes[$x] . '">' . $allottedCourseNames[$x] . '</option>';
                                     array_push($courseNamesBeingShown, $allottedCourseNames[$x]);
                                 }
-
                             }
                             ?>
-
                         </select>
                         <label class="select-label">Course</label>
                     </div>
@@ -259,7 +254,6 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             containsErrors = false
             $(this).closest('div').removeClass('select-error-input')
         })
-
 
 
     });

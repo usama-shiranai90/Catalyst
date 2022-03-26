@@ -81,7 +81,8 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="CourseProfileAssets/js/cpm_common.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
-    <script src="CourseProfileAssets/js/additionalWork.js"></script>
+    <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
+
     <script type="text/javascript">
         writeRandomQuote = function () {
             var quotes = new Array();

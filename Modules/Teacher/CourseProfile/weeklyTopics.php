@@ -165,9 +165,10 @@ function callStaticData($viewWeeklyTopics)
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
-    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
-    <script src="CourseProfileAssets/js/additionalWork.js"></script>
-    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+<!--    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>-->
+<!--    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>-->
+
+    <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
 </head>
 <body style="background-color: #F9F8FE">
 <div class="w-full min-h-full">

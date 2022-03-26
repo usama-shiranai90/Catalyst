@@ -58,12 +58,10 @@ class PLO implements JsonSerializable
     }
 
 
-    public function retrieveSelectedCurriculumPlo($curriculumCode, $programType): ?array
+    public function retrieveSelectedCurriculumPlo($curriculumCode, $programCode): ?array
     {
-        $programName = compareProgramType($programType);
         $sql = /** @lang text */
-            "select * from plo join program p on plo.programCode = p.programCode 
-            where programName = \"$programName\" and p.curriculumCode = \"$curriculumCode\"; ";
+            "select * from plo  where curriculumCode = \"$curriculumCode\" and programCode = \"$programCode\";";
 
         $result = $this->databaseConnection->query($sql);
         $PLOList = array();
@@ -77,7 +75,40 @@ class PLO implements JsonSerializable
             }
             return $PLOList;
         } else
-            return array($programName);
+            return array();
+    }
+
+
+    public function removeProgramOutcome($ploCode, $programCode, $curriculumCode): bool
+    {
+
+        $sql = /** @lang text */
+            "delete from plo where PLOCode = \"$ploCode\" and programCode = \"$programCode\" and curriculumCode = \"$curriculumCode\" ";
+        $result = $this->databaseConnection->query($sql);
+        if ($result === TRUE) {
+//            echo sprintf("\n<br>Record Deleted successfully for CourseProfile ID:%s .\n<br>", (string)$ploCode);
+            return true;
+        }
+//            echo sprintf("\n<br>Error while deleting record from CLO-Description Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($currentCLOID, $programID, $batchCode)), $this->databaseConnection->error);
+        return false;
+    }
+
+    public function updateProgramOutcome($ploCode, $curriculumCode , $currentPlo): bool
+    {
+
+        $ploName = $currentPlo['plo_number'];
+        $ploDescription = $currentPlo['plo_description'];
+
+        $sql1 = /** @lang text */
+            "update plo set ploName =  \"$ploName\", ploDescription = \"$ploDescription\" 
+            where PLOCode = \"$ploCode\" and curriculumCode = \"$curriculumCode\" ";
+
+        if ($this->databaseConnection->query($sql1) === TRUE) {
+//            echo "Record updated successfully" . "\n<br>";
+            return true;
+        }
+//        echo sprintf("\n<br>Error while updating Course Profile Basic Info : %s\n<br>Server Error:%s\n<br>", json_encode(array($courseProfileID)), $this->databaseConnection->error);
+        return false;
     }
 
 

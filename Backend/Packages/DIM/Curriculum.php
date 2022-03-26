@@ -15,10 +15,10 @@ class Curriculum
         $this->listOfPLOs = array();
     }
 
-    public function createCurriculum($assignYear): bool
+    public function createCurriculum($assignYear, $curriculumName): bool
     {
         $sql_statement = /** @lang text */
-            "insert into curriculum(curriculumYear) VALUE (\"$assignYear\")";
+            "insert into curriculum(curriculumYear, dateCreated , curriculumName) VALUE (\"$assignYear\" ,NOW() , \"$curriculumName\")";
 
         $result = $this->databaseConnection->query($sql_statement);
         if ($result) {
@@ -81,7 +81,8 @@ class Curriculum
             while ($row = $result->fetch_assoc()) {
                 $temp = array(
                     "code" => $row['curriculumCode'],
-                    "year" => $row['curriculumYear']
+                    "year" => $row['curriculumYear'],
+                    "date" => $row['dateCreated']
                 );
                 array_push($curriculumYearList, $temp);
             }

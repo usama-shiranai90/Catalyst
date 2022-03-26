@@ -59,6 +59,25 @@ class Program implements JsonSerializable
 
     }
 
+
+    public function getProgramAbbreviation($programCode)
+    {
+        $sql = /** @lang text */
+            "select programCode, departmentCode, programName from program where programCode = \"$programCode\"";
+        $result = $this->databaseConnection->query($sql);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $programName = $row['programName'];
+                return $this->checkAbbreviation($programName);
+            }
+        } else
+            echo "No program found for program code: " . $programCode;
+
+        return null;
+    }
+
     public function getProgramName()
     {
         return $this->programName;
@@ -67,6 +86,24 @@ class Program implements JsonSerializable
     public function getProgramCode()
     {
         return $this->programCode;
+    }
+
+
+    protected function checkAbbreviation($value): ?string
+    {
+        if (str_contains(strtolower($value) , strtolower("Bachelors of Computer in Software Engineering")) !== false
+            || ( preg_match('/\bSoftware Engineering\b/', $value, $f) == 1 ) ){
+            return 'BCSE';
+        }
+        elseif (str_contains(strtolower($value) , strtolower("Bachelors of Computer in Computer Science")) !== false
+            || preg_match('/\bComputer Science\b/', $value, $f) == 1){
+            return 'BCCS';
+        }
+        elseif (str_contains(strtolower($value) , strtolower("Bachelors in Social Science")) !== false
+            || preg_match('/\bSocial Science\b/', $value, $f) == 1){
+            return 'BCSS';
+        }
+        return null;
     }
 
 

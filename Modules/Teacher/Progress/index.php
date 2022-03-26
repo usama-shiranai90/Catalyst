@@ -101,7 +101,7 @@ if ($retrievedFinalTerm != null) {
     <link href="ProgressAssets/progressInjection.css" rel="stylesheet">
     <link href="ProgressAssets/style.css" rel="stylesheet">
     <script src="ProgressAssets/progressScript.js" rel="script"></script>
-    <script src="../CourseProfile/CourseProfileAssets/js/additionalWork.js" rel="script"></script>
+    <script src="../../../Assets/Scripts/InterfaceUtil.js" rel="script"></script>
 
 </head>
 <body>

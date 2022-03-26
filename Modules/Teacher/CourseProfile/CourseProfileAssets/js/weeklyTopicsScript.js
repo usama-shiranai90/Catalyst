@@ -44,13 +44,15 @@ window.onload = function (e) {
                             allWeeklyRecordDescriptionValues[counter][innerCounter] = "Week-" + (index);
                             // allWeeklyRecordDescriptionValues[counter][innerCounter] = $(weeklyRowRecord[i]).first().text();
                             innerCounter++;
-                        } else {
+                        }
+                        else {
                             if (i !== 3) // assessment and description.
                             {
                                 $(weeklyRowRecord[i]).attr('readonly', true).removeClass("italic").addClass("not-italic");
                                 allWeeklyRecordDescriptionValues [counter][innerCounter] = $(weeklyRowRecord[i]).val();
                                 innerCounter++;
-                            } else {
+                            }
+                            else {
                                 let tempArray = [];
                                 $(weeklyRowRecord[i]).children().each((ind, n) => { //for clo list
                                     let currentCLO = '#week' + index + '_clo-' + (ind + 1) + 'ID';
@@ -259,7 +261,7 @@ window.onload = function (e) {
     </div>
     <div id="wct-wdescription-r${currentWeekNo}" class="lweek-column col-start-2 col-end-7">
         <label for="detail-r-${currentWeekNo}">
-            <textarea type="text" class="cell-input pt-4  px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+            <textarea type="text" class="cell-input py-4  px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
                       value="" placeholder="Write weekly description here..."  
                       id="detail-r-${currentWeekNo}"  onkeyup="autoHeight('detail-r-${currentWeekNo}')" ></textarea></label>
 
@@ -310,10 +312,6 @@ window.onload = function (e) {
             checkBoxParentContainer.innerHTML += currentCloCheckBoxContainer;
         }
 
-    }
-
-    function uniqueName(str, no, toReplace) {
-        return str.replace((toReplace), no);
     }
 }
 

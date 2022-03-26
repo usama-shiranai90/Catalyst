@@ -2,14 +2,21 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
-$adminCode = $_SESSION['adminCode'];
-$departmentCode = $_SESSION['departmentCode'];
+$admin = unserialize($_SESSION['adminInstance']);
+$personalDetails = $admin->getInstance();
 
-//$personalDetails = array();
-//$admin = unserialize($_SESSION['adminInstance']);
-//$personalDetails = $admin->getPersonalDetails();
+if (empty($_POST)) {
+    $adminCode = $_SESSION['adminCode'];
+    $departmentCode = $_SESSION['departmentCode'];
 
-//echo json_encode($curriculumList);
+    $faculty = new FacultyRole();
+    $facultyList = $faculty->retrieveFacultyListDepartment($departmentCode);
+}
+
+/*foreach ($facultyList as $facultyDetail) {
+    print_r(json_encode($facultyDetail) . "<br><br>");
+    echo $facultyDetail->getInstance()['facultyCode'];
+}*/
 
 ?>
 
@@ -25,7 +32,7 @@ $departmentCode = $_SESSION['departmentCode'];
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
-    <script src="../../Teacher/CourseProfile/CourseProfileAssets/js/additionalWork.js"></script>
+    <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
     <script src="asset/roleScript.js"></script>
 
     <style>
@@ -81,6 +88,9 @@ $departmentCode = $_SESSION['departmentCode'];
                             you are following.</h2>
                         <div class="w-full flex flex-col">
                             <form method="post" class="w-full flex flex-row justify-center w-4/12 my-5 gap-10">
+                                <input class="hidden" id="hdNamae" type="text" name="hdNamae"
+                                       value="<?php echo $personalDetails['name'] ?>">
+
                                 <div class="textField-label-content w-3/12">
                                     <label for="froleDesignationID"></label>
                                     <select class="select" name="roleDesignation"
@@ -88,18 +98,28 @@ $departmentCode = $_SESSION['departmentCode'];
                                             onchange="this.setAttribute('value', this.value);" value=""
                                             id="froleDesignationID">
                                         <option value="" hidden=""></option>
-                                        <option value="1">1</option>
+                                        <?php
+                                        $designationList = array();
+                                        foreach ($facultyList as $faculty) {
+                                            $currentDesignation = $faculty->getInstance()['designation'];
+                                            if (!in_array($currentDesignation, $designationList)) {
+                                                print sprintf("<option  value=\"%s\" >%s</option>",
+                                                    $faculty->getInstance()['designation'], $faculty->getInstance()['designation']);
+                                                $designationList[] = $faculty->getInstance()['designation'];
+                                            }
+                                        }
+                                        ?>
+
                                     </select>
                                     <label class="select-label top-1/4 sm:top-3">Designation</label>
                                 </div>
                                 <div class="textField-label-content w-3/12">
                                     <label for="f_role_facultyID"></label>
-                                    <select class="select" name="facultycode"
+                                    <select class="select" name="facultyIDSelect"
                                             onclick="this.setAttribute('value', this.value);"
                                             onchange="this.setAttribute('value', this.value);" value=""
                                             id="f_role_facultyID">
                                         <option value="" hidden=""></option>
-                                        <option value="1">1</option>
                                     </select>
                                     <label class="select-label top-1/4 sm:top-3">Faculty-ID</label>
                                 </div>
@@ -135,7 +155,7 @@ $departmentCode = $_SESSION['departmentCode'];
                             </div>
                         </div>
                     </div>
-                    <section class="db-table-container my-5">
+                    <section class="db-table-container my-5 ">
                         <div class="db-table-header-topic">
                             <h2 id="roleCreationHeader"
                                 class="text-base font-semibold text-white tracking-wide text-center capitalize">HOD Role
@@ -178,13 +198,30 @@ $departmentCode = $_SESSION['departmentCode'];
                                                name="hrcREmail" id="hrcREmailID" value="">
                                         <label class="textField-label">Email</label>
                                     </div>
-                                    <div class="textField-label-content w-3/12 chalJa">
+                                    <div class="textField-label-content w-3/12 relative">
+
                                         <input class="textField" type="text" placeholder="email password"
                                                name="hrcRPassword" id="hrcPasswordID" value="">
                                         <label class="textField-label">Password</label>
+
+                                        <div class="flex justify-center items-center absolute top-0 -right-1/2 w-32 h-12 box-border cursor-default"
+                                             id="roleCreationPasswordGeneratorID">
+                                            <span class="flex items-center justify-center text-gray-400 transform transition hover:scale-90 hover:text-indigo-700 cursor-pointer sm:text-sm">
+                                                <svg
+                                                        xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                              <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
+                                            </svg>
+                                                 <div class="w-32 h-full opacity-0 hover:opacity-100 duration-300 z-10
+                                                  flex justify-center items-center capitalize text-xs text-black font-semibold">Generate password</div>
+                                            </span>
+                                        </div>
+
                                     </div>
 
                                 </div>
+
                             </form>
 
                             <form method="post" class="hidden flex flex-col overflow-hidden" id="pmRoleCreationFormID">
@@ -218,7 +255,7 @@ $departmentCode = $_SESSION['departmentCode'];
                                                name="pmrcREmail" id="pmrcREmailID" value="">
                                         <label class="textField-label">Email</label>
                                     </div>
-                                    <div class="textField-label-content w-3/12">
+                                    <div class="textField-label-content w-3/12 relative">
                                         <input class="textField" type="text" placeholder="email password"
                                                name="pmrcRPassword" id="pmrcPasswordID" value="">
                                         <label class="textField-label">Password</label>
@@ -282,16 +319,15 @@ $departmentCode = $_SESSION['departmentCode'];
                                                name="carcEmail" id="carcEmailID" value="">
                                         <label class="textField-label">Email</label>
                                     </div>
-                                    <div class="textField-label-content w-3/12">
+                                    <div class="textField-label-content w-3/12 relative">
                                         <input class="textField" type="text" placeholder="email here"
                                                name="carcPassword" id="carcPasswordID" value="">
                                         <label class="textField-label">Password</label>
                                     </div>
                                 </div>
                             </form>
-
                             <!--absolute inset-y-0 inset-x-full left-r flex items-center w-72-->
-                            <div class="absolute inset-x-2/3 m-8 flex items-center" style="bottom: 40%"
+                            <!--<div class="hidden absolute inset-x-2/3 m-8 flex items-center" style="bottom: 40%"
                                  id="roleCreationPasswordGeneratorID">
                                             <span class="text-gray-400 transform transition hover:scale-90 hover:text-indigo-700 cursor-pointer sm:text-sm">
                                                 <svg
@@ -303,7 +339,7 @@ $departmentCode = $_SESSION['departmentCode'];
                                                  <div class="w-32 h-full opacity-0 hover:opacity-100 duration-300 absolute inset-0 inset-x-4  z-10
                                                   flex justify-center items-center capitalize text-xs text-black font-semibold">Generate password</div>
                                             </span>
-                            </div>
+                            </div>-->
                             <div class="text-right mx-0 my-2">
                                 <button type="button"
                                         class="text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-8 mx-5 py-1"
@@ -319,6 +355,15 @@ $departmentCode = $_SESSION['departmentCode'];
         </div>
     </main>
 </div>
-
 </body>
+
+<script>
+    // const tester = document.querySelector('meta[name="tester"]').content;
+    // var match = document.cookie.match(new RegExp('name=([^;]+)'))
+
+    var facultyInstanceList = <?php echo json_encode($facultyList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
+    var personalDetail = <?php echo json_encode($personalDetails, JSON_HEX_QUOT | JSON_HEX_APOS)?>
+</script>
+
+
 </html>

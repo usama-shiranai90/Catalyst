@@ -10,6 +10,8 @@ spl_autoload_register(function ($className) {
     $transcript = "/Backend/Packages/Transcript/";
     $uti = "/Backend/Packages/Util/";
 
+    $Bukhari = "/Backend/Packages/Bukhari-User-Division/";
+
 //    echo "FileName List :".__NAMESPACE__."  ".$className."<br>";
 
     if (file_exists($_SERVER['DOCUMENT_ROOT'] . $dim . str_replace('\\', "/", $className) . ".php")) {
@@ -29,6 +31,9 @@ spl_autoload_register(function ($className) {
         include $_SERVER['DOCUMENT_ROOT'] . $transcript . str_replace('\\', "/", $className) . ".php";
     } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $uti . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $uti . str_replace('\\', "/", $className) . ".php";
+    }
+    elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $Bukhari . str_replace('\\', "/", $className) . ".php")) {
+        include $_SERVER['DOCUMENT_ROOT'] . $Bukhari . str_replace('\\', "/", $className) . ".php";
     }
 
 });

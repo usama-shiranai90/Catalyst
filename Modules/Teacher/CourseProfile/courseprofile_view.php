@@ -398,7 +398,7 @@ $viewCLOMapping = $cloObject->mappedPLOs;
         </div>
     </main>
 
-    <script src="CourseProfileAssets/js/additionalWork.js"></script>
+    <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
     <script>
         clearAllStorage();
         setLocalStorage("courseCLO_key", <?php echo json_encode($viewCLODescription, JSON_HEX_TAG)?>)

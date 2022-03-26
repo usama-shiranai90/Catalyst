@@ -87,7 +87,23 @@ window.onload = function () {
             removeFocusFromSelectedNavItems()
             $(this).addClass("menuItemSelected")
         });
-
-
     });
+}
+
+function addLoader() {
+    return `<div id="loader" class="hidden m-auto fixed top-1/4 left-1/2 z-5">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class=" transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <!-- inline-block align-bottom bg-white rounded-lg text-center overflow-hidden-->
+            <div class=" px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <svg class="animate-spin fill-current text-catalystBlue-d2 opacity-100"
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="55" height="55" viewBox="0 0 24 24">
+                    <path d="M13.75 22c0 .966-.783 1.75-1.75 1.75s-1.75-.784-1.75-1.75.783-1.75 1.75-1.75 1.75.784 1.75 1.75zm-1.75-22c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 10.75c.689 0 1.249.561 1.249 1.25 0 .69-.56 1.25-1.249 1.25-.69 0-1.249-.559-1.249-1.25 0-.689.559-1.25 1.249-1.25zm-22 1.25c0 1.105.896 2 2 2s2-.895 2-2c0-1.104-.896-2-2-2s-2 .896-2 2zm19-8c.551 0 1 .449 1 1 0 .553-.449 1.002-1 1-.551 0-1-.447-1-.998 0-.553.449-1.002 1-1.002zm0 13.5c.828 0 1.5.672 1.5 1.5s-.672 1.501-1.502 1.5c-.826 0-1.498-.671-1.498-1.499 0-.829.672-1.501 1.5-1.501zm-14-14.5c1.104 0 2 .896 2 2s-.896 2-2.001 2c-1.103 0-1.999-.895-1.999-2s.896-2 2-2zm0 14c1.104 0 2 .896 2 2s-.896 2-2.001 2c-1.103 0-1.999-.895-1.999-2s.896-2 2-2z"/>
+                </svg>
+                <span class=" text-lg font-medium antialiased tracking-tighter">Loading</span>
+            </div>
+        </div>
+    </div>
+</div>`;
 }

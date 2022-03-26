@@ -3,20 +3,22 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
 
 session_start();
-
 $adminCode = $_SESSION['adminCode'];
-//$personalDetails = array();
-//$admin = unserialize($_SESSION['adminInstance']);
-//$personalDetails = $admin->getPersonalDetails();
-
 
 $curriculum = new Curriculum();
 $curriculumList = $curriculum->getPreviousFewCurriculumYear(true);
+$currentOnGoingYear = date('Y'); // current year : 2022
 
-$currentOnGoingYear = date('Y');
-$earliestYear = ($curriculumList === null ? date('Y', strtotime("-4 year")) : reset($curriculumList)['year']); // 016
+/*$earliestYear = ($curriculumList === null ? date('Y', strtotime("-4 year")) : reset($curriculumList)['year']); // last four years list.
+if ($curriculumList == null)
+    $earliestYear = date('Y', strtotime("-4 year"));
+elseif ($curriculumList[0]["year"] > date('Y')) {
+    $earliestYear = date('Y', strtotime("-8 year"));
+} else
+    $earliestYear = reset($curriculumList)['year'];*/
 
-echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $earliestYear . PHP_EOL . gettype($curriculumList) . PHP_EOL . gettype($curriculumList[0]) . "<br>";
+echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<br>";
+
 ?>
 
 <!doctype html>
@@ -29,10 +31,14 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
     <title>Catalyst | Student Profile</title>
     <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="/Assets/Scripts/Master.js" rel="script"></script>
-    <script src="assets/js/creationJs.js" type="text/javascript"></script>
     <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
+
+    <script src="/Assets/Scripts/Master.js" rel="script"></script>
     <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+    <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
+    <script src="assets/js/creationJs.js" type="text/javascript"></script>
+
+
 </head>
 <body>
 <div class="w-full min-h-full " style="background-color: #ECECF3">
@@ -44,15 +50,15 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
                         class="capitalize font-semibold">program</span> along with the allocated
                 <span class="capitalize font-semibold">year</span></p>
             <div class="inline-flex">
-                <div class="flex justify-end items-center pt-3 pb-2 text-white text-base font-medium w-3/4">
+                <div class="flex flex-grow justify-end items-center pt-3 pb-2 text-white text-base font-medium ml-20 w-3/4">
                     <div class="textField-label-content w-3/12">
                         <label for="curriculumProgramId"></label>
                         <select class="select" name="curriculumProgram"
                                 onclick="this.setAttribute('value', this.value);"
-                                onchange="this.setAttribute('value', this.value);" value="BCSE"
+                                onchange="this.setAttribute('value', this.value);" value="<?php echo $_SESSION['programName'] ?>"
                                 id="curriculumProgramId">
                             <option value="" hidden=""></option>
-                            <option value="BCSE" selected disabled>BCSE</option>
+                            <option value="<?php echo $_SESSION['programName'] ?>" selected disabled><?php echo $_SESSION['programName'] ?></option>
                         </select>
                         <label class="select-label top-1/4 sm:top-3">Program</label>
                     </div>
@@ -67,10 +73,19 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
                             <?php
                             $tempKeyReference = "";
                             $tempValueReference = "";
-                            $earliestYear = ($curriculumList === null ? date('Y', strtotime("-4 year")) : reset($curriculumList)['year']); // 016
+
+                            if ($curriculumList == null)
+                                $earliestYear = date('Y', strtotime("-4 year"));
+                            elseif ($curriculumList[0]["year"] > date('Y')) {
+                                $earliestYear = date('Y', strtotime("-4 year"));
+                            } else
+                                $earliestYear = reset($curriculumList)['year'];
+
                             foreach (range(date('Y', strtotime("+4 year")), $earliestYear) as $year) {
                                 if (iterateAndSearchValue($curriculumList, $year, $tempKeyReference, $tempValueReference)) {
-                                    print sprintf("<option  value=\"%s\"%sdata-select-id=\"%s\">%s</option>", $year, $year == $currentOnGoingYear ? ' selected="selected"' : '', $tempKeyReference, $year);
+
+                                    print sprintf("<option  value=\"%s\"%sdata-select-id=\"%s\">%s</option>", $year, $year == $currentOnGoingYear ? ' selected="selected"' : ''  , $tempKeyReference, $year);
+
                                 } else
                                     print '<option value="' . $year . '"' . ($year == $currentOnGoingYear ? ' selected="selected"' : '') . '>' . $year . '</option>';
                             }
@@ -79,12 +94,26 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
                         <label class="select-label top-1/4 sm:top-3">Assign Year</label>
                     </div>
                     <div class="textField-label-content w-3/12">
+                        <label for="curriculumRevisedSeasonId"></label>
+                        <select class="select" name="curriculumRevisedSeason"
+                                onclick="this.setAttribute('value', this.value);"
+                                onchange="this.setAttribute('value', this.value);" value=""
+                                id="curriculumRevisedSeasonId">
+                            <option value="" hidden=""></option>
+
+                        </select>
+                        <label class="capitalize select-label top-1/4 sm:top-3">Curriculum Name</label>
+                    </div>
+                    <div class="textField-label-content w-3/12">
                         <label for="noOfPLOsToCreateId"></label>
                         <select class="select" name="noOfPLOsToCreate"
                                 onclick="this.setAttribute('value', this.value);"
                                 onchange="this.setAttribute('value', this.value);" value=""
                                 id="noOfPLOsToCreateId">
                             <option value="" hidden=""></option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
                             <option value="4">4</option>
                             <option value="5">5</option>
                             <option value="6">6</option>
@@ -92,16 +121,12 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
                             <option value="8">8</option>
                             <option value="9">9</option>
                             <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
+
                         </select>
                         <label class="capitalize select-label top-1/4 sm:top-3">No of PLO</label>
                     </div>
                 </div>
-                <div class="flex justify-end items-center w-1/4">
+                <div class="flex justify-end items-center w-1/6">
                     <button type="button"
                             class="text-white rounded-md border-0  font-medium bg-catalystBlue-l2 px-8 mx-5 py-1"
                             name="importBoxCreateBtn" id="importBoxCreateBtnID">Create
@@ -109,48 +134,6 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . $e
                 </div>
             </div>
         </div>
-        <!--        <div id="curriculumBoxPLOContainerID" class="hidden flex flex-col py-2 my-5 rounded-lg shadow bg-white">
-                    <img class="absolute mx-1 my-1" src="../../../Assets/Images/arrow-back.svg" width="25" height="25"
-                         alt="back arrow" data-curriculum-import>
-                    <div class="flex flex-col px-10">
-                        <h2 class="font-semibold text-2xl text-gray-700">Import Box</h2>
-                        <p class="font-normal text-base text-gray-700">Please select total number of <span
-                                    class="capitalize font-semibold">program learning outcome</span> you want to create.
-
-                        <div class="inline-flex ml-32">
-                            <div class="flex justify-center items-center pt-3 pb-2 text-white text-base font-medium w-4/5">
-                                <div class="textField-label-content w-3/12">
-                                    <label for="noOfPLOsToCreateId"></label>
-                                    <select class="select" name="noOfPLOsToCreate"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="noOfPLOsToCreateId">
-                                        <option value="" hidden=""></option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                        <option value="8">8</option>
-                                        <option value="9">9</option>
-                                        <option value="10">10</option>
-                                        <option value="11">11</option>
-                                        <option value="12">12</option>
-                                        <option value="13">13</option>
-                                        <option value="14">14</option>
-                                        <option value="15">15</option>
-                                    </select>
-                                    <label class="capitalize select-label top-1/4 sm:top-3">No of PLO</label>
-                                </div>
-                            </div>
-                            <div class="flex justify-end items-center w-1/5">
-                                <button type="button"
-                                        class="text-white rounded-md border-0  font-medium bg-catalystBlue-l2 px-8 mx-5 py-1"
-                                        name="importBoxCreateBtn" id="importBoxCreateBtnID">Create
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
 
         <div id="creationCurriculumSectionId"
              class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 h-1/2 weeklytopics-primary-border-n">

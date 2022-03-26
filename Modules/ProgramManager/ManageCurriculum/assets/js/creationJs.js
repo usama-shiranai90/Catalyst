@@ -1,5 +1,6 @@
 // const selectionBoxCurriculumPloContainer = document.getElementById('curriculumBoxPLOContainerID');
 // const importBoxCreateBtn = document.getElementById('importBoxCreateBtnID')
+
 /*       $(importBoxCreateBtn).on('click', function (event) {
            event.stopPropagation();
            $(selectionBoxCurriculumContainer).addClass("hidden");
@@ -18,6 +19,7 @@ window.onload = function (e) {
 
     const selectedProgramField = document.getElementById('curriculumProgramId');
     const selectedCurriculumProgramYearField = document.getElementById('curriculumAllocationYearId');
+    const selectedAssignCurriculumRevisedSeason = document.getElementById('curriculumRevisedSeasonId')
     const selectedPloField = document.getElementById('noOfPLOsToCreateId')
 
     const selectionBoxCurriculumContainer = document.getElementById('curriculumBoxContainerID');
@@ -30,7 +32,34 @@ window.onload = function (e) {
     const addMoreCurriculumBtn = document.getElementById('addMoreCurriculumBtn');
     const saveButtonCurriculumBtn = document.getElementById('saveNewlyCreatedCurriculumBtnId');
 
+    class Curriculum {
+        plo_number = ''
+        plo_description = ''
+
+        set setploNumber(plo_number) {
+            this.plo_number = plo_number;
+        }
+
+        set setploDescription(plo_description) {
+            this.plo_description = plo_description;
+        }
+    }
+
     $(document).ready(function () {
+        $(document).ajaxSend(function () {
+            $("#loader").fadeIn(1000);
+        });
+
+
+        $(selectedCurriculumProgramYearField).on('change', function (e) {
+            const value = this.value;
+            if (value !== "") {
+                $(selectedAssignCurriculumRevisedSeason).children().slice(1).remove();
+                selectedAssignCurriculumRevisedSeason.setAttribute("value", "");
+                $(selectedAssignCurriculumRevisedSeason).append(createCurriculumSeasonDropDown(value));
+            }
+
+        });
 
         $(importBoxCreateBtn).on('click', function (event) {
             event.stopPropagation();
@@ -88,13 +117,24 @@ window.onload = function (e) {
 
             console.log("All Curriculum List : ", recentlyCreatedCurriculumPloArray, assignCurriculumYear)
 
-            const programName = selectedProgramField.getAttribute("value");
+            // const programName = selectedProgramField.getAttribute("value");
+            const curriculumName = selectedAssignCurriculumRevisedSeason.getAttribute("value");
 
-            createCurriculumAjaxCall(recentlyCreatedCurriculumPloArray, assignCurriculumYear, programName);
-
-
+            createCurriculumAjaxCall(recentlyCreatedCurriculumPloArray, assignCurriculumYear, curriculumName);
         });
+
     });
+
+
+    function createCurriculumSeasonDropDown(value) {
+        let seasonList = ['Fall', 'Spring'];
+        let options = '';
+        for (let i = 0; i < seasonList.length; i++) {
+            const temp = seasonList[i] + " " + value;
+            options += `<option value="${temp}">${temp}</option>`;
+        }
+        return options;
+    }
 
     function deleteCurriculumRow(dischargedIndex, hasKeyFlag) {
         $(('#creationCurriculumRow-' + dischargedIndex)).remove();
@@ -163,7 +203,7 @@ window.onload = function (e) {
                             <div id="coc-description-r${currentCurriculumNo}" class="lweek-column col-start-2 col-span-10 border-b-0">
                                 <label for="detail-r-${currentCurriculumNo}">
                                             <textarea type="text"
-                                                      class="cell-input pt-4  px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                                      class="cell-input py-4  px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
                                                       value="" placeholder="write program outcome description here"
                                                       id="detail-r-${currentCurriculumNo}"
                                                       onkeyup="autoHeight('detail-r-${currentCurriculumNo}')"></textarea></label>
@@ -195,23 +235,6 @@ window.onload = function (e) {
         return fragment;
     }
 
-    class Curriculum {
-        plo_number = ''
-        plo_description = ''
-
-        set setploNumber(plo_number) {
-            this.plo_number = plo_number;
-        }
-
-        set setploDescription(plo_description) {
-            this.plo_description = plo_description;
-        }
-    }
-
-    function uniqueName(str, no, toReplace) {
-        return str.replace((toReplace), no);
-    }
-
     let isEmpty;
 
     function containsEmptyField(fieldsArray) {
@@ -231,7 +254,7 @@ window.onload = function (e) {
         }
     }
 
-    function createCurriculumAjaxCall(recentlyCreatedCurriculumArray, assignCurriculumYear, programName) {
+    function createCurriculumAjaxCall(recentlyCreatedCurriculumArray, assignCurriculumYear, curriculumName) {
         $.ajax({
             type: "POST",
             url: 'assets/CurriculumAjax.php',
@@ -241,9 +264,12 @@ window.onload = function (e) {
                 creation: true,
                 curriculumPloArray: recentlyCreatedCurriculumArray,
                 assignCurriculumYear: assignCurriculumYear,
-                programType: programName
+                curriculumName: curriculumName
             },
             beforeSend: function () {
+                $("body").append(addLoader());
+                $("main").toggleClass("blur-filter")
+                $('#loader').toggleClass('hidden')
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
@@ -252,17 +278,17 @@ window.onload = function (e) {
                 const reponseText = JSON.parse(data)
                 console.log(reponseText)
                 if (reponseText.status === 1 && reponseText.errors === 'none') {
-                    const cgpa = reponseText.message.CGPA;
-                    console.log(reponseText.message.CGPA)
-                    let cgpaProgress = new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), getCGPA_Progress(cgpa));
-                    cgpaProgress.render();
                 }
+
             },
             complete: function (data) {
-
+                setInterval(function () {
+                    $("main").toggleClass("blur-filter");
+                    $('#loader').remove();
+                    location.href = "manageCurriculum.php";
+                }, 2000);
             },
         });
     }
-
 
 }

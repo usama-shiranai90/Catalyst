@@ -22,6 +22,16 @@ function generateCurriculumYearSelector($earliestYear , $currentOnGoingYear , $c
     }
 }
 
+function updateServer($status, $message, $error): array
+{
+    $resultBackServer['status'] = $status;
+    $resultBackServer['message'] = $message;
+    $resultBackServer['errors'] = $error;
+    return $resultBackServer;
+}
+
+
+/** Excluded due to update in database schema */
 function compareProgramType($programType)
 {
     $programType = strtolower($programType);
@@ -37,15 +47,5 @@ function compareProgramType($programType)
     }
     return "";
 }
-
-
-function updateServer($status, $message, $error): array
-{
-    $resultBackServer['status'] = $status;
-    $resultBackServer['message'] = $message;
-    $resultBackServer['errors'] = $error;
-    return $resultBackServer;
-}
-
 
 ?>

@@ -46,6 +46,27 @@ function uniquePLO(str, c, CLONumber) {
 }
 
 
+function uniqueName(str, no, toReplace) {
+    return str.replace((toReplace), no);
+}
+
+function autoHeight(element) {
+    const el = document.getElementById(element);
+    el.style.height = "5px";
+    el.style.height = (el.scrollHeight) + "px";
+}
+
+$.fn.textNodes = function () {
+    return this.contents().filter(function () {
+        return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
+    });
+}
+
+
+
+
+/** Extra Work-list */
+
 function setJsonLocalStorage() {
     let simpleJson = {
         t: [
@@ -65,15 +86,6 @@ function getJsonLocalStorage() {
     console.log(backToJson);
     document.getElementById("testing").textContent = backToJson.t[0].name;
 }
-
-
-$.fn.textNodes = function () {
-    return this.contents().filter(function () {
-        return (this.nodeType === Node.TEXT_NODE && this.nodeValue.trim() !== "");
-    });
-}
-
-// Extra Work-list:
 function stripFullPath(tempFileName, lastDir) {
     var fileName = tempFileName;
     // anything before the last lastDir will be lost
@@ -104,7 +116,7 @@ function stripIllegalChars(value) {
     return t;
 }
 
-var BrowserDetect = {
+const BrowserDetect = {
     init: function () {
         this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
         this.version = this.searchVersion(navigator.userAgent) ||
@@ -234,7 +246,6 @@ var BrowserDetect = {
 
 };
 
-
 function isSpecialChar(a, b) {
     var d = "`~,\\/.!@#$%^><?&*-_+=)([]\"';:{}|".split(""),
         c = !1;
@@ -263,64 +274,6 @@ function setFieldState(a, b) {
     b ? ($(a).removeAttr("disabled"), $(a).removeClass("inactive")) : ($(a).attr("disabled", "disabled"), $(a).addClass("inactive"))
 }
 
-function hasErrors(a, b, d) {
-    var c = !1;
-    a = getBasicFieldErrorMessages(2, 35, $(a).val(), b, d);
-    null != a && 0 < a.length && (c = !0);
-    setFieldState(!c);
-    return c
-}
-
-function getValidateMessageListCheckSpaces(a, b, d, c, g) {
-    var f = "",
-        e = getBasicFieldSuccessMessages(b, d, $(a).val(), c, g);
-    if (null != e && 0 < e.length)
-        for (i = 0; i < e.length; i++) f += "<li class='ok'>" + e[i] + "</li>";
-    a = getBasicFieldErrorMessages(b, d, $(a).val(), c, g);
-    if (null != a && 0 < a.length)
-        for (i = 0; i < a.length; i++) f += "<li class='error'>" + a[i] + "</li>";
-    return f
-}
-
-function getValidateMessageList(a, b, d, c) {
-    return getValidateMessageListCheckSpaces(a, b, d, c, !1)
-}
-
-function getBasicFieldErrorMessages(a, b, d, c, g) {
-    c = [];
-    var f = !1;
-    (d.length < a || d.length > b) && c.push("Is between " + a + "-" + b + " characters");
-    for (a = 0; a < d.length; a++) isSpecialChar(d.charAt(a), g) && (f = !0);
-    f && c.push("Contains only letters and numbers");
-    return c
-}
-
-function getBasicFieldSuccessMessages(a, b, d, c, g) {
-    c = [];
-    var f = !1;
-    d.length >= a && d.length <= b && c.push("Is between " + a + "-" + b + " characters");
-    for (a = 0; a < d.length; a++) isSpecialChar(d.charAt(a), g) && (f = !0);
-    f || c.push("Contains only letters and numbers");
-    return c
-}
-
-function isIE7() {
-    var a = !1;
-    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)) {
-        var b = new Number(RegExp.$1);
-        if (7 == b || 6 == b) a = !0
-    }
-    return a
-}
-
-function validatePasswordRules(a) {
-    var b = [];
-    /[0-9]/.test($(a).val()) || b.push("Includes at least one number");
-    /[A-Za-z]/.test($(a).val()) || b.push("Includes at least one letter");
-    (8 > $.trim($(a).val()).length || 15 < $.trim($(a).val()).length) && b.push("Is between 8-15 characters");
-    isIE7() ? validateIE7($(a).val(), !1) || b.push("Contains only letters and numbers") : /^(?=.*[A-Za-z])(?!.*[`~,\\//\.!@#$%\>\<\?^&\*\-_+=\)\(])(?=.*[0-9])\S{8,15}$/.test($(a).val()) || b.push("Contains only letters and numbers");
-    return b
-}
 
 function isEmpty(a) {
     return 0 == $.trim(a).length
@@ -333,12 +286,8 @@ function randRange(data) {
 
 function toggleSomething() {
     var timeArray = [200, 300, 150, 250, 2000, 3000, 1000, 1500];
-
-    // do stuff, happens to use jQuery here (nothing else does)
     $("#box").toggleClass("visible");
-
-    clearInterval(timer);
-    // timer = setInterval(toggleSomething, randRange(timeArray));
+    // clearInterval(timer);
 }
 
 function getQueryVariable(variable) {
@@ -352,4 +301,3 @@ function getQueryVariable(variable) {
     }
     return false;
 }
-

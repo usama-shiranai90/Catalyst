@@ -31,8 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $email = $_POST["batch"] . "-" . $_POST["program"] . "-" . $_POST["rollNo"];
 //            $email = "F18" . "-" . "BCSE" . "-" . "011";
             $password = $_POST["studentPassword"];
-            $user = new Student();
+            $user = new StudentRole();
             $accessGranted = $user->login($email, $password);
+
 
             if (!$accessGranted) {
                 $studentIncorrectPass = "";
@@ -68,10 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $email = $_POST["adminUsername"];
             $password = $_POST["adminPassword"];
 
-            $user = new Admin();
+            $user = AdministrativeRole::authenticate($email, $password);
             $adminType = $user->login($email, $password);
 
-            if ($adminType == null) {
+            if ($adminType === false) {
                 $adminIncorrectPass = "";
 
                 $adminTab = "selected";
@@ -91,38 +92,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["teacherLogin"])) {
             $user->setPersonalDetails();
             $_SESSION['facultyCode'] = $user->getUserCode();
-//            Storing object in sessionVariable
             $_SESSION['facultyInstance'] = serialize(Faculty::getFacultyInstance());
-
             header("Location: ../Teacher/TeacherDashboard.php");
-        }
-        elseif (isset($_POST["studentLogin"])) {
-            $user->setPersonalDetails();
-            $_SESSION['studentRegistrationCode'] = $user->getUserCode();
+
+        } elseif (isset($_POST["studentLogin"])) {
+            $_SESSION['studentRegistrationCode'] = $user->getStudentRegistrationCode();
             $_SESSION['batchCode'] = $_POST["batchCode"];
             $_SESSION['programCode'] = $_POST["programCode"];
-            //            Storing object in sessionVariable
-            $_SESSION['studentInstance'] = serialize($user);
 
-            header("Location: ../Student/StudentPanel.php");
-        }
-        elseif (isset($_POST["adminLogin"])) {
-            $user->setPersonalDetails();
-            $_SESSION['adminCode'] = $user->getUserCode();
-            $_SESSION['departmentCode'] = $user->getDepartmentCode();
-            $_SESSION['adminInstance'] = serialize($user);
-            if ($adminType == "HOD") {
-                header("Location: ../HeadOfDepartment/hodPanel.php");
-            } elseif ($adminType == "PM") {
-                header("Location: ../ProgramManager/pmPanel.php");
-            }
+        } elseif (isset($_POST["adminLogin"])) {
+            $_SESSION['adminCode'] = $user->getAdminCode();
 
+            if ($user instanceof HeadOfDepartmentRole)
+                $_SESSION['departmentCode'] = $user->getDepartmentCode();
+                elseif ($user instanceof ProgramManagerRole)
+                $_SESSION['programCode'] = $user->getProgramCode();
+            elseif ($user instanceof CourseAdvisorRole)
+                $_SESSION['sectionCode'] = $user->getSectionCode();
 
         }
+        $_SESSION['adminInstance'] = serialize($user);
+        echo json_encode($_SESSION['adminInstance']);
+        header(sprintf("Location: %s", $user->getNavigationUrl()));
 
-//        echo "Access Granted";
+
     } else {
-        echo "not working";
+//        echo "not working";
     }
 
 }
@@ -454,9 +449,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!--                Username Portion-->
                 <div class="mt-3 usernameSectionMobile usernameSectionNormal">
                     <i class="fa-1x w-1/2 text-center far fa-user"></i>
-                    <!--hodse@fui.edu.pk-->
+                    <!--pm-se@fui.edu.pk-->
                     <div class="textField-label-content col-span-6" id="adminUsernameDiv">
-                        <input class="textField" type="email" value="hodse@fui.edu.pk" placeholder=" "
+                        <input class="textField" type="email" value="hod-se@fui.edu.pk" placeholder=" "
                                id="adminUsername"
                                name="adminUsername">
                         <label class="textField-label">Email</label>
@@ -565,7 +560,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script>
     $(document).ready(function () {
         var listOfBatches = '<?php echo json_encode($listOfBatches);?>';
-         listOfBatches = JSON.parse(listOfBatches);
+        listOfBatches = JSON.parse(listOfBatches);
 
         //Setting programs to show on batch selection
         $('#batch').on('change', function () {

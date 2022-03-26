@@ -1,37 +1,36 @@
 <?php
-
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $adminCode = $_SESSION['adminCode'];
-//$batchCode = $_SESSION['batchCode'];
-//$programCode = $_SESSION['programCode'];
-
-$personalDetails = array();
+$departmentCode = $_SESSION['departmentCode'];
 
 $admin = unserialize($_SESSION['adminInstance']);
-$personalDetails = $admin->getPersonalDetails();
+$personalDetails = $admin->getInstance();
+//echo json_encode($personalDetails);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Teacher</title>
+    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
     <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
     <script src="../../Assets/Scripts/Master.js" rel="script"></script>
-    <script src="StudentAssets/studentPanelScripts.js" rel="script"></script>
+    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>
 
 <body>
 
 <header class="text-center text-4xl p-2 pl-48">
-    <label id="teacherPanelTitleID">Dashboard</label>
+    <label id="HodPanelTitleID">Dashboard</label>
     <div class="profilePictureDiv" id="viewProfileID">
         <div class="flex">
             <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
-                <img src="../../Assets/Images/vectorFiles/Others/profilePicAvatar.jpg" width="40">
+                <img src="/Assets/Images/profilePicAvatar.jpg" width="40">
                 <div class="flex flex-col text-xs pl-4 pt-1 cursor-pointer">
                     <div><?php echo $personalDetails['name'] ?></div>
                     <hr class="w-full">
@@ -122,19 +121,9 @@ $personalDetails = $admin->getPersonalDetails();
 
         <div class="mt-5 relative h-full">
 
-
-            <!--            Dashboard-->
-            <div class="navigationItem" id="none">
-                <svg width="25" height="25" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
-                    <path d="M3 15C3 11.8174 4.26428 8.76516 6.51472 6.51472C8.76516 4.26428 11.8174 3 15 3V15H27C27 18.1826 25.7357 21.2348 23.4853 23.4853C21.2348 25.7357 18.1826 27 15 27C11.8174 27 8.76516 25.7357 6.51472 23.4853C4.26428 21.2348 3 18.1826 3 15Z"/>
-                    <path d="M18 3.37793C20.0754 3.91562 21.9693 4.9986 23.4853 6.51461C25.0013 8.03062 26.0843 9.92449 26.622 11.9999H18V3.37793Z"/>
-                </svg>
-                <label class="pl-3">Dashboard</label>
-            </div>
-
-
-            <div class="navigationItem" id="academicIssueTrackerID">
-                <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite" xmlns="http://www.w3.org/2000/svg">
+            <div class="navigationItem" id="hodacademicIssueTrackerID">
+                <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite"
+                     xmlns="http://www.w3.org/2000/svg">
                     <path d="M25.25 0H2.75C1.375 0 0.25 1.125 0.25 2.5V18.75C0.25 20.125 1.375 21.25 2.75 21.25H25.25C26.625 21.25 27.75 20.125 27.75 18.75V2.5C27.75 1.125 26.625 0 25.25 0ZM2.75 18.75V2.5H12.75V18.75H2.75ZM25.25 18.75H15.25V2.5H25.25V18.75ZM16.5 6.875H24V8.75H16.5V6.875ZM16.5 10H24V11.875H16.5V10ZM16.5 13.125H24V15H16.5V13.125Z"/>
                 </svg>
                 <label class="pl-3">Academic Issue Tracker</label>
@@ -185,7 +174,7 @@ $personalDetails = $admin->getPersonalDetails();
             </div>
         </div>
     </div>
-    <div class="ml-48 w-full h-full" id="headOfDepMainContent">
+    <div class="ml-48 w-full h-full" id="headOfDepMainContentId">
         <!--        Pages to load go here through scripts-->
         <iframe class="h-full" src="headOfDepDashboard.php" style="width: 100%"></iframe>
     </div>
