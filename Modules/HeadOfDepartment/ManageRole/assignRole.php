@@ -4,20 +4,28 @@ session_start();
 
 $admin = unserialize($_SESSION['adminInstance']);
 $personalDetails = $admin->getInstance();
+$adminCode = $_SESSION['adminCode'];
+$departmentCode = $_SESSION['departmentCode'];
+$faculty = new FacultyRole();
+$facultyObjectList = $faculty->retrieveFacultyListDepartment($departmentCode);
 
-if (empty($_POST)) {
-    $adminCode = $_SESSION['adminCode'];
-    $departmentCode = $_SESSION['departmentCode'];
-
-    $faculty = new FacultyRole();
-    $facultyList = $faculty->retrieveFacultyListDepartment($departmentCode);
-}
-
-/*foreach ($facultyList as $facultyDetail) {
+/*foreach ($facultyObjectList as $facultyDetail) {
     print_r(json_encode($facultyDetail) . "<br><br>");
-    echo $facultyDetail->getInstance()['facultyCode'];
+   echo $facultyDetail->getInstance()['facultyCode'];
 }*/
 
+$facultyList = array();
+foreach ($facultyObjectList as $faculty) {
+    $facultyList[] = array(
+        'fc' => $faculty->getInstance()['facultyCode'],
+        'name' => $faculty->getInstance()['name'],
+        'designation' => $faculty->getInstance()['designation'],
+        'dc' => $faculty->getInstance()['departmentCode'],
+    );
+}
+
+
+setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
 ?>
 
 <!doctype html>
@@ -87,10 +95,30 @@ if (empty($_POST)) {
                         <h2 class="px-3 font-semibold text-base"> Following are the Program Curriculum Outcome which
                             you are following.</h2>
                         <div class="w-full flex flex-col">
-                            <form method="post" class="w-full flex flex-row justify-center w-4/12 my-5 gap-10">
-                                <input class="hidden" id="hdNamae" type="text" name="hdNamae"
-                                       value="<?php echo $personalDetails['name'] ?>">
+                            <form method="post" class="w-full flex flex-row justify-center w-4/12 my-5 gap-5">
+                                <!--                                <input class="hidden" id="hdNamae" type="text" name="hdNamae" value="-->
+                                <?php //echo $personalDetails['name'] ?><!--">-->
 
+                                <div class="textField-label-content w-3/12">
+                                    <label for="programIDSelect"></label>
+                                    <select class="select" name="programIDSelect"
+                                            onclick="this.setAttribute('value', this.value);"
+                                            onchange="this.setAttribute('value', this.value);" value=""
+                                            id="programIDSelect">
+                                        <option value="" hidden=""></option>
+                                        <option value="none">All</option>
+                                        <?php
+                                        $program = new Program();
+                                        $allocatedProgramList = array();
+                                        foreach ($program->retrieveProgramList($departmentCode) as $program) {
+                                            print sprintf("<option  value=\"%s\" >%s</option>",
+                                                bin2hex($program->getProgramCode()), $program->getProgramName());
+                                            array_push($allocatedProgramList, $program->getProgramCode());
+                                        }
+                                        ?>
+                                    </select>
+                                    <label class="select-label top-1/4 sm:top-3">Program</label>
+                                </div>
                                 <div class="textField-label-content w-3/12">
                                     <label for="froleDesignationID"></label>
                                     <select class="select" name="roleDesignation"
@@ -98,42 +126,45 @@ if (empty($_POST)) {
                                             onchange="this.setAttribute('value', this.value);" value=""
                                             id="froleDesignationID">
                                         <option value="" hidden=""></option>
+
                                         <?php
                                         $designationList = array();
-                                        foreach ($facultyList as $faculty) {
-                                            $currentDesignation = $faculty->getInstance()['designation'];
+                                        foreach ($facultyList as $index => $faculty) {
+                                            $currentDesignation = $faculty['designation'];
                                             if (!in_array($currentDesignation, $designationList)) {
                                                 print sprintf("<option  value=\"%s\" >%s</option>",
-                                                    $faculty->getInstance()['designation'], $faculty->getInstance()['designation']);
-                                                $designationList[] = $faculty->getInstance()['designation'];
+                                                    $faculty['designation'], $faculty['designation']);
+                                                $designationList[] = $faculty['designation'];
                                             }
                                         }
                                         ?>
 
                                     </select>
-                                    <label class="select-label top-1/4 sm:top-3">Designation</label>
+                                    <label class="select-label top-1/4 sm:top-3">Designation *</label>
                                 </div>
                                 <div class="textField-label-content w-3/12">
-                                    <label for="f_role_facultyID"></label>
-                                    <select class="select" name="facultyIDSelect"
+                                    <label for="facultyNameSelectId"></label>
+                                    <select class="select" name="facultyNameSelect"
                                             onclick="this.setAttribute('value', this.value);"
                                             onchange="this.setAttribute('value', this.value);" value=""
-                                            id="f_role_facultyID">
+                                            id="facultyNameSelectId">
                                         <option value="" hidden=""></option>
                                     </select>
-                                    <label class="select-label top-1/4 sm:top-3">Faculty-ID</label>
+                                    <label class="select-label top-1/4 sm:top-3">Faculty Name *</label>
                                 </div>
-                                <div class="textField-label-content w-3/12">
-                                    <input class="textField" type="text" placeholder="automatically be shown"
-                                           name="froleFacultyName" id="froleFacultyNameID"
-                                           value="automatically be shown" disabled style="color: gray">
-                                    <label class="textField-label" style="top: -20%">Faculty Name</label>
-                                </div>
-                            </form>
-                            <!--  <button type="button" class="text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-10 py-2">Update Password</button>-->
 
-                            <div class="w-full flex justify-center">
-                                <div class="w-2/5 flex justify-center items-center gap-2 relative shadow-md p-3 rounded-full border-2 border-gray-400 border-solid divide-blue-300">
+
+                                <!--          <div class="textField-label-content w-3/12">
+                                              <input class="textField" type="text" placeholder="automatically be shown"
+                                                     name="froleFacultyName" id="froleFacultyNameID"
+                                                     value="automatically be shown" disabled style="color: gray">
+                                              <label class="textField-label" style="top: -20%">Faculty Name</label>
+                                          </div>-->
+                            </form>
+
+                            <div class="w-full flex justify-center items-center">
+                                <!--ml-64 mr-14-->
+                                <div class="flex w-2/5 justify-center items-center h-12 gap-2 relative shadow-md p-3 rounded-full border-2 border-gray-400 border-solid divide-blue-300">
 
                                     <input class="z-20" type="radio" id="adminRoleDivisionHod" name="tabs" checked/>
                                     <label class="z-20 flex items-center justify-center h-30 w-1/2 text-sm font-medium rounded-full cursor-pointer"
@@ -152,6 +183,16 @@ if (empty($_POST)) {
                                     <span class="glider z-10 w-36 h-5/6 absolute flex rounded-full transition duration-500 ease-out"></span>
 
                                 </div>
+                                <div id="extraRoleDetailContainerId"
+                                     class="hidden bg-white w-1/3 content-end px-2 rounded-lg shadow-md flex bg-catalystLight-f2 border-transparent ">
+                                    <div class=" px-5">
+                                        <h5 class="text-lg font-semibold py-2 text-gray-600">Role</h5>
+                                        <div class="flex items-center justify-between">
+                                            <ul class="py-2" id="roleDetailListId">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -162,35 +203,11 @@ if (empty($_POST)) {
                                 Creation</h2>
                         </div>
 
-                        <h2 class="px-3 py-3 font-normal text-base">Complete the followin</h2>
+                        <h2 class="px-3 py-3 font-medium text-base">Complete the following fields to create respective role.</h2>
                         <!--w-full text-left whitespace-no-wrap min-h-0 max-h-40 h-5/6-->
                         <div class="bg-white overflow-hidden sm:rounded-lg">
 
                             <form method="post" class="flex flex-col overflow-hidden" id="hodRoleCreationFormID">
-                                <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
-                                    <div class="textField-label-content w-3/12">
-                                        <label for="hrcRDepartmentID"></label>
-                                        <select class="select" name="hrcRDepartment"
-                                                onclick="this.setAttribute('value', this.value);"
-                                                onchange="this.setAttribute('value', this.value);" value=""
-                                                id="hrcRDepartmentID">
-                                            <option value="" hidden=""></option>
-                                            <option value="1">1</option>
-                                        </select>
-                                        <label class="select-label top-1/4 sm:top-3">Department</label>
-                                    </div>
-                                    <div class="textField-label-content w-3/12">
-                                        <label for="hrcRProgramID"></label>
-                                        <select class="select" name="hrcRProgram"
-                                                onclick="this.setAttribute('value', this.value);"
-                                                onchange="this.setAttribute('value', this.value);" value=""
-                                                id="hrcRProgramID">
-                                            <option value="" hidden=""></option>
-                                            <option value="1">1</option>
-                                        </select>
-                                        <label class="select-label top-1/4 sm:top-3">Program</label>
-                                    </div>
-                                </div>
 
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
                                     <div class="textField-label-content w-3/12">
@@ -227,30 +244,6 @@ if (empty($_POST)) {
                             <form method="post" class="hidden flex flex-col overflow-hidden" id="pmRoleCreationFormID">
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
                                     <div class="textField-label-content w-3/12">
-                                        <label for="pmrcRDepartmentID"></label>
-                                        <select class="select" name="pmrcRDepartment"
-                                                onclick="this.setAttribute('value', this.value);"
-                                                onchange="this.setAttribute('value', this.value);" value=""
-                                                id="pmrcRDepartmentID">
-                                            <option value="" hidden=""></option>
-                                            <option value="1">1</option>
-                                        </select>
-                                        <label class="select-label top-1/4 sm:top-3">Department</label>
-                                    </div>
-                                    <div class="textField-label-content w-3/12">
-                                        <label for="pmrcRProgramID"></label>
-                                        <select class="select" name="pmrcRProgram"
-                                                onclick="this.setAttribute('value', this.value);"
-                                                onchange="this.setAttribute('value', this.value);" value=""
-                                                id="pmrcRProgramID">
-                                            <option value="" hidden=""></option>
-                                            <option value="1">1</option>
-                                        </select>
-                                        <label class="select-label top-1/4 sm:top-3">Program</label>
-                                    </div>
-                                </div>
-                                <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
-                                    <div class="textField-label-content w-3/12">
                                         <input class="textField" type="text" placeholder="email here"
                                                name="pmrcREmail" id="pmrcREmailID" value="">
                                         <label class="textField-label">Email</label>
@@ -265,30 +258,6 @@ if (empty($_POST)) {
                             </form>
 
                             <form method="post" class="hidden flex flex-col overflow-hidden" id="caRoleCreationFormID">
-                                <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
-                                    <div class="textField-label-content w-3/12">
-                                        <label for="carcRDepartmentID"></label>
-                                        <select class="select" name="carcDepartment"
-                                                onclick="this.setAttribute('value', this.value);"
-                                                onchange="this.setAttribute('value', this.value);" value=""
-                                                id="carcRDepartmentID">
-                                            <option value="" hidden=""></option>
-                                            <option value="1">1</option>
-                                        </select>
-                                        <label class="select-label top-1/4 sm:top-3">Department</label>
-                                    </div>
-                                    <div class="textField-label-content w-3/12">
-                                        <label for="carcRDepartmentID"></label>
-                                        <select class="select" name="carcProgram"
-                                                onclick="this.setAttribute('value', this.value);"
-                                                onchange="this.setAttribute('value', this.value);" value=""
-                                                id="carcRProgramID">
-                                            <option value="" hidden=""></option>
-                                            <option value="1">1</option>
-                                        </select>
-                                        <label class="select-label top-1/4 sm:top-3">Program</label>
-                                    </div>
-                                </div>
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
                                     <div class="textField-label-content w-3/12">
                                         <label for="carcRSeasonID"></label>
@@ -359,10 +328,20 @@ if (empty($_POST)) {
 
 <script>
     // const tester = document.querySelector('meta[name="tester"]').content;
-    // var match = document.cookie.match(new RegExp('name=([^;]+)'))
+    // let fid = decodeURI(JSON.stringify(fetchedUser[1])).replace(/['"]+/g, '')
 
-    var facultyInstanceList = <?php echo json_encode($facultyList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
-    var personalDetail = <?php echo json_encode($personalDetails, JSON_HEX_QUOT | JSON_HEX_APOS)?>
+    const getCookieValue = (name) => (document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '')
+    var fetchedUser = getCookieValue('loggedUser')
+
+    let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')
+    let facultyInstanceList = <?php echo json_encode($facultyList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
+    let programList = <?php echo json_encode($allocatedProgramList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
+
+
+    console.log(userId)
+    console.log(facultyInstanceList)
+    console.log(programList)
+
 </script>
 
 

@@ -5,13 +5,26 @@ class Program implements JsonSerializable
 
     private $programName;
     private $programCode;
-
+    private $programFullAbbreviation;
 
     protected $databaseConnection;
 
     public function __construct()
     {
         $this->databaseConnection = DatabaseSingleton:: getConnection();
+
+    }
+    public function createProgram($curriculumCode, $departmentCode, $programName): bool
+    {
+        $sqlStatement = /** @lang text */
+            "insert into program(curriculumCode, departmentCode, programName) VALUE (\"$curriculumCode\" , \"$departmentCode\" ,\"$programName\");";
+
+        if ($this->databaseConnection->query($sqlStatement) === TRUE) {
+            $this->programCode = ((int)$this->databaseConnection->insert_id);
+            return true;
+        } else
+//            echo "Error inserting marks for activity: " . $activityCode . "******" . $sql . "<br>" . $this->databaseConnection->error;
+            return false;
 
     }
 
@@ -44,23 +57,35 @@ class Program implements JsonSerializable
         return $newProgram;
     }
 
+    public function retrieveProgramList($departmentCode){
+        $programList = array();
+        $dbStatement = /** @lang text */
+            "select * from program where departmentCode = \"$departmentCode\"";
+        $result = $this->databaseConnection->query($dbStatement);
 
-    public function createProgram($curriculumCode, $departmentCode, $programName): bool
-    {
-        $sqlStatement = /** @lang text */
-            "insert into program(curriculumCode, departmentCode, programName) VALUE (\"$curriculumCode\" , \"$departmentCode\" ,\"$programName\");";
-
-        if ($this->databaseConnection->query($sqlStatement) === TRUE) {
-            $this->programCode = ((int)$this->databaseConnection->insert_id);
-            return true;
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $program = new Program();
+                $program->programCode = $row["programCode"];
+                $program->programName = $row["programName"];
+                $programName = preg_split("/[\s,_-]+/", $program->getProgramName());;
+                $programNameAcronym = "";
+                foreach ($programName as $w) {
+                    if (ctype_upper($w[0]))
+                        $programNameAcronym .= $w[0];
+                }
+                $program->programName = $programNameAcronym;
+                array_push($programList , $program);
+            }
         } else
-//            echo "Error inserting marks for activity: " . $activityCode . "******" . $sql . "<br>" . $this->databaseConnection->error;
-            return false;
+            echo "No program found related to current department: " . $departmentCode;
+
+        return $programList;
 
     }
 
 
-    public function getProgramAbbreviation($programCode)
+    public function getProgramAbbreviation($programCode): ?string
     {
         $sql = /** @lang text */
             "select programCode, departmentCode, programName from program where programCode = \"$programCode\"";
