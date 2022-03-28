@@ -25,18 +25,13 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Catalyst | Student Profile</title>
-<!--    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">-->
-<!--    <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">-->
-    <!--    <script src="../../Assets/Scripts/Master.js" rel="script"></script>-->
-    <!--    <script src="../Teacher/CourseProfile/CourseProfileAssets/js/additionalWork.js"></script>-->
-    <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <link href="/Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
-    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
-    <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script async src="/Assets/Frameworks/apexChart/apexcharts.js"></script>
+    <script async rel="script" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
+    <script async src="../../Assets/Frameworks/apexChart/apexcharts.js"></script>
     <script async src="assets/js/DashboardGraphicalData.js"></script>
-    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
-
+    <script src="../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 
 </head>
 <body>

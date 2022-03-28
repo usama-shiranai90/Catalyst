@@ -61,8 +61,7 @@ $fetchAssessment = array(
     <link href="../asset/TeacherDashboardStyles.css" rel="stylesheet">
     <script src="../../../Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
-    <script src="../asset/TeacherDashScripts.js" rel="script"></script>
-
+    <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
     <script>
         window.Promise ||
         document.write(

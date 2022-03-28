@@ -21,15 +21,14 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Catalyst | Student Profile</title>
-    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
-    <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="/Assets/Scripts/Master.js" rel="script"></script>
-
-    <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
-    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
-    <script src="assets/js/controlJs.js" rel="script"></script>
+    <title>Catalyst | Manage Curriculum</title>
+    <script src="../../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
     <script src="/Assets/Scripts/InterfaceUtil.js" rel="script"></script>
+    <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
+    <script src="assets/js/controlJs.js" rel="script"></script>
+    <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
 
 </head>
 <body>

@@ -28,16 +28,14 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Catalyst | Student Profile</title>
-    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
-    <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="/Assets/Frameworks/jQuery/jquery.min.js" type="text/javascript"></script>
-
-    <script src="/Assets/Scripts/Master.js" rel="script"></script>
-    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+    <title>Catalyst | Curriculum Creation</title>
+    <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
+    <script src="../../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
+    <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
     <script src="assets/js/creationJs.js" type="text/javascript"></script>
-
 
 </head>
 <body>
@@ -55,10 +53,12 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
                         <label for="curriculumProgramId"></label>
                         <select class="select" name="curriculumProgram"
                                 onclick="this.setAttribute('value', this.value);"
-                                onchange="this.setAttribute('value', this.value);" value="<?php echo $_SESSION['programName'] ?>"
+                                onchange="this.setAttribute('value', this.value);"
+                                value="<?php echo $_SESSION['programName'] ?>"
                                 id="curriculumProgramId">
                             <option value="" hidden=""></option>
-                            <option value="<?php echo $_SESSION['programName'] ?>" selected disabled><?php echo $_SESSION['programName'] ?></option>
+                            <option value="<?php echo $_SESSION['programName'] ?>" selected
+                                    disabled><?php echo $_SESSION['programName'] ?></option>
                         </select>
                         <label class="select-label top-1/4 sm:top-3">Program</label>
                     </div>
@@ -84,7 +84,7 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
                             foreach (range(date('Y', strtotime("+4 year")), $earliestYear) as $year) {
                                 if (iterateAndSearchValue($curriculumList, $year, $tempKeyReference, $tempValueReference)) {
 
-                                    print sprintf("<option  value=\"%s\"%sdata-select-id=\"%s\">%s</option>", $year, $year == $currentOnGoingYear ? ' selected="selected"' : ''  , $tempKeyReference, $year);
+                                    print sprintf("<option  value=\"%s\"%sdata-select-id=\"%s\">%s</option>", $year, $year == $currentOnGoingYear ? ' selected="selected"' : '', $tempKeyReference, $year);
 
                                 } else
                                     print '<option value="' . $year . '"' . ($year == $currentOnGoingYear ? ' selected="selected"' : '') . '>' . $year . '</option>';

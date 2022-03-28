@@ -13,12 +13,13 @@ $departmentCode = $_SESSION['departmentCode'];
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Catalyst | Administration View Role</title>
+    <script src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
     <script src="asset/roleScript.js"></script>

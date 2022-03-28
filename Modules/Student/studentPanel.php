@@ -12,15 +12,11 @@ $personalDetails = $student->getPersonalDetails();
 <head>
     <meta charset="UTF-8">
     <title>Teacher</title>
-    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <script async rel="script" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
-
-    <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/Assets/Scripts/Master.js" rel="script"></script>
-
-    <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+    <script src="../../Assets/Scripts/Master.js" rel="script"></script>
+    <script src="../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>
 <body>
 

@@ -43,14 +43,13 @@ if ($isPromotedToNewSemester) {
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
-    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
-    <link href="/Assets/Stylesheets/Master.css" rel="stylesheet">
-    <script async rel="script" src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/Assets/Frameworks/apexChart/apexcharts.js"></script>
-    <link href="/Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <script async src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
+    <script src="../../Assets/Frameworks/apexChart/apexcharts.js"></script>
+    <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script async src="assets/js/DashboardGraphicalData.js"></script>
-    <script async src="/Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+    <script async src="../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 
     <script>
         window.Promise ||

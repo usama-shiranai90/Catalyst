@@ -105,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($user instanceof HeadOfDepartmentRole)
                 $_SESSION['departmentCode'] = $user->getDepartmentCode();
-                elseif ($user instanceof ProgramManagerRole)
+            elseif ($user instanceof ProgramManagerRole)
                 $_SESSION['programCode'] = $user->getProgramCode();
             elseif ($user instanceof CourseAdvisorRole)
                 $_SESSION['sectionCode'] = $user->getSectionCode();
@@ -126,13 +126,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/Assets/Stylesheets/Tailwind.css" rel="stylesheet">
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
-    <link href="/Assets/Frameworks/Tailwind/tailwind.css" rel="stylesheet">
+    <link href="../../Assets/Frameworks/Tailwind/tailwind.css" rel="stylesheet">
     <link href="AuthenticationAssets/LoginStyles.css" rel="stylesheet">
     <script src="AuthenticationAssets/LoginScripts.js" rel="script"></script>
-    <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
-    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <title>Catalyst - Login</title>
 
@@ -282,7 +281,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 }
                             }
                             ?>
-
 
                         </select>
                         <label class="select-label">Batch</label>
