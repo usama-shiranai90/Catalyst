@@ -1,4 +1,5 @@
 <?php
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
 
 class ProgramManagerRole extends UserRole
 {
@@ -70,7 +71,7 @@ class ProgramManagerRole extends UserRole
             while ($row = $authenticationResult->fetch_assoc()) {
                 $temp['hasRole'] = true;
                 $temp['programCode'] = $row['programCode'];
-                $temp['programName'] = $this->checkAbbreviation($row['programName']);
+                $temp['programName'] = checkProgramAbbreviation($row['programName']);
                 $respectiveRoles['PM'][] = $temp;
             }
             $flag = true;
@@ -78,21 +79,6 @@ class ProgramManagerRole extends UserRole
             $respectiveRoles['PM'][] = $temp;
 
         return $flag;
-    }
-
-    protected function checkAbbreviation($value): ?string
-    {
-        if (str_contains(strtolower($value), strtolower("Bachelors of Computer in Software Engineering")) !== false
-            || (preg_match('/\bSoftware Engineering\b/', $value, $f) == 1)) {
-            return 'BCSE';
-        } elseif (str_contains(strtolower($value), strtolower("Bachelors of Computer in Computer Science")) !== false
-            || preg_match('/\bComputer Science\b/', $value, $f) == 1) {
-            return 'BCCS';
-        } elseif (str_contains(strtolower($value), strtolower("Bachelors in Social Science")) !== false
-            || preg_match('/\bSocial Science\b/', $value, $f) == 1) {
-            return 'BCSS';
-        }
-        return null;
     }
 
 }

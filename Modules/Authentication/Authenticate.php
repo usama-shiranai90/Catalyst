@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['adminCode'] = $user->getAdminCode();
 
             if ($user instanceof HeadOfDepartmentRole)
-                $_SESSION['departmentCode'] = $user->getDepartmentCode();
+                $_SESSION['departmentCode'] = array($user->getDepartmentCode() , $user->getDepartmentName());
             elseif ($user instanceof ProgramManagerRole)
                 $_SESSION['programCode'] = $user->getProgramCode();
             elseif ($user instanceof CourseAdvisorRole)

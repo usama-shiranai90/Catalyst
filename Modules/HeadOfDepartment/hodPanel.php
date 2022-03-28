@@ -3,7 +3,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $adminCode = $_SESSION['adminCode'];
-$departmentCode = $_SESSION['departmentCode'];
+
+if ( is_array($_SESSION['departmentCode']) && sizeof($_SESSION['departmentCode']) > 1) {
+    $_SESSION['departmentName'] = $_SESSION['departmentCode'][1];
+    $_SESSION['departmentCode'] = $_SESSION['departmentCode'][0];
+}
 
 $admin = unserialize($_SESSION['adminInstance']);
 $personalDetails = $admin->getInstance();

@@ -36,7 +36,12 @@ window.onload = function () {
             e.stopPropagation();
             const selectedTab = this;
             changeRoleViewContainer(selectedTab);
+
+            if (facultyBindField.value.length !== 0 && designationField.value.length !== 0)
+                generateUserEmail($(facultyBindField).children(`option[value=${facultyBindField.value}]`).text())
+
         });
+
 
         $(document).on('click', "#roleCreationPasswordGeneratorID", function (e) {
             $(roleCreationForm).each(function (i, n) {
@@ -81,6 +86,11 @@ window.onload = function () {
         $(designationField).on('change', function (event) {
             performDropDownSelection("designation", this);
         })
+
+        $(programField).on('change', function (event) {
+            performDropDownSelection("program", facultyBindField)
+        });
+
 
         $(facultyBindField).on('change', function (event) {
             performDropDownSelection("faculty", this);
@@ -129,11 +139,27 @@ window.onload = function () {
 
     /** State change for selection */
     function performDropDownSelection(selector, selectedDOM) {
+        let isHeadOfDepartment = false;
+        let isProgramManager = false;
+        let isCourseAdvisor = false;
+
         let optionsList = "";
-
-
+        let name;
         switch (selector) {
             case "program":
+                console.log("selected DOM : " , selectedDOM)
+                console.log("value : ", facultyBindField.value.length, selectedDOM.value !== undefined, selectedDOM.value.length !== 0, selectedDOM.value !== "")
+
+                console.log(selectedDOM.value !== undefined && selectedDOM.value.length !== 0 && selectedDOM.value !== "")
+
+                if (selectedDOM.value !== undefined && selectedDOM.value.length !== 0 && selectedDOM.value !== "") {
+                    respectiveRolesList = callAjaxForFacultyRole(facultyBindField.value);
+                    console.log(respectiveRolesList);
+                    displayAdministrativeRole(respectiveRolesList);
+                    name = $(selectedDOM).children(`option[value=${facultyBindField.value}]`).text();
+                    generateUserEmail(name)
+                }
+
                 break;
 
             case "designation":
@@ -147,11 +173,7 @@ window.onload = function () {
                 break;
 
             case "faculty":
-                let isHeadOfDepartment = false;
-                let isProgramManager = false;
-                let isCourseAdvisor = false;
                 disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0)
-
                 for (let i = 0; i < facultyInstanceList.length; i++) {
                     if (userId === selectedDOM.value && selectedDOM.value === facultyInstanceList[i].fc) // the current Head of department is selected.
                         isHeadOfDepartment = true;
@@ -171,6 +193,9 @@ window.onload = function () {
                 }
                 disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0);
                 displayAdministrativeRole(respectiveRolesList)
+
+                name = $(selectedDOM).children(`option[value=${facultyBindField.value}]`).text();
+                generateUserEmail(name)
                 break;
         }
 
@@ -383,17 +408,21 @@ window.onload = function () {
     }
 
     function generateUserEmail(name) {
+        /*        console.log("pm".match(/^([a-z0-9]{pm,})$/));
+                const emailRegex = RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
+                this.value = this.value.replace(/(\d{2})(\d{2})/, '$1/$2')*/
+
         $("input[type=radio]:checked").each(function (key, value) {
-            // if ($(this).attr("checked") == true){
-            //     console.log($(`label[for=${this.id}]`).text())
-            // }else{
-            //     console.log("not working")
-            // }
-            // console.log(key ,value)
+            let rnd = makeRanPassword(generateSize(0));
+
+            if (value.id.match("(.{3})\s*$", "i")[0].toUpperCase() === 'hod'.toUpperCase()) {
+                $("#hrcREmailID").val(rnd.replace(`${rnd}`, 'hod-' + $('input[data-h-set= "departmentName"]').val()) + "@fui.edu.pk");
+            } else if (value.id.match("(.{2})\\s*$", "i")[0].toUpperCase() === 'pm'.toUpperCase() && programField.value.length !== 0) {
+                $("#pmrcREmailID").val(rnd.replace(`${rnd}`, 'pm-' + $(programField).children(`option[value=${programField.value}]`).text().toLowerCase() + "@fui.edu.pk"));
+            } else if (value.id.match("(.{2})\\s*$", "i")[0].toUpperCase() === 'ca'.toUpperCase())
+                $("#carcEmailID").val("");
 
         });
-
-
     }
 
 
@@ -403,6 +432,8 @@ window.onload = function () {
         else
             $(programField).prop("disabled", false).css({cursor: 'pointer'});
     }
+
+
 }
 //var createUserName = function(value) {
 //     var parts = value.split('@');

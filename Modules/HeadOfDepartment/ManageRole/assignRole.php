@@ -93,33 +93,13 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                 <div class="container px-5 mx-auto flex flex-col">
                     <!--border-solid border-4 border-opacity-25 border-black-->
                     <div class="items-center place-content-center my-5 pb-10 border-solid border-b-2 border-gray-300">
-                        <h2 class="px-3 font-semibold text-base"> Following are the Program Curriculum Outcome which
-                            you are following.</h2>
+                        <h2 class="px-3 font-semibold text-base">Select the required fields to create respective
+                            role.</h2>
                         <div class="w-full flex flex-col">
                             <form method="post" class="w-full flex flex-row justify-center w-4/12 my-5 gap-5">
                                 <!--                                <input class="hidden" id="hdNamae" type="text" name="hdNamae" value="-->
-                                <?php //echo $personalDetails['name'] ?><!--">-->
+                                <input class="hidden" type="text" value="<?php echo strtolower($_SESSION['departmentName']) ?>" data-h-set="departmentName">
 
-                                <div class="textField-label-content w-3/12">
-                                    <label for="programIDSelect"></label>
-                                    <select class="select" name="programIDSelect"
-                                            onclick="this.setAttribute('value', this.value);"
-                                            onchange="this.setAttribute('value', this.value);" value=""
-                                            id="programIDSelect">
-                                        <option value="" hidden=""></option>
-                                        <option value="none">All</option>
-                                        <?php
-                                        $program = new Program();
-                                        $allocatedProgramList = array();
-                                        foreach ($program->retrieveProgramList($departmentCode) as $program) {
-                                            print sprintf("<option  value=\"%s\" >%s</option>",
-                                                bin2hex($program->getProgramCode()), $program->getProgramName());
-                                            array_push($allocatedProgramList, $program->getProgramCode());
-                                        }
-                                        ?>
-                                    </select>
-                                    <label class="select-label top-1/4 sm:top-3">Program</label>
-                                </div>
                                 <div class="textField-label-content w-3/12">
                                     <label for="froleDesignationID"></label>
                                     <select class="select" name="roleDesignation"
@@ -143,6 +123,27 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                     </select>
                                     <label class="select-label top-1/4 sm:top-3">Designation *</label>
                                 </div>
+                                <div class="textField-label-content w-3/12">
+                                    <label for="programIDSelect"></label>
+                                    <select class="select" name="programIDSelect"
+                                            onclick="this.setAttribute('value', this.value);"
+                                            onchange="this.setAttribute('value', this.value);" value=""
+                                            id="programIDSelect">
+                                        <option value="" hidden=""></option>
+                                        <option value="none">All</option>
+                                        <?php
+                                        $program = new Program();
+                                        $allocatedProgramList = array();
+                                        foreach ($program->retrieveProgramList($departmentCode) as $program) {
+                                            print sprintf("<option  value=\"%s\" >%s</option>",
+                                                bin2hex($program->getProgramCode()), $program->getProgramName());
+                                            array_push($allocatedProgramList, $program->getProgramCode());
+                                        }
+                                        ?>
+                                    </select>
+                                    <label class="select-label top-1/4 sm:top-3">Program</label>
+                                </div>
+
                                 <div class="textField-label-content w-3/12">
                                     <label for="facultyNameSelectId"></label>
                                     <select class="select" name="facultyNameSelect"
@@ -204,7 +205,8 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                 Creation</h2>
                         </div>
 
-                        <h2 class="px-3 py-3 font-medium text-base">Complete the following fields to create respective role.</h2>
+                        <h2 class="px-3 py-3 font-medium text-base">Complete the following fields to create respective
+                            role.</h2>
                         <!--w-full text-left whitespace-no-wrap min-h-0 max-h-40 h-5/6-->
                         <div class="bg-white overflow-hidden sm:rounded-lg">
 
@@ -213,7 +215,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
                                     <div class="textField-label-content w-3/12">
                                         <input class="textField" type="text" placeholder="email here"
-                                               name="hrcREmail" id="hrcREmailID" value="">
+                                               name="hrcREmail" id="hrcREmailID" value="" disabled>
                                         <label class="textField-label">Email</label>
                                     </div>
                                     <div class="textField-label-content w-3/12 relative">
@@ -246,7 +248,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
                                     <div class="textField-label-content w-3/12">
                                         <input class="textField" type="text" placeholder="email here"
-                                               name="pmrcREmail" id="pmrcREmailID" value="">
+                                               name="pmrcREmail" id="pmrcREmailID" value="" disabled>
                                         <label class="textField-label">Email</label>
                                     </div>
                                     <div class="textField-label-content w-3/12 relative">
@@ -286,7 +288,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
                                     <div class="textField-label-content w-3/12">
                                         <input class="textField" type="text" placeholder="email here"
-                                               name="carcEmail" id="carcEmailID" value="">
+                                               name="carcEmail" id="carcEmailID" value="" disabled>
                                         <label class="textField-label">Email</label>
                                     </div>
                                     <div class="textField-label-content w-3/12 relative">

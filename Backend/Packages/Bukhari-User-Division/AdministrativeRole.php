@@ -29,13 +29,14 @@ class AdministrativeRole
         return -1;
     }
 
-    public static function getAssociatedRoles($facultyCode, $programCode = 'none', $sectionCode = 'none')
+    public static function getAssociatedRoles($facultyCode, $programCode = 'none', $sectionCode = 'none'): array
     {
         /*foreach (array(new HeadOfDepartmentRole("", ""), new ProgramManagerRole("", ""),
                      new CourseAdvisorRole("", "")) as $index => $role) {
             $respectiveRoles[$index] = $role->getFacultyRole($facultyCode, $respectiveRoles);
         }*/
 //        $respectiveRoles = array("HOD" => false, "PM" => false, "CA" => false);
+
         $respectiveRoles = array();
         for ($i = 0; $i < 3; $i++) {
             if ($i === 0) {

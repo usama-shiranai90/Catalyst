@@ -17,7 +17,8 @@ if (isset($_POST['fetchAssociatedRole']) and $_POST['fetchAssociatedRole']) {
         if (empty($_POST['programCode'])) { // When no program Code is pass.
             $respectiveRoles = AdministrativeRole::getAssociatedRoles($facultyCode);
         } else if (!empty($_POST['programCode'])) {
-            $programCode = hex2bin($_POST['programCode']);
+//            $programCode = hex2bin($_POST['programCode']);
+            $programCode = $_POST['programCode'];
             $respectiveRoles = AdministrativeRole::getAssociatedRoles($facultyCode, $programCode);
         }
         $resultBackServer = updateServer(0, $respectiveRoles, "none");
