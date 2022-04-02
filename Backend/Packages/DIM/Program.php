@@ -1,12 +1,11 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\Util\SearchUtil.php";
+//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
 
 class Program implements JsonSerializable
 {
 
     private $programName;
     private $programCode;
-    private $programFullAbbreviation;
 
     protected $databaseConnection;
 
@@ -15,6 +14,7 @@ class Program implements JsonSerializable
         $this->databaseConnection = DatabaseSingleton:: getConnection();
 
     }
+
     public function createProgram($curriculumCode, $departmentCode, $programName): bool
     {
         $sqlStatement = /** @lang text */
@@ -58,7 +58,8 @@ class Program implements JsonSerializable
         return $newProgram;
     }
 
-    public function retrieveProgramList($departmentCode){
+    public function retrieveProgramList($departmentCode): array
+    {
         $programList = array();
         $dbStatement = /** @lang text */
             "select * from program where departmentCode = \"$departmentCode\"";
@@ -68,15 +69,14 @@ class Program implements JsonSerializable
             while ($row = $result->fetch_assoc()) {
                 $program = new Program();
                 $program->programCode = $row["programCode"];
-                $program->programName = $row["programName"];
-                $programName = preg_split("/[\s,_-]+/", $program->getProgramName());;
+                $program->programName = $row["programShortName"];
+                /*$programName = preg_split("/[\s,_-]+/", $program->getProgramName());;
                 $programNameAcronym = "";
-                foreach ($programName as $w) {
+                foreach ($programName as $w)
                     if (ctype_upper($w[0]))
                         $programNameAcronym .= $w[0];
-                }
-                $program->programName = $programNameAcronym;
-                array_push($programList , $program);
+                $program->programName = $programNameAcronym;*/
+                array_push($programList, $program);
             }
         } else
             echo "No program found related to current department: " . $departmentCode;
@@ -95,8 +95,8 @@ class Program implements JsonSerializable
         if (mysqli_num_rows($result) > 0) {
 
             while ($row = $result->fetch_assoc()) {
-                $programName = $row['programName'];
-                return checkProgramAbbreviation($programName);
+//                return checkProgramAbbreviation($programName);
+                return $row['programShortName'];
             }
         } else
             echo "No program found for program code: " . $programCode;
@@ -113,7 +113,6 @@ class Program implements JsonSerializable
     {
         return $this->programCode;
     }
-
 
 
     public function jsonSerialize()

@@ -7,7 +7,6 @@ $adminCode = $_SESSION['adminCode'];
 
 $curriculum = new Curriculum();
 $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
-
 //echo json_encode($curriculumList) . PHP_EOL . PHP_EOL . "<br>";
 //foreach ($curriculumList as $year) {
 //    echo json_encode($year['year'])."<br>";
@@ -232,14 +231,12 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
                     </button>
                 </div>
             </section>
-
         </div>
-
     </main>
 </div>
 
 <div id="alertContainer"
-     class="hidden shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
+     class=" shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
     <div class="w-full h-full text-center">
         <div class="flex h-full flex-col justify-between">
             <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross"

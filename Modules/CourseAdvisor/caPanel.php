@@ -3,15 +3,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $adminCode = $_SESSION['adminCode'];
-if ( is_array($_SESSION['departmentCode']) && sizeof($_SESSION['departmentCode']) > 1) {
-    $_SESSION['departmentName'] = $_SESSION['departmentCode'][1];
-    $_SESSION['departmentCode'] = $_SESSION['departmentCode'][0];
-}
+$departmentCode = $_SESSION['adminCode'];
+$programCode = $_SESSION['programCode'];
+$batchCode = $_SESSION['batchCode'];
+$sectionCode = $_SESSION['sectionCode'];
 
 $admin = unserialize($_SESSION['adminInstance']);
 $personalDetails = $admin->getInstance();
-//echo json_encode($personalDetails);
-
+//print $departmentCode . " " . $programCode . " " . $batchCode . "  " . $sectionCode;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,7 +29,7 @@ $personalDetails = $admin->getInstance();
 <body>
 
 <header class="text-center text-4xl p-2 pl-48">
-    <label id="HodPanelTitleID">Dashboard</label>
+    <label id="CaPanelTitleID">Dashboard</label>
     <div class="profilePictureDiv" id="viewProfileID">
         <div class="flex">
             <a href="#" name="viewTeacherProfile" class="cursor-pointer flex">
@@ -125,7 +124,7 @@ $personalDetails = $admin->getInstance();
 
         <div class="mt-5 relative h-full">
 
-            <div class="navigationItem" id="hodacademicIssueTrackerID">
+            <div class="navigationItem" id="caAcademicIssueTrackerID">
                 <svg width="25" height="22" viewBox="0 0 28 22" style="padding-left: 2px" class="turnItWhite"
                      xmlns="http://www.w3.org/2000/svg">
                     <path d="M25.25 0H2.75C1.375 0 0.25 1.125 0.25 2.5V18.75C0.25 20.125 1.375 21.25 2.75 21.25H25.25C26.625 21.25 27.75 20.125 27.75 18.75V2.5C27.75 1.125 26.625 0 25.25 0ZM2.75 18.75V2.5H12.75V18.75H2.75ZM25.25 18.75H15.25V2.5H25.25V18.75ZM16.5 6.875H24V8.75H16.5V6.875ZM16.5 10H24V11.875H16.5V10ZM16.5 13.125H24V15H16.5V13.125Z"/>
@@ -144,25 +143,16 @@ $personalDetails = $admin->getInstance();
                                 <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
                             </svg>
                         </div>
-                        <label class="pl-3">Admin Management</label>
+                        <label class="pl-3">Course Management</label>
                     </div>
 
                     <img class="sidePanelNavigationItemDropdownIcon rotate"
                          src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
-                    <div class="menuItem" id="assignRoleID">Assign Role</div>
-                    <div class="menuItem" id="viewRoleID">View Role</div>
+                    <div class="menuItem" id="importOfferedCourseID">Import Course</div>
+                    <div class="menuItem" id="viewAdvisorCourseId">View Course</div>
                 </div>
-            </div>
-            <!--            Faculty Management-->
-            <div class="navigationItem pr-5" id="facultyManagementID">
-                <svg width="25" height="25" viewBox="0 0 30 30"
-                     xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
-                    <path d="M23.75 6.25V23.75H6.25V6.25H23.75ZM23.75 3.75H6.25C4.875 3.75 3.75 4.875 3.75 6.25V23.75C3.75 25.125 4.875 26.25 6.25 26.25H23.75C25.125 26.25 26.25 25.125 26.25 23.75V6.25C26.25 4.875 25.125 3.75 23.75 3.75Z"/>
-                    <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
-                </svg>
-                <label class="pl-3">Faculty Management</label>
             </div>
 
             <!--            Logout-->
@@ -178,7 +168,7 @@ $personalDetails = $admin->getInstance();
             </div>
         </div>
     </div>
-    <div class="ml-48 w-full h-full" id="headOfDepMainContentId">
+    <div class="ml-48 w-full h-full" id="caMainContentId">
         <!--        Pages to load go here through scripts-->
         <iframe class="h-full" src="headOfDepDashboard.php" style="width: 100%"></iframe>
     </div>

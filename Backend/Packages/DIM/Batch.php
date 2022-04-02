@@ -1,6 +1,7 @@
 <?php
 
-class Batch implements JsonSerializable{
+class Batch implements JsonSerializable
+{
 
     private $batchCode;
     private $batchName;
@@ -12,7 +13,8 @@ class Batch implements JsonSerializable{
     protected $databaseConnection;
 
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->databaseConnection = DatabaseSingleton::getConnection();
     }
 
@@ -43,6 +45,45 @@ class Batch implements JsonSerializable{
             }
         } else
             echo "No batches found";
+
+        return $listOfBatches;
+    }
+
+
+    public function retrieveBatchList($programCode): ?array
+    {
+        $listOfBatches = array();
+        if (is_array($programCode) && sizeof($programCode) > 1) {
+            foreach ($programCode as $value) {
+                $key = $value->getProgramCode();
+                $sql = /** @lang text */
+                    "select batchCode, seasonCode, batchName, dateCreated from batch where programCode = \"$key \" ";
+                $result = $this->databaseConnection->query($sql);
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $newBatch = new Batch();
+                        $newBatch->batchCode = $row["batchCode"];
+                        $newBatch->batchName = $row["batchName"];
+                        array_push($listOfBatches, $newBatch);
+                    }
+                } else {
+                    return $listOfBatches;
+                }
+            }
+        } else {
+            $sql = /** @lang text */
+                "select batchCode, seasonCode, batchName, dateCreated from batch where programCode = \"$programCode \" ";
+            $result = $this->databaseConnection->query($sql);
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $newBatch = new Batch();
+                    $newBatch->batchCode = $row["batchCode"];
+                    $newBatch->batchName = $row["batchName"];
+                    array_push($listOfBatches, $newBatch);
+                }
+            } else
+                return null;
+        }
 
         return $listOfBatches;
     }
@@ -95,13 +136,12 @@ class Batch implements JsonSerializable{
     }
 
 
-
     public function jsonSerialize()
     {
         return array(
-            'programCode'=>$this->programCode,
-            'batchName'=>$this->batchName,
-            'batchCode'=>$this->batchCode
+            'programCode' => $this->programCode,
+            'batchName' => $this->batchName,
+            'batchCode' => $this->batchCode
         );
     }
 }

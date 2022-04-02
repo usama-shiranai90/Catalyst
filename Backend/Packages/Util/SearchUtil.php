@@ -1,5 +1,5 @@
 <?php
-
+/** Function is used to iterate the array and get the specific key=>value. */
 function iterateAndSearchValue($array, $val, &$tempKeyReference, &$tempValueReference): bool
 {
     foreach ($array as $item) {
@@ -12,7 +12,8 @@ function iterateAndSearchValue($array, $val, &$tempKeyReference, &$tempValueRefe
     return false;
 }
 
-/** Program Name Abbreviation */
+
+/** Function is used to check the name of Program and convert it into its related Abbreviation. #Approach-1st */
 function checkProgramAbbreviation($value): ?string
 {
     if (str_contains(strtolower($value), strtolower("Bachelors of Computer in Software Engineering")) !== false
@@ -28,7 +29,26 @@ function checkProgramAbbreviation($value): ?string
     return null;
 }
 
-/** Program Name Abbreviation */
+/** Function is used to check the name of Program and convert it into its related Abbreviation. #Approach-2nd
+ *  Excluded due to update in database schema */
+function compareProgramType($programType)
+{
+    $programType = strtolower($programType);
+    $data = array(strtolower("Bachelors of Computer in Software Engineering"), strtolower("Bachelors of Computer in Computer Science"), strtolower("Bachelors in Social Science"));
+    $toCompareWith = array(strtolower("BCSE"), strtolower("BCCS"), strtolower("IDK"));
+
+    $counter = 0;
+    foreach ($toCompareWith as $type) {
+        if (str_contains($programType, $type)) {
+            return $data[$counter];
+        }
+        $counter++;
+    }
+    return "";
+}
+
+
+/** Function is used to check the name of department and convert it into its related Abbreviation. #Approach-1st */
 function checkDepartmentAbbreviation($value): ?string
 {
     if (str_contains(strtolower($value), strtolower("Software Engineering")) !== false
@@ -54,30 +74,17 @@ function generateCurriculumYearSelector($earliestYear, $currentOnGoingYear, $cur
     }
 }
 
-function updateServer($status, $message, $error): array
+
+function checkAdministrativePattern($word): int
 {
-    $resultBackServer['status'] = $status;
-    $resultBackServer['message'] = $message;
-    $resultBackServer['errors'] = $error;
-    return $resultBackServer;
-}
-
-
-/** Excluded due to update in database schema */
-function compareProgramType($programType)
-{
-    $programType = strtolower($programType);
-    $data = array(strtolower("Bachelors of Computer in Software Engineering"), strtolower("Bachelors of Computer in Computer Science"), strtolower("Bachelors in Social Science"));
-    $toCompareWith = array(strtolower("BCSE"), strtolower("BCCS"), strtolower("IDK"));
-
-    $counter = 0;
-    foreach ($toCompareWith as $type) {
-        if (str_contains($programType, $type)) {
-            return $data[$counter];
-        }
-        $counter++;
+    if (preg_match('/\bhead of department\b/i', $word, $f) == 1) {
+        return 0;
+    } else if (preg_match('/\bprogram manager\b/i', $word, $f) == 1) {
+        return 1;
+    } else if (preg_match('/\bcourse advisor\b/i', $word, $f) == 1) {
+        return 2;
     }
-    return "";
+    return -1;
 }
 
 ?>

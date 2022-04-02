@@ -11,9 +11,9 @@ class AdministrativeRole
             return new HeadOfDepartmentRole($email, $password);
         elseif ($containsPattern === 2)
             return new ProgramManagerRole($email, $password);
-        elseif ($containsPattern === 3)
+        elseif ($containsPattern === 3){
             return new CourseAdvisorRole($email, $password);
-
+        }
         return null;
     }
 
@@ -29,14 +29,10 @@ class AdministrativeRole
         return -1;
     }
 
+
+    // Function is used for getting the list of roles with respect to user belong to a specific department.
     public static function getAssociatedRoles($facultyCode, $programCode = 'none', $sectionCode = 'none'): array
     {
-        /*foreach (array(new HeadOfDepartmentRole("", ""), new ProgramManagerRole("", ""),
-                     new CourseAdvisorRole("", "")) as $index => $role) {
-            $respectiveRoles[$index] = $role->getFacultyRole($facultyCode, $respectiveRoles);
-        }*/
-//        $respectiveRoles = array("HOD" => false, "PM" => false, "CA" => false);
-
         $respectiveRoles = array();
         for ($i = 0; $i < 3; $i++) {
             if ($i === 0) {
@@ -49,7 +45,6 @@ class AdministrativeRole
                 self::forCourseAdvisor($facultyCode, $programCode, $sectionCode, $respectiveRoles);
             }
         }
-
         return $respectiveRoles;
     }
 
@@ -60,6 +55,15 @@ class AdministrativeRole
     }
 
     public static function forProgramManager($facultyCode, $programCode, &$respectiveRoles)
+    {
+        if (is_array($programCode) and sizeof($programCode) > 1)
+            foreach ($programCode as $value)
+                self::operateProgram($facultyCode, $value->getProgramCode(), $respectiveRoles);
+        else
+            self::operateProgram($facultyCode, $programCode, $respectiveRoles);
+    }
+
+    protected static function operateProgram($facultyCode, $programCode, &$respectiveRoles)
     {
         $adminRole = new ProgramManagerRole("", "");
         if (strcasecmp($programCode, "none") === 0) {
@@ -75,6 +79,51 @@ class AdministrativeRole
             $adminRole->getFacultyRole($facultyCode, $respectiveRoles);
         else
             $adminRole->getFacultyRole($facultyCode, $respectiveRoles, $programCode, $sectionCode);
+    }
+
+
+    // Function is used for getting the list of all the associated Roles belong to a specific department or all departments.
+    public static function retrieveListOfAdminRoles($departmentCode, $selected = 'none'): array
+    {
+        $respectiveRolesList = array();
+        for ($i = 0; $i < 3; $i++) {
+            if ($selected !== 'none')
+                $i = $selected;
+
+            if ($i === 0) {
+                $adminRole = new HeadOfDepartmentRole("", "");
+                $adminRole->retrieveAdminRole($departmentCode, $respectiveRolesList);
+            }
+            if ($i === 1) {
+                $adminRole = new ProgramManagerRole("", "");
+                $adminRole->retrieveAdminRole($departmentCode, $respectiveRolesList);
+            }
+            if ($i === 2) {
+                $adminRole = new CourseAdvisorRole("", "");
+                $adminRole->retrieveAdminRole($departmentCode, $respectiveRolesList);
+            }
+            if ($selected !== 'none')
+                break;
+        }
+        return $respectiveRolesList;
+    }
+
+    public static function deleteAdministrativeRole($facultyId, $departmentCode, $programCode, $sectionCode): bool
+    {
+        $flag = false;
+        if ($facultyId !== -1) {
+            if ($departmentCode != -1) {
+                $headOfDepartment = new HeadOfDepartmentRole("", "");
+                $flag = $headOfDepartment->deleteAdministrativeRole($facultyId, $departmentCode);
+            } elseif ($programCode != -1) {
+                $programManager = new ProgramManagerRole("", "");
+                $flag = $programManager->deleteAdministrativeRole($facultyId, $programCode);
+            } elseif ($sectionCode != -1) {
+                $courseAdvisor = new CourseAdvisorRole("", "");
+                $flag = $courseAdvisor->deleteAdministrativeRole($facultyId, $sectionCode);
+            }
+        }
+        return $flag;
     }
 
 }

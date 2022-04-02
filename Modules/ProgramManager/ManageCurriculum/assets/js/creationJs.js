@@ -35,7 +35,6 @@ window.onload = function (e) {
     class Curriculum {
         plo_number = ''
         plo_description = ''
-
         set setploNumber(plo_number) {
             this.plo_number = plo_number;
         }
@@ -49,7 +48,6 @@ window.onload = function (e) {
         $(document).ajaxSend(function () {
             $("#loader").fadeIn(1000);
         });
-
 
         $(selectedCurriculumProgramYearField).on('change', function (e) {
             const value = this.value;
@@ -235,24 +233,6 @@ window.onload = function (e) {
         return fragment;
     }
 
-    let isEmpty;
-
-    function containsEmptyField(fieldsArray) {
-        isEmpty = true;
-        for (let i = 0; i < fieldsArray.length; i++)
-            errorInputType(fieldsArray[i]);
-        return isEmpty;
-    }
-
-    function errorInputType(currentField) {
-        if (currentField.value.length === 0) {
-            if (currentField.tagName === "SELECT")
-                currentField.parentElement.classList.add("select-error-input")
-            else if (currentField.tagName === "INPUT" || currentField.tagName === "TEXTAREA")
-                currentField.parentElement.classList.add("textField-error-input")
-            isEmpty = false;
-        }
-    }
 
     function createCurriculumAjaxCall(recentlyCreatedCurriculumArray, assignCurriculumYear, curriculumName) {
         $.ajax({
@@ -290,5 +270,4 @@ window.onload = function (e) {
             },
         });
     }
-
 }

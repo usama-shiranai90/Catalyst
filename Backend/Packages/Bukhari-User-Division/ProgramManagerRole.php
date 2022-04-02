@@ -54,7 +54,6 @@ class ProgramManagerRole extends UserRole
             "programCode" => 'none',
             "programName" => 'none',
         );
-
         if (strcasecmp($programCode, 'none') === 0) {
             $sql = /** @lang text */
                 "select facultyCode, p.programCode, departmentCode, programName from programmanager join program p on 
@@ -64,7 +63,6 @@ class ProgramManagerRole extends UserRole
             $sql = /** @lang text */
                 "select facultyCode, p.programCode, departmentCode, programName from programmanager join program p on 
                 p.programCode = programmanager.programCode where facultyCode = \"$facultyCode\" and p.programCode = \"$programCode\" ";
-
         }
         $authenticationResult = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($authenticationResult) > 0) {
@@ -79,6 +77,71 @@ class ProgramManagerRole extends UserRole
             $respectiveRoles['PM'][] = $temp;
 
         return $flag;
+    }
+
+
+    public function assignProgramManagerRole($email, $password, $facultyCode, $programCode): bool
+    {
+        $sql = /** @lang text */
+            "select facultyCode, programCode, officialEmail, password from programmanager where programCode = \"$programCode\"; ";
+
+        $authenticationResult = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($authenticationResult) > 0) {
+            $secondSql = /** @lang text */
+                "UPDATE programmanager  SET facultyCode =  \"$facultyCode\" , officialEmail = \"$email\", password = \"$password\"
+            WHERE programCode = \"$programCode\";  ";
+            if ($this->databaseConnection->query($secondSql) === TRUE)
+                return true;
+        } else if (mysqli_num_rows($authenticationResult) === 0) {
+
+            $sql = /** @lang text */
+                "insert into programmanager(facultyCode, programCode, officialEmail, password)
+            VALUES (\"$facultyCode\" , \"$programCode\" , \"$email\", \"$password\"  );";
+            if ($this->databaseConnection->query($sql) === TRUE)
+                return true;
+        }
+        return false;
+    }
+
+
+    public function retrieveAdminRole($departmentCode, &$respectiveRoles): bool
+    {
+        $temp = array("programCode" => '-', "facultyID" => '-', "name" => '-', "designation" => '-', "officialEmail" => '-', "roleName" => '-', 'ofOther' => '-');
+        $sql = /** @lang text */
+            "select pm.facultyCode, pm.programCode, pm.officialEmail, name, f.departmentCode ,designation , programName , programShortName
+            from programmanager pm
+                     join faculty f on pm.facultyCode = f.facultyCode join program p on pm.programCode = p.programCode
+            where f.departmentCode = \"$departmentCode\"; ";
+
+        $authenticationResult = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($authenticationResult) > 0) {
+            while ($row = $authenticationResult->fetch_assoc()) {
+                $temp['programCode'] = $row['programCode'];
+                $temp['facultyID'] = $row['facultyCode'];
+                $temp['name'] = $row['name'];
+                $temp['designation'] = $row['designation'];
+                $temp['officialEmail'] = $row['officialEmail'];
+                $temp['roleName'] = "Program Manager";
+//                $temp['ofOther'] = $row['programName'] . "( " . $row['programShortName'] . " )";
+                $temp['ofOther'] = $row['programShortName'];
+                $respectiveRoles['PM'][] = $temp;
+            }
+            return true;
+        }
+        $respectiveRoles['HOD'][] = $temp;
+        return false;
+    }
+
+
+    public function deleteAdministrativeRole($facultyId, $programCode): bool
+    {
+        $sql = /** @lang text */
+            "delete from programmanager where facultyCode = \"$facultyId\" and programCode =\"$programCode\" ;";
+        $result = $this->databaseConnection->query($sql);
+        if ($result === TRUE) {
+            return true;
+        } else
+            return false;
     }
 
 }

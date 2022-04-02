@@ -87,15 +87,16 @@ $(document).ready(function () {
     });
     $("#assignRoleID").click(function () {
         $("#headOfDepMainContentId").html("<iframe class='h-full block' src='ManageRole/assignRole.php' style='width: 100%'></iframe>");
-        updateIframeWithPanelTitle($("#HodPanelTitleID"), "Faculty Management", "Catalyst | Faculty Management");
+        updateIframeWithPanelTitle($("#HodPanelTitleID"), "Admin Assign Role", "Catalyst | Assign Role");
     });
     $("#viewRoleID").click(function () {
         $("#headOfDepMainContentId").html("<iframe class='h-full block' src='ManageRole/viewRole.php' style='width: 100%'></iframe>");
-        updateIframeWithPanelTitle($("#HodPanelTitleID"), "Admin Assign Role", "Catalyst | Assign Role");
+        updateIframeWithPanelTitle($("#HodPanelTitleID"), "Admin View Role", "Catalyst | View Role");
     })
     $("#facultyManagementID").click(function () {
         $("#headOfDepMainContentId").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
-        updateIframeWithPanelTitle($("#HodPanelTitleID"), "Admin View Role", "Catalyst | View Role");
+
+        updateIframeWithPanelTitle($("#HodPanelTitleID"), "Faculty Management", "Catalyst | Faculty Management");
     });
 
 
@@ -111,7 +112,22 @@ $(document).ready(function () {
     $("#viewCurriculumID").click(function () {
         $("#programManagerMainContent").html("<iframe class='h-full block' src='ManageCurriculum/manageCurriculum.php' style='width: 100%'></iframe>");
         updateIframeWithPanelTitle($("#teacherPanelTitleID"), "Curriculum View", "Catalyst | Curriculum View");
+    });
+
+
+    /** Course Advisor. */
+    $("#caAcademicIssueTrackerID").click(function () {
+        $("#caMainContentId").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
+        updateIframeWithPanelTitle($("#CaPanelTitleID"), "Dashboard", "Catalyst | Academic Issue Tracker");
     })
+    $("#importOfferedCourseID").click(function () {
+        $("#caMainContentId").html("<iframe class='h-full block' src='ManageCourseOffering/importOffering.php' style='width: 100%'></iframe>");
+        updateIframeWithPanelTitle($("#CaPanelTitleID"), "Course Offering Import", "Catalyst | Course Offering Import");
+    })
+    $("#viewAdvisorCourseId").click(function () {
+        $("#caMainContentId").html("<iframe class='h-full block' src='ManageCourseOffering/viewOfferedCourses.php' style='width: 100%'></iframe>");
+        updateIframeWithPanelTitle($("#CaPanelTitleID"), "View Offered Courses", "Catalyst | View Offered Courses");
+    });
 
 });
 

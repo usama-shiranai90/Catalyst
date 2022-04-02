@@ -19,6 +19,34 @@ class Section implements JsonSerializable
         return $this->sectionName;
     }
 
+    public function retrieveSectionsList($batchCode): ?array
+    {
+        $sql = /** @lang text */
+            "select sectionCode, s.semesterCode, sectionName
+            from section as s
+             inner join (select se.semesterCode, se.batchCode, se.semesterName
+                     from semester as se
+                     where batchCode =  \"$batchCode\"
+                     group by semesterCode desc
+                     limit 1) as sCbCsN where sCbCsN.semesterCode = s.semesterCode;";
+        $result = $this->databaseConnection->query($sql);
+
+        $batchList = [];
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $section = new Section();
+                $section->sectionCode = $row['sectionCode'];
+                $section->sectionName = $row['sectionName'];
+                $batchList[] = $section;
+            }
+        } else
+            return null;
+
+        return $batchList;
+    }
+
+
     public function retrieveSectionName($sectionCode)
     {
         $this->setSectionCode($sectionCode);
@@ -90,8 +118,8 @@ class Section implements JsonSerializable
     }
 
 
-
-    public function retrieveSectionsInSemester($semesterCode){
+    public function retrieveSectionsInSemester($semesterCode)
+    {
         $sql = /** @lang text */
             "select sectionCode, sectionName from section where semesterCode = \"$semesterCode\"";
         $result = $this->databaseConnection->query($sql);
@@ -106,7 +134,7 @@ class Section implements JsonSerializable
                 $newSection->setSectionCode($row["sectionCode"]);
                 array_push($sectionsList, $newSection);
             }
-        } else{
+        } else {
 //            echo "No sections found for semesterCode: ".$semesterCode."<br>";
 
         }

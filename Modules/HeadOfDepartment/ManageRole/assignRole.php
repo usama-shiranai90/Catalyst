@@ -24,7 +24,6 @@ foreach ($facultyObjectList as $faculty) {
     );
 }
 
-
 setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
 ?>
 
@@ -42,7 +41,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
-    <script src="asset/roleScript.js"></script>
+    <script src="asset/js/adminstrationRoleAssign.js"></script>
 
     <style>
         /*.tabs * {z-index: 20;}*/
@@ -98,7 +97,9 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                         <div class="w-full flex flex-col">
                             <form method="post" class="w-full flex flex-row justify-center w-4/12 my-5 gap-5">
                                 <!--                                <input class="hidden" id="hdNamae" type="text" name="hdNamae" value="-->
-                                <input class="hidden" type="text" value="<?php echo strtolower($_SESSION['departmentName']) ?>" data-h-set="departmentName">
+                                <input class="hidden" type="text"
+                                       value="<?php echo strtolower($_SESSION['departmentName']) ?>"
+                                       data-h-set="departmentName">
 
                                 <div class="textField-label-content w-3/12">
                                     <label for="froleDesignationID"></label>
@@ -130,15 +131,17 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                             onchange="this.setAttribute('value', this.value);" value=""
                                             id="programIDSelect">
                                         <option value="" hidden=""></option>
-                                        <option value="none">All</option>
+                                        <option value="all" selected>All</option>
                                         <?php
                                         $program = new Program();
                                         $allocatedProgramList = array();
+                                        $options = '';
                                         foreach ($program->retrieveProgramList($departmentCode) as $program) {
-                                            print sprintf("<option  value=\"%s\" >%s</option>",
+                                            $options .= sprintf("<option  value=\"%s\" >%s</option>",
                                                 bin2hex($program->getProgramCode()), $program->getProgramName());
                                             array_push($allocatedProgramList, $program->getProgramCode());
                                         }
+                                        echo $options;
                                         ?>
                                     </select>
                                     <label class="select-label top-1/4 sm:top-3">Program</label>
@@ -155,13 +158,6 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                     <label class="select-label top-1/4 sm:top-3">Faculty Name *</label>
                                 </div>
 
-
-                                <!--          <div class="textField-label-content w-3/12">
-                                              <input class="textField" type="text" placeholder="automatically be shown"
-                                                     name="froleFacultyName" id="froleFacultyNameID"
-                                                     value="automatically be shown" disabled style="color: gray">
-                                              <label class="textField-label" style="top: -20%">Faculty Name</label>
-                                          </div>-->
                             </form>
 
                             <div class="w-full flex justify-center items-center">
@@ -241,7 +237,14 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                     </div>
 
                                 </div>
-
+                                <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
+                                    <div class="textField-label-content w-3/12 relative">
+                                        <input class="textField" type="date" placeholder="Expire Date"
+                                               name="hrcStartDate" id="hrcStartDateID"
+                                               min="<?php echo date("Y-m-d"); ?>">
+                                        <label class="textField-label">Start Date</label>
+                                    </div>
+                                </div>
                             </form>
 
                             <form method="post" class="hidden flex flex-col overflow-hidden" id="pmRoleCreationFormID">
@@ -269,7 +272,6 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                                 onchange="this.setAttribute('value', this.value);" value=""
                                                 id="carcRSeasonID">
                                             <option value="" hidden=""></option>
-                                            <option value="1">1</option>
                                         </select>
                                         <label class="select-label top-1/4 sm:top-3">Batch/Season</label>
                                     </div>
@@ -278,9 +280,8 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                         <select class="select" name="carcSection"
                                                 onclick="this.setAttribute('value', this.value);"
                                                 onchange="this.setAttribute('value', this.value);" value=""
-                                                id="carcRSectionID">
+                                                id="carcRSectionID" style="cursor: no-drop;" disabled>
                                             <option value="" hidden=""></option>
-                                            <option value="1">1</option>
                                         </select>
                                         <label class="select-label top-1/4 sm:top-3">Section</label>
                                     </div>
@@ -313,7 +314,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                             </span>
                             </div>-->
                             <div class="text-right mx-0 my-2">
-                                <button type="button"
+                                <button type="submit"
                                         class="text-white rounded-md border-0 p font-medium bg-catalystBlue-l2 px-8 mx-5 py-1"
                                         name="roleAssignBtn" id="roleAssignBtnID">Assign
                                 </button>
@@ -327,6 +328,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
         </div>
     </main>
 </div>
+
 </body>
 
 <script>
@@ -339,12 +341,10 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
     let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')
     let facultyInstanceList = <?php echo json_encode($facultyList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
     let programList = <?php echo json_encode($allocatedProgramList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
+    console.log("User ID : ", userId, "\nFaculty Instance : ", facultyInstanceList, "\nProgram Code List : ", programList)
 
-
-    console.log(userId)
-    console.log(facultyInstanceList)
-    console.log(programList)
-
+    // $("main").addClass("blur-filter");
+    // $("#alertContainer").removeClass("hidden");
 </script>
 
 

@@ -104,22 +104,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['adminCode'] = $user->getAdminCode();
 
             if ($user instanceof HeadOfDepartmentRole)
-                $_SESSION['departmentCode'] = array($user->getDepartmentCode() , $user->getDepartmentName());
+                $_SESSION['departmentCode'] = array($user->getDepartmentCode(), $user->getDepartmentName());
             elseif ($user instanceof ProgramManagerRole)
                 $_SESSION['programCode'] = $user->getProgramCode();
-            elseif ($user instanceof CourseAdvisorRole)
+            elseif ($user instanceof CourseAdvisorRole) {
+                $_SESSION['departmentCode'] = $user->getDepartmentCode();
+                $_SESSION['programCode'] = $user->getProgramCode();
+                $_SESSION['batchCode'] = $user->getBatchCode();
                 $_SESSION['sectionCode'] = $user->getSectionCode();
-
+            }
         }
         $_SESSION['adminInstance'] = serialize($user);
-        echo json_encode($_SESSION['adminInstance']);
         header(sprintf("Location: %s", $user->getNavigationUrl()));
 
-
-    } else {
-//        echo "not working";
     }
-
 }
 ?>
 <html lang="en">
@@ -448,8 +446,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="mt-3 usernameSectionMobile usernameSectionNormal">
                     <i class="fa-1x w-1/2 text-center far fa-user"></i>
                     <!--pm-se@fui.edu.pk-->
+                    <!--ca-fa15a@fui.edu.pk-->
+                    <!--hod-se@fui.edu.pk-->
                     <div class="textField-label-content col-span-6" id="adminUsernameDiv">
-                        <input class="textField" type="email" value="hod-se@fui.edu.pk" placeholder=" "
+                        <input class="textField" type="email" value="ca-fa15a@fui.edu.pk" placeholder=" "
                                id="adminUsername"
                                name="adminUsername">
                         <label class="textField-label">Email</label>
@@ -467,7 +467,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="textField-label-content md:col-start-2 col-span-6" id="adminPasswordDiv">
 
                         <input class="textField" type="password" placeholder=" " id="adminPassword"
-                               name="adminPassword" value="123456789">
+                               name="adminPassword" value="EUMUwPfe11">
                         <label class="textField-label">Password</label>
                         <!--  forgot section for Desktop-->
                         <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"

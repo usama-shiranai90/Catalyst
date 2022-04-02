@@ -213,6 +213,7 @@ window.onload = function (e) {
 
         /** It controls the visibility of section i.e. essential , detail and course distribution */
         $(backArrow).on("click", function (e) {
+
             if (!$(cDetailSection).hasClass("hidden")) {                // 2nd section to move to 1st section.
                 $(cEssentialSection).toggleClass("hidden");             // open first section.
                 $(cDetailSection).toggleClass("hidden");                // close second section.
