@@ -449,7 +449,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!--ca-fa15a@fui.edu.pk-->
                     <!--hod-se@fui.edu.pk-->
                     <div class="textField-label-content col-span-6" id="adminUsernameDiv">
-                        <input class="textField" type="email" value="ca-fa15a@fui.edu.pk" placeholder=" "
+                        <input class="textField" type="email" value="hod-se@fui.edu.pk" placeholder=" "
                                id="adminUsername"
                                name="adminUsername">
                         <label class="textField-label">Email</label>
@@ -467,7 +467,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="textField-label-content md:col-start-2 col-span-6" id="adminPasswordDiv">
 
                         <input class="textField" type="password" placeholder=" " id="adminPassword"
-                               name="adminPassword" value="EUMUwPfe11">
+                               name="adminPassword" value="123456789">
                         <label class="textField-label">Password</label>
                         <!--  forgot section for Desktop-->
                         <div class="hidden md:inline-flex lg:inline-flex forgotPasswordNormal"

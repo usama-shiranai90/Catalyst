@@ -40,9 +40,6 @@ class StudentRole extends UserRole
         return $this->personalInfo;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStudentRegistrationCode()
     {
         return $this->studentRegistrationCode;

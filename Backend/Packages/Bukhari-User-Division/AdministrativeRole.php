@@ -5,7 +5,6 @@ class AdministrativeRole
     public static function authenticate($email, $password): HeadOfDepartmentRole|ProgramManagerRole|CourseAdvisorRole|null
     {
         $containsPattern = self::checkIfPatternMatches($email);
-//        echo sprintf("Email: %s   ,   %d <br>", $email, $containsPattern);
 
         if ($containsPattern === 1)
             return new HeadOfDepartmentRole($email, $password);

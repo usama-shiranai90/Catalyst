@@ -74,7 +74,19 @@ $listOfAllocatedAdministratorRolesList = AdministrativeRole::retrieveListOfAdmin
                                     onchange="this.setAttribute('value', this.value);" value=""
                                     id="administrativeRoleId">
                                 <option value="" hidden=""></option>
+                                <?php
 
+                                $roleList = array();
+                                foreach ($listOfAllocatedAdministratorRolesList as $index => $role) {
+                                    foreach ($role as $selectedFaculty) {
+                                        $currentRole = $selectedFaculty['roleName'];
+                                        if (!in_array($currentRole, $roleList)) {
+                                            print sprintf("<option  value=\"%s\" >%s</option>", $selectedFaculty['roleName'], $selectedFaculty['roleName']);
+                                            $roleList[] = $selectedFaculty['roleName'];
+                                        }
+                                    }
+                                }
+                                ?>
 
                                 <!--                                <option value="2018" data-select-id="1">2018</option>-->
                             </select>
