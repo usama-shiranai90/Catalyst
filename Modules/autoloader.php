@@ -11,12 +11,12 @@ spl_autoload_register(function ($className) {
     $uti = "/Backend/Packages/Util/";
 
     $Bukhari = "/Backend/Packages/Bukhari-User-Division/";
+//    echo set_include_path(get_include_path() . PATH_SEPARATOR . "../") . "<br> ";
+//    echo set_include_path(get_include_path() . PATH_SEPARATOR . "../".$Bukhari) . "<br> ";
 
-//    echo "FileName List :".__NAMESPACE__."  ".$className."<br>";
 
     if (file_exists($_SERVER['DOCUMENT_ROOT'] . $dim . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $dim . str_replace('\\', "/", $className) . ".php";
-
     } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $classActivities . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $classActivities . str_replace('\\', "/", $className) . ".php";
 
@@ -31,10 +31,10 @@ spl_autoload_register(function ($className) {
         include $_SERVER['DOCUMENT_ROOT'] . $transcript . str_replace('\\', "/", $className) . ".php";
     } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $uti . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $uti . str_replace('\\', "/", $className) . ".php";
-    }
-    elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $Bukhari . str_replace('\\', "/", $className) . ".php")) {
+    } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $Bukhari . str_replace('\\', "/", $className) . ".php")) {
         include $_SERVER['DOCUMENT_ROOT'] . $Bukhari . str_replace('\\', "/", $className) . ".php";
     }
+
 
 });
 

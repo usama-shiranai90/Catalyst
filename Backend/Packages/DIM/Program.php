@@ -85,11 +85,10 @@ class Program implements JsonSerializable
 
     }
 
-
     public function getProgramAbbreviation($programCode): ?string
     {
         $sql = /** @lang text */
-            "select programCode, departmentCode, programName from program where programCode = \"$programCode\"";
+            "select programCode, departmentCode, programName, programShortName from program where programCode = \"$programCode\"";
         $result = $this->databaseConnection->query($sql);
 
         if (mysqli_num_rows($result) > 0) {

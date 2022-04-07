@@ -8,15 +8,17 @@ class CourseAdvisorRole extends UserRole
     protected $batchCode;
     protected $sectionCode;
 
-    public function __construct($email, $password)
+    public function __construct()
     {
         parent::__construct();
-        $this->email = $email;
-        $this->password = $password;
     }
 
     public function login($email, $password): bool
     {
+
+        $this->email = $email;
+        $this->password = $password;
+
         $sql = /** @lang text */
             " select ca.facultyCode,  ca.sectionCode, ca.officialEmail, ca.password, departmentCode , programCode , b.batchCode
                 from courseadvisor ca

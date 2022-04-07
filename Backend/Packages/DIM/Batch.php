@@ -19,7 +19,7 @@ class Batch implements JsonSerializable
     }
 
 //    Return batches of last 6 years
-    public function retrieveAllEligibleBatches()
+    public function retrieveAllEligibleBatches(): array
     {
         $sql = /** @lang text */
             "select * from batch where year between
@@ -40,7 +40,6 @@ class Batch implements JsonSerializable
                 $newBatch->curriculumCode = $row["curriculumCode"];
                 $newBatch->programCode = $row["programCode"];
                 $newBatch->batchYear = $row["year"];
-
                 array_push($listOfBatches, $newBatch);
             }
         } else
@@ -49,6 +48,7 @@ class Batch implements JsonSerializable
         return $listOfBatches;
     }
 
+//    public fun
 
     public function retrieveBatchList($programCode): ?array
     {

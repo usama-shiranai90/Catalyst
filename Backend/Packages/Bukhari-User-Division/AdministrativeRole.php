@@ -7,11 +7,11 @@ class AdministrativeRole
         $containsPattern = self::checkIfPatternMatches($email);
 
         if ($containsPattern === 1)
-            return new HeadOfDepartmentRole($email, $password);
+            return new HeadOfDepartmentRole();
         elseif ($containsPattern === 2)
-            return new ProgramManagerRole($email, $password);
+            return new ProgramManagerRole();
         elseif ($containsPattern === 3){
-            return new CourseAdvisorRole($email, $password);
+            return new CourseAdvisorRole();
         }
         return null;
     }
@@ -49,7 +49,7 @@ class AdministrativeRole
 
     public static function forHeadOfDepartment($facultyCode, &$respectiveRoles)
     {
-        $adminRole = new HeadOfDepartmentRole("", "");
+        $adminRole = new HeadOfDepartmentRole();
         $adminRole->getFacultyRole($facultyCode, $respectiveRoles);
     }
 
@@ -64,7 +64,7 @@ class AdministrativeRole
 
     protected static function operateProgram($facultyCode, $programCode, &$respectiveRoles)
     {
-        $adminRole = new ProgramManagerRole("", "");
+        $adminRole = new ProgramManagerRole();
         if (strcasecmp($programCode, "none") === 0) {
             $adminRole->getFacultyRole($facultyCode, $respectiveRoles);
         } else
@@ -73,7 +73,7 @@ class AdministrativeRole
 
     public static function forCourseAdvisor($facultyCode, $programCode, $sectionCode, &$respectiveRoles)
     {
-        $adminRole = new CourseAdvisorRole("", "");
+        $adminRole = new CourseAdvisorRole();
         if (strcasecmp($sectionCode, "none") === 0)
             $adminRole->getFacultyRole($facultyCode, $respectiveRoles);
         else
@@ -90,15 +90,15 @@ class AdministrativeRole
                 $i = $selected;
 
             if ($i === 0) {
-                $adminRole = new HeadOfDepartmentRole("", "");
+                $adminRole = new HeadOfDepartmentRole();
                 $adminRole->retrieveAdminRole($departmentCode, $respectiveRolesList);
             }
             if ($i === 1) {
-                $adminRole = new ProgramManagerRole("", "");
+                $adminRole = new ProgramManagerRole();
                 $adminRole->retrieveAdminRole($departmentCode, $respectiveRolesList);
             }
             if ($i === 2) {
-                $adminRole = new CourseAdvisorRole("", "");
+                $adminRole = new CourseAdvisorRole();
                 $adminRole->retrieveAdminRole($departmentCode, $respectiveRolesList);
             }
             if ($selected !== 'none')
@@ -112,13 +112,13 @@ class AdministrativeRole
         $flag = false;
         if ($facultyId !== -1) {
             if ($departmentCode != -1) {
-                $headOfDepartment = new HeadOfDepartmentRole("", "");
+                $headOfDepartment = new HeadOfDepartmentRole();
                 $flag = $headOfDepartment->deleteAdministrativeRole($facultyId, $departmentCode);
             } elseif ($programCode != -1) {
-                $programManager = new ProgramManagerRole("", "");
+                $programManager = new ProgramManagerRole();
                 $flag = $programManager->deleteAdministrativeRole($facultyId, $programCode);
             } elseif ($sectionCode != -1) {
-                $courseAdvisor = new CourseAdvisorRole("", "");
+                $courseAdvisor = new CourseAdvisorRole();
                 $flag = $courseAdvisor->deleteAdministrativeRole($facultyId, $sectionCode);
             }
         }

@@ -132,29 +132,6 @@ $personalDetails = $admin->getInstance();
                 <label class="pl-3">Academic Issue Tracker</label>
             </div>
 
-            <!--            Admin Management-->
-            <div class="navigationItemDropdown" id="adminManagementID">
-                <div class="flex justify-between items-center navDropBox" id="teacherClassActivitiesDropBox">
-                    <div class="flex items-center">
-                        <div>
-                            <svg width="25" height="25" viewBox="0 0 30 30"
-                                 xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
-                                <path d="M23.75 6.25V23.75H6.25V6.25H23.75ZM23.75 3.75H6.25C4.875 3.75 3.75 4.875 3.75 6.25V23.75C3.75 25.125 4.875 26.25 6.25 26.25H23.75C25.125 26.25 26.25 25.125 26.25 23.75V6.25C26.25 4.875 25.125 3.75 23.75 3.75Z"/>
-                                <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
-                            </svg>
-                        </div>
-                        <label class="pl-3">Course Management</label>
-                    </div>
-
-                    <img class="sidePanelNavigationItemDropdownIcon rotate"
-                         src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
-                </div>
-                <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
-                    <div class="menuItem" id="importOfferedCourseID">Import Course</div>
-                    <div class="menuItem" id="viewAdvisorCourseId">View Course</div>
-                </div>
-            </div>
-
             <!--            Logout-->
             <div class="flex justify-center w-full bottom-3 absolute">
                 <div class="logout rounded-md bg-white w-2/3 p-0.5 cursor-pointer" id="logout">

@@ -12,6 +12,11 @@ class Semester implements JsonSerializable
 
     }
 
+
+
+
+// SemCode _. sectionCode . Faculty Allocation Ma Search karo...
+
     public function retrieveSemesterName($semesterCode): void
     {
         $this->setSemesterCode($semesterCode);

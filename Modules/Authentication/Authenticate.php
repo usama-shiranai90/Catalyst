@@ -445,11 +445,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!--                Username Portion-->
                 <div class="mt-3 usernameSectionMobile usernameSectionNormal">
                     <i class="fa-1x w-1/2 text-center far fa-user"></i>
-                    <!--pm-se@fui.edu.pk-->
+                    <!--pm-bcse@fui.edu.pk-->
                     <!--ca-fa15a@fui.edu.pk-->
                     <!--hod-se@fui.edu.pk-->
                     <div class="textField-label-content col-span-6" id="adminUsernameDiv">
-                        <input class="textField" type="email" value="hod-se@fui.edu.pk" placeholder=" "
+                        <input class="textField" type="email" value="pm-se@fui.edu.pk" placeholder=" "
                                id="adminUsername"
                                name="adminUsername">
                         <label class="textField-label">Email</label>

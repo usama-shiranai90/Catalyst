@@ -91,7 +91,7 @@
     @apply bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4;
 }
 
-.cprofile-container-centertxt, .weekly-topic-container-centertxt  , .student-profile-header-text{
+.cprofile-container-centertxt, .weekly-topic-container-centertxt, .student-profile-header-text {
     @apply text-xl text-center my-2 font-bold;
 }
 
@@ -214,6 +214,27 @@
     @apply flex items-center justify-between p-6 border-l-8 sm:py-8 ;
 }
 
+.drop-zone {
+    @apply flex items-center justify-center flex-col;
+}
+
+.drop-zone {
+    @apply min-h-full border-dashed border-2 border-gray-400 rounded transition-all ease-in duration-200;
+    /*      min-height: 200px;
+                border: 2px dashed gray;
+                border-radius: 10px;
+                margin: 30px;
+                transition: 0.2s all ease-in; */
+}
+
+.drop-zone .dragged{
+    @apply bg-blue-300 border-catalystBlue-l2;
+}
+
+.drop-zone input{
+    @apply hidden;
+}
+
 
 /*</editor-fold>*/
 
@@ -264,13 +285,15 @@
     focus:ring-blue-500;
 }
 
-.db-table-container{
+.db-table-container {
     @apply bg-white outline-none ring-2 bg-white ring-gray-200 rounded-md hover:shadow-lg;
 }
-.db-table-header-topic{
+
+.db-table-header-topic {
     @apply px-2 py-2 bg-catalystBlue-l8  border-gray-300 shadow-md rounded-t-md rounded-b-sm;
 }
-.db-table-header-text{
+
+.db-table-header-text {
     @apply text-center font-bold text-white;
 }
 
@@ -280,6 +303,7 @@
 .sutareta-waku-gray-p {
     @apply border-2 border-solid rounded-md  border-gray-300 shadow-md;
 }
+
 .sutareta-waku-gray-c {
     @apply px-2 py-2 sm:px-4 border-b border-gray-200 bg-white border-2 border-solid rounded-md    border-gray-300 shadow-md;
 }

@@ -6,16 +6,16 @@ class HeadOfDepartmentRole extends UserRole
     protected $departmentCode;
     protected $departmentName;
 
-    public function __construct($email, $password)
+    public function __construct()
     {
         parent::__construct();
-        $this->email = $email;
-        $this->password = $password;
         return $this;
     }
 
     public function login($email, $password)
     {
+        $this->email = $email;
+        $this->password = $password;
         $sql = /** @lang text */
             "select facultyCode, d.departmentCode ,departmentName,departmentShortName , officialEmail, password from headofdepartment join department d on d.departmentCode = headofdepartment.departmentCode
              where officialEmail = \"$this->email\" and password = \"$this->password\" ; ";
