@@ -8,7 +8,7 @@ $adminCode = $_SESSION['adminCode'];
 $programCode = $_SESSION['programCode'];
 $personalDetails = array();
 $admin = unserialize($_SESSION['adminInstance']);
-$personalDetails = $admin->getPersonalDetails();
+$personalDetails = $admin->getInstance();
 ?>
 
 <!doctype html>

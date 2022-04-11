@@ -105,7 +105,8 @@ function loadAdminData($listOfAllocatedAdministratorRolesList, $toStore = 'none'
             </td>
         </tr>
         
-        ', ($counter), $CUSTOM_ROLE_TAG, $selectedFaculty['facultyID'], $selectedFaculty['name'], $selectedFaculty['officialEmail'], $selectedFaculty['roleName'], $counter, $counter, $counter, $CUSTOM_TAG_PARAGRAPH);
+        ', ($counter), $CUSTOM_ROLE_TAG, $selectedFaculty['facultyID'], $selectedFaculty['name'], $selectedFaculty['officialEmail'], $selectedFaculty['roleName'],
+                $counter, $counter, $CUSTOM_TAG_PARAGRAPH);
             if ($toStore !== 'none')
                 $temp .= $print;
             else

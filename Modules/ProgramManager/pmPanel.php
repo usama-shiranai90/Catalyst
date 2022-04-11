@@ -174,8 +174,8 @@ $personalDetails = $admin->getInstance();
                          src="../../Assets/Images/vectorFiles/Icons/chevron-down.svg">
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
-                    <div class="menuItem" id="importAllocationCourseID">Import Course Offering</div>
-                    <div class="menuItem" id="importOfferedCourseID">Import Course Allocation</div>
+                    <!--                    <div class="menuItem" id="importAllocationCourseID">Import Course </div>-->
+                    <div class="menuItem" id="importOfferAndAllocationCourseID">Import Course Offering & Allocation</div>
                     <div class="menuItem" id="viewCourseDetailId">View Offer & Allocation</div>
                 </div>
             </div>

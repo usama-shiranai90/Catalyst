@@ -162,7 +162,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
 
                             <div class="w-full flex justify-center items-center">
                                 <!--ml-64 mr-14-->
-                                <div class="flex w-2/5 justify-center items-center h-12 gap-2 relative shadow-md p-3 rounded-full border-2 border-gray-400 border-solid divide-blue-300">
+                                <div class="flex w-2/5 justify-center items-center h-12 gap-2 relative shadow-md p-3 rounded-full border-2 border-gray-400 border-solid">
 
                                     <input class="z-20" type="radio" id="adminRoleDivisionHod" name="tabs" checked/>
                                     <label class="z-20 flex items-center justify-center h-30 w-1/2 text-sm font-medium rounded-full cursor-pointer"
@@ -173,11 +173,13 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                     <label class="z-20 flex items-center justify-center h-30 w-1/2 text-sm font-medium rounded-full cursor-pointer"
                                            for="adminRoleDivisionPm" style="transition: color 0.15s ease-in">Program
                                         Manager</label>
-                                    <input class="z-20" type="radio" id="adminRoleDivisionCa" name="tabs"/>
 
+                                    <input class="z-20" type="radio" id="adminRoleDivisionCa" name="tabs"/>
                                     <label class="z-20 flex items-center justify-center h-30 w-1/2 text-sm font-medium rounded-full cursor-pointer"
                                            for="adminRoleDivisionCa" style="transition: color 0.15s ease-in">Course
                                         Advisor</label>
+
+
                                     <span class="glider z-10 w-36 h-5/6 absolute flex rounded-full transition duration-500 ease-out"></span>
 
                                 </div>
@@ -194,6 +196,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                             </div>
                         </div>
                     </div>
+
                     <section class="db-table-container my-5 ">
                         <div class="db-table-header-topic">
                             <h2 id="roleCreationHeader"

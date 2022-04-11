@@ -12,6 +12,19 @@ function iterateAndSearchValue($array, $val, &$tempKeyReference, &$tempValueRefe
     return false;
 }
 
+/** Function is used to apply the standard deviation on given data set (array) i.e.
+ *  implemented to find the average scoring of CLO per course , student average course score.
+ */
+function standardDeviation($scoreList): float
+{
+    $variance = 0.0;
+    $totalScoreLength = count($scoreList);
+    $average = array_sum($scoreList) / $totalScoreLength;
+    foreach ($scoreList as $value)
+        $variance += pow(($value - $average), 2);
+    return number_format(sqrt($variance / $totalScoreLength), 4, '.', '');
+}
+
 
 /** Function is used to check the name of Program and convert it into its related Abbreviation. #Approach-1st */
 function checkProgramAbbreviation($value): ?string

@@ -35,7 +35,7 @@ class CLO implements JsonSerializable
     }
 
     /**OneEyeOwl */
-    public function retrieveAllCLOPerCourse($curriculumID, $programID, $courseCode,$batchCode, $deleteFromMappingArray): array
+    public function retrieveAllCLOPerCourse($curriculumID, $programID, $courseCode, $batchCode, $deleteFromMappingArray): array
     {
         $CLOlist = array();
 
@@ -97,18 +97,17 @@ class CLO implements JsonSerializable
 //                unset($this->mappedPLOs[$x][$y][4]);
 //                echo  json_encode($this->mappedPLOs[$x][$y])."<br> <br><br>";
             }
-
         }
     }
 
-    public function retrieveCLOlist($curriculumID, $programID, $courseCode): ?array
+    public function retrieveCLOlist($programCode , $curriculumCode , $batchCode , $courseCode): ?array
     {
         $CLOlist = array();
 
         $sql = /** @lang text */
             "select co.courseCode ,co.cloName ,co.description ,co.domain ,co.btLevel ,co.CLOCode  ,map.CLOCode,map.PLOCode , p.ploName , p.ploDescription
             from clo as co  join clotoplomapping map on co.CLOCode = map.CLOCode join plo p on map.PLOCode = p.PLOCode where 
-            co.programCode = \"$programID\" and co.curriculumCode = \"$curriculumID\" and co.courseCode = \"$courseCode\" ORDER BY co.cloName;";
+            co.programCode = \"$programCode\" and co.curriculumCode = \"$curriculumCode\" and batchCode =  \"$batchCode\" and co.courseCode = \"$courseCode\" ORDER BY co.cloName;";
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
@@ -180,6 +179,7 @@ class CLO implements JsonSerializable
         }
     }
 
+//    $courseCode, $sectionCode, $batchCode, $curriculumCode
     public function retrieveCLOAveragePerStudent($courseCode, $sectionCode): ?array
     {
         $cloDataSet = array();
@@ -200,11 +200,11 @@ class CLO implements JsonSerializable
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
                 $temp = array(
-                    "cloName"    => $row['cloName'],
-                    "regNumber"  => $row['studentRegCode'],
+                    "cloName" => $row['cloName'],
+                    "regNumber" => $row['studentRegCode'],
                     "totalMarks" => $row['tQMarks'],
-                    "ObtainMarks"=> $row['obtainMarks'],
-                    "result"     => $row['result']
+                    "ObtainMarks" => $row['obtainMarks'],
+                    "result" => $row['result']
                 );
                 array_push($cloDataSet, $temp);
             }

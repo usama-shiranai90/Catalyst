@@ -50,7 +50,7 @@ if (isset($_POST['creation']) and $_POST['creation']) {
 
 } elseif (isset($_POST['deletion']) and $_POST['deletion']) {
 
-    if ($_POST['deletedWeeklyIdsArray'] !== "" and isset($_POST['deletedWeeklyIdsArray'])) { // undefined array key when no id of weekly is passed.
+    if ($_POST['deletedWeeklyIdsArray'] ?? null and $_POST['deletedWeeklyIdsArray'] !== "" and isset($_POST['deletedWeeklyIdsArray'])) { // undefined array key when no id of weekly is passed.
 
         $toDeleteWeeklyTopics = $_POST['deletedWeeklyIdsArray'];
         if (is_array($toDeleteWeeklyTopics)) // if it is empty.

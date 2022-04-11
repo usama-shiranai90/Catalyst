@@ -159,15 +159,9 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             var allottedSemesterCodes = <?php echo json_encode($allottedSemesterCodes);?>;
             var allottedSemesterNames = <?php echo json_encode($allottedSemesterNames);?>;
             var selectedCourseCode = $(this).val();
-
-            console.log(allottedCoursesCodes)
-            console.log(allottedSemesterCodes)
-            console.log(allottedSemesterNames)
-
+            console.log("Allocation Info : \nCourseCode:", allottedCoursesCodes, "\nSemesterCode : ", allottedSemesterCodes, "\nSemesterNames : ", allottedSemesterNames)
 
             var options = '<option value="" hidden></option>';
-
-
             /*I'll push section codes into this, because if I ush section names, then it would create confusion
              when same section names from different programs appear, it won't show them except the first of them */
             /*Though we are actually showing section names and not codes*/

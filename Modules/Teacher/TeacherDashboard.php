@@ -70,56 +70,7 @@ if (isset($_POST['selectClass'])) {
     $section = new Section();
     $section->retrieveSectionName($selectedSection);
     $sectionName = $section->getSectionName();
-
-
-    /*echo "<br> Course Code: ".$_SESSION['selectedCourse'];
-    echo "<br> Semester Code: ".$_SESSION['selectedSemester'];
-    echo "<br> Section Code: ".$_SESSION['selectedSection'];
-    echo "<br> Curriculum Code: ".$_SESSION['selectedCurriculum'];
-    echo "<br> Program Code: ".$_SESSION['selectedProgram'];
-    echo "<br> Batch Code: ".$_SESSION['selectedBatch'];*/
-
-
-//    $faculty = Faculty::getFacultyInstance();
-//    $faculty->setPersonalDetails();
-//    echo $faculty->getUserCode();
-    /*$listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
-
-     echo "<br>Total Allocations:" . sizeof($listOfAllocations);
-        for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-            $listOfAllocations[$x]->toString();
-        }*/
 }
-//Stores title of allotted courses
-//$allottedCourses = array();
-//Stores name of allotted sections
-//$allottedSections = array();
-/*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
-for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-    $listOfAllocations[$x]->toString();
-}*/
-
-//for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-//    array_push($allottedCourses, $listOfAllocations[$x]->getCourse());
-//    array_push($allottedSections, $listOfAllocations[$x]->getSection());
-//}
-
-/*echo "Allotted Courses ()";
-for ($x = 0; $x < sizeof($allottedCourses); $x++) {
-    echo "<br>".$allottedCourses[$x]->getCourseCode();
-}
-echo "Allotted Sections";
-for ($x = 0; $x < sizeof($allottedSections); $x++) {
-    echo "<br>".$allottedSections[$x]->getSectionCode();
-}*/
-
-//print_r($courses);
-//echo "<br> Sections:";
-//print_r($courseSections);
-/*for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-    array_push($courseCodes, $listOfAllocations[$x]->getCourse()->getCourseTitle());
-    array_push($courseSections, $listOfAllocations[$x]->getSection()->getSectionName());
-}*/
 
 ?>
 
@@ -347,10 +298,8 @@ for ($x = 0; $x < sizeof($allottedSections); $x++) {
     const sbar = [document.getElementById('teacherDashboardID'), document.getElementById('courseManagementID'), document.getElementById('classActivities'), document.getElementById('teacherClassSummary')];
 
     let hasFormCompleted = <?php echo json_encode($showSelectorIframe); ?>;
-    console.log("Form Completed Length :", hasFormCompleted.length)
+    // console.log("Form Completed Length :", hasFormCompleted.length)
     if (hasFormCompleted.length === 0) {
-        console.log("bruh")
-
         $(sbar).each((node, currentSideTag) => {
             $(currentSideTag).addClass("pointer-events-none");
             $(currentSideTag).children().attr("disabled", true);

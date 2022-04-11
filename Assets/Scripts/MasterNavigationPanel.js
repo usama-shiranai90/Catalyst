@@ -115,20 +115,16 @@ $(document).ready(function () {
     });
 
 
-
-    $("#importAllocationCourseID").click(function () {
-        $("#programManagerMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
-        updateIframeWithPanelTitle($("#teacherPanelTitleID"), "Course Offering Import", "Catalyst | Course Allocation Import");
-    })
-    $("#importOfferedCourseID").click(function () {
+    // $("#importAllocationCourseID").click(function () {$("#programManagerMainContent").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");updateIframeWithPanelTitle($("#teacherPanelTitleID"), "Course Offering Import", "Catalyst | Course Allocation Import");});
+    $("#importOfferAndAllocationCourseID").click(function () {
         $("#programManagerMainContent").html("<iframe class='h-full block' src='ManageCourseOffering/importOffering.php' style='width: 100%'></iframe>");
-        updateIframeWithPanelTitle($("#teacherPanelTitleID"), "Course Offering Import", "Catalyst | Course Offering Import");
-    })
-    $("#viewCourseDetailId").click(function () {
-        $("#programManagerMainContent").html("<iframe class='h-full block' src='ManageCourseOffering/viewOfferedCourses.php' style='width: 100%'></iframe>");
-        updateIframeWithPanelTitle($("#teacherPanelTitleID"),  "View Offered Courses", "Catalyst | View Offered Courses");
+        updateIframeWithPanelTitle($("#teacherPanelTitleID"), "Course Offering & Allocation Import", "Catalyst | Course Offering Import");
     });
 
+    $("#viewCourseDetailId").click(function () {
+        $("#programManagerMainContent").html("<iframe class='h-full block' src='ManageCourseOffering/viewOfferedCourses.php' style='width: 100%'></iframe>");
+        updateIframeWithPanelTitle($("#teacherPanelTitleID"), "View Offered Courses", "Catalyst | View Offered Courses");
+    });
 
     /** Course Advisor. */
     $("#caAcademicIssueTrackerID").click(function () {

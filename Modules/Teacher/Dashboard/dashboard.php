@@ -3,25 +3,30 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
-echo $_SESSION['selectedCourse']."   ".$_SESSION['selectedBatch']."   ".$_SESSION['selectedCurriculum']."   ".$_SESSION['selectedSection'];
+$programCode = $_SESSION['selectedProgram'];
+$curriculumCode = $_SESSION['selectedCurriculum'];
+$batchCode = $_SESSION['selectedBatch'];
+$sectionCode = $_SESSION['selectedSection'];
+$courseCode = $_SESSION['selectedCourse'];
+$facultyCode = $_SESSION['facultyCode'];
+$faculty = unserialize($_SESSION['facultyInstance']);
+$listOfAllocations = $faculty->retrieveAllocations($facultyCode);
 
-$clo = new CLO();
-$fetchCloList = $clo->retrieveCLOlist($_SESSION['selectedCurriculum'], $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); //
-//$fetchCloList1 = $clo->retrieveCLOlist($_SESSION['selectedCurriculum'], $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); //
-//$fetchCloList2 = $clo->retrieveCLOlist($_SESSION['selectedCurriculum'], $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); //
-//$fetchCloList = array_merge($fetchCloList, $fetchCloList1 , $fetchCloList2);
+print sprintf("Program Code : %s <br> Curriculum Code : %s <br> batchCode : %s <br> sectionCode : %s <br> courseCode %s ", $programCode, $curriculumCode, $batchCode, $sectionCode, $courseCode);
 
 $courseProfile = new CourseProfile();
-$isProfileCreated = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedBatch']); //  $_SESSION['selectedCurriculum']
+$courseLearningOutcome = new CLO();
+$activity = new ClassActivity();
 
-$faculty = unserialize($_SESSION['facultyInstance']);
-//echo json_encode($faculty->getPersonalDetails()) . "<br><br><br>";
+$courseOutcomeList = $courseLearningOutcome->retrieveCLOlist($programCode, $curriculumCode, $batchCode, $courseCode); // 1 , 1  ,4, SEN-28
+print json_encode($courseOutcomeList);
 
-$listOfAllocations = $faculty->retrieveAllocations($_SESSION['facultyCode']);
+/** the following function may change depending on our current scenario (for coordinator) */
+$isProfileCreated = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);  //$_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedBatch']        //  ,$_SESSION['selectedCurriculum']
 
 $allottedCourseNames = array();
 $courseNamesBeingShown = array();
-for ($x = 0; $x < sizeof($listOfAllocations);$x++) {
+for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     $allottedCourseNames[] = $listOfAllocations[$x]->getCourse()->getCourseTitle();
     if (!in_array($allottedCourseNames[$x], $courseNamesBeingShown))
         $courseNamesBeingShown[] = $allottedCourseNames[$x];
@@ -29,16 +34,12 @@ for ($x = 0; $x < sizeof($listOfAllocations);$x++) {
 $allottedCourseNames = $courseNamesBeingShown;
 unset($courseNamesBeingShown);
 
-
-//echo json_encode($allottedCourseNames);
-if ($isProfileCreated) {
+if ($isProfileCreated === TRUE) {
     $courseProfileCode = $courseProfile->getCourseProfileCode();
     $weeklyTopic = new WeeklyTopic();
     $fetchWeeklyTopic = $weeklyTopic->retrieveLastInsertedWeeklyTopic($courseProfileCode);
 }
 
-
-$activity = new ClassActivity();
 $assessmentObject = $activity->getLatestCourseSpecificAssessment($_SESSION['selectedSection'], $_SESSION['selectedCourse']);
 $fetchAssessment = array(
     $assessmentObject->getActivityType(),
@@ -47,10 +48,10 @@ $fetchAssessment = array(
     $assessmentObject->getTopic(),
     $assessmentObject->getListOfQuestions(),
 );
-//sleep(2)
+
+
 
 ?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -93,7 +94,8 @@ $fetchAssessment = array(
                                 <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Student
                                     <br>Strength</p>
                             </div>
-                            <p id="teacherDashboardTotalStudentID" class="text-3xl font-semibold" style="color: #003C9C"></p>
+                            <p id="teacherDashboardTotalStudentID" class="text-3xl font-semibold"
+                               style="color: #003C9C"></p>
                         </div>
                     </div>
                     <div class="shadow-lg col-span-2 rounded-2xl w-full h-40  p-4 py-4 bg-white">
@@ -235,8 +237,7 @@ $fetchAssessment = array(
 
                                                         </td>
                     -->
-<!--                                <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight" data-assessment="4"></tr>-->
-
+                                <!--                                <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight" data-assessment="4"></tr>-->
 
 
                                 </tbody>
@@ -349,7 +350,7 @@ $fetchAssessment = array(
     // totalCLO = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4'];  // fetch from server
     // avgScorePerCLO = [66, 51, 33, 10];  // fetch from server
 
-    const courseLearningArray =<?php echo json_encode($fetchCloList);?>;
+    const courseLearningArray =<?php echo json_encode($courseOutcomeList);?>;
     const recentWeeklyCoveredTopic =<?php echo json_encode($fetchWeeklyTopic);?>;
     const recentAssessmentArray =<?php echo json_encode($fetchAssessment);?>;
 

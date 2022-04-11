@@ -32,8 +32,8 @@ class WeeklyTopic
             $assessment = $value[2];
 
             $sql_statement = /** @lang text */
-                "insert into weeklytopics(courseProfileCode, weeklyNo, topicDetail, assessmentCriteria) 
-                        VALUES (\"$courseProfileCode\",\"$weekNo\",\"$description\",\"$assessment\")";
+                "insert into weeklytopics(courseProfileCode, weeklyNo, topicDetail, assessmentCriteria , modifiedDate) 
+                        VALUES (\"$courseProfileCode\",\"$weekNo\",\"$description\",\"$assessment\" , ,NOW())";
 
             $result = $this->databaseConnection->query($sql_statement);
             if ($result) {
@@ -91,9 +91,8 @@ class WeeklyTopic
         $description = $weeklyRowData[1];
         $assessment = $weeklyRowData[2];
 
-
         $sql1 = /** @lang text */
-            "update weeklytopics set weeklyNo = \"$weekNo\",topicDetail = \"$description\",assessmentCriteria =  \"$assessment\"
+            "update weeklytopics set weeklyNo = \"$weekNo\",topicDetail = \"$description\",assessmentCriteria =  \"$assessment\" , modifiedDate = NOW()
               where  courseProfileCode =\"$courseProfileID\" and weeklyTopicCode = \"$weeklyID\";";
 
         if ($this->databaseConnection->query($sql1) === TRUE) {
@@ -102,15 +101,16 @@ class WeeklyTopic
             echo "Error weekly topic updated : " . $this->databaseConnection->error . "<br>" . $weeklyRowData;
         }
 
-        foreach ($weeklyRowData[3] as $clo_id) {
-            $sql_statement1 = /** @lang text */
-                "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values
+        if ($weeklyRowData[3] ?? null)
+            foreach ($weeklyRowData[3] as $clo_id) {
+                $sql_statement1 = /** @lang text */
+                    "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values
                     (\"$weeklyID\",\"$clo_id\")";
 
-            $result1 = $this->databaseConnection->query($sql_statement1);
-            if (!$result1)
-                echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $clo_id . "   " . $weeklyID;
-        }
+                $result1 = $this->databaseConnection->query($sql_statement1);
+                if (!$result1)
+                    echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $clo_id . "   " . $weeklyID;
+            }
 
 
     }
@@ -120,7 +120,7 @@ class WeeklyTopic
     {
         $weeklyTopicListArray = array();
         $sql = /** @lang text */
-            "select weeklyTopicCode , weeklyNo , topicDetail , assessmentCriteria
+            "select weeklyTopicCode , weeklyNo , topicDetail , assessmentCriteria , modifiedDate
             from weeklytopics where courseProfileCode = \"$courseProfileCode\";";
 
         $result = $this->databaseConnection->query($sql);
@@ -143,7 +143,7 @@ class WeeklyTopic
 //                        }
                     }
                 }
-                $weeklyTopicListArray[] = array($row['weeklyTopicCode'], $row['weeklyNo'], $row['topicDetail'], $weekCLOList, $row['assessmentCriteria']);
+                $weeklyTopicListArray[] = array($row['weeklyTopicCode'], $row['weeklyNo'], $row['topicDetail'], $weekCLOList, $row['assessmentCriteria'], $row['modifiedDate']);
             }
         } else
             echo "No Weekly Information:" . $this->databaseConnection->error;
@@ -157,7 +157,7 @@ class WeeklyTopic
     public function retrieveLastInsertedWeeklyTopic($courseProfileCode): ?array
     {
         $sql = /** @lang text */
-            "select weeklyTopicCode , weeklyNo , topicDetail , assessmentCriteria from weeklytopics
+            "select weeklyTopicCode , weeklyNo , topicDetail , assessmentCriteria , modifiedDate from weeklytopics
                where courseProfileCode = \"$courseProfileCode\" order BY weeklyTopicCode desc limit 1;";
         $result = $this->databaseConnection->query($sql);
 
@@ -177,6 +177,7 @@ class WeeklyTopic
                         $weekCLOList[] = $row2['cloName'];
                     }
                 }
+                // add modifiedDate at the end of array.
                 array_push($soloWeeklyTopic, $row['weeklyNo'], $row['topicDetail'], $row['assessmentCriteria'], $weekCLOList);
                 return $soloWeeklyTopic;
             }

@@ -1,43 +1,55 @@
 <?php
-//echo realpath(dirname(__FILE__));
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
-require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
-
+/*echo realpath(dirname(__FILE__));
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";*/
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
+
+$programCode = $_SESSION['selectedProgram'];
+$curriculumCode = $_SESSION['selectedCurriculum'];
+$batchCode = $_SESSION['selectedBatch'];
+$sectionCode = $_SESSION['selectedSection'];
+$courseCode = $_SESSION['selectedCourse'];
+$facultyCode = $_SESSION['facultyCode'];
+$programOutcomeList = $_SESSION['ploList'];
 
 $courseProfile = new CourseProfile();
 $viewCLODescription = '';
 $viewCLOMapping = '';
 
-
-$ploArray = $_SESSION['ploList'];
-echo json_encode($ploArray);
-
-
-if (count($ploArray) != 0) { // if we have plo then enter.
-    /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
-      'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-      'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
-      'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
-      'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
-      'PLO 6' => "Use AJAX to get the data you need from the server. Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
-      'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
-      'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
-      'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
-      'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
-      'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
-      'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
-    $isProfileCreated = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'],$_SESSION['selectedBatch']); //  $_SESSION['selectedCurriculum']
+/** check if there exist Program learning outcome (curriculum) */
+/*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
+  'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+  'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
+  'PLO 4' => "More readable - JavaScript is JavaScript, PHP is PHP. Without mixing the two, you get more readable code on both languages",
+  'PLO 5' => "Better separation between layers - If tomorrow you stop using PHP, and want to move to a servlet, a REST API, or some other service, you don't have to change much of the JavaScript code.",
+  'PLO 6' => "Use AJAX to get the data you need from the server. Echo the data into the page somewhere, and use JavaScript to get the information from the DOM.",
+  'PLO 7' => "There are actually several approaches to do this. Some require more overhead than others, and some are considered better than others",
+  'PLO 8' => "Post, we'll examine each of the above methods, and see the pros and cons of each, as well as how to implement ",
+  'PLO 9' => "Waiting for multiple simultaneous AJAX requests to be finished has become quite easy by using the concept of Promises. We change each AJAX call to return a Promise. Promises from all AJAX calls are then passed to the Promise.all() method to find when all Promises are resolved.",
+  'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
+  'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
+  'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
+if (count($programOutcomeList) != 0) {
+    $isProfileCreated = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);
     $_SESSION['batchCode'] = $courseProfile->getBatchCode();
+    if ($courseProfile->getBatchCode() === $batchCode)
+        echo "course profile returning same batch code (working fine) : " . $courseProfile->getBatchCode() . "<br>";
 
-    if ($isProfileCreated === true) {    // not created
+
+    /** To check if profile exist or not.
+     *  if exist return with code and #typeOfProfile with two
+     *  otherwise return #typeOfProfile with one.
+     */
+    if ($isProfileCreated !== true)
+        $_SESSION['typeOfProfile'] = 1;
+    else {
         $_SESSION['typeOfProfile'] = 2;
         $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
-    } else  // is created
-        $_SESSION['typeOfProfile'] = 1;
+    }
+
 
     if ($_SESSION['typeOfProfile'] != 1) { // in Update Mode.
         if (isset($_GET['profileID'])) {
@@ -45,7 +57,7 @@ if (count($ploArray) != 0) { // if we have plo then enter.
 
             $cloObject = new CLO();
             $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($_SESSION['selectedCurriculum'],
-                $_SESSION['selectedProgram'], $_SESSION['selectedCourse'],$_SESSION['selectedBatch'], 'PLODescription');  // add batchCode in the future.
+                $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], $_SESSION['selectedBatch'], 'PLODescription');  // add batchCode in the future.
             $viewCLOMapping = $cloObject->mappedPLOs;
 
         } // if in editor mode.
@@ -54,12 +66,11 @@ if (count($ploArray) != 0) { // if we have plo then enter.
     }
 
 }
+
 $mem_usage = memory_get_usage();
 $mem_peak = memory_get_peak_usage();
-
 echo 'The script is now using: <strong>' . round(memory_get_usage() / 1024) . 'KB</strong> of memory.<br>';
 echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<br><br>';
-
 
 ?>
 
@@ -83,6 +94,8 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
 
+    <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
+    <!--
     <script type="text/javascript">
         writeRandomQuote = function () {
             var quotes = new Array();
@@ -96,7 +109,7 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
         // writeRandomQuote();
     </script>
     <script src="../asset/TeacherDashScripts.js"></script>
-
+-->
 </head>
 <body>
 <div class="w-full min-h-full">
@@ -808,7 +821,7 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
     let viewType;
 
     viewType = <?php echo json_encode($_SESSION['typeOfProfile'], JSON_HEX_TAG)  ?>;
-    ploArray = Object.values(<?php echo json_encode($ploArray, JSON_HEX_TAG)  ?>);
+    ploArray = Object.values(<?php echo json_encode($programOutcomeList, JSON_HEX_TAG)  ?>);
 
     if (viewType !== 1) {
         iframeContainUpdate("Course Profile Update", "Catalyst | Course Profile Update");

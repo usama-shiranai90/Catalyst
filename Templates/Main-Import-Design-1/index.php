@@ -1,12 +1,15 @@
 <?php
 ?>
+
+
 <!DOCTYPE HTML>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Convert Excel to HTML Table using JavaScript</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 </head>
@@ -16,9 +19,7 @@
     <div class="card">
         <div class="card-header"><b>Select Excel File</b></div>
         <div class="card-body">
-
-            <input type="file" id="excel_file" />
-
+            <input type="file" id="excel_file"/>
         </div>
     </div>
     <div id="excel_data" class="mt-5"></div>
@@ -32,8 +33,7 @@
 
     excel_file.addEventListener('change', (event) => {
 
-        if(!['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'].includes(event.target.files[0].type))
-        {
+        if (!['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'].includes(event.target.files[0].type)) {
             document.getElementById('excel_data').innerHTML = '<div class="alert alert-danger">Only .xlsx or .xls file format are allowed</div>';
 
             excel_file.value = '';
@@ -45,44 +45,44 @@
 
         reader.readAsArrayBuffer(event.target.files[0]);
 
-        reader.onload = function(event){
+        console.log("reader file ", reader)
+
+
+        reader.onload = function (event) {
 
             var data = new Uint8Array(reader.result);
 
-            var work_book = XLSX.read(data, {type:'array'});
+            var work_book = XLSX.read(data, {type: 'array'});
 
             var sheet_name = work_book.SheetNames;
 
-            /***
-             * sheet_data is a 2D arrray
-             * ***/
-            var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], {header:1});
+            var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], {header: 1});
 
-            if(sheet_data.length > 0)
-            {
+
+            console.log("Data : ", data)
+            console.log("work_book :", work_book)
+            console.log("sheet_name :", sheet_name)
+            console.log("sheet_data :", sheet_data)
+
+
+            if (sheet_data.length > 0) {
                 var table_output = '<table class="table table-striped table-bordered">';
-                console.log("Rows:",sheet_data.length)
-                for(var row = 0; row < sheet_data.length; row++)
-                {
+
+                for (var row = 0; row < sheet_data.length; row++) {
 
                     table_output += '<tr>';
-/*                    if(sheet_data[row].length == 0){
-                        console.log("ssss")
-                    }*/
 
-                    for(var cell = 0; cell < sheet_data[row].length; cell++)
-                    {
+                    for (var cell = 0; cell < sheet_data[row].length; cell++) {
 
-                        if(row == 0)
-                        {
+                        if (row == 0) {
 
-                            table_output += '<th>'+sheet_data[row][cell]+'</th>';
+                            table_output += '<th>' + sheet_data[row][cell] + '</th>';
 
-                        }
-                        else
-                        {
+                        } else {
+                            if (sheet_data[row][cell] == null) {
 
-                            table_output += '<td>'+sheet_data[row][cell]+'</td>';
+                            } else
+                                table_output += '<td>' + sheet_data[row][cell] + '</td>';
 
                         }
 

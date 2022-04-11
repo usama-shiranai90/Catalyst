@@ -89,7 +89,7 @@ function loadWeeklyTopicDashboardData(weeklyTopicDashboardContainer, weeklyTopic
     }
 }
 
-/** Loading Dashboard Chart of CLOs. */
+/** Loading Dashboard pie Chart of CLOs. */
 function loadCourseOverallAverageOutcome() {
     let totalCLO = [];  // fetch from server
     let avgScorePerCLO = [] // fetch from server
@@ -106,6 +106,7 @@ function loadCourseOverallAverageOutcome() {
         },
         success: function (data, status) {
             responseText = JSON.parse(data);
+            console.log("PIE CHART : ", responseText);
             if (responseText.errors === 'none') {
                 const fetchedData = responseText.message;
                 for (let i = 0; i < fetchedData.length; i++) {
@@ -218,7 +219,7 @@ function loadStudentCLOPerformanceDashboardData(studentsPerformanceContainer, st
         },
         success: function (data, status) {
             responseText = JSON.parse(data);
-            console.log(responseText)
+            console.log("PERFORMANCE MATRIX : " ,responseText);
             if (responseText.errors === 'none') {
                 const fetchedData = responseText.message;
                 /*let tableData = "";

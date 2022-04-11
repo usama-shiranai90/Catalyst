@@ -8,7 +8,7 @@ $programCode = $_SESSION['programCode'];
 
 $personalDetails = array();
 $student = unserialize($_SESSION['studentInstance']); //
-$personalDetails = $student->getPersonalDetails();
+$personalDetails = $student->getInstance();
 
 $totalEnrolledCourses = 0;
 $totalCreditHour = 0;

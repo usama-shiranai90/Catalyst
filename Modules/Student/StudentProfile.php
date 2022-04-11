@@ -8,7 +8,7 @@ $programCode = $_SESSION['programCode'];
 
 $personalDetails = array();
 $student = unserialize($_SESSION['studentInstance']);
-$personalDetails = $student->getPersonalDetails();
+$personalDetails = $student->getInstance();
 
 //echo json_encode($personalDetails) . "<br><br>";
 $personalDetails = str_replace('\\', '', $personalDetails);

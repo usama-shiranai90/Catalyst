@@ -69,15 +69,13 @@ class CourseProfile implements Persistable
         $this->batchCode = $bcode;
     }
 
-    public function isCourseProfileExist($currentCourseCode, $currentProgramCode, $currentBatchCode): bool
+    public function isCourseProfileExist($currentProgramCode, $currentBatchCode , $currentCourseCode): bool
     {
         $this->setCourseCode($currentCourseCode);
         $this->setProgramCode($currentProgramCode);
         $this->setBatchCode($currentBatchCode);
         $this->course->getCreditHourAndTitle($currentCourseCode);
         $this->course->setCourseCode($currentCourseCode);
-
-
         /*        $sql =
             "select batchCode from batch where curriculumCode = \"$currentCurriculumCode\" and programCode = \"$currentProgramCode\"";
 
@@ -89,7 +87,6 @@ class CourseProfile implements Persistable
             }
         } else
             echo sprintf("\n<br> Can not fetch batchCode: %s\n<br>%s\n<br>", mysqli_error(), $this->databaseConnection->error);*/
-
         $sql = /** @lang text */
             "select courseProfileCode
         from courseprofile join batch b on b.batchCode = courseprofile.batchCode where
@@ -161,16 +158,6 @@ class CourseProfile implements Persistable
         return $courseID;
     }
 
-    public function getCourseProfileCode()
-    {
-        return $this->courseProfileCode;
-    }
-
-    public function setCourseProfileCode($courseProfileCode): void
-    {
-        $this->courseProfileCode = $courseProfileCode;
-    }
-
     private function saveAssessment($cCourseCode)
     {
         $c_quiz_weight = $this->assessmentInfo->getQuizWeightage();
@@ -227,7 +214,6 @@ class CourseProfile implements Persistable
                  \"$cloObject->cloDescription\", \"$cloObject->cloDomain\", \"$cloObject->cloBtLevel\")";
 
                 if ($this->databaseConnection->query($sql_statement) === TRUE) {
-//                $cloIDList [] = mysqli_insert_id($this->databaseConnection);
                     $cloIDList [] = (int)$this->databaseConnection->insert_id;
                 } else {
                     echo sprintf("\n<br>Error clo description: %s\n<br>%s", $sql_statement, $this->databaseConnection->error);
@@ -260,7 +246,7 @@ class CourseProfile implements Persistable
                         echo "Current-CLO-ID:" . $cloIDList[$cloCounter] . '   and PLO-ID: ' . $plo[0] . "\n";
 
                         $sql_statement = /** @lang text */
-                            "INSERT INTO clotoplomapping(PLOCode, CLOCode) VALUES (\"$plo[0]\",\"$cloIDList[$cloCounter]\")";
+                            "INSERT INTO clotoplomapping(PLOCode, CLOCode) VALUES (\"$plo[0]\", \"$cloIDList[$cloCounter]\")";
                         $result = $this->databaseConnection->query($sql_statement);
                         if ($result)
                             echo sprintf("\n<br> CLO to PLO Mapping Successfully for %s.\n<br>", $cloIDList[$cloCounter]);
@@ -404,6 +390,18 @@ class CourseProfile implements Persistable
             echo sprintf("\n<br>Error while Updating Course Profile Assessment Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
 
     }
+
+
+    public function getCourseProfileCode()
+    {
+        return $this->courseProfileCode;
+    }
+
+    public function setCourseProfileCode($courseProfileCode): void
+    {
+        $this->courseProfileCode = $courseProfileCode;
+    }
+
 
     /**
      * @return Course

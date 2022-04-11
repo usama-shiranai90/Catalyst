@@ -1,31 +1,34 @@
 <?php
-
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\WeeklyTopic.php";
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
-
 require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
-
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
+
+$programCode = $_SESSION['selectedProgram'];
+$curriculumCode = $_SESSION['selectedCurriculum'];
+$batchCode = $_SESSION['selectedBatch'];
+$sectionCode = $_SESSION['selectedSection'];
+$courseCode = $_SESSION['selectedCourse'];
+$facultyCode = $_SESSION['facultyCode'];
+
 $courseProfile = new CourseProfile();
 $weeklyInfo = new WeeklyTopic();
 $curriculum = new Curriculum();
 $cloObject = new CLO();
 
-$profileExist = $courseProfile->isCourseProfileExist($_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedBatch']);
+$profileExist = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);
 
 $CLOList = '';
 $viewWeeklyTopics = '';
 
 if ($profileExist) {
-    $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
+    $curriculum->fetchCurriculumID($sectionCode);   // provide with ongoing section code.
 
-    //$CLOList = ['CLO-1', 'CLO-2', 'CLO-3'];
-    $CLOList = $cloObject->retrieveCLOlist($curriculum->getCurriculumCode(), $_SESSION['selectedProgram'], $_SESSION['selectedCourse']); // array of clo-code and name.
-    foreach ($CLOList as $key => $value) {
-        $CLOList[$key][1] = removeCloDash($value[1]);;
+    if ($curriculum->getCurriculumCode() === $curriculumCode){
+        $CLOList = $cloObject->retrieveCLOlist($programCode , $curriculumCode , $batchCode , $courseCode); // array of clo-code and name.
+        foreach ($CLOList as $key => $value) {
+            $CLOList[$key][1] = removeCloDash($value[1]);;
+        }
     }
 
     $_SESSION['courseProfileCode'] = $courseProfile->getCourseProfileCode();

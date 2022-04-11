@@ -99,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['studentRegistrationCode'] = $user->getStudentRegistrationCode();
             $_SESSION['batchCode'] = $_POST["batchCode"];
             $_SESSION['programCode'] = $_POST["programCode"];
+            $_SESSION['studentInstance'] = serialize($user);
 
         } elseif (isset($_POST["adminLogin"])) {
             $_SESSION['adminCode'] = $user->getAdminCode();

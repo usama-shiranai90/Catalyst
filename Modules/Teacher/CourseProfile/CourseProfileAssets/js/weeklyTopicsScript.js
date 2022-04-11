@@ -146,10 +146,10 @@ window.onload = function (e) {
             let modifiedIndex = $(event.target).closest(pclass).index()
             $(event.target).toggleClass("hidden")
 
-            console.log("My Modified Index is :", modifiedIndex, $(this).closest(pclass))
+            // console.log("My Modified Index is :", modifiedIndex, $(this).closest(pclass))
 
             $(this).closest(pclass).children().each((index, node) => {
-                console.log(index, node)
+                // console.log(index, node)
                 if (index > 1) {
                     $('#detail-r-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");
                     $('#assessment-clo-' + modifiedIndex).attr('readonly', false).removeClass("not-italic").addClass("italic");

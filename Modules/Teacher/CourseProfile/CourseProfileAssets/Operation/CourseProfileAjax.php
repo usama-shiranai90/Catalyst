@@ -104,7 +104,7 @@ if (isset($_POST['saved']) and $_POST['saved']) {
             $courseCloRecentDescriptionArray = $_POST['recentlyAddedCLOsDescriptionArray']; // newly created clo description array.
             $courseProfile->createCourseCLOs($courseCloRecentDescriptionArray, $courseMappingArray, $ploArray, $cloCodeArrayExisting);
         } else {
-            echo "wtf im here" . json_encode($courseMappingArray);
+//            echo "wtf im here" . json_encode($courseMappingArray);
             $courseProfile->createCourseCLOs(null, $courseMappingArray, $ploArray, $cloCodeArrayExisting);
         }
         die((json_encode(array('message' => 'Data Send Successfully'))));

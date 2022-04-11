@@ -4,7 +4,7 @@ session_start();
 
 $personalDetails = array();
 $student = unserialize($_SESSION['studentInstance']);
-$personalDetails = $student->getPersonalDetails();
+$personalDetails = $student->getInstance();
 
 ?>
 <!DOCTYPE html>
