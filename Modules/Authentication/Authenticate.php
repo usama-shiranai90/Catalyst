@@ -450,7 +450,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!--ca-fa15a@fui.edu.pk-->
                     <!--hod-se@fui.edu.pk-->
                     <div class="textField-label-content col-span-6" id="adminUsernameDiv">
-                        <input class="textField" type="email" value="pm-se@fui.edu.pk" placeholder=" "
+                        <input class="textField" type="email" value="hod-se@fui.edu.pk" placeholder=" "
                                id="adminUsername"
                                name="adminUsername">
                         <label class="textField-label">Email</label>

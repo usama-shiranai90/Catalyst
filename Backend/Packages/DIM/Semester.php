@@ -12,7 +12,19 @@ class Semester implements JsonSerializable
 
     }
 
+    public function createNewSemester($batchCode, $semesterName = 1): bool
+    {
+        $sql = /** @lang text */
+            "insert into semester(batchCode, semesterName)
+             VALUES (\"$batchCode\" , \"$semesterName\" );";
 
+        $result = $this->databaseConnection->query($sql);
+        if ($result) {
+            $this->setSemesterCode($this->databaseConnection->insert_id);
+            return true;
+        }
+        return false;
+    }
 
 
 // SemCode _. sectionCode . Faculty Allocation Ma Search karo...
@@ -75,6 +87,11 @@ class Semester implements JsonSerializable
     public function setSemesterCode($semesterCode): void
     {
         $this->semesterCode = $semesterCode;
+    }
+
+    public function getDatabaseConnection(): ?mysqli
+    {
+        return $this->databaseConnection;
     }
 
     public function jsonSerialize()

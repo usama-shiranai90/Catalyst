@@ -91,6 +91,14 @@ class UserRole implements Visitor
         $this->personalInfo = $personalInfo;
     }
 
+
+    public function getDatabaseConnection(): ?mysqli
+    {
+        return $this->databaseConnection;
+    }
+
+
+
     /**
      * @return mixed
      */

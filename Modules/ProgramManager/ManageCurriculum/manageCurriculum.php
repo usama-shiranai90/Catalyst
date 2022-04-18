@@ -236,7 +236,7 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
 </div>
 
 <div id="alertContainer"
-     class=" shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
+     class="hidden shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
     <div class="w-full h-full text-center">
         <div class="flex h-full flex-col justify-between">
             <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross"

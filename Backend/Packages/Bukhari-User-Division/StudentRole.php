@@ -9,6 +9,22 @@ class StudentRole extends UserRole
         parent::__construct();
     }
 
+    public function createStudentData($sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode): bool
+    {
+        $sql = /** @lang text */
+            "insert into student(studentRegCode, sectionCode, name, fatherName, contactNumber, officialEmail, personalEmail, bloodGroup, address, dateOfBirth, password, authenticationCode)
+             VALUES (\"$registrationNumber\" , \"$sectionCode\" ,\"$name\" ,\"$fatherName\" , \"$contact\",\"$officialMail\",\"$personalMail\",\"$bloodGroup\" , \"$address\",
+              \"$dob\" , \"123456789\" , \"$authenticateCode\");";
+
+        $result = $this->databaseConnection->query($sql);
+        if ($result) {
+            $this->setStudentRegistrationCode(($this->databaseConnection->insert_id));
+            return true;
+        }
+        return false;
+    }
+
+
     public function login($email, $password)
     {
         $this->email = $email;
@@ -43,6 +59,12 @@ class StudentRole extends UserRole
     public function getStudentRegistrationCode()
     {
         return $this->studentRegistrationCode;
+    }
+
+
+    public function setStudentRegistrationCode($studentRegistrationCode): void
+    {
+        $this->studentRegistrationCode = $studentRegistrationCode;
     }
 
 

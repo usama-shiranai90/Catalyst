@@ -78,6 +78,33 @@ class PLO implements JsonSerializable
             return array();
     }
 
+    public function retrieveCurriculumPLOsList($programCode): array
+    {
+        $sql = /** @lang text */
+            "select  PLOCode, ploName, ploDescription, c.curriculumName, PLOCode, c.curriculumCode, p.programCode
+            from programcurriculum as pc
+                     join curriculum c on c.curriculumCode = pc.curriculumCode
+                     join plo p on c.curriculumCode = p.curriculumCode
+            where p.programCode = \" $programCode \" 
+            group by PLOCode;";
+
+        $PLOList = array();
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    "PLOCode" => $row['PLOCode'],
+                    "ploName" => $row['ploName'],
+                    "ploDescription" => $row['ploDescription'],
+                    "curriculumName" => $row['curriculumName'],
+                );
+                $PLOList[] = $temp;
+            }
+        } else
+            echo "No Found" . '';
+        return $PLOList;
+    }
+
 
     public function removeProgramOutcome($ploCode, $programCode, $curriculumCode): bool
     {
@@ -93,7 +120,7 @@ class PLO implements JsonSerializable
         return false;
     }
 
-    public function updateProgramOutcome($ploCode, $curriculumCode , $currentPlo): bool
+    public function updateProgramOutcome($ploCode, $curriculumCode, $currentPlo): bool
     {
 
         $ploName = $currentPlo['plo_number'];

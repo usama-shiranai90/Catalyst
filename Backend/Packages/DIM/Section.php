@@ -14,6 +14,22 @@ class Section implements JsonSerializable
         $this->listOfStudents = array();
     }
 
+
+    public function createNewSection($semesterCode, $sectionName): bool
+    {
+        $sql = /** @lang text */
+            "insert into section(semesterCode, sectionName)
+             VALUES (\"$semesterCode\" , \"$sectionName\" );";
+
+        $result = $this->databaseConnection->query($sql);
+        if ($result) {
+            $this->setSectionCode($this->databaseConnection->insert_id);
+            return true;
+        }
+        return false;
+    }
+
+
     public function getSectionName()
     {
         return $this->sectionName;
@@ -151,6 +167,11 @@ class Section implements JsonSerializable
         for ($x = 0; $x < sizeof($this->listOfStudents); $x++) {
             echo $this->getListOfStudents()[$x]->toString();
         }
+    }
+
+    public function getDatabaseConnection(): ?mysqli
+    {
+        return $this->databaseConnection;
     }
 
     public function jsonSerialize()

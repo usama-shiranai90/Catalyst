@@ -93,10 +93,15 @@ $(document).ready(function () {
         $("#headOfDepMainContentId").html("<iframe class='h-full block' src='ManageRole/viewRole.php' style='width: 100%'></iframe>");
         updateIframeWithPanelTitle($("#HodPanelTitleID"), "Admin View Role", "Catalyst | View Role");
     })
+
     $("#facultyManagementID").click(function () {
         $("#headOfDepMainContentId").html("<iframe class='h-full block' src='' style='width: 100%'></iframe>");
-
         updateIframeWithPanelTitle($("#HodPanelTitleID"), "Faculty Management", "Catalyst | Faculty Management");
+    });
+
+    $("#programManagementID").click(function () {
+        $("#headOfDepMainContentId").html("<iframe class='h-full block' src='ManageProgram/manageProgram.php' style='width: 100%'></iframe>");
+        updateIframeWithPanelTitle($("#HodPanelTitleID"), "Program Management", "Catalyst | Program Management");
     });
 
 

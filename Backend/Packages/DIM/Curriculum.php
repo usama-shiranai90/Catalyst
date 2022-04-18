@@ -65,6 +65,7 @@ class Curriculum
         return $this->listOfPLOs;
     }
 
+
     public function getPreviousFewCurriculumYear($hasLimit): ?array
     {
         $curriculumYearList = array();

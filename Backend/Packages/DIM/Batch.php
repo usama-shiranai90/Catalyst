@@ -10,13 +10,29 @@ class Batch implements JsonSerializable
     private $curriculumCode;
     private $programCode;
 
-    protected $databaseConnection;
+    public $databaseConnection;
 
 
     public function __construct()
     {
         $this->databaseConnection = DatabaseSingleton::getConnection();
     }
+
+    public function createNewBatch($curriculumCode, $programCode, $seasonCode, $shortBatchName, $createdYear): bool
+    {
+        $sql = /** @lang text */
+            "insert into batch(curriculumCode, programCode, year, seasonCode, batchName, dateCreated)
+             VALUES (\"$curriculumCode\" , \"$programCode\" , \"$createdYear\" ,\"$seasonCode\" ,
+             \"$shortBatchName\", NOW());";
+
+        $result = $this->databaseConnection->query($sql);
+        if ($result) {
+            $this->setBatchCode($this->databaseConnection->insert_id);
+            return true;
+        }
+        return false;
+    }
+
 
 //    Return batches of last 6 years
     public function retrieveAllEligibleBatches(): array
@@ -47,8 +63,6 @@ class Batch implements JsonSerializable
 
         return $listOfBatches;
     }
-
-//    public fun
 
     public function retrieveBatchList($programCode): ?array
     {
@@ -86,6 +100,12 @@ class Batch implements JsonSerializable
         }
 
         return $listOfBatches;
+    }
+
+
+    public function setBatchCode($batchCode): void
+    {
+        $this->batchCode = $batchCode;
     }
 
     public function getBatchCode()
@@ -133,6 +153,12 @@ class Batch implements JsonSerializable
     public function setCurriculumCode($curriculumCode): void
     {
         $this->curriculumCode = $curriculumCode;
+    }
+
+
+    public function getDatabaseConnection(): ?mysqli
+    {
+        return $this->databaseConnection;
     }
 
 

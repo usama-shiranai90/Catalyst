@@ -3,7 +3,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\ServerPerformance.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
 
-
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
@@ -65,7 +64,9 @@ if (isset($_POST['creation']) and $_POST['creation']) { // for creation section.
 
     // for head of department
     if ($_POST['programCode'] == 'none' and $_POST['seasonCode'] == 'none' and $_POST['sectionCode'] == 'none') {
-        if ($instance->assignHeadOfDepartmentRole($email, $password, $facultyCode, $departmentCode) !== false)
+        $startDate = $_POST['startDate'];
+
+        if ($instance->assignHeadOfDepartmentRole($email, $password, $facultyCode, $departmentCode , $startDate) !== false)
             $resultBackServer = updateServer(1, true, "none");
         else
             $resultBackServer = updateServer(-1, false, "can not update profile");

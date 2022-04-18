@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
 $adminCode = $_SESSION['adminCode'];
-if ( is_array($_SESSION['departmentCode']) && sizeof($_SESSION['departmentCode']) > 1) {
+if (is_array($_SESSION['departmentCode']) && sizeof($_SESSION['departmentCode']) > 1) {
     $_SESSION['departmentName'] = $_SESSION['departmentCode'][1];
     $_SESSION['departmentCode'] = $_SESSION['departmentCode'][0];
 }
@@ -164,6 +164,17 @@ $personalDetails = $admin->getInstance();
                 </svg>
                 <label class="pl-3">Faculty Management</label>
             </div>
+
+            <!--            Faculty Management-->
+            <div class="navigationItem pr-5" id="programManagementID">
+                <svg width="25" height="25" viewBox="0 0 30 30"
+                     xmlns="http://www.w3.org/2000/svg" class="turnItWhite">
+                    <path d="M23.75 6.25V23.75H6.25V6.25H23.75ZM23.75 3.75H6.25C4.875 3.75 3.75 4.875 3.75 6.25V23.75C3.75 25.125 4.875 26.25 6.25 26.25H23.75C25.125 26.25 26.25 25.125 26.25 23.75V6.25C26.25 4.875 25.125 3.75 23.75 3.75Z"/>
+                    <path d="M17.5 21.25H8.75V18.75H17.5V21.25ZM21.25 16.25H8.75V13.75H21.25V16.25ZM21.25 11.25H8.75V8.75H21.25V11.25Z"/>
+                </svg>
+                <label class="pl-3">Program Management</label>
+            </div>
+
 
             <!--            Logout-->
             <div class="flex justify-center w-full bottom-3 absolute">

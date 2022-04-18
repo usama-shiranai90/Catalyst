@@ -12,21 +12,42 @@ class Program implements JsonSerializable
     public function __construct()
     {
         $this->databaseConnection = DatabaseSingleton:: getConnection();
-
     }
 
-    public function createProgram($curriculumCode, $departmentCode, $programName): bool
+    public function createProgram($departmentCode, $programName, $programShortName): bool
     {
         $sqlStatement = /** @lang text */
-            "insert into program(curriculumCode, departmentCode, programName) VALUE (\"$curriculumCode\" , \"$departmentCode\" ,\"$programName\");";
+            "INSERT INTO program(departmentCode, programName ,programShortName) VALUE ( \"$departmentCode\" ,\"$programName\" , \"$programShortName\" );";
 
         if ($this->databaseConnection->query($sqlStatement) === TRUE) {
             $this->programCode = ((int)$this->databaseConnection->insert_id);
             return true;
         } else
-//            echo "Error inserting marks for activity: " . $activityCode . "******" . $sql . "<br>" . $this->databaseConnection->error;
             return false;
+    }
 
+    public function deleteProgram($programCode): bool
+    {
+        $sql = /** @lang text */
+            "delete from program where programCode = \"$programCode\" ";
+        $result = $this->databaseConnection->query($sql);
+        if ($result === TRUE) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function modifyProgram($programCode , $programName , $programSName)
+    {
+        $sql = /** @lang text */
+            "UPDATE program p    SET p.programName = \"$programName\" , p.programShortName = \"$programSName\"
+            WHERE p.programCode = \"$programCode\"  ";
+
+        if ($this->databaseConnection->query($sql) === TRUE) {
+            return true;
+        } else
+            return false.$this->databaseConnection->error;
     }
 
     public function retrieveProgram($programCode): Program
@@ -64,7 +85,6 @@ class Program implements JsonSerializable
         $dbStatement = /** @lang text */
             "select * from program where departmentCode = \"$departmentCode\"";
         $result = $this->databaseConnection->query($dbStatement);
-
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
                 $program = new Program();
@@ -102,6 +122,57 @@ class Program implements JsonSerializable
 
         return null;
     }
+
+
+    public function retrieveEntireProgramList(): ?array
+    {
+        $sql = /** @lang text */
+            "select programCode, departmentCode, programName, programShortName from program;";
+
+        $result = $this->databaseConnection->query($sql);
+        $programList = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+
+                $temp = array(
+                    'programCode' => $row['programCode'],
+                    'departmentCode' => $row['departmentCode'],
+                    'programName' => $row['programName'],
+                    'programSN' => $row['programShortName']
+                );
+                array_push($programList, $temp);
+            }
+            return $programList;
+        } else
+            echo "Please Program List.";
+
+        return null;
+    }
+
+    public function retrieveEntireDepartmentList(): ?array
+    {
+        $sql = /** @lang text */
+            "select departmentCode, departmentName, departmentShortName from department;";
+
+        $result = $this->databaseConnection->query($sql);
+        $departmentList = array();
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    'departmentCode' => $row['departmentCode'],
+                    'departmentName' => $row['departmentName'],
+                    'departmentSN' => $row['departmentShortName']
+                );
+                array_push($departmentList, $temp);
+            }
+            return $departmentList;
+        } else
+            echo "Please Department List";
+
+        return null;
+    }
+
 
     public function getProgramName()
     {

@@ -123,7 +123,7 @@ window.onload = function () {
                         if (hasEmptyField) {
                             let email = $(staticHeadOfDepartmentEmailField).val();
                             let password = $(headOfDepartmentPasswordField).val();
-                            let startDate = $(headOfDepartmentStartDateField).val();
+                            let startDate = headOfDepartmentStartDateField.value;
                             callAjaxCreateNewRole(email, password, facultyCode, startDate);
                         }
 
@@ -195,16 +195,24 @@ window.onload = function () {
 
     /** function is used to change the view container according to selected tab. */
     function changeRoleViewContainer(selectedTab) {
+        console.log("Selected tab : ", selectedTab)
         $("input[type=radio]").each(function (index, currentNode) { // for all radio button available iterate.
             /*console.log($(roleCreationContainersFormList[i]).hasClass("hidden"))
             $(roleCreationContainersFormList[i]).removeClass("hidden")
             $(roleCreationContainersFormList[i]).fadeIn(3000).delay(100).fadeTo(1000, 0.4).delay(100).fadeTo(1000,1).delay(100).fadeOut(3000);
             $("#roleCreationPasswordGeneratorID").removeClass().addClass("absolute inset-x-2/3 m-8 flex items-center").css({bottom: '40%'});
             $("#roleCreationPasswordGeneratorID").removeClass().addClass("absolute inset-x-2/3 bottom-7 m-8 mb-2 flex items-center").css({bottom: '35.5%'});*/
+
+            console.log(index , currentNode);
+
             if (currentNode.id === selectedTab.id && $(roleCreationContainersFormList[index]).hasClass("hidden")) {
                 $(roleCreationContainersFormList[index]).fadeIn("fast").animate({}, "linear", function () {
                     $(this).fadeIn();
                 }).removeClass("hidden").removeAttr("style");
+
+                // $(roleCreationContainersFormList[index]).removeClass("hidden")
+
+
                 if (index === 0) {
                     $("#roleCreationHeader").html("HOD role creation")
                     $(hodFormContainer).children(":first-child").children(":last-child").append(appearGeneratePasswordBtn()); // to add password generate button.
@@ -608,6 +616,7 @@ window.onload = function () {
                 creation: true,
                 email: email,
                 password: password,
+                startDate: startDate, // 2022-04-13 format must be
                 facultyCode: facultyCode,
                 programCode: programCode,
                 seasonCode: seasonCode,

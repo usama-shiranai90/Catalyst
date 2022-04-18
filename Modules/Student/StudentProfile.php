@@ -16,6 +16,9 @@ echo json_encode($personalDetails) . "<br><br>";
 
 $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
 
+$curriculumPLO = new PLO();
+$programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($programCode);
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -223,24 +226,24 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
                             </div>
                         </div>
 
-                        <div class="flex flex-row w-full bg-white border-solid">
+
+                        <?php
+
+                        $output = '';
+                        foreach ($programLearningOutcomeList as $key => $plo) {
+                            $output .= sprintf('
+                        <div class="flex flex-row w-full bg-white border-solid border-b-2">
                             <div class="text-md text-gray-500 text-left font-semibold border-0 w-48 border-r-2">
-                                <span class="cprofile-cell-data">PLO-1</span>
+                                <span class="cprofile-cell-data">%s</span>
                             </div>
                             <div class="col-span-1 w-10/12 border-0 p-2">
-                           <span class="w-full font-normal text-sm text-justify text-gray-900"
-                                 id="smpStudentEmailId-view">This forces the writer to use creativity to complete one of three common writing challenges. The writer can use the paragraph as the first one of a short story
-                           This forces the writer to use creativity to complete one of three common writing challenges. The writer can use the paragraph as the first one of a short story
-                           </span>
+                           <span class="w-full font-normal text-sm text-justify text-gray-900">%s</span>
                             </div>
-                        </div>
+                        </div>', $plo['ploName'], $plo['ploDescription']);
+                        }
+                        print $output;
+                        ?>
 
-
-                        <!--<div class="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 border-solid">
-                            <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Home Address:</h4>
-                            <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
-                                  id="otherReferenceID-view">what</span>
-                        </div>-->
                     </div>
             </section>
 

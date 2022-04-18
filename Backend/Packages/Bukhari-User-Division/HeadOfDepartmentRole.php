@@ -12,29 +12,65 @@ class HeadOfDepartmentRole extends UserRole
         return $this;
     }
 
-    public function login($email, $password)
+    public function login($email, $password): bool
     {
+        /** CASES :
+         * when the password is same for Same department Then multiple times it will execute.
+         * 1. if we provide (resignationDate <=> NULL) it will only select user having empty/null resignationDate
+         * 2. If we provide Not .... the opposite will happen.
+         */
+
         $this->email = $email;
         $this->password = $password;
-        $sql = /** @lang text */
-            "select facultyCode, d.departmentCode ,departmentName,departmentShortName , officialEmail, password from headofdepartment join department d on d.departmentCode = headofdepartment.departmentCode
-             where officialEmail = \"$this->email\" and password = \"$this->password\" ; ";
+        $sql = /** @lang text  and  (resignationDate <=> NULL); */
+            "select facultyCode, d.departmentCode ,departmentName,departmentShortName , officialEmail , resignationDate, password from headofdepartment join department d on d.departmentCode = headofdepartment.departmentCode
+             where officialEmail = \"$this->email\" and password = \"$this->password\"";
 
         $authenticationResult = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($authenticationResult) == 1) {
             while ($row = $authenticationResult->fetch_assoc()) {
+//                $this->departmentName = checkDepartmentAbbreviation($row["departmentName"]);
                 $this->adminCode = $row["facultyCode"];
                 $this->departmentCode = $row["departmentCode"];
-//                $this->departmentName = checkDepartmentAbbreviation($row["departmentName"]);
                 $this->departmentName = $row['departmentShortName'];
+                $facultyCode = $row['facultyCode'];
 
+                // check if the current login user has resignation/ start date set.
+                if (strlen($row['resignationDate']) > 0) { // date has been set .
 
+                    $resignationDate = $row['resignationDate'];
+                    $todayDate = date('Y-m-d');
+                    if ($resignationDate >= $todayDate) { // if the current user date matches then remove the value of resignation and delete old HOD account.
+                        $isDeleted = $this->deletePreviousAssignHeadOfDepartment($this->departmentCode);
+                        if ($isDeleted)
+                            $this->moveResignationDateFromNewHOD($this->departmentCode, $facultyCode);
+                    } else { // not allow the current user to login as its date has not reached.
+                        return false;   // later on pass error message.
+                    }
+                }
                 $this->setUserDataInstance(/** @lang text */ "select * from faculty where facultyCode = '$this->adminCode'", $this->adminCode);
                 $this->setNavigationUrl("../HeadOfDepartment/hodPanel.php");
                 return true;
             }
         }
         return false;
+    }
+
+    function deletePreviousAssignHeadOfDepartment($departmentCode): bool
+    {
+        $deleteSqlStatement = /** @lang text */
+            "delete from headofdepartment where departmentCode = \" $departmentCode \" and resignationDate <=> NULL;";
+        $resultDeletion = $this->databaseConnection->query($deleteSqlStatement);
+        if ($resultDeletion === TRUE)
+            return true;
+        return false;
+    }
+
+    function moveResignationDateFromNewHOD($departmentCode, $facultyCode): bool
+    {
+        $sqlStatement = /** @lang text */
+            "update headofdepartment set resignationDate = null where departmentCode = \"$departmentCode\" and facultyCode = \"$facultyCode\" ;  ";
+        return $this->databaseConnection->query($sqlStatement) === TRUE;
     }
 
     public function getAdminCode()
@@ -75,26 +111,29 @@ class HeadOfDepartmentRole extends UserRole
     }
 
 
-    public function assignHeadOfDepartmentRole($emailList, $password, $facultyCode, $departmentCode): bool
+    public function assignHeadOfDepartmentRole($email, $password, $facultyCode, $departmentCode ,$startDate): bool
     {
         $flag = false;
-        $sql = /** @lang text */
-            "select facultyCode, departmentCode, officialEmail, password from headofdepartment where departmentCode  = \"$departmentCode\"; ";
+        /** Old approach, first search department multiple times. then update. */
+        /*$sql = "select facultyCode, departmentCode, officialEmail, password from headofdepartment where departmentCode  = \"$departmentCode\"; ";
         $authenticationResult = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($authenticationResult) > 0) {
-
             foreach ($emailList as $email) {
-                $secondSql = /** @lang text */
-                    "UPDATE headofdepartment  SET facultyCode =  \"$facultyCode\" , officialEmail = \"$email\", password = \"$password\"
-                     WHERE departmentCode = \"$departmentCode\";  ";
-                if ($this->databaseConnection->query($secondSql) === TRUE) {
+                $secondSql = "UPDATE headofdepartment  SET facultyCode =  \"$facultyCode\" , officialEmail = \"$email\", password = \"$password\"
+                    WHERE departmentCode = \"$departmentCode\";  ";
+                    if ($this->databaseConnection->query($secondSql) === TRUE) {
                     $flag = true;
                 } else {
                     $flag = false;
                 }
             }
         }
-        return $flag;
+        */
+
+        $sql = /** @lang text */
+            "insert into headofdepartment(facultyCode, departmentCode, officialEmail, password, resignationDate)
+            VALUES ( \"$facultyCode\" , \"$departmentCode\" , \"$email\" , \"$password\" , \"$startDate\" );";
+        return ($this->databaseConnection->query($sql) === TRUE);
     }
 
 

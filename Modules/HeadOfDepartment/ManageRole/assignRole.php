@@ -2,10 +2,16 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
-$admin = unserialize($_SESSION['adminInstance']);
+$adminInstance = $_SESSION['adminInstance'];
+$admin = unserialize($adminInstance);
 $personalDetails = $admin->getInstance();
+
+//print json_encode($personalDetails);
+
 $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];
+
+
 $faculty = new FacultyRole();
 $facultyObjectList = $faculty->retrieveFacultyListDepartment($departmentCode);
 
@@ -23,6 +29,9 @@ foreach ($facultyObjectList as $faculty) {
         'dc' => $faculty->getInstance()['departmentCode'],
     );
 }
+print json_encode($facultyList);
+
+//print ($personalDetails['facultyCode']);
 
 setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
 ?>
@@ -111,8 +120,9 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
 
                                         <?php
                                         $designationList = array();
+
                                         foreach ($facultyList as $index => $faculty) {
-                                            $currentDesignation = $faculty['designation'];
+                                            $currentDesignation = $faculty['designation']; // mama
                                             if (!in_array($currentDesignation, $designationList)) {
                                                 print sprintf("<option  value=\"%s\" >%s</option>",
                                                     $faculty['designation'], $faculty['designation']);
@@ -132,17 +142,21 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                             id="programIDSelect">
                                         <option value="" hidden=""></option>
                                         <option value="all" selected>All</option>
+
                                         <?php
                                         $program = new Program();
                                         $allocatedProgramList = array();
                                         $options = '';
-                                        foreach ($program->retrieveProgramList($departmentCode) as $program) {
+                                        $getProgramList = $program->retrieveProgramList($departmentCode);
+
+                                        foreach ($getProgramList as $program) {
                                             $options .= sprintf("<option  value=\"%s\" >%s</option>",
                                                 bin2hex($program->getProgramCode()), $program->getProgramName());
                                             array_push($allocatedProgramList, $program->getProgramCode());
                                         }
-                                        echo $options;
+                                        print $options;
                                         ?>
+
                                     </select>
                                     <label class="select-label top-1/4 sm:top-3">Program</label>
                                 </div>
@@ -233,7 +247,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                                     d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
                                             </svg>
                                                  <div class="w-32 h-full opacity-0 hover:opacity-100 duration-300 z-10
-                                                  flex justify-center items-center capitalize text-xs text-black font-semibold">Generate password</div>
+                                                  flex justify-center items-center capitalize text-xs text-black font-semibold">Dafa ho</div>
                                             </span>
                                         </div>
 
@@ -248,7 +262,9 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                         <label class="textField-label">Start Date</label>
                                     </div>
                                 </div>
+
                             </form>
+
 
                             <form method="post" class="hidden flex flex-col overflow-hidden" id="pmRoleCreationFormID">
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
@@ -342,6 +358,8 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
     var fetchedUser = getCookieValue('loggedUser')
 
     let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')
+
+
     let facultyInstanceList = <?php echo json_encode($facultyList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
     let programList = <?php echo json_encode($allocatedProgramList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
     console.log("User ID : ", userId, "\nFaculty Instance : ", facultyInstanceList, "\nProgram Code List : ", programList)
