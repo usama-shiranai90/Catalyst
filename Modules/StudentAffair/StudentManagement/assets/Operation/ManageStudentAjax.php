@@ -52,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $isSectionCreated = $section->createNewSection($semesterCode, $key);
                             if ($isSectionCreated) {
                                 $sectionCode = $section->getSectionCode();
-
                                 foreach ($sectionList as $k => $v) {
                                     $student = new StudentRole();
                                     $registrationNumber = $v['_reg'];
@@ -102,10 +101,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             die(json_encode($resultBackServer));
         }
+    } else if (isset($_POST['manipulateData']) and $_POST['manipulateData']) {
+        if (isset($_POST['sectionCode'])) {
+            $_POST['newStudentList'] = $_POST['newStudentList'] ?? null;
+            $_POST['updateStudentList'] = $_POST['updateStudentList'] ?? null;
+            $_POST['deleteStudentList'] = $_POST['deleteStudentList'] ?? null;
+
+            $sectionCode = $_POST['sectionCode'];
+            $programName = $_POST['programName'];
+            $newStudentList = $_POST['newStudentList'];
+            $updateStudentList = $_POST['updateStudentList'];
+            $deleteStudentList = $_POST['deleteStudentList'];
+
+//            print json_encode($newStudentList) . "  " . is_array($newStudentList) . "<br>\n";
+//            print json_encode($updateStudentList) . "  " . is_array($updateStudentList) . "<br>\n";
+//            print json_encode($deleteStudentList) . "  " . is_array($deleteStudentList) . "<br>\n";
+
+            /** Perform Insertion First before Deletion and Update */
+            if ($_POST['hasAddition']) {
+                $duplicateList = array();
+                $student = new StudentRole();
+                foreach ($newStudentList as $key => $value) {
+                    foreach ($value as $k => $v) {
+                        $registrationNumber = $v['_reg'];
+//                    $student->createStudentData($sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode , $duplicateList);
+                        $student->checkDuplication($registrationNumber, $duplicateList);
+                    }
+                }
+                if (empty($duplicateList) and count($duplicateList) === 0) { // $duplicateList is empty
+                    foreach ($newStudentList as $key => $value) {
+                        foreach ($value as $k => $v) {
+                            $registrationNumber = $v['_reg'];
+                            $registrationNumber = $v['_reg'];
+                            $name = $v['_name'];
+                            $fatherName = $v['_fname'];
+                            $contact = $v['_contact'];
+                            $bloodGroup = $v['_group'];
+                            $address = $v['_address'];
+                            $dob = $v['_dob'];
+                            $officialMail = $v['_oMail'];
+                            $personalMail = $v['_pMail'];
+                            preg_match_all("/\d+/", $registrationNumber, $batchMatch);
+                            $authenticateCode = $batchMatch[0][1] . "-" . $programName . "-" . substr(preg_replace("/[^0-9]/", "", $registrationNumber), 2);
+                            $student->createStudentData($sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode);
+                        }
+                    }
+                } else {
+                    $resultBackServer = updateServer("-99", $duplicateList, "ERROR");
+                    die(json_encode($resultBackServer));
+                }
+            } else {
+                $resultBackServer = updateServer("-1", "Can not perform New Insertions", "ERROR");
+                die(json_encode($resultBackServer));
+            }
+
+            if ($_POST['hasDeletion']) {
+                $failedDeletion = array();
+                if (is_array($deleteStudentList) == 1 and $deleteStudentList != null) {
+                    $student = new StudentRole();
+                    foreach ($deleteStudentList as $key => $value)
+                        if (!$student->deleteStudentRecord($value))
+                            array_push($failedDeletion, $value);
+                }
+            } else {
+                $resultBackServer = updateServer("-1", "Can not perform deletion", "ERROR");
+                die(json_encode($resultBackServer));
+            }
+
+            if ($_POST['hasModification']) {
+                $failedToModified = array();
+                if (is_array($updateStudentList) == 1 and $updateStudentList != null) {
+                    $student = new StudentRole();
+                    foreach ($newStudentList as $key => $value) {
+                        foreach ($value as $k => $v) {
+                            $registrationNumber = $v['_reg'];
+                            $student->checkDuplication($registrationNumber, $duplicateList);
+                        }
+                    }
+
+                    foreach ($updateStudentList as $key => $value)
+                        if (!$student->deleteStudentRecord($value))
+                            array_push($failedDeletion, $value);
+                }
+
+            } else {
+                $resultBackServer = updateServer("-1", "Can not perform edition", "ERROR");
+                die(json_encode($resultBackServer));
+            }
+
+
+        } else {
+            $resultBackServer = updateServer("-1", "No Section Code found in post", "ERROR");
+        }
+        die(json_encode($resultBackServer));
     }
 
 }
-
-
 ?>
 

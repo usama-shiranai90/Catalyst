@@ -165,7 +165,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', 'img[id^="addMoreBtn-"]', function (e) {
-        deleteStudentTableRecord(this, false);
+        addStudentTableRecord(this, false);
     });
 
     const uploadFileProcess = () => {
@@ -216,7 +216,7 @@ $(document).ready(function () {
         let hasDuplication = checkDuplication(generatedTableContainer);
 
         if (isCorrectFormat && !hasDuplication) { // working fine
-            let studentSectionWiseList = passIntoStudentList(sectionNameList);
+            let studentSectionWiseList = passIntoStudentList(generatedTableContainer, sectionNameList, true, 0);
             callAjaxForCreation(departmentCode, programCode, programName, seasonFullName, seasonName, seasonShortName, studentSectionWiseList)
 
         } else if (!isCorrectFormat) {
@@ -235,35 +235,6 @@ $(document).ready(function () {
     })
 });
 
-
-function passIntoStudentList(sectionNameList) {
-    let studentSectionWiseList = {};
-    console.log("sectionNameList ", sectionNameList)
-    $(generatedTableContainer).children("table").each(function (index, value) {
-        studentSectionWiseList[sectionNameList[index]] = []; // 0 []
-        let temp = new Array();
-        $(value).children("tbody").children("tr").each(function (tIndex, tValue) {
-            let studentObject = new Student();
-            studentObject.reg = getTableRowNthChild(tValue, 1);
-            studentObject.name = getTableRowNthChild(tValue, 2);
-            studentObject.fname = getTableRowNthChild(tValue, 3);
-            studentObject.contact = getTableRowNthChild(tValue, 4);
-            studentObject.group = getTableRowNthChild(tValue, 5);
-            studentObject.address = getTableRowNthChild(tValue, 6);
-            studentObject.dob = getTableRowNthChild(tValue, 7);
-            studentObject.oMail = getTableRowNthChild(tValue, 8);
-            studentObject.pMail = getTableRowNthChild(tValue, 9);
-            temp.push(studentObject);
-        });
-        studentSectionWiseList[sectionNameList[index]] = temp;
-    });
-
-    return (studentSectionWiseList)
-}
-
-function getTableRowNthChild(currentTableRowData, i) {
-    return $(currentTableRowData).children(`:nth-child(${i})`).text().replace(/\s\s+/g, '');
-}
 
 /** Sample working of Different Util sheet import design. */
 let tableHeaderName = [];
@@ -407,101 +378,6 @@ function sheetToHtml(work_book, sheet_name) {
     $("#generatedTableContainer table tbody tr td").addClass("border-dashed border-t border-gray-200 text-sm");
     $("#generatedTableContainer table tbody tr td span").addClass("text-gray-700  flex justify-center items-center text-sm");
 
-}
-
-class Student {
-    /* constructor(reg, name, fname, contact, group, address, dob, oMail, pMail) {
-         this.sRegNo = reg;
-         this.fatherName = fname;
-         this.contactNo = contact;
-         this.bGroup = group;
-         this.offEmail = oMail;
-         this.personalEmail = pMail;
-         this._reg = reg;
-         this._name = name;
-         this._fname = fname;
-         this._contact = contact;
-         this._group = group;
-         this._address = address;
-         this._dob = dob;
-         this._oMail = oMail;
-         this._pMail = pMail;
-     }*/
-
-    constructor() {
-    }
-
-    get reg() {
-        return this._reg;
-    }
-
-    set reg(value) {
-        this._reg = value;
-    }
-
-    get name() {
-        return this._name;
-    }
-
-    set name(value) {
-        this._name = value;
-    }
-
-    get fname() {
-        return this._fname;
-    }
-
-    set fname(value) {
-        this._fname = value;
-    }
-
-    get contact() {
-        return this._contact;
-    }
-
-    set contact(value) {
-        this._contact = value;
-    }
-
-    get group() {
-        return this._group;
-    }
-
-    set group(value) {
-        this._group = value;
-    }
-
-    get address() {
-        return this._address;
-    }
-
-    set address(value) {
-        this._address = value;
-    }
-
-    get dob() {
-        return this._dob;
-    }
-
-    set dob(value) {
-        this._dob = value;
-    }
-
-    get oMail() {
-        return this._oMail;
-    }
-
-    set oMail(value) {
-        this._oMail = value;
-    }
-
-    get pMail() {
-        return this._pMail;
-    }
-
-    set pMail(value) {
-        this._pMail = value;
-    }
 }
 
 

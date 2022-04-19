@@ -17,7 +17,7 @@ function createAddMoreBtn(value) {
             </td>`
 }
 
-function deleteStudentTableRecord(selectedTag, hasKey = false) {
+function addStudentTableRecord(selectedTag, unqStdReg, hasKey = false) {
     let $table = $(selectedTag).closest('table');
     let $tableBody = $(selectedTag).closest('table').children(':nth-child(2)');
 
@@ -27,17 +27,16 @@ function deleteStudentTableRecord(selectedTag, hasKey = false) {
     if (size % perPage === 0) {
         console.log("remove old and create new pagination")
         $table.next().remove(); // Deleting The Following Pagination...
-        $tableBody.append(sampleNewTableRow(false));
+        $tableBody.append(sampleNewTableRow(unqStdReg));
         createPaginationBar($table.attr("id"));
     } else
-        $tableBody.append(sampleNewTableRow(true));
+        $tableBody.append(sampleNewTableRow(unqStdReg));
 }
 
-function sampleNewTableRow(toDisplay) {
-    // ${ (toDisplay ? 'style="display: none;"' : "")  }
-    return `<tr >
+function sampleNewTableRow(unqStdReg) {
+    return `<tr>
                     <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center"></span>
+                                <span class="text-gray-700 flex justify-center items-center">${(unqStdReg === -1 ? '' : unqStdReg)}</span>
                             </td>
                     <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" onkeydown="return IsNonNumeric(event)" contenteditable="true">
                                 <span class="text-gray-700 flex justify-center items-center"></span>
@@ -147,6 +146,151 @@ function getRelatedKeyDownForTabularRow(index) {
     } else if (index === 4) {
         return 'onkeydown="return isContactFormat(event)"';
     }
+}
+
+
+class Student {
+    constructor() {
+    }
+
+    get reg() {
+        return this._reg;
+    }
+
+    set reg(value) {
+        this._reg = value;
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    set name(value) {
+        this._name = value;
+    }
+
+    get fname() {
+        return this._fname;
+    }
+
+    set fname(value) {
+        this._fname = value;
+    }
+
+    get contact() {
+        return this._contact;
+    }
+
+    set contact(value) {
+        this._contact = value;
+    }
+
+    get group() {
+        return this._group;
+    }
+
+    set group(value) {
+        this._group = value;
+    }
+
+    get address() {
+        return this._address;
+    }
+
+    set address(value) {
+        this._address = value;
+    }
+
+    get dob() {
+        return this._dob;
+    }
+
+    set dob(value) {
+        this._dob = value;
+    }
+
+    get oMail() {
+        return this._oMail;
+    }
+
+    set oMail(value) {
+        this._oMail = value;
+    }
+
+    get pMail() {
+        return this._pMail;
+    }
+
+    set pMail(value) {
+        this._pMail = value;
+    }
+}
+
+function passIntoStudentList(generatedTableContainer, sectionNameList, isImported, checker, extraTarget = '', extraTargetSecond = '') {
+    let studentSectionWiseList = {};
+
+    if (isImported && checker === 0) {
+        $(generatedTableContainer).children("table").each(function (index, value) {
+            studentSectionWiseList[sectionNameList[index]] = []; // 0 []
+            studentSectionWiseList[sectionNameList[index]] = pushIntoStudentObject(isImported, index, value);
+        });
+    } else if (!isImported && checker === 1) {
+        $("tbody").children("tr").each(function (index, value) {
+            let getData = pushIntoStudentObject(isImported, index, value);
+            if (getData !== undefined)
+                studentSectionWiseList[index] = getData;
+        })
+
+    } else {
+        let counter = 0;
+        studentSectionWiseList = [];
+        $("tbody").children("tr").each(function (index, value) {
+            let getData = pushIntoStudentObjectModified(isImported, value, extraTarget);
+            if (getData !== undefined)
+                studentSectionWiseList[extraTargetSecond[counter++] + ''] = getData;
+        })
+    }
+    return (studentSectionWiseList)
+}
+
+function pushIntoStudentObject(isImported, index, value) {
+    let temp;
+    if (isImported || ($(value).attr('data-record-target') === undefined && !isImported)) {
+        temp = [];
+        let student = new Student();
+        student.reg = getTableRowNthChild(value, 1);
+        student.name = getTableRowNthChild(value, 2);
+        student.fname = getTableRowNthChild(value, 3);
+        student.contact = getTableRowNthChild(value, 4);
+        student.group = getTableRowNthChild(value, 5);
+        student.address = getTableRowNthChild(value, 6);
+        student.dob = getTableRowNthChild(value, 7);
+        student.oMail = getTableRowNthChild(value, 8);
+        student.pMail = getTableRowNthChild(value, 9);
+        temp.push(student);
+    }
+    return temp;
+}
+
+function pushIntoStudentObjectModified(isImported, value, extraTarget) {
+    let student;
+    if (($(value).attr('data-record-target') !== undefined && extraTarget.includes($(value).attr('data-record-target')) && !isImported)) {
+        student = new Student();
+        student.reg = getTableRowNthChild(value, 1);
+        student.name = getTableRowNthChild(value, 2);
+        student.fname = getTableRowNthChild(value, 3);
+        student.contact = getTableRowNthChild(value, 4);
+        student.group = getTableRowNthChild(value, 5);
+        student.address = getTableRowNthChild(value, 6);
+        student.dob = getTableRowNthChild(value, 7);
+        student.oMail = getTableRowNthChild(value, 8);
+        student.pMail = getTableRowNthChild(value, 9);
+    }
+    return student;
+}
+
+function getTableRowNthChild(currentTableRowData, i) {
+    return $(currentTableRowData).children(`:nth-child(${i})`).text().replace(/\s\s+/g, '');
 }
 
 // Redundant /  Tester Function for now..

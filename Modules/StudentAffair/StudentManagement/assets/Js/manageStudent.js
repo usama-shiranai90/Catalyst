@@ -1,3 +1,8 @@
+let updateStudentRecordList = [];
+let updateStudentTargetKList = [];
+let deleteStudentRecordList = [];
+let newlyAddedStudentRecordList = [];
+
 /** Fields list.  */
 const departmentField = document.getElementById('viewStudentDepartmentSelectId');
 const programField = document.getElementById('viewStudentProgramSelectId');
@@ -47,7 +52,7 @@ $(document).ready(function () {
         if (containsEmptyField([departmentField, programField, batchField])) {
             let sectionList = callAjaxForSectionDropDown(batchField.value)
             console.log(sectionList)
-            if (sectionList[0] !== 0){
+            if (sectionList[0] !== 0) {
                 let selectedSelection = this;
                 if (!(selectedSelection.value.length !== 0 && (programList !== null && batchList != null) &&
                     (departmentField.value.length !== 0 && programField.value.length !== 0 && batchField.value.length !== 0))) {
@@ -71,22 +76,86 @@ $(document).ready(function () {
     });
 
     $(document).on('click', 'img[id="addMoreBtn-1"]', function (e) {
-        console.log(this);
-        deleteStudentTableRecord(this, true);
+        let unqStdReg = -1;
+        $('tbody').children(':last-child').each(function () {
+            const findElement = $(this).find(':first-child')[0];
+            let innerText;
+            let lastThreeDigit;
+            if (findElement === undefined)
+                return
+            else {
+                innerText = findElement.innerText.replace(/\s\s+/g, '');
+                lastThreeDigit = ('000' + (parseInt(innerText.match("(.{3})\s*$", "i")[0]) + 1)).slice(-3);
+                unqStdReg = innerText.slice(0, -3) + lastThreeDigit;
+            }
+        });
+        addStudentTableRecord(this, unqStdReg, true);
     });
 
+    // delete record for newly inserted record.
     $(document).on('click', 'img[data-std-delete="remove"]', function (e) {
         e.stopPropagation();
         $(this).closest("tr").remove();
     });
 
+    // delete for data based.
+    let deletionReferenceElement;
+    $(document).on('click', 'button[data-std-remove="remove"]', function (e) {
+        e.stopPropagation();
+        deletionReferenceElement = this
+        $("body").append(alertConfirmationMessage("Delete Program", "The Following Student :<br>",
+            $(this).closest("tr").children(".f-name-representation").children(":first-child").text(), "STUDENT-NAME", " will be deleted and can not be recovered!"));
+        $("main").addClass("blur-filter");
+    });
+
+    $(document).on('click', "#alertDeleteBtnId ,#alertCancelBtnId ", function (event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        $("main").removeClass("blur-filter");
+        $("#alertMessageContainer").remove();
+        if (this.id === 'alertDeleteBtnId') {
+            let extraID = $(deletionReferenceElement).closest("tr").attr("data-record-target");
+            let id = $(deletionReferenceElement).closest("tr").children(":first").text().replace(/\s\s+/g, '');
+            deleteStudentRecordList.push(id);
+            $(deletionReferenceElement).closest('tr').remove();
+        }
+    });
+
+
+    $(document).on('click', 'button[data-std-edit="remove"]', function (e) {
+        $(this).addClass("hidden");
+        updateStudentTargetKList.push($(this).closest("tr").children(":first").text().replace(/\s\s+/g, ''));
+        updateStudentRecordList.push($(this).closest("tr").attr('data-record-target'));
+
+        $(this).closest('tr').removeClass("hover:bg-catalystLight-89").addClass("hover:bg-catalystLight-f1");
+        let size = $(this).closest('tr').children().length;
+        $(this).closest('tr').children().each(function (index, value) {
+            if (index > 0 && index < size - 1)
+                $(value).attr("contenteditable", true).addClass("italic")
+        });
+    });
+
     $(document).on('input', 'tr > td', function (e) {
         $(this).removeClass('bg-red-300 text-white');
+    });
+
+
+    $(updateStudentRecordBtn).on('click', function (e) {
+        newlyAddedStudentRecordList = Object.values(passIntoStudentList(null, null, false, 1));
+        // updateStudentRecordList = Object.entries(passIntoStudentList(null, null, false, 2, updateStudentRecordList , updateStudentTargetKList));
+        updateStudentRecordList = (passIntoStudentList(null, null, false, 2, updateStudentRecordList , updateStudentTargetKList));
+
+        console.log(updateStudentRecordList)
+        console.log(deleteStudentRecordList)
+        console.log(newlyAddedStudentRecordList)
+
+
+        let programName = $("#viewStudentProgramSelectId option:selected").text().replace(/\s\s+/g, '');
+        let sectionCode = sectionField.value
+        // callAjaxForManipulation(programName, sectionCode);
+
     })
-
 });
-
-
 
 
 function refreshTableContentStudent(studentRecord) {
@@ -109,10 +178,10 @@ function refreshTableContentStudent(studentRecord) {
     let tableID = "student-table-" + 1;
     table.setAttribute("id", tableID);
 
-    console.log("for table header file :")
+    // console.log("for table header file :")
     let maxLengthPerRow = Object.entries(studentRecord[0]).length - 2;
     Object.entries(studentRecord[0]).forEach(function (value, index) {
-        console.log(index, value)
+        // console.log(index, value)
         if (index < 9) {
             $(tableHeaderRow).append(`<th class="capitalize px-4 py-3  tracking-wider font-medium text-sm">
                                 ${value[0]}
@@ -191,7 +260,6 @@ function refreshTableContentStudent(studentRecord) {
 
     /** pagination Design */
     createPaginationBar(tableID);
-
 }
 
 
@@ -243,6 +311,51 @@ function callAjaxForTableUpdation() {
             }
         }
     });
+
+
+}
+
+
+function callAjaxForManipulation(programName, sectionCode) {
+    $.ajax({
+        type: "POST",
+        async: false,
+        url: "assets/Operation/ManageStudentAjax.php",
+        data: {
+            manipulateData: true,
+            newStudentList: newlyAddedStudentRecordList,
+            updateStudentList: updateStudentRecordList,
+            deleteStudentList: deleteStudentRecordList,
+            sectionCode: sectionCode,
+            programName: programName,
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+        },
+        success: function (serverResponse, status) {
+            let returnValue = JSON.parse(serverResponse);
+        },
+        complete: function (response) {
+            let responseText = JSON.parse(response.responseText)
+
+            if (responseText.status == -99) {
+                let duplicateList = responseText.message;
+                console.log(duplicateList);
+                $('body').append(popupErrorNotifier("Duplication Founded", "The Following List Of Students already exist for different sections.<br>" + Object.values(duplicateList)));
+                $("#errorMessageDiv").toggle("hidden").animate(
+                    {right: 0,}, 15000, function () {
+                        $(this).delay(10000).fadeOut().remove();
+                    });
+            }
+
+            if (responseText.status !== -1 || responseText.status !== 0 || responseText.status != -99) {
+                let studentRecord = responseText.message;
+            }
+
+        }
+    });
+
+
 }
 
 

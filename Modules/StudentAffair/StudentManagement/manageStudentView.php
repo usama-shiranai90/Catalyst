@@ -13,6 +13,17 @@ $programList = $program->retrieveEntireProgramList();
 
 $batchList = $batch->retrieveEntireBatchList();
 
+/*
+ *  TESTING FOR DUPLICATION FOR DIFFERENT SECTIONS.
+ *
+ * $studentList = $section->retrieveStudentList(82);
+print $studentList[0]['studentReg'];
+$duplicateList = array();
+$student = new StudentRole();
+$student->createStudentData(82, 'FUI/FURC-SP-15-BCSE-066', $studentList[0]['name'], $studentList[0]['fatherName'], $studentList[0]['contact'],
+    $studentList[0]['bloodGroup'], $studentList[0]['address'], $studentList[0]['dob'], $studentList[0]['officialEmail'], $studentList[0]['personalEmail'], '324324', $duplicateList);
+print "wtf :" . json_encode($duplicateList);*/
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['fetchSections'])) {
     if (isset($_POST['batchCode'])) {
         $batchCode = $_POST['batchCode'];
@@ -137,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['fetchSections'])) {
             </div>
 
             <div id="uploadedTableContainer"
-                 class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 h-1/2 weeklytopics-primary-border-n">
+                 class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 weeklytopics-primary-border-n">
 
                 <div class="db-table-header-topic items-center border-b-0 rounded-b-none pb-0"
                      style="background-color: #F4F8F9">
