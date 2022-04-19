@@ -124,6 +124,7 @@ foreach ($seasonList as $sName)
 <body>
 <div class="w-full min-h-full" style="background-color: #ECECF3">
 
+
     <main class="main-content-alignment min-h-full">
         <section>
             <div class="flex flex-col px-10 py-2 my-5 rounded-lg shadow bg-white">
@@ -134,11 +135,11 @@ foreach ($seasonList as $sName)
                 <div class="inline-flex rounded" style="background-color: #F4F8F9">
                     <div class="flex flex-grow justify-end items-center pt-3 pb-2 text-white text-base font-medium ml-20 w-3/4">
                         <div class="textField-label-content w-3/12">
-                            <label for="importCourseOfferingDepartmentSelectId"></label>
-                            <select class="select" name="importCourseOfferingDepartmentSelect"
+                            <label for="importStudentDepartmentSelectId"></label>
+                            <select class="select" name="importStudentDepartmentSelect"
                                     onclick="this.setAttribute('value', this.value);"
                                     onchange="this.setAttribute('value', this.value);" value="xxxx"
-                                    id="importCourseOfferingDepartmentSelectId">
+                                    id="importStudentDepartmentSelectId">
                                 <option value="" hidden=""></option>
                                 <option value="xxx" selected>xxx</option>
 
@@ -157,11 +158,11 @@ foreach ($seasonList as $sName)
                         </div>
 
                         <div class="textField-label-content w-3/12">
-                            <label for="importCourseOfferingProgramSelectId"></label>
-                            <select class="select" name="importCourseOfferingProgramSelect"
+                            <label for="importStudentProgramSelectId"></label>
+                            <select class="select" name="importStudentProgramSelect"
                                     onclick="this.setAttribute('value', this.value);"
                                     onchange="this.setAttribute('value', this.value);" value="xxx"
-                                    id="importCourseOfferingProgramSelectId">
+                                    id="importStudentProgramSelectId">
                                 <option value="" hidden=""></option>
                                 <option value="xxx" selected>xxx</option>
                             </select>
@@ -169,11 +170,11 @@ foreach ($seasonList as $sName)
                             <label class="select-label top-1/4 sm:top-3">Program</label>
                         </div>
                         <div class="textField-label-content w-3/12">
-                            <label for="importCourseOfferingSeasonSelectId"></label>
-                            <select class="select" name="importCourseOfferingSeasonSelect"
+                            <label for="importStudentSeasonSelectId"></label>
+                            <select class="select" name="importStudentSeasonSelect"
                                     onclick="this.setAttribute('value', this.value);"
                                     onchange="this.setAttribute('value', this.value);" value="xxx"
-                                    id="importCourseOfferingSeasonSelectId">
+                                    id="importStudentSeasonSelectId">
                                 <option value="" hidden=""></option>
                                 <option value="xxx" selected>xxx</option>
                                 <?php
@@ -254,7 +255,6 @@ foreach ($seasonList as $sName)
                     </label>
                 </form>
 
-
                 <div id="generatedTableContainer"
                      class="bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0 transform transition ease-out duration-700">
 
@@ -282,4 +282,5 @@ foreach ($seasonList as $sName)
 </script>
 
 <script src="assets/Js/FileUpload.js"></script>
+<script src="assets/Js/manager.js"></script>
 </html>

@@ -29,12 +29,13 @@ window.onload = function (e) {
             } else
                 settingID = value.id;
 
-            // console.log(settingID);
-
             selectedAssessmentValue = value.innerText;
+
             let studentTableBody = document.getElementById('studentTableBodyID');
             studentTableBody.innerHTML = '';
             $(studentTableBody).css({display: 'none'});
+
+            console.log(settingID);
 
             $.ajax({
                 type: "POST",
@@ -104,53 +105,6 @@ window.onload = function (e) {
                             });
                         });
                     }
-                    /*if (Array.isArray(allStudents)) {
-                        let studentRegNo = allStudents[0]
-                        let description = allStudents[1]
-                        let total = allStudents[2]
-                        let studentAchievement = allStudents[3]
-                        let rowID = ""
-
-
-                        for (let i = 0; i < studentRegNo.length; i++) {
-                            rowID = "studentRow-" + (i + 1);
-                            let tableRow = document.createElement('tr');
-                            tableRow.setAttribute("class", "text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight");
-                            tableRow.setAttribute("id", rowID);
-                            for (let j = 0; j < 5; j++) {
-                                let td = document.createElement('td');
-                                td.setAttribute("class", "px-1 py-1") // py-3
-                                switch (j) {
-                                    case 0:
-                                        td.innerText = studentRegNo[i];
-                                        break;
-                                    case 1:
-                                        td.innerText = description;
-                                        break;
-                                    case 2:
-                                        td.innerText = total;
-                                        break;
-                                    case 3:
-                                        td.innerText = studentAchievement["obtain"][i];
-                                        break;
-
-                                    case 4:
-                                        td.innerText = studentAchievement["achieved"][i];
-                                        break;
-
-                                }
-                                tableRow.appendChild(td)
-                            }
-                            studentTableBody.appendChild(tableRow);
-                        }
-
-                        document.querySelectorAll("tr.text-center.text-sm.font-base").forEach((v, k, p) => {
-                            v.addEventListener("click", evt => {
-                                selectStudentAssessmentTable.classList.remove("hidden");
-                            });
-                        });
-
-                    }*/
                 }
             });
             if (!selectStudentAssessmentTable.classList.contains("hidden"))

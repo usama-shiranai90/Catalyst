@@ -133,8 +133,52 @@ class Section implements JsonSerializable
         return $this->semester;
     }
 
+    public function retrieveAllLatestSemester(): ?array
+    {
+        $sql = /** @lang text */
+            "select semesterCode, batchCode, semesterName from semester group by batchCode desc;";
 
-    public function retrieveSectionsInSemester($semesterCode)
+        $result = $this->databaseConnection->query($sql);
+        $semesterList = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+
+                $temp = array(
+                    'semesterCode' => $row['semesterCode'],
+                    'batchCode' => $row['batchCode'],
+                    'semesterName' => $row['semesterName']
+                );
+                array_push($semesterList, $temp);
+            }
+            return $semesterList;
+        } else
+            echo "no semester List.";
+
+        return null;
+    }
+
+
+    public function retrieveSectionsBasedOnBatch($batchCode): array
+    {
+        $sectionsList = array();
+        $semester = new Semester();
+        if ($semester->retrieveCurrentSemester($batchCode)) {
+            $sql = "/** @lang text */
+            select sectionCode, sectionName from section where semesterCode = \"$semester->semesterCode\"";
+            $result = $this->databaseConnection->query($sql);
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $newSection = new Section();
+                    $newSection->setSectionName($row["sectionName"]);
+                    $newSection->setSectionCode($row["sectionCode"]);
+                    array_push($sectionsList, $newSection);
+                }
+            }
+        }
+        return $sectionsList;
+    }
+
+    public function retrieveSectionsInSemester($semesterCode): array
     {
         $sql = /** @lang text */
             "select sectionCode, sectionName from section where semesterCode = \"$semesterCode\"";
@@ -158,6 +202,35 @@ class Section implements JsonSerializable
         return $sectionsList;
     }
 
+
+    public function retrieveStudentList($sectionCode): ?array
+    {
+        $studentList = array();
+        $sql = /** @lang text */
+            "select * from student where sectionCode = \"$sectionCode\"";
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    'studentReg' => $row['studentRegCode'],
+                    'name' => $row['name'],
+                    'fatherName' => $row['fatherName'],
+                    'contact' => $row['contactNumber'],
+                    'bloodGroup' => $row['bloodGroup'],
+                    'address' => $row['address'],
+                    'dob' => $row['dateOfBirth'],
+                    'officialEmail' => $row['officialEmail'],
+                    'personalEmail' => $row['personalEmail'],
+                    'authCode' => $row['password'],
+                    'password' => $row['authenticationCode']
+                );
+                array_push($studentList, $temp);
+            }
+            return $studentList;
+        }
+
+        return null;
+    }
 
     public function toString()
     {

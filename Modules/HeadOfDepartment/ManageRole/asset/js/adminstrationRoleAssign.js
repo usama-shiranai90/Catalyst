@@ -446,7 +446,13 @@ window.onload = function () {
         $("#extraRoleDetailContainerId").removeClass("hidden");
         $("#roleDetailListId").children().remove();
 
+
         let rolesKeyList = Object.keys(respectiveRolesList)
+
+        console.log(respectiveRolesList)
+        console.log(rolesKeyList)
+
+
         for (let i = 0; i < rolesKeyList.length; i++) {
             let key = rolesKeyList[i];
             if (respectiveRolesList[key].length > 1) { // 2

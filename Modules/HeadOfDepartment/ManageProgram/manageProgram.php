@@ -33,7 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
         $resultBackServer = updateServer(-1, $resultBackServer, "no-record");
 
     die(json_encode($resultBackServer));
-} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
+}
+
+elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
     if (isset($_POST['programObjectList'])) {
         $programObjectList = $_POST['programObjectList'];
         foreach ($programObjectList as $programCode => $value) {

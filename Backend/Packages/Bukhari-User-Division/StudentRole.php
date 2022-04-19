@@ -11,12 +11,18 @@ class StudentRole extends UserRole
 
     public function createStudentData($sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode): bool
     {
+//        print sprintf("%s , %s , %s , %s , %s , %s , %s , %s , %s ,  %s ,  %s <br>\n", $sectionCode, $registrationNumber, $name, $fatherName, $contact,
+//            $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode);
+
+
         $sql = /** @lang text */
             "insert into student(studentRegCode, sectionCode, name, fatherName, contactNumber, officialEmail, personalEmail, bloodGroup, address, dateOfBirth, password, authenticationCode)
              VALUES (\"$registrationNumber\" , \"$sectionCode\" ,\"$name\" ,\"$fatherName\" , \"$contact\",\"$officialMail\",\"$personalMail\",\"$bloodGroup\" , \"$address\",
               \"$dob\" , \"123456789\" , \"$authenticateCode\");";
-
         $result = $this->databaseConnection->query($sql);
+
+        print "ERROR :" . json_encode($this->databaseConnection->error_list) . "\n";
+
         if ($result) {
             $this->setStudentRegistrationCode(($this->databaseConnection->insert_id));
             return true;
@@ -44,6 +50,8 @@ class StudentRole extends UserRole
         }
         return false;
     }
+
+
 
 
     public function logout()

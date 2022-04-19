@@ -13,9 +13,9 @@ const progressBar = document.querySelector(".progress-bar");
 const maxSizeAllowed = 15 * 1024 * 1024;
 
 /** Fields list.  */
-const departmentField = document.getElementById('importCourseOfferingDepartmentSelectId');
-const programField = document.getElementById('importCourseOfferingProgramSelectId');
-const seasonField = document.getElementById('importCourseOfferingSeasonSelectId');
+const departmentField = document.getElementById('importStudentDepartmentSelectId');
+const programField = document.getElementById('importStudentProgramSelectId');
+const seasonField = document.getElementById('importStudentSeasonSelectId');
 
 const backArrowBtn = document.getElementById('backArrowId');
 const generatedTableContainer = document.getElementById('generatedTableContainer');
@@ -25,13 +25,10 @@ const saveStudentRecordBtn = document.getElementById('saveStudentRecordBtn');
 $(document).ready(function () {
     /**  */
     $(departmentField).on('change', function (e) {
-        const currentValue = this.value;
-        if (currentValue.length !== 0 && (programList !== null)) {
-            let optionsList = '';
-            for (let i = 0; i < programList.length; i++) {
-                if (currentValue === programList[i].departmentCode)
-                    optionsList += `<option value="${programList[i].programCode}">${programList[i].programSN}</option>`;
-            }
+        const departmentFieldValue = this.value;
+        if (departmentFieldValue.length !== 0 && (programList !== null)) {
+            let optionsList = createOptionsListForProgramField(departmentFieldValue, programList)
+
             $(programField).children().slice(1).remove();
             $(programField).append(optionsList);
         }
@@ -69,6 +66,10 @@ $(document).ready(function () {
             }
         }
     });
+
+    $(document).on('input', 'tr > td', function (e) {
+        $(this).removeClass('bg-red-300 text-white');
+    })
 
     /** Browse Button and Input Excel File... */
     $(browseBtnSpan).on('click', function (e) {
@@ -161,35 +162,18 @@ $(document).ready(function () {
     $(document).on('click', 'img[data-std-delete="remove"]', function (e) {
         e.stopPropagation();
         $(this).closest("tr").remove();
-
     });
 
     $(document).on('click', 'img[id^="addMoreBtn-"]', function (e) {
-        console.log(this);
-        let $table = $(this).closest('table');
-        let $tableBody = $(this).closest('table').children(':nth-child(2)');
-
-        let size = $table.find('tbody tr').slice().length; // 8
-        let perPage = 4;
-        console.log("before mod : ", size % perPage, perPage % size)
-        if (size % perPage === 0) {
-            console.log("inside the size value :")
-            $table.next().remove(); // Deleting The Following Pagination...
-            $tableBody.append(sampleNewTableRow());
-            createPaginationBar($table.attr("id"));
-        } else
-            $tableBody.append(sampleNewTableRow());
-
-    })
+        deleteStudentTableRecord(this, false);
+    });
 
     const uploadFileProcess = () => {
         files = fileInput.files;
         const formData = new FormData();
         formData.append("myfile", files[0]);
-
         let reader = new FileReader();
         reader.readAsArrayBuffer(event.target.files[0]);
-
         reader.onload = function (event) {
             let data = new Uint8Array(reader.result);
             let work_book = XLSX.read(data, {type: 'array'});
@@ -200,8 +184,6 @@ $(document).ready(function () {
             $("form.px-10.py-6").addClass("hidden");
         }
         $(saveStudentRecordBtn).removeClass("hidden")
-
-
     };
 
     $(saveStudentRecordBtn).on('click', function (e) {
@@ -210,8 +192,8 @@ $(document).ready(function () {
         let departmentCode = departmentField.value.replace(/\s\s+/g, '');
         let programCode = programField.value.replace(/\s\s+/g, '');
 
-        let programName = $("#importCourseOfferingProgramSelectId option:selected").text().replace(/\s\s+/g, ''); // Saves BCSE, BCCS
-        let seasonName = $("#importCourseOfferingSeasonSelectId option:selected").text().replace(/\s\s+/g, ''); //  Fall 24
+        let programName = $("#importStudentProgramSelectId option:selected").text().replace(/\s\s+/g, ''); // Saves BCSE, BCCS
+        let seasonName = $("#importStudentSeasonSelectId option:selected").text().replace(/\s\s+/g, ''); //  Fall 24
         let sectionNameList = [];
 
         let seasonShortName = seasonField.value; // FA24
@@ -229,21 +211,28 @@ $(document).ready(function () {
                     isCorrectFormat = true;
             }
 
-        })
+        });
 
-        if (isCorrectFormat) { // working fine
+        let hasDuplication = checkDuplication(generatedTableContainer);
+
+        if (isCorrectFormat && !hasDuplication) { // working fine
             let studentSectionWiseList = passIntoStudentList(sectionNameList);
             callAjaxForCreation(departmentCode, programCode, programName, seasonFullName, seasonName, seasonShortName, studentSectionWiseList)
 
-        } else {
+        } else if (!isCorrectFormat) {
             $('body').append(popupErrorNotifier("Mismatch Provided Format", "Please check the parameters of Program or Season, wrong sheet is uploaded."));
+            $("#errorMessageDiv").toggle("hidden").animate(
+                {right: 0,}, 3000, function () {
+                    $(this).delay(2000).fadeOut().remove();
+                });
+        } else if (hasDuplication) {
+            $('body').append(popupErrorNotifier("Duplicate Match Registration", "Please recheck the highlight field."));
             $("#errorMessageDiv").toggle("hidden").animate(
                 {right: 0,}, 3000, function () {
                     $(this).delay(2000).fadeOut().remove();
                 });
         }
     })
-
 });
 
 
@@ -352,15 +341,17 @@ function createTabularStudentDataFormat(studentJsonFormatList, workSheetName, co
 
             let maxLengthPerRow = Object.entries(studentJsonFormatList[row]).length;
             Object.entries(studentJsonFormatList[row]).forEach(function (value, index) {
+
+                let relatedEvent = getRelatedKeyDownForTabularRow(index);
+                relatedEvent = (relatedEvent === undefined ? '' : relatedEvent)
+
                 if (value[0] !== "__EMPTY" && maxLengthPerRow > index) {
-                    // console.log(value);
                     $(tableHeaderRow).append(`
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">${value[1]}</span>
+                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" ${relatedEvent} contenteditable="true">
+                                <span class="text-gray-700 flex justify-center items-center" >${value[1]}</span>
                             </td>`);
                 }
                 if (maxLengthPerRow === index + 1) { // adding buttons.
-                    console.log("inside ????")
                     $(tableHeaderRow).append(`
              <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="false">
                                            <img class="h-10 w-6 cursor-pointer" alt="" 
@@ -394,89 +385,6 @@ function createDifferentSheetWorkSection(sheetList, counter) {
                    items-center py-2 w-1/2 rounded-t border-b-2 border-indigo-500 text-black
                    tracking-wide leading-none student-profile-header-text my-0 text-base">
                             ${sheetList}</a>`);
-}
-
-function createAddMoreBtn(value) {
-    return ` <td colspan="12" class="py-5 text-center">
-                     <button type="button" aria-label="add_clos_button_label" class="max-w-2xl rounded-full" id="add-clo-btn" aria-expanded="false" aria-haspopup="true">
-                            <img id="addMoreBtn${-value}" class="h-8 w-8 rounded-full" src="../../../Assets/Images/vectorFiles/Icons/add-button.svg" alt="">
-                        </button>
-            </td>`
-}
-
-function sampleNewTableRow() {
-    return `<tr>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter Reg Code</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter Name</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter Father Name</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter ContactNo</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter BloodGroup</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter DOB</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter Address</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter Official Mail</span>
-                            </td>
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center">Enter Personal Mail</span>
-                            </td>
-             <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="false">
-                                           <img class="h-10 w-6 cursor-pointer" alt="" src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg" data-std-delete="remove">
-                                        </td></tr>`
-}
-
-function createPaginationBar(tableID) {
-    $("#" + tableID).each(function () {
-        let currentPage = 0;
-        const numPerPage = 4;
-        const $table = $(this);
-        $table.bind('repaginate' + tableID, function () {
-            $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).fadeIn("fast").animate({}, "linear", function () {
-                // $table.fadeIn();
-            }).show().removeAttr("style");
-            // $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).fadeIn("slow").show();
-        });
-
-
-        $table.trigger('repaginate' + tableID);
-        const totalTableRows = $table.find('tbody tr').length;
-        const NoOfPages = Math.ceil(totalTableRows / numPerPage);
-        const $paginationContainer = $('<div class="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6"></div>');
-        for (let page = 0; page < NoOfPages; page++) {
-            let cssClass = "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-            if (page === 0)
-                cssClass = "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium clickable z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
-
-            $(`<span class="${cssClass}" ></span>`).text(page + 1).bind('click', {
-                newPage: page
-            }, function (event) {
-                currentPage = event.data['newPage'];
-                $table.trigger('repaginate' + tableID);
-
-                $(this).fadeIn("slow").animate({}, "linear", function () {
-                    $(this).fadeIn();
-                }).addClass("z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium")
-                    .removeAttr("style").siblings()
-                    .removeClass().addClass('bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium');
-
-            }).appendTo($paginationContainer).addClass('clickable');
-
-        }
-        $paginationContainer.insertAfter($table).find('span.page-number:first').addClass('active');
-    });
 }
 
 function sheetToHtml(work_book, sheet_name) {
@@ -623,48 +531,18 @@ function callAjaxForCreation(departmentCode, programCode, programName, seasonFul
         success: function (serverResponse, status) {
         },
         complete: function (response) {
-       /*     const refreshIntervalId = setInterval(function () {
+            /*     const refreshIntervalId = setInterval(function () {
 
-                $("tbody").children().slice(0).remove();
-                $("tbody").append(responseText.message);
-                $(refreshBtn).addClass("transform").removeClass("animate-spin")
-                clearInterval(refreshIntervalId);
-            }, 1000);*/
+                     $("tbody").children().slice(0).remove();
+                     $("tbody").append(responseText.message);
+                     $(refreshBtn).addClass("transform").removeClass("animate-spin")
+                     clearInterval(refreshIntervalId);
+                 }, 1000);*/
             let responseText = JSON.parse(response.responseText)
-            console.log("responseText " , responseText)
+            console.log("responseText ", responseText)
 
         }
     });
-}
-
-// Redundant /  Tester Function for now..
-function idkWorking(work_book, sheet_name) {
-    /*var range = XLSX.utils.decode_range(worksheet['!ref']);
-range.s.r = 1; // <-- zero-indexed, so setting to 1 will skip row 0
-worksheet['!ref'] = XLSX.utils.encode_range(range);*/
-    var range = XLSX.utils.decode_range(work_book.Sheets[work_book.SheetNames[0]]['!ref']);
-    range.s.c = 3; // 0 == XLSX.utils.decode_col("A")
-    range.e.c = 4; // 6 == XLSX.utils.decode_col("G")
-    var new_range = XLSX.utils.encode_range(range);
-    var excelInJSON = XLSX.utils.sheet_to_html(work_book.Sheets[work_book.SheetNames[0]], {
-        blankRows: false,
-        defval: '',
-        range: new_range
-    });
-    document.getElementById('generatedTableContainer').innerHTML += excelInJSON;
-    // console.log(excelInJSON);
-}
-
-function startProgressBarAnimation() {
-    $(progressContainer).removeClass("hidden");
-    event.loaded = 42;
-    event.total = 100;
-
-    let percent = Math.round((100 * event.loaded) / event.total);
-    progressPercent.innerText = percent;
-    const scaleX = `scaleX(${percent / 100})`;
-    bgProgress.style.transform = scaleX;
-    progressBar.style.transform = scaleX;
 }
 
 /*
@@ -697,4 +575,3 @@ function startProgressBarAnimation() {
         xhr.open("POST", uploadURL);
         xhr.send(formData);
 */
-

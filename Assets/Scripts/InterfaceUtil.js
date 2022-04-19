@@ -205,6 +205,37 @@ function isCharacterALetter(char) {
     return (/[a-zA-Z]/).test(char)
 }
 
+function IsNonNumeric(providedEvent) {
+    return /^[a-zA-Z\s]*$/.test(providedEvent.key);
+}
+
+function isBloodGroupFormat(providedEvent) {
+    return /[A|B|AB|O+-]/i.test(providedEvent.key)   ///^(A|B|AB|O)[+-]*$/
+}
+
+function isContactFormat(providedEvent) {
+    // return /^(?=.*\d)[\d ]+$/.test(providedEvent.key)
+    // return /^(\s*[0-9]+\s*)*$/.test(providedEvent.key)
+
+    const key = event.keyCode || event.charCode;
+    if (key === 8)
+        providedEvent.target.innerText = providedEvent.target.innerText.substr(0, providedEvent.target.innerText.length - 1);
+
+    return /^[0-9._\b]+$/.test(providedEvent.key)
+}
+
+function controlContactSize(current) {
+    console.log(parseInt($(current).children('span').text().length))
+
+    $(current).datePicker('dd/mm/yy');
+
+    if (parseInt($(current).children('span').text().length) > 10) {
+        current.innerText = current.innerText.replace(/^(\d{4})(\d{2})(\d{2}).{10}$/, '$1-$2-$3')
+        event.preventDefault();
+    } else
+        $(current).children('span').text($(current).text().length);
+}
+
 /** Function List used to show and hide the tooltip when hover over section. */
 function showTooltip(flag) {
     const getId = 'tooltip' + flag;
@@ -276,7 +307,6 @@ function autoHeight(element) {
     inputField.style.height = "5px";
     inputField.style.height = (inputField.scrollHeight) + "px";
 }
-
 
 /** Custom Node text filter. */
 $.fn.textNodes = function () {

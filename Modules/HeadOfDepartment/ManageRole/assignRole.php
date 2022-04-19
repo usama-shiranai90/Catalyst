@@ -29,8 +29,7 @@ foreach ($facultyObjectList as $faculty) {
         'dc' => $faculty->getInstance()['departmentCode'],
     );
 }
-print json_encode($facultyList);
-
+//print json_encode($facultyList);
 //print ($personalDetails['facultyCode']);
 
 setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
@@ -120,7 +119,6 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
 
                                         <?php
                                         $designationList = array();
-
                                         foreach ($facultyList as $index => $faculty) {
                                             $currentDesignation = $faculty['designation']; // mama
                                             if (!in_array($currentDesignation, $designationList)) {

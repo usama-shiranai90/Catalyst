@@ -64,6 +64,39 @@ class Batch implements JsonSerializable
         return $listOfBatches;
     }
 
+
+    public function retrieveEntireBatchList(): array
+    {
+        $sql = /** @lang text */
+            "select * from batch where year between
+    (select YEAR(DATE_SUB((select dateCreated from batch order by dateCreated desc limit 1), INTERVAL 5 year )))
+    and
+    (select year from batch order by year desc limit 1) order by dateCreated
+";
+        $result = $this->databaseConnection->query($sql);
+
+        $listOfBatches = array();
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    'batchCode' => $row['batchCode'],
+                    'batchName' => $row['batchName'],
+                    'curriculumCode' => $row['curriculumCode'],
+                    'seasonCode' => $row['seasonCode'],
+                    'programCode' => $row['programCode'],
+                );
+                array_push($listOfBatches, $temp);
+
+            }
+        } else
+            echo "No batches found";
+
+        return $listOfBatches;
+    }
+
+
     public function retrieveBatchList($programCode): ?array
     {
         $listOfBatches = array();
