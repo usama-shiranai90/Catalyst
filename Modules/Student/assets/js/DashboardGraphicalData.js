@@ -15,8 +15,8 @@ const courseCLOTable = document.getElementById('courseTableID');
 $(document).ready(function () {
 
     loadRadialBarGraphAccumulatedCgpa();
-    loadBarChartSemesterWise();
     loadBarChartProgramOutcomeScore();
+    loadBarChartSemesterWise();
     setRegisterCoursesDashboard();
 
     let clickedIndex = 0;
@@ -30,8 +30,7 @@ $(document).ready(function () {
             const bodyID = $(node).attr("id").match(/\d+/)[0];
             const courseDivID = document.getElementById("daregcor-" + bodyID);
 
-            if (bodyID == clickedIndex) {
-                // $(node).attr("class","").removeClass("hidden")
+            if (bodyID === clickedIndex) {
                 $(courseDivID).removeClass().addClass("sm:px-6 sm:w-auto sm:justify-center cursor-pointer inline-flex justify-center items-center py-5 w-1/2 rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none student-profile-header-text my-0 font-medium text-base")
                 if ($(node).hasClass("hidden"))
                     $(node).toggle("hidden").animate({'background-color': 'green'}, "slow");
@@ -60,6 +59,8 @@ function loadRadialBarGraphAccumulatedCgpa() {
         },
         success: function (data, status) {
             const responseText = JSON.parse(data)
+            console.log(responseText.message)
+
             if (responseText.status === 1 && responseText.errors === 'none') {
                 const cgpa = responseText.message.CGPA;
                 new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(cgpa)).render();
@@ -101,7 +102,9 @@ function loadBarChartProgramOutcomeScore() {
     $.ajax({
         type: "POST",
         url: 'assets/Operation/DashboardAjax.php',
-        data: {toLoadPloBar: true},
+        data: {
+            toLoadPloBar: true
+        },
         beforeSend: function () {
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -273,14 +276,14 @@ function createOverallPLOLinearChartStructure(ploArrayList) {
             },
             // toolbar: {show: false}
             tooltip: {
-              /*  enabled: true,
-                custom: function ({series, seriesIndex, dataPointIndex, w}) {
-                    var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
-                    console.log(series, seriesIndex, dataPointIndex, w , data);
-                    // return '<ul>' +
-                    //     '<li><b>PLO</b>: ' + data.x + '</li>' +
-                    //     '</ul>';
-                },*/
+                /*  enabled: true,
+                  custom: function ({series, seriesIndex, dataPointIndex, w}) {
+                      var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                      console.log(series, seriesIndex, dataPointIndex, w , data);
+                      // return '<ul>' +
+                      //     '<li><b>PLO</b>: ' + data.x + '</li>' +
+                      //     '</ul>';
+                  },*/
             }
         },
         noData: {
@@ -470,6 +473,3 @@ function createSemesterGpaLineChartStructure(semesterArray) {
 function valueToPercent(value) {
     return (value * 100) / 4
 }
-
-// }
-

@@ -16,7 +16,7 @@ function popupErrorNotifier(header, container) {
 }
 
 function successfulMessageNotifier(header, message) {
-    return `<div id="successNotifiedId" class="hidden fixed top-5 right-5 py-8 px-6 flex items-center w-2/6 shadow 
+    return `<div id="successNotifiedId" class="hidden fixed top-5 right-0 py-8 px-6 flex items-center w-2/6 shadow 
                         divide-x divide-gray-500 
                         text-gray-500 bg-green-50 border-l-4 border-green-400 rounded-lg rounded-r-lg gap-5" style="z-index: 999;">
                    

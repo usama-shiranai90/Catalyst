@@ -40,11 +40,11 @@ class StudentRole extends UserRole
     }
 
 
-    function modifiedStudentRecord($oldReg, $sectionCode, $studentRegCode, $name, $fatherName, $contactNumber, $officialEmail, $personalEmail, $bloodGroup, $address, $dateOfBirth, $authenticationCode): mysqli_result|bool
+    function modifiedStudentRecord($oldReg, $sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode): mysqli_result|bool
     {
         $sql = /** @lang text */
-            "UPDATE student SET studentRegCode= \"$studentRegCode\", name= \"$name\", fatherName= \"$fatherName\", contactNumber= \"$contactNumber\", officialEmail= \"$officialEmail\"
-            , personalEmail= \"$personalEmail\", bloodGroup= \"$bloodGroup\", address= \"$address\", dateOfBirth= \"$dateOfBirth\", authenticationCode = \"$authenticationCode\"
+            "UPDATE student SET studentRegCode= \"$registrationNumber\", name= \"$name\", fatherName= \"$fatherName\", contactNumber= \"$contact\", officialEmail= \"$officialMail\"
+            , personalEmail= \"$personalMail\", bloodGroup= \"$bloodGroup\", address= \"$address\", dateOfBirth= \"$dob\", authenticationCode = \"$authenticateCode\"
              WHERE studentRegCode = \"$oldReg\" and  sectionCode= \"$sectionCode\"";
 
         return $this->databaseConnection->query($sql);

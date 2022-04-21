@@ -427,6 +427,4 @@ window.onload = function (e) {
         }
         return fragment;
     }
-
-
 }

@@ -23,9 +23,9 @@ function addStudentTableRecord(selectedTag, unqStdReg, hasKey = false) {
 
     let size = $table.find('tbody tr').slice().length; // 8
     let perPage = 4;
-    console.log("before mod : ", size % perPage)
+    // console.log("before mod : ", size % perPage)
     if (size % perPage === 0) {
-        console.log("remove old and create new pagination")
+        // console.log("remove old and create new pagination")
         $table.next().remove(); // Deleting The Following Pagination...
         $tableBody.append(sampleNewTableRow(unqStdReg));
         createPaginationBar($table.attr("id"));

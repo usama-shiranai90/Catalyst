@@ -118,7 +118,7 @@ class CourseAdvisorRole extends UserRole
         if (mysqli_num_rows($authenticationResult) > 0) {
             $secondSql = /** @lang text */
                 "UPDATE courseadvisor  SET facultyCode =  \"$facultyCode\" , officialEmail = \"$email\", password = \"$password\"
-            WHERE sectionCode = \"sectionCode\";  ";
+            WHERE sectionCode = \"$sectionCode\";  ";
             if ($this->databaseConnection->query($secondSql) === TRUE)
                 return true;
         } else if (mysqli_num_rows($authenticationResult) === 0) {

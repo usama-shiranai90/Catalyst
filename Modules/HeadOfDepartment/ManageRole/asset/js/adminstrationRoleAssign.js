@@ -12,6 +12,7 @@ let respectiveRolesList; // fetches the list of roles with respect to its facult
 
 window.onload = function () {
 
+
     /** Administrative Role Major Search Fields ( selections field list ) */
     const programField = document.getElementById('programIDSelect');
     const designationField = document.getElementById('froleDesignationID');
@@ -51,6 +52,7 @@ window.onload = function () {
 
 
     $(document).ready(function () {
+
         /** Disable program-field when HOD is selected. */
         visibilityOfProgramField();
 
@@ -151,38 +153,6 @@ window.onload = function () {
 
             });
         });
-
-        /** Old Code , when Faculty Object Instance is returned */
-        /*$(designationField).on('change', function (event) {
-            let optionsList = "";
-            for (let i = 0; i < facultyInstanceList.length; i++)
-                if (this.value === facultyInstanceList[i].designation) {
-                    let option = `<option value="${facultyInstanceList[i].facultyCode}">${facultyInstanceList[i].facultyCode}</option>`;
-                    optionsList += option;
-                }
-
-            $(facultyBindField).children().slice(1).remove();
-            $(facultyBindField).append(optionsList);
-        });
-        $(facultyBindField).on('change', function (e) {
-            for (let i = 0; i < facultyInstanceList.length; i++) {
-                if (this.value === facultyInstanceList[i].facultyCode){
-                    facultyNameBindField.setAttribute("value", facultyInstanceList[i].name);
-
-                    // check if HOD role is already assign and can't be overridden to itself.
-                    if ($("#hdNamae").attr("value") === facultyInstanceList[i].name){
-                        $(radioBtnPm).prop("checked", true);
-                        changeRoleViewContainer(radioBtnPm)
-                        // disable the role option for Hod until same person is deselected.
-                        $(radioBtnHod).prop("disabled", true);
-                        $("label[for=adminRoleDivisionHod]").addClass("cursor-not-allowed")
-                    }else {
-                        $(radioBtnHod).prop("disabled", false);
-                        $("label[for=adminRoleDivisionHod]").removeClass("cursor-not-allowed")
-                    }
-                }
-            }
-        })*/
     });
 
     /** function is used for controlling the selection and disable of a field. */
@@ -195,7 +165,6 @@ window.onload = function () {
 
     /** function is used to change the view container according to selected tab. */
     function changeRoleViewContainer(selectedTab) {
-        console.log("Selected tab : ", selectedTab)
         $("input[type=radio]").each(function (index, currentNode) { // for all radio button available iterate.
             /*console.log($(roleCreationContainersFormList[i]).hasClass("hidden"))
             $(roleCreationContainersFormList[i]).removeClass("hidden")
@@ -203,15 +172,10 @@ window.onload = function () {
             $("#roleCreationPasswordGeneratorID").removeClass().addClass("absolute inset-x-2/3 m-8 flex items-center").css({bottom: '40%'});
             $("#roleCreationPasswordGeneratorID").removeClass().addClass("absolute inset-x-2/3 bottom-7 m-8 mb-2 flex items-center").css({bottom: '35.5%'});*/
 
-            console.log(index , currentNode);
-
             if (currentNode.id === selectedTab.id && $(roleCreationContainersFormList[index]).hasClass("hidden")) {
                 $(roleCreationContainersFormList[index]).fadeIn("fast").animate({}, "linear", function () {
                     $(this).fadeIn();
                 }).removeClass("hidden").removeAttr("style");
-
-                // $(roleCreationContainersFormList[index]).removeClass("hidden")
-
 
                 if (index === 0) {
                     $("#roleCreationHeader").html("HOD role creation")
@@ -240,6 +204,11 @@ window.onload = function () {
     /** State change for selection */
     let isHeadOfDepartment, isProgramManager, isCourseAdvisor;
 
+
+    /**  Cases List.
+     *  1. when single program is selected and we select related faculty member.
+     *
+     * */
     function performDropDownSelection(selector, selectedDOM) {
         isHeadOfDepartment = false;
         isProgramManager = false;
@@ -259,31 +228,38 @@ window.onload = function () {
                 $(facultyBindField).children().slice(1).remove();
                 $(facultyBindField).append(optionsList);
                 break;
-            case "program":
-                // check if the selectedDOM ( facultyID) is not empty then check respective roles.
+
+            case "program": // check if the selectedDOM ( facultyID /facultyBind) is not empty then check respective roles.
                 if (selectedDOM.value !== undefined && selectedDOM.value.length !== 0 && selectedDOM.value !== "") {
-                    respectiveRolesList = callAjaxForFacultyRole(facultyBindField.value);
-                    displayAdministrativeRole(respectiveRolesList);
+
+                    respectiveRolesList = callAjaxForFacultyRole(selectedDOM.value); // call the function ajax to get faculty instance role.
+                    $(Object.entries(respectiveRolesList)).each(function (index, value) {
+                        checkRoleRepetition(value[0], value[1]); // first parameter = key , second parameter = key array of related role Object.
+                    })
+                    disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0);
+                    displayAdministrativeRole(respectiveRolesList)
                     name = $(selectedDOM).children(`option[value=${facultyBindField.value}]`).text();
                     generateUserEmail(name)
+
                 }
                 break;
             case "faculty": // major role for binding of fields.
                 for (let i = 0; i < facultyInstanceList.length; i++) {
+                    console.log(userId, selectedDOM.value, facultyInstanceList[i].fc)
                     if (userId === selectedDOM.value && selectedDOM.value === facultyInstanceList[i].fc) // the current Head of department is selected.
                         isHeadOfDepartment = true;
                     if (selectedDOM.value === facultyInstanceList[i].fc) {
+
                         respectiveRolesList = callAjaxForFacultyRole(selectedDOM.value); // call the function ajax to get faculty instance role.
                         $(Object.entries(respectiveRolesList)).each(function (index, value) {
-                            if (value.length > 1)
-                                checkIfRoleRepetition(value[0], value[1]);
+                            checkRoleRepetition(value[0], value[1]); // first parameter = key , second parameter = key array of related role Object.
                         })
+
                         if (facultyBindField.value.length !== 0 && programField.value.length !== 0)
                             callAjaxForSeasonDropDown(programField.value);
                     }
                 }
 
-                console.log(isHeadOfDepartment, isProgramManager, isCourseAdvisor);
                 disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0);
                 displayAdministrativeRole(respectiveRolesList)
                 name = $(selectedDOM).children(`option[value=${facultyBindField.value}]`).text();
@@ -296,7 +272,7 @@ window.onload = function () {
                     // will execute only for course advisor.
                     $(Object.entries(respectiveRolesList)).each(function (index, value) {
                         if (value.length > 1 && value[0] === 'CA')
-                            checkIfRoleRepetition(value[0], value[1], sectionList);
+                            checkRoleRepetition(value[0], value[1], sectionList);
                     });
                 }
                 break;
@@ -375,52 +351,43 @@ window.onload = function () {
 
     /**  This function is called when we need to check if a single Role has returned with multiple same value.
      *   i.e. A program manager can be repeated for one or more Program e.g. BCSE and BCCS */
-    function checkIfRoleRepetition(key, roleValueReference, sectionList = '') {
+    function checkRoleRepetition(key, adminRoleArray, sectionList = '') {
         switch (key) {
-            case 'HOD': // for Head of department check.
-                if (roleValueReference.length !== 1) // more than 1 role is retrieved from server.
-                {
-                    roleValueReference.each(function (i, v) { // important if Has multiple department.
-                    })
-                }
-                break;
-
             case 'PM': // for Program Manager check.
                 isProgramManager = false;
                 let toDisableSelectionOptions = false;
-                if (roleValueReference.length !== 1) { // is more than one pm for programs.
+                if (adminRoleArray.length !== 1) { // is more than one pm for program manager.
                     let toSkipProgramArray = [];
-                    roleValueReference.forEach(function (v, i) { // important if Has multiple program.
+                    adminRoleArray.forEach(function (v, i) { // important if Has multiple program.
                         if (programList.includes(v.programCode) && v.hasRole === true)// programList[i] === v.programCode
                             toSkipProgramArray.push(v.programCode);
 
                     })
                     if (toSkipProgramArray.length === programList.length)
                         isProgramManager = true;
-                } else if (roleValueReference.length === 1 && sectionList.length === 0) {
-                    roleValueReference.forEach(function (v, i) { // important if Has multiple program.
-                        if (v.hasRole && programList.includes(v.programCode))// programList[i] === v.programCode
+                } else if (adminRoleArray.length === 1 && sectionList.length === 0) {  // for single program manager.
+                    $(adminRoleArray).each(function (index, value) {
+                        if (value.hasRole && programList.includes(value.programCode))// programList[i] === v.programCode
                             toDisableSelectionOptions = true;
                     });
                 }
 
                 if (toDisableSelectionOptions) {
-                    $(programField).children(`option[value=${programField.value}]`).attr("disabled", true);
+                    $(programField).children(`option[value=${programField.value}]`).attr("disabled", true).css({cursor: 'no-drop'});
                     programField.value = 'all';
                 } else
                     $(programField).children().each(function (i, v) {
                         $(v).attr("disabled", false)
                     });
-
                 break;
 
             case 'CA': // for Course Advisor check.
                 isCourseAdvisor = false;
                 let toSkipSectionsArray = [];
 
-                if (roleValueReference.length > 0 && sectionList.length !== 0) {
+                if (adminRoleArray.length > 0 && sectionList.length !== 0) {
                     console.log("Section : ", sectionList)
-                    roleValueReference.forEach(function (v, i) {
+                    adminRoleArray.forEach(function (v, i) {
                         if (v.sectionCode === sectionList[i].sectionCode) // then the selected section is equal to passed section now we can check sections.
                             toSkipSectionsArray.push(v.sectionCode);
                     });
@@ -445,24 +412,20 @@ window.onload = function () {
     function displayAdministrativeRole(respectiveRolesList) {
         $("#extraRoleDetailContainerId").removeClass("hidden");
         $("#roleDetailListId").children().remove();
-
-
         let rolesKeyList = Object.keys(respectiveRolesList)
 
-        console.log(respectiveRolesList)
-        console.log(rolesKeyList)
-
-
         for (let i = 0; i < rolesKeyList.length; i++) {
+            let listNumber = document.createElement('li');
+            $(listNumber).addClass("flex text-gray-600 mb-1 text-sm font-medium");
+
             let key = rolesKeyList[i];
-            if (respectiveRolesList[key].length > 1) { // 2
-                for (let j = 0; j < rolesKeyList[i].length; j++) {
+            console.log("key :", key, respectiveRolesList[key], respectiveRolesList[key].length)
+            if (respectiveRolesList[key].length > 1) { // more than one role.
+                /*for (let j = 0; j < respectiveRolesList[key].length; j++) { // iterate over the if a single role is repeated.
                     let listNumber = document.createElement('li');
                     $(listNumber).addClass("flex text-gray-600 mb-1 text-sm font-medium");
-
-                    let currentRoleStatus = respectiveRolesList[key][j].hasRole; // true
+                    let currentRoleStatus = respectiveRolesList[key][j].hasRole; // false
                     let nextRoleStatus = (j + 1 < respectiveRolesList[key].length) ? respectiveRolesList[key][j + 1].hasRole : false; // false.
-
                     if (currentRoleStatus !== false && nextRoleStatus !== false) {
                         createRolesListSection(listNumber, respectiveRolesList[key][j], rolesKeyList, i);
                         $("#roleDetailListId").append(listNumber);
@@ -471,11 +434,31 @@ window.onload = function () {
                         $("#roleDetailListId").append(listNumber);
                         break;
                     }
+                }*/
 
+                let hasRole = [];
+                for (let j = 0; j < respectiveRolesList[key].length; j++)
+                    hasRole.push(respectiveRolesList[key][j].hasRole); // f ,f ,t ,f
+
+                let totalTrues = hasRole.filter(status => status === true).length;
+                if (hasRole.includes(true) && totalTrues > 1) {
+                    for (let j = 0; j < totalTrues; j++) {
+                        let listNumber = document.createElement('li');
+                        $(listNumber).addClass("flex text-gray-600 mb-1 text-sm font-medium");
+                        createRolesListSection(listNumber, respectiveRolesList[key][j], rolesKeyList, i);
+                        $("#roleDetailListId").append(listNumber);
+                    }
+                } else if (hasRole.includes(true) && totalTrues === 1) {
+                    let indexOf = hasRole.indexOf(true);
+                    createRolesListSection(listNumber, respectiveRolesList[key][indexOf], rolesKeyList, i);
+                    $("#roleDetailListId").append(listNumber);
+                } else {
+                    createRolesListSection(listNumber, respectiveRolesList[key][0], rolesKeyList, i);
+                    $("#roleDetailListId").append(listNumber);
+                    // break;
                 }
+
             } else {
-                let listNumber = document.createElement('li');
-                $(listNumber).addClass("flex text-gray-600 mb-1 text-sm font-medium");
                 createRolesListSection(listNumber, respectiveRolesList[key][0], rolesKeyList, i);
                 $("#roleDetailListId").append(listNumber);
             }
@@ -526,6 +509,7 @@ window.onload = function () {
 
     /** following are the function used to request data from server. */
     function callAjaxForFacultyRole(facultyCode) {
+        // console.log("program code ", programField.value)
         let getValue = "";
         $.ajax({
             type: "POST",
@@ -541,7 +525,7 @@ window.onload = function () {
             },
             success: function (serverResponse, status) {
                 getValue = JSON.parse(serverResponse).message;
-                console.log("Call Ajax For Faculty Role Status : ", getValue)
+                // console.log("Call Ajax For Faculty Role Status : ", getValue)
             },
             complete: function (response) {
                 let responseText = JSON.parse(response.responseText)
@@ -614,7 +598,9 @@ window.onload = function () {
         return returnValue;
     }
 
-    function callAjaxCreateNewRole(email, password, facultyCode, startDate, programCode = 'none', seasonCode = 'none', sectionCode = 'none') {
+    function callAjaxCreateNewRole(email, password, facultyCode, startDate,
+                                   programCode = -1, seasonCode = -1, sectionCode = -1) {
+
         $.ajax({
             type: "POST",
             url: "asset/operation/AdministrativeDropDownAjax.php",
@@ -622,11 +608,19 @@ window.onload = function () {
                 creation: true,
                 email: email,
                 password: password,
-                startDate: startDate, // 2022-04-13 format must be
+                startDate: startDate,
                 facultyCode: facultyCode,
                 programCode: programCode,
                 seasonCode: seasonCode,
                 sectionCode: sectionCode,
+            },
+            beforeSend: function (request, settings) {
+                start_time = new Date().getTime();
+                console.log("start time : ", start_time);
+                $("main").toggleClass("blur-filter");
+                $('body').append(processLoaderAnimation());
+                $('#loader').toggleClass('hidden')
+                $("#loader").fadeIn(start_time);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
@@ -635,10 +629,55 @@ window.onload = function () {
 
             },
             complete: function (response) {
+                let request_time = new Date().getTime() - start_time;
+                console.log("request_time : ", request_time);
+
                 let responseText = JSON.parse(response.responseText)
-                console.log("Well : ", responseText);
+                switch (responseText.status) {
+                    case 200:
+                        loaderAnimation(responseText, 3000);
+                        break;
+                    case 207:
+                        // Warning message as few records are unable to CRUD.
+                        loadMessage(responseText)
+                        break;
+                    case 501:
+                        // Warning message as few records are unable to CRUD.
+                        loadMessage(responseText)
+                        break;
+                }
             }
         });
+    }
+
+    function loaderAnimation(responseText, request_time) {
+        const myTimer = setInterval(function () {
+            $("main").toggleClass("blur-filter");
+            $('#loader').toggleClass('hidden');
+            loadMessage(responseText);
+            clearInterval(myTimer);
+        }, 3000);
+    }
+
+    function loadMessage(responseText, timerS = 5000, timerE = 3000) {
+        let duplicateList = responseText.message;
+        if (responseText.status > 200) {
+            if (responseText.status === 207)
+                $('body').append(popupErrorNotifier("Alert " + responseText.errors, responseText.message));
+            else if (responseText.status === 501)
+                $('body').append(popupErrorNotifier("Duplication Founded", "The Following List Of Students already exist for different sections.<br>" + Object.values(duplicateList)));
+            $("#errorMessageDiv").toggle("hidden").animate(
+                {right: 0,}, timerS, function () {
+                    $(this).delay(timerE).fadeOut().remove();
+                }).removeAttr("style").removeClass("hidden");
+        } else if (responseText.status === 200) {
+            $("body").append(successfulMessageNotifier(responseText.errors, responseText.message));
+            $("#successNotifiedId").toggle("hidden").animate(
+                {right: 0}, timerS, function () {
+                    $(this).delay(timerE).fadeOut().remove();
+                }).removeAttr("style").removeClass("hidden");
+        }
+
     }
 
 
@@ -672,7 +711,6 @@ window.onload = function () {
         /*        console.log("pm".match(/^([a-z0-9]{pm,})$/));
                 const emailRegex = RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
                 this.value = this.value.replace(/(\d{2})(\d{2})/, '$1/$2')*/
-
         $("input[type=radio]:checked").each(function (key, value) {
             let rnd = makeRanPassword(generateSize(0));
 
@@ -698,3 +736,34 @@ window.onload = function () {
         });
     }
 }
+/** Old Code , when Faculty Object Instance is returned */
+/*$(designationField).on('change', function (event) {
+    let optionsList = "";
+    for (let i = 0; i < facultyInstanceList.length; i++)
+        if (this.value === facultyInstanceList[i].designation) {
+            let option = `<option value="${facultyInstanceList[i].facultyCode}">${facultyInstanceList[i].facultyCode}</option>`;
+            optionsList += option;
+        }
+
+    $(facultyBindField).children().slice(1).remove();
+    $(facultyBindField).append(optionsList);
+});
+$(facultyBindField).on('change', function (e) {
+    for (let i = 0; i < facultyInstanceList.length; i++) {
+        if (this.value === facultyInstanceList[i].facultyCode){
+            facultyNameBindField.setAttribute("value", facultyInstanceList[i].name);
+
+            // check if HOD role is already assign and can't be overridden to itself.
+            if ($("#hdNamae").attr("value") === facultyInstanceList[i].name){
+                $(radioBtnPm).prop("checked", true);
+                changeRoleViewContainer(radioBtnPm)
+                // disable the role option for Hod until same person is deselected.
+                $(radioBtnHod).prop("disabled", true);
+                $("label[for=adminRoleDivisionHod]").addClass("cursor-not-allowed")
+            }else {
+                $(radioBtnHod).prop("disabled", false);
+                $("label[for=adminRoleDivisionHod]").removeClass("cursor-not-allowed")
+            }
+        }
+    }
+})*/

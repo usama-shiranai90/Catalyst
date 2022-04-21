@@ -51,7 +51,7 @@ $(document).ready(function () {
     $(batchField).on('change', function (e) {
         if (containsEmptyField([departmentField, programField, batchField])) {
             let sectionList = callAjaxForSectionDropDown(batchField.value)
-            console.log(sectionList)
+            // console.log(sectionList)
             if (sectionList[0] !== 0) {
                 let selectedSelection = this;
                 if (!(selectedSelection.value.length !== 0 && (programList !== null && batchList != null) &&
@@ -143,16 +143,19 @@ $(document).ready(function () {
     $(updateStudentRecordBtn).on('click', function (e) {
         newlyAddedStudentRecordList = Object.values(passIntoStudentList(null, null, false, 1));
         // updateStudentRecordList = Object.entries(passIntoStudentList(null, null, false, 2, updateStudentRecordList , updateStudentTargetKList));
-        updateStudentRecordList = (passIntoStudentList(null, null, false, 2, updateStudentRecordList , updateStudentTargetKList));
+        updateStudentRecordList = (passIntoStudentList(null, null, false, 2, updateStudentRecordList, updateStudentTargetKList));
 
-        console.log(updateStudentRecordList)
-        console.log(deleteStudentRecordList)
-        console.log(newlyAddedStudentRecordList)
-
-
-        let programName = $("#viewStudentProgramSelectId option:selected").text().replace(/\s\s+/g, '');
-        let sectionCode = sectionField.value
-        // callAjaxForManipulation(programName, sectionCode);
+        if (newlyAddedStudentRecordList.length === 0 && deleteStudentRecordList.length === 0 && Object.values(updateStudentRecordList).length === 0) {
+            $('body').append(popupErrorNotifier("Nothing To Update", "Please provide some addition information or perform some sort of action."));
+            $("#errorMessageDiv").toggle("hidden").animate(
+                {right: 0,}, 5000, function () {
+                    $(this).delay(1000).fadeOut().remove();
+                });
+        } else {
+            let programName = $("#viewStudentProgramSelectId option:selected").text().replace(/\s\s+/g, '');
+            let sectionCode = sectionField.value
+            callAjaxForManipulation(programName, sectionCode);
+        }
 
     })
 });
@@ -317,14 +320,21 @@ function callAjaxForTableUpdation() {
 
 
 function callAjaxForManipulation(programName, sectionCode) {
+    console.log(newlyAddedStudentRecordList)
+    console.log(Object.entries(updateStudentRecordList))
+    console.log(deleteStudentRecordList)
+
     $.ajax({
         type: "POST",
         async: false,
         url: "assets/Operation/ManageStudentAjax.php",
         data: {
             manipulateData: true,
+            hasDeletion: true,
+            hasAddition: true,
+            hasModification: true,
             newStudentList: newlyAddedStudentRecordList,
-            updateStudentList: updateStudentRecordList,
+            updateStudentList: Object.entries(updateStudentRecordList),
             deleteStudentList: deleteStudentRecordList,
             sectionCode: sectionCode,
             programName: programName,
@@ -337,25 +347,41 @@ function callAjaxForManipulation(programName, sectionCode) {
         },
         complete: function (response) {
             let responseText = JSON.parse(response.responseText)
+            console.log("MY STATUS :", responseText);
 
-            if (responseText.status == -99) {
-                let duplicateList = responseText.message;
-                console.log(duplicateList);
-                $('body').append(popupErrorNotifier("Duplication Founded", "The Following List Of Students already exist for different sections.<br>" + Object.values(duplicateList)));
-                $("#errorMessageDiv").toggle("hidden").animate(
-                    {right: 0,}, 15000, function () {
-                        $(this).delay(10000).fadeOut().remove();
-                    });
+            switch (responseText.status) {
+                case 200:
+                    // apply animation and reload the page.
+                    console.log("successful");
+                    break;
+
+                case 207:
+                    // Warning message as few records are unable to CRUD.
+                    loadAlertMessage(responseText)
+                    break;
+                case 501:
+                    // Warning message as few records are unable to CRUD.
+                    loadAlertMessage(responseText)
+                    break;
             }
-
-            if (responseText.status !== -1 || responseText.status !== 0 || responseText.status != -99) {
-                let studentRecord = responseText.message;
-            }
-
         }
     });
 
+}
 
+function loadAlertMessage(responseText, timerS = 5000, timerE = 3000) {
+    let duplicateList = responseText.message;
+    console.log(duplicateList);
+
+    if (responseText.status === 207)
+        $('body').append(popupErrorNotifier("Alert " + responseText.errors, responseText.message));
+    else if (responseText.status === 501)
+        $('body').append(popupErrorNotifier("Duplication Founded", "The Following List Of Students already exist for different sections.<br>" + Object.values(duplicateList)));
+
+    $("#errorMessageDiv").toggle("hidden").animate(
+        {right: 0,}, timerS, function () {
+            $(this).delay(timerE).fadeOut().remove();
+        });
 }
 
 

@@ -19,6 +19,7 @@ $securePass = password_hash($personalDetails['password'], PASSWORD_DEFAULT);
 $curriculumPLO = new PLO();
 $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($programCode);
 
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -53,7 +54,8 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
                     </svg>
                     My Profile
                 </a>
-                <a id="curriculumSettingTabID" class="sm:px-6 sm:w-auto cursor-pointer inline-flex justify-center items-center py-3 w-1/2 rounded-t border-b-2 text-gray-400 font-semibold tracking-normal leading-none student-profile-header-text my-0
+                <a id="curriculumSettingTabID" class="sm:px-6 sm:w-auto cursor-pointer inline-flex justify-center items-center py-3 w-1/2 rounded-t border-b-2 text-gray-400 font-semibold
+                 tracking-normal leading-none student-profile-header-text my-0
                      transform transition ease-out duration-300 hover:scale-100 hover:-translate-y-0 hover:translate-x-0 hover:text-black hover:font-normal hover:border-black ">
                     <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                          stroke-width="2" class="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -154,7 +156,7 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
                                     <div class="textField-label-content w-full">
                                         <input class="textField" type="email" placeholder=" "
                                                name="studentPersonalEmailField" id="studentPersonalEmailFieldID"
-                                               value="<?php echo $personalDetails['personalEmail'] ?>">
+                                               va$programLearningOutcomeListlue="<?php echo $personalDetails['personalEmail'] ?>">
                                         <label class="textField-label">Personal Email</label>
                                     </div>
                                     <!-- onkeyup="this.value=this.value.replace(/(\d{4})(\d{4})/, '$1-$2')"-->

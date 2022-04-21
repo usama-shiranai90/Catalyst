@@ -63,7 +63,7 @@ class ProgramManagerRole extends UserRole
 
         } else {
             $sql = /** @lang text */
-                "select facultyCode, p.programCode, departmentCode, programName from programmanager join program p on 
+                "select facultyCode, p.programCode, departmentCode, programName, programShortName from programmanager join program p on 
                 p.programCode = programmanager.programCode where facultyCode = \"$facultyCode\" and p.programCode = \"$programCode\" ";
         }
         $authenticationResult = $this->databaseConnection->query($sql);
@@ -71,7 +71,8 @@ class ProgramManagerRole extends UserRole
             while ($row = $authenticationResult->fetch_assoc()) {
                 $temp['hasRole'] = true;
                 $temp['programCode'] = $row['programCode'];
-                $temp['programName'] = checkProgramAbbreviation($row['programName']);
+                $temp['programName'] = $row['programShortName'];
+//                $temp['programName'] = checkProgramAbbreviation($row['programName']);
                 $respectiveRoles['PM'][] = $temp;
             }
             $flag = true;

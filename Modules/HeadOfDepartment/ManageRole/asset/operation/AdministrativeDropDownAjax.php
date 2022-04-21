@@ -26,10 +26,7 @@ if (isset($_POST['fetchAssociatedRole']) and $_POST['fetchAssociatedRole']) {
         $resultBackServer = updateServer(-1, $respectiveRoles, "no-record");
 
     die(json_encode($resultBackServer));
-}
-
-
-elseif (isset($_POST['fetchBatch']) and $_POST['fetchBatch']) {
+} elseif (isset($_POST['fetchBatch']) and $_POST['fetchBatch']) {
     $programCode = isProgramCodeArray($departmentCode);
 
     $batch = new Batch();
@@ -52,52 +49,67 @@ elseif (isset($_POST['fetchBatch']) and $_POST['fetchBatch']) {
     die(json_encode($resultBackServer));
 }
 
-if (isset($_POST['creation']) and $_POST['creation']) { // for creation section.
+if (isset($_POST['creation']) and $_POST['creation']) {
+
+    /**
+     * Email is returned in array format
+     * if single email is found in array then programCode is also one.
+     * if multiple email is found in array then multiple programCode is provided.
+     */
+
     $email = $_POST['email'];
     $password = $_POST['password'];
     $facultyCode = $_POST['facultyCode'];
+    $programCode = $_POST['programCode'];
+    $seasonCode = $_POST['seasonCode'];
+    $sectionCode = $_POST['sectionCode'];
 
-    if (is_array($email) and sizeof($email) === 1) {
-        $email = $email[0];
-    }
-    $instance = AdministrativeRole::authenticate($email[0], $password);
+    /** For verification, we need to check the first most email format for verification i.e. to check its belonging Instance. */
+    $instance = AdministrativeRole::authenticate($email[0], '');
 
-    // for head of department
-    if ($_POST['programCode'] == 'none' and $_POST['seasonCode'] == 'none' and $_POST['sectionCode'] == 'none') {
+    /** For Head Of Department */
+    if ($programCode == -1 and $seasonCode == -1 and $sectionCode == -1) {
         $startDate = $_POST['startDate'];
-
-        if ($instance->assignHeadOfDepartmentRole($email, $password, $facultyCode, $departmentCode , $startDate) !== false)
-            $resultBackServer = updateServer(1, true, "none");
+        if ($instance->assignHeadOfDepartmentRole($email, $password, $facultyCode, $departmentCode, $startDate) !== false)
+            $resultBackServer = updateServer(200, "Head Of Department created successfully.", SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
         else
-            $resultBackServer = updateServer(-1, false, "can not update profile");
+            $resultBackServer = updateServer(500, "Error while performing administrative role for HOD Creation . ", "ERROR " . SERVER_STATUS_CODES[500]);
+    } else
+        $resultBackServer = updateServer(400, "Incorrect parameter while performing action ", "ALERT " . SERVER_STATUS_CODES[400]);
 
-    } // for program manager
-    else if ($_POST['seasonCode'] == 'none' and $_POST['sectionCode'] == 'none' and (!empty($_POST['programCode']) and $_POST['programCode'] !== 'none')) {
-        $programCode = isProgramCodeArray($departmentCode);
+    /** For Program Manager */
+//    print ($seasonCode == -1 and $sectionCode === -1) . " " . ($seasonCode == -1) . " " . ($sectionCode == -1);
+    if ($seasonCode == -1 and $sectionCode == -1 and (!empty($programCode) and $programCode != -1)) {
+        $programCode = isProgramCodeArray($departmentCode); // is either string for 1 pc or array for multiple pc.
 
-        if (is_array($programCode) and sizeof($programCode) > 1) {
-            foreach ($programCode as $index => $value) {
-                if ($instance->assignProgramManagerRole($email[$index], $password, $facultyCode, $value->getProgramCode()) === false) {
-                    $message[] = false;
-                    $resultBackServer = updateServer(-1, $message, "can not update profile manager");
-                }
-            }
-        } else {
-            if ($instance->assignProgramManagerRole($email, $password, $facultyCode, $programCode[0]->getProgramCode()) !== false)
-                $resultBackServer = updateServer(1, true, "none");
-            else
-                $resultBackServer = updateServer(-1, false, "can not update profile for program manager");
+        $failedToPerform = array();
+        if (is_array($programCode) and sizeof($programCode) > 1) { // for multiple program creation array
+            foreach ($programCode as $index => $value)
+                if ($instance->assignProgramManagerRole($email[$index], $password, $facultyCode, $value->getProgramCode()) === false)
+                    array_push($failedToPerform, $email[$index]);
+
+        } elseif (is_array($programCode) and sizeof($programCode) === 1) { // for single program creation array.
+            if ($instance->assignProgramManagerRole($email[0], $password, $facultyCode, $programCode[0]->getProgramCode()) === false)
+                array_push($failedToPerform, $email);
+        } elseif (!empty($programCode)) {  // for single program creation string.
+            if ($instance->assignProgramManagerRole($email[0], $password, $facultyCode, $programCode) === false)
+                array_push($failedToPerform, $email);
         }
 
-    } // for course advisor.
-    else if ($_POST['programCode'] !== 'none' and $_POST['seasonCode'] !== 'none' and $_POST['sectionCode'] !== 'none') {
-        $seasonCode = $_POST['seasonCode'];
-        $sectionCode = $_POST['sectionCode'];
-
-        if ($instance->assignCourseAdvisor($email, $password, $facultyCode, $sectionCode) !== false)
-            $resultBackServer = updateServer(1, true, "none");
+        if (empty($failedToPerform))
+            $resultBackServer = updateServer(200, "Program Manager created successfully.", SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
         else
-            $resultBackServer = updateServer(-1, false, "can not update course advisor profile");
+            $resultBackServer = updateServer(500, "Error while performing administrative role for PM Creation . ", "ERROR " . SERVER_STATUS_CODES[500]);
+
+    } else
+        $resultBackServer = updateServer(400, "Incorrect parameter while performing action ", "ALERT " . SERVER_STATUS_CODES[400]);
+
+    // for course advisor.
+    if ($programCode !== -1 and $seasonCode != -1 and $sectionCode != -1) {
+        if ($instance->assignCourseAdvisor($email, $password, $facultyCode, $sectionCode) !== false)
+            $resultBackServer = updateServer(200, "Course Advisor created successfully.", SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
+        else
+            $resultBackServer = updateServer(500, "Error while performing administrative role for CA Creation.", "ERROR " . SERVER_STATUS_CODES[500]);
     }
     die(json_encode($resultBackServer));
 }
@@ -106,7 +118,7 @@ if (isset($_POST['creation']) and $_POST['creation']) { // for creation section.
 function isProgramCodeArray($departmentCode): array|string
 {
     $program = new Program();
-    if ($_POST['programCode'] !== 'all')
+    if ($_POST['programCode'] != 'all') // single program string is returned.
         $programCode = hex2bin($_POST['programCode']);
     else
         $programCode = $program->retrieveProgramList($departmentCode);

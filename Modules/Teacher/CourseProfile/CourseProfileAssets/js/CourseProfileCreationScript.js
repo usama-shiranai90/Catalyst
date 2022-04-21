@@ -642,11 +642,13 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
             console.log(data);
         },
         complete: function () {
-            setInterval(function () {
+            const myTimer = setInterval(function () {
                 $("main").toggleClass("blur-filter");
                 $('#loader').toggleClass('hidden');
                 location.href = "courseprofile_view.php";
             }, 3000);
+            clearInterval(myTimer);
+
         },
     });
 }

@@ -18,8 +18,8 @@ if (isset($_POST['toLoadCgpa']) and $_POST['toLoadCgpa']) {
     else
         $resultBackServer = updateServer(1, $cgpa, "none");
     die(json_encode($resultBackServer));
-
 }
+
 elseif (isset($_POST['toLoadSemesterBar']) and $_POST['toLoadSemesterBar']) {
         $studentSemesterGpaArray = $cgpa->studentAllSemesterGPA($studentRegCode);
         if ($studentSemesterGpaArray !== null)

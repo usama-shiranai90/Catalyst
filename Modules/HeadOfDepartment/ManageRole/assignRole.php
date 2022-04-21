@@ -6,11 +6,8 @@ $adminInstance = $_SESSION['adminInstance'];
 $admin = unserialize($adminInstance);
 $personalDetails = $admin->getInstance();
 
-//print json_encode($personalDetails);
-
 $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];
-
 
 $faculty = new FacultyRole();
 $facultyObjectList = $faculty->retrieveFacultyListDepartment($departmentCode);

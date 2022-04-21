@@ -1,4 +1,9 @@
 <?php
+/**
+ * Things to Correct In Student Import Data Management.
+ * 1.
+*/
+
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
@@ -10,9 +15,13 @@ $section = new Section();
 $departmentList = $program->retrieveEntireDepartmentList();
 $programList = $program->retrieveEntireProgramList();
 //$seasonList = $season->retrieveSeasonList();
-
 $batchList = $batch->retrieveEntireBatchList();
 
+/*
+    header(':', true, 404);
+    header("HTTP/1.1 200 OK");
+    print http_response_code(201)."<br>";
+*/
 /*
  *  TESTING FOR DUPLICATION FOR DIFFERENT SECTIONS.
  *

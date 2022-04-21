@@ -1,5 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\ServerPerformance.php";
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
