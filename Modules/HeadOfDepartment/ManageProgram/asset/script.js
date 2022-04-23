@@ -5,8 +5,8 @@ let deletedProgramList = [];  // stores the id for deleted rows by saving their 
 const programNameInputField = document.getElementById('programNameFieldId');
 const programAbbreviationNameInputField = document.getElementById('programAbbreviationNameFieldId');
 const createProgramBtn = document.getElementById('createProgramBtnId');
-/** Fields for Program Management */
 
+/** Fields for Program Management */
 const saveBtn = document.getElementById('saveProgramBtn');
 
 $(document).ready(function () {
@@ -24,16 +24,23 @@ $(document).ready(function () {
         if (!containsEmptyField([programNameInputField, programAbbreviationNameInputField])) {
             e.preventDefault();
         } else {
+
             $("body").append(successfulMessageNotifier("created successfully", "New Program Has been created successfully."));
             $("#successNotifiedId").toggle("hidden").animate(
-                {right: 10}, 500, function () {
-                    $(this).delay(100).fadeOut().remove();
+                {right: 10}, 60000, function () {
+                    $(this).delay(4000).fadeOut().remove();
                 });
             $(this).unbind('click').click();
         }
     });
 
-    // setting a prefixed value for program name.
+    /** Checks if the program name or program abbreviation contains a numeric value or not. */
+    $(programNameInputField).add(programAbbreviationNameInputField).on('focusout', function (e) {
+        if (!isCharacterALetter(this.value)) // if it contains a numeric , special character.
+            this.parentElement.classList.add("textField-error-input")
+    })
+
+    /** setting a prefixed value for program name.. */
     $(programNameInputField).bind({
         keydown: function (e) {
             let prefixedValue = $(this).val();
@@ -50,8 +57,6 @@ $(document).ready(function () {
             value = convertIntoAbb(value);
             $(programAbbreviationNameInputField).val(value);
         },
-        keyup: function (e) {
-        }
     });
 
     $(programAbbreviationNameInputField).bind({
@@ -112,15 +117,15 @@ $(document).ready(function () {
         if (deletedProgramList.length > 0 && Object.entries(updateProgramList).length > 0) {
             callAjaxForProgramDeletion(deletedProgramList);
             callAjaxForProgramModify(updateProgramList);
-        } else if (deletedProgramList.length > 0){
+        } else if (deletedProgramList.length > 0) {
             callAjaxForProgramDeletion(deletedProgramList)
-        }
-        else if (updateProgramList.length > 0)
+        } else if (updateProgramList.length > 0)
             callAjaxForProgramModify(updateProgramList);
 
     })
 
 });
+
 
 function convertIntoAbb(name) {
     return name.split(' ')

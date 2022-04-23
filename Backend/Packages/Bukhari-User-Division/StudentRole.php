@@ -83,6 +83,41 @@ class StudentRole extends UserRole
         return false;
     }
 
+    function updateProfileInfo($name, $email, $contact , $regCode): bool
+    {
+        $this->studentRegistrationCode = $regCode;
+
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+        $sql = /** @lang text */
+            "UPDATE student stu    SET stu.name = '$name', stu.personalEmail = '$email', stu.contactNumber = '$contact'
+            WHERE stu.studentRegCode = '$this->studentRegistrationCode'";
+
+        if ($this->databaseConnection->query($sql) === TRUE) {
+            $this->setUserDataInstance(/** @lang text */ "select * from student where studentRegCode = '$this->studentRegistrationCode'", $this->studentRegistrationCode);
+            return true;
+        } else {
+            echo "Error updating record: " . $this->databaseConnection->error;
+            return false;
+        }
+
+    }
+
+    function updatePassword($password, $idk): bool
+    {
+        $this->databaseConnection = DatabaseSingleton:: getConnection();
+        $sql = /** @lang text */
+            "UPDATE student stu SET stu.password = '$password' WHERE stu.studentRegCode = '$idk'";
+
+        if ($this->databaseConnection->query($sql) === TRUE) {
+            return true;
+        } else {
+            echo "Error updating Password: " . $this->databaseConnection->error;
+            return false;
+        }
+
+    }
+
+
 
     public function logout()
     {

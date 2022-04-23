@@ -12,22 +12,24 @@ class Curriculum
     public function __construct()
     {
         $this->databaseConnection = DatabaseSingleton::getConnection();
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
         $this->listOfPLOs = array();
     }
 
-    public function createCurriculum($assignYear, $curriculumName): bool
+    public function createCurriculum($programCode, $assignYear, $curriculumName): bool
     {
-        $sql_statement = /** @lang text */
-            "insert into curriculum(curriculumYear, dateCreated , curriculumName) VALUE (\"$assignYear\" ,NOW() , \"$curriculumName\")";
-
+        $sql_statement = "insert into curriculum(curriculumYear, dateCreated , curriculumName) VALUE (\"$assignYear\" ,NOW() , \"$curriculumName\")";
         $result = $this->databaseConnection->query($sql_statement);
         if ($result) {
             $this->setCurriculumCode((int)$this->databaseConnection->insert_id);
-//            echo sprintf("\n<br>Course Profile record has been added successfully: %s\n<br>", (string)$this->getCurriculumCode());
-            return true;
-        } else
-            return false;
-//            echo sprintf("\n<br>Error, can not create CourseProfile : %s\n<br>", $this->databaseConnection->error);
+            $sql_statement2 = /** @lang text */
+                "insert into programcurriculum(programCode , curriculumCode) VALUE (\"$programCode\" , \"$this->curriculumCode\")";
+            $result2 = $this->databaseConnection->query($sql_statement2);
+            if ($result2)
+                return true;
+        }
+        print $this->databaseConnection->error;
+        return false;
     }
 
     public function fetchCurriculumID($sectionCode)
@@ -74,8 +76,7 @@ class Curriculum
             $format = "";
 
         $sql = /** @lang text */
-            "select * from curriculum order by curriculumCode $format
-           ";
+            "select * from curriculum order by curriculumCode $format ";
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {

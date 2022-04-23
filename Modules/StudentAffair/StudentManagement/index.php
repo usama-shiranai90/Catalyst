@@ -281,6 +281,6 @@ foreach ($seasonList as $sName)
     let programList =  <?php echo json_encode($programList);?>
 </script>
 
-<script src="assets/Js/FileUpload.js"></script>
+<script src="assets/Js/FileImport.js"></script>
 <script src="assets/Js/manager.js"></script>
 </html>

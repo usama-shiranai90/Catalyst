@@ -14,22 +14,19 @@ const courseCLOTable = document.getElementById('courseTableID');
 
 $(document).ready(function () {
 
-    loadRadialBarGraphAccumulatedCgpa();
-    loadBarChartProgramOutcomeScore();
-    loadBarChartSemesterWise();
+    loadStudentGraphs()
     setRegisterCoursesDashboard();
 
     let clickedIndex = 0;
     $(document).on('click', "img[data-reg-course='ico']", function (event) {
-        event.stopImmediatePropagation();
+        event.stopPropagation();
         clickedIndex = parseInt($(event.target).closest('.student-profile-header-text').attr("id").match(/\d+/)[0]); //  daregcor-2-> 2 , ID ma sa integer.
         $(this).attr("src", "../../Assets/Images/bottom-arrow.svg");
 
         // console.log($(event.target).closest('.student-profile-header-text'), clickedIndex)
         $("tbody[id^='courseTableBodyID']").each(function (index, node) {
-            const bodyID = $(node).attr("id").match(/\d+/)[0];
+            const bodyID = parseInt($(node).attr("id").match(/\d+/)[0]);
             const courseDivID = document.getElementById("daregcor-" + bodyID);
-
             if (bodyID === clickedIndex) {
                 $(courseDivID).removeClass().addClass("sm:px-6 sm:w-auto sm:justify-center cursor-pointer inline-flex justify-center items-center py-5 w-1/2 rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none student-profile-header-text my-0 font-medium text-base")
                 if ($(node).hasClass("hidden"))
@@ -43,88 +40,27 @@ $(document).ready(function () {
     });
 });
 
-/** Graph Section */
-// Student Radial Bar Chart For Accumulated CGPA.
-function loadRadialBarGraphAccumulatedCgpa() {
-    $.ajax({
-        type: "POST",
-        url: 'assets/Operation/DashboardAjax.php',
-        data: {toLoadCgpa: true},
-        //The beforeSend() function is use to set the custom headers and it is
-        // an Ajax event that triggers before an Ajax request is started.
-        beforeSend: function () {
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("Not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
-        },
-        success: function (data, status) {
-            const responseText = JSON.parse(data)
-            console.log(responseText.message)
 
-            if (responseText.status === 1 && responseText.errors === 'none') {
-                const cgpa = responseText.message.CGPA;
-                new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(cgpa)).render();
-            } else if (responseText.status === 0 && responseText.errors === 'no-record')
-                new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(0)).render();
-        },
-        complete: function (data) {
-        },
-    });
+function loadStudentGraphs() {
+
+    // Student Radial Bar Chart For Accumulated CGPA.
+    if (hasPreviousGPA) {
+        new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(cgpa.CGPA)).render();
+    } else
+        new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(0)).render();
+
+
+    // Student Semester Wise GPA Line Bar Chart.
+    if (studentSemesterGpaArray !== null) {
+        new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), createSemesterGpaLineChartStructure(studentSemesterGpaArray)).render();
+    } else
+        new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), createSemesterGpaLineChartStructure([])).render();
+
+
+    // PLO Chart.
+    new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure([])).render();
 }
 
-// Student Semester Wise GPA Line Bar Chart.
-function loadBarChartSemesterWise() {
-    $.ajax({
-        type: "POST",
-        url: 'assets/Operation/DashboardAjax.php',
-        data: {toLoadSemesterBar: true},
-        beforeSend: function () {
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
-        },
-        success: function (data, status) {
-            const responseText = JSON.parse(data);
-            console.log(responseText)
-            if (responseText.status === 1 && responseText.errors === 'none') {
-                semesterResultArray = responseText.message;
-                console.log("Semester Array : ", semesterResultArray);
-                new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), createSemesterGpaLineChartStructure(semesterResultArray)).render();
-            } else if (responseText.status === 0 && responseText.errors === 'no-record')
-                new ApexCharts(document.querySelector("#studentCurrenGPAProgress"), createSemesterGpaLineChartStructure([])).render();
-        },
-        complete: function (data) {
-        },
-    });
-}
-
-function loadBarChartProgramOutcomeScore() {
-    $.ajax({
-        type: "POST",
-        url: 'assets/Operation/DashboardAjax.php',
-        data: {
-            toLoadPloBar: true
-        },
-        beforeSend: function () {
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
-        },
-        success: function (data, status) {
-            const responseText = JSON.parse(data);
-            console.log(responseText)
-            if (responseText.status === 1 && responseText.errors === 'none') {
-                semesterResultArray = responseText.message;
-                console.log("PLO Array : ", semesterResultArray);
-                new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure(semesterResultArray)).render();
-            } else if (responseText.status === 0 && responseText.errors === 'no-record')
-                new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure([])).render();
-            new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure([])).render();
-        },
-        complete: function (data) {
-        },
-    });
-}
 
 /** TABLE: Registered Course along with Respective CLO's. */
 function setRegisterCoursesDashboard() {

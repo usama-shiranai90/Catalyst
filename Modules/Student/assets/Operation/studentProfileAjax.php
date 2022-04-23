@@ -4,12 +4,7 @@ if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
 $resultBackServer = array("status" => -1, "message" => 'no message', "errors" => 'no error');
-$student = new Student();
-
-//$studentObject = unserialize($_SESSION['studentInstance']);
-//$personalDetails = $studentObject->getPersonalDetails();
-//$personalDetails = str_replace('\\', '', $personalDetails);
-
+$student = new StudentRole();
 
 if (isset($_POST['update_student_p']) and $_POST['update_student_p']) {
 

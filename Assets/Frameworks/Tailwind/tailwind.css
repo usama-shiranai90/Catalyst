@@ -5,7 +5,9 @@
 /*Fonts being used in headers*/
 @font-face {
     font-family: Poppins-Regular;
-    src: url(../../Fonts/Poppins/Poppins-Regular.ttf);
+    src: url(../../Fonts/Poppins/Poppins-Regular.ttf) format('woff');
+    font-style: normal;
+    font-display: block;
 }
 @font-face {
     font-family: Poppins-Bold;

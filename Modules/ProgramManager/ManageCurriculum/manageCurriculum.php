@@ -263,6 +263,8 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
     </div>
 </div>
 </body>
+
+<script src="assets/js/Common.js"></script>
 <script>
     let curriculumArray = <?php echo json_encode($curriculumList);?>;
     console.log(curriculumArray);

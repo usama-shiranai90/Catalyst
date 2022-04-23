@@ -9,18 +9,8 @@ $curriculum = new Curriculum();
 $curriculumList = $curriculum->getPreviousFewCurriculumYear(true);
 $currentOnGoingYear = date('Y'); // current year : 2022
 
-/*$earliestYear = ($curriculumList === null ? date('Y', strtotime("-4 year")) : reset($curriculumList)['year']); // last four years list.
-if ($curriculumList == null)
-    $earliestYear = date('Y', strtotime("-4 year"));
-elseif ($curriculumList[0]["year"] > date('Y')) {
-    $earliestYear = date('Y', strtotime("-8 year"));
-} else
-    $earliestYear = reset($curriculumList)['year'];*/
-
 echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<br>";
-
 ?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -83,9 +73,7 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
 
                             foreach (range(date('Y', strtotime("+4 year")), $earliestYear) as $year) {
                                 if (iterateAndSearchValue($curriculumList, $year, $tempKeyReference, $tempValueReference)) {
-
                                     print sprintf("<option  value=\"%s\"%sdata-select-id=\"%s\">%s</option>", $year, $year == $currentOnGoingYear ? ' selected="selected"' : '', $tempKeyReference, $year);
-
                                 } else
                                     print '<option value="' . $year . '"' . ($year == $currentOnGoingYear ? ' selected="selected"' : '') . '>' . $year . '</option>';
                             }
@@ -136,7 +124,7 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
         </div>
 
         <div id="creationCurriculumSectionId"
-             class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 h-1/2 weeklytopics-primary-border-n">
+             class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 weeklytopics-primary-border-n">
             <div class="db-table-header-topic border-b-0 rounded-b-none bg-catalystBlue ">
                 <h2 class="text-xl text-center font-bold text-white tracking-wide text-center capitalize">Creation Of
                     Curriculum</h2>
@@ -185,48 +173,9 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
 
 </div>
 </body>
+
+<script src="assets/js/Common.js"></script>
 <script>
-
-    /*   $.ajax({
-            url: 'asset/xsadasd.csv',
-            dataType: 'text',
-        }).done(successFunction);
-
-        function successFunction(data) {
-            var allRows = data.split(/\r?\n|\r/);
-            var table = '<table>';
-            for (var singleRow = 0; singleRow < allRows.length; singleRow++) {
-                if (singleRow === 0) {
-                    table += '<thead>';
-                    table += '<tr>';
-                } else {
-                    table += '<tr>';
-                }
-                var rowCells = allRows[singleRow].split(',');
-                for (var rowCell = 0; rowCell < rowCells.length; rowCell++) {
-                    if (singleRow === 0) {
-                        table += '<th>';
-                        table += rowCells[rowCell];
-                        table += '</th>';
-                    } else {
-                        table += '<td>';
-                        table += rowCells[rowCell];
-                        table += '</td>';
-                    }
-                }
-                if (singleRow === 0) {
-                    table += '</tr>';
-                    table += '</thead>';
-                    table += '<tbody>';
-                } else {
-                    table += '</tr>';
-                }
-            }
-            table += '</tbody>';
-            table += '</table>';
-            $('body').append(table);
-        }*/
-
     function autoHeight(element) {
         const el = document.getElementById(element);
         el.style.height = "5px";

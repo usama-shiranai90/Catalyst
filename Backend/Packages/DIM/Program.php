@@ -34,7 +34,6 @@ class Program implements JsonSerializable
         if ($result === TRUE) {
             return true;
         }
-
         return false;
     }
 

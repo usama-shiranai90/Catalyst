@@ -51,7 +51,6 @@ window.onload = function () {
 
         /** it is used when the user wants to edit the role idk what the add right now. */
         $(document).on('click', 'button[id^="performRoleEdit-"]', function (event) {
-
         });
 
         /** it is used when the user wants to delete the respective role for a user. */
@@ -98,8 +97,38 @@ window.onload = function () {
 
     });
 
+    function openTabular(selectedRecord) {
+        $(selectedRecord).fadeIn("fast").animate({}, "linear", function () {
+            $(selectedRecord).fadeIn();
+        }).removeClass("hidden").removeAttr("style");
 
-    //  let hId = -1, pmId = -1, caId = -1;
+        $(selectedRecord).attr("aria-expanded", "true");
+        $(selectedRecord).next().children(":first-child").removeClass("hidden");
+    }
+
+    function closeTabular(selectedRecord, flag) {
+
+        if (!flag)
+            $('tbody tr[aria-expanded="true"]').each(function (index, value) {
+                if (this.getAttribute("data-record-target") !== selectedRecord.getAttribute("data-record-target")) {
+                    $(this).fadeIn("fast").animate({}, "linear", function () {
+                        $(this).fadeIn();
+                    }).removeClass("hidden").removeAttr("style")
+
+                    $(this).attr("aria-expanded", "false");
+                    $(this).next().children(":first-child").addClass("hidden");
+                }
+            });
+        else {
+            $(selectedRecord).fadeIn("fast").animate({}, "linear", function () {
+                $(selectedRecord).fadeIn();
+            }).removeClass("hidden").removeAttr("style")
+            $(selectedRecord).attr("aria-expanded", "false");
+            $(selectedRecord).next().children(":first-child").addClass("hidden");
+        }
+
+    }
+
     function callAjaxToDeleteAdministrative(facultyId, departmentId, programManagerId, courseAdvisorId) {
         console.log(facultyId, departmentId, programManagerId, courseAdvisorId);
         $.ajax({
@@ -163,39 +192,6 @@ window.onload = function () {
 
             }
         });
-    }
-
-
-    function openTabular(selectedRecord) {
-        $(selectedRecord).fadeIn("fast").animate({}, "linear", function () {
-            $(selectedRecord).fadeIn();
-        }).removeClass("hidden").removeAttr("style");
-
-        $(selectedRecord).attr("aria-expanded", "true");
-        $(selectedRecord).next().children(":first-child").removeClass("hidden");
-    }
-
-    function closeTabular(selectedRecord, flag) {
-
-        if (!flag)
-            $('tbody tr[aria-expanded="true"]').each(function (index, value) {
-                if (this.getAttribute("data-record-target") !== selectedRecord.getAttribute("data-record-target")) {
-                    $(this).fadeIn("fast").animate({}, "linear", function () {
-                        $(this).fadeIn();
-                    }).removeClass("hidden").removeAttr("style")
-
-                    $(this).attr("aria-expanded", "false");
-                    $(this).next().children(":first-child").addClass("hidden");
-                }
-            });
-        else {
-            $(selectedRecord).fadeIn("fast").animate({}, "linear", function () {
-                $(selectedRecord).fadeIn();
-            }).removeClass("hidden").removeAttr("style")
-            $(selectedRecord).attr("aria-expanded", "false");
-            $(selectedRecord).next().children(":first-child").addClass("hidden");
-        }
-
     }
 
 }

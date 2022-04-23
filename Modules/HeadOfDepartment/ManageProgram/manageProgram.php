@@ -3,16 +3,16 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\ServerPerformance.php";
 
 session_start();
+
 $program = new Program();
 $departmentCode = $_SESSION['departmentCode'];
 $programList = $program->retrieveEntireProgramList();
-$temp = array();
+
 foreach ($programList as $index => $currentProgram)
     if ($departmentCode !== $currentProgram['departmentCode'])
         unset($programList[$index]);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST["createProgramBtn"])) {
-
     print $_POST['programNameField'] . "  " . $_POST['programAbbreviationNameField'];
     $FLAG = $program->createProgram($departmentCode, $_POST['programNameField'], $_POST['programAbbreviationNameField']);
     unset($_POST['createProgramBtn']);
@@ -23,20 +23,22 @@ $resultBackServer = array("status" => -1, "message" => 'no message', "errors" =>
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
     if (isset($_POST['programList'])) {
         $programList = $_POST['programList'];
+        $notDeletedArray = array();
         foreach ($programList as $programCode) {
-            if ($program->deleteProgram($programCode))
-                $resultBackServer = updateServer(1, $resultBackServer, "none");
-            else
-                $resultBackServer = updateServer(-1, $resultBackServer, "can not delete");
+            if (!$program->deleteProgram($programCode))
+                array_push($notDeletedArray , true);
         }
     } else
-        $resultBackServer = updateServer(-1, $resultBackServer, "no-record");
+        $resultBackServer = updateServer(-1, "No program code found , try again.", "no-record");
+
+    if (!empty($notDeletedArray))
+        $resultBackServer = updateServer(0, "Could not delete some program. try again" , "Failure");
+    else
+        $resultBackServer = updateServer(1, "Program list has been deleted successfully.", "OK");
 
     die(json_encode($resultBackServer));
-}
-
-elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
-    if (isset($_POST['programObjectList'])) {
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
+    if (isset($_POST['programObjectList']) and $_POST['programObjectList']) {
         $programObjectList = $_POST['programObjectList'];
         foreach ($programObjectList as $programCode => $value) {
             if (($LET = !$program->modifyProgram($programCode, $value['programName'], $value['shortName'])) === TRUE) {
@@ -48,9 +50,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
     $resultBackServer = updateServer(1, "successfully modified program list", "Modified");
     die(json_encode($resultBackServer));
 }
-
 ?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -65,13 +65,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
-
-
     <style>
         .textField-label {
             top: 10px;
         }
-
     </style>
 
 </head>
@@ -97,7 +94,6 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
                         <input class="textField uppercase" type="text" placeholder="Software Engineering i.e BCSE"
                                name="programAbbreviationNameField"
                                maxlength="5"
-                               oninput="isCharacterALetter(this)"
                                id="programAbbreviationNameFieldId" value="">
                         <label class="textField-label">Abbreviation</label>
                     </div>

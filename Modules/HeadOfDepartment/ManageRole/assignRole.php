@@ -26,10 +26,8 @@ foreach ($facultyObjectList as $faculty) {
         'dc' => $faculty->getInstance()['departmentCode'],
     );
 }
-//print json_encode($facultyList);
-//print ($personalDetails['facultyCode']);
+//setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
 
-setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
 ?>
 
 <!doctype html>
@@ -105,6 +103,10 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                 <input class="hidden" type="text"
                                        value="<?php echo strtolower($_SESSION['departmentName']) ?>"
                                        data-h-set="departmentName">
+
+                                <input class="hidden" type="text"
+                                       value="<?php echo $personalDetails['facultyCode'] ?>"
+                                       data-h-set="facCod">
 
                                 <div class="textField-label-content w-3/12">
                                     <label for="froleDesignationID"></label>
@@ -281,11 +283,13 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
                                 <div class="flex my-2 px-5 w-full justify-center content-center gap-32">
                                     <div class="textField-label-content w-3/12">
                                         <label for="carcRSeasonID"></label>
-                                        <select class="select" name="carcSeason"
+                                        <select class="select cursor-not-allowed" name="carcSeason"
                                                 onclick="this.setAttribute('value', this.value);"
                                                 onchange="this.setAttribute('value', this.value);" value=""
                                                 id="carcRSeasonID">
                                             <option value="" hidden=""></option>
+                                            <option value="" >x</option>
+
                                         </select>
                                         <label class="select-label top-1/4 sm:top-3">Batch/Season</label>
                                     </div>
@@ -346,21 +350,15 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
 </body>
 
 <script>
-    // const tester = document.querySelector('meta[name="tester"]').content;
-    // let fid = decodeURI(JSON.stringify(fetchedUser[1])).replace(/['"]+/g, '')
-
-    const getCookieValue = (name) => (document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '')
+/*    const getCookieValue = (name) => (document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '')
     var fetchedUser = getCookieValue('loggedUser')
-
-    let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')
+    let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')*/
 
 
     let facultyInstanceList = <?php echo json_encode($facultyList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
     let programList = <?php echo json_encode($allocatedProgramList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
-    console.log("User ID : ", userId, "\nFaculty Instance : ", facultyInstanceList, "\nProgram Code List : ", programList)
+    console.log("\nFaculty Instance : ", facultyInstanceList, "\nProgram Code List : ", programList)
 
-    // $("main").addClass("blur-filter");
-    // $("#alertContainer").removeClass("hidden");
 </script>
 
 

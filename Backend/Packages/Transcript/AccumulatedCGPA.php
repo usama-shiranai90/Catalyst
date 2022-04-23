@@ -1,5 +1,4 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\db.php";
 
 class AccumulatedCGPA implements JsonSerializable
 {

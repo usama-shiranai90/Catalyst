@@ -197,12 +197,12 @@ function isNumeric(selectedInput) {
     // return selectedInput.value = selectedInput.value.replace(/[^0-9.]/g, '').replace(/(..?)\..*/g, '');
 }
 
-function isNum(val) {
+function isNum(val) { //function determines whether a value is NaN or not
     return !isNaN(val)
 }
 
 function isCharacterALetter(char) {
-    return (/[a-zA-Z]/).test(char)
+    return (/^[A-Za-z_ ]+$/gi).test(char);
 }
 
 function IsNonNumeric(providedEvent) {
@@ -222,6 +222,10 @@ function isContactFormat(providedEvent) {
         providedEvent.target.innerText = providedEvent.target.innerText.substr(0, providedEvent.target.innerText.length - 1);
 
     return /^[0-9._\b]+$/.test(providedEvent.key)
+}
+
+function extractFirstNumeric(text) {
+    return text.match(/\d+/)[0];
 }
 
 function controlContactSize(current) {

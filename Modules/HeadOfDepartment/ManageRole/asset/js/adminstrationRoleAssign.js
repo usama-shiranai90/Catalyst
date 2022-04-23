@@ -1,17 +1,5 @@
-/*    let facultyInfo = [];
-    facultyInstanceList.find(function (fac) {
-        facultyInfo.push({"code": fac.facultyCode, "name": fac.name});
-    });*/
-/*let facultyNameList = [];
-facultyInstanceList.find(function (fac) {
-    facultyNameList.push(fac.name);
-});
-facultyNameList = Array.from(new Set(facultyNameList))*/
-
 let respectiveRolesList; // fetches the list of roles with respect to its faculty name.
-
 window.onload = function () {
-
 
     /** Administrative Role Major Search Fields ( selections field list ) */
     const programField = document.getElementById('programIDSelect');
@@ -50,9 +38,8 @@ window.onload = function () {
     /** Button  */
     const roleAssignBtn = document.getElementById('roleAssignBtnID');
 
-
+    let userId = $('input[data-h-set="facCod"]').val()
     $(document).ready(function () {
-
         /** Disable program-field when HOD is selected. */
         visibilityOfProgramField();
 
@@ -62,7 +49,6 @@ window.onload = function () {
                 $(this).parent().removeClass("textField-error-input");
             else if (this.type === "select-one")
                 $(this).parent().removeClass("select-error-input");
-
         });
 
         /** click to hide view section and show input section according to Role Creation */
@@ -767,3 +753,12 @@ $(facultyBindField).on('change', function (e) {
         }
     }
 })*/
+/*    let facultyInfo = [];
+    facultyInstanceList.find(function (fac) {
+        facultyInfo.push({"code": fac.facultyCode, "name": fac.name});
+    });*/
+/*let facultyNameList = [];
+facultyInstanceList.find(function (fac) {
+    facultyNameList.push(fac.name);
+});
+facultyNameList = Array.from(new Set(facultyNameList))*/

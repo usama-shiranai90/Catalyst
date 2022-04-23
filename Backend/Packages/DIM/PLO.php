@@ -22,7 +22,7 @@ class PLO implements JsonSerializable
             $ploName = $plo['plo_number'];
             $ploDescription = $plo['plo_description'];
             $sql_statement = /** @lang text */
-                "insert into plo(curriculumCode, programCode, ploName, ploDescription) VALUE (\"$programCode\" ,  \"$curriculumId\" ,\" $ploName\"  ,\" $ploDescription\" )";
+                "insert into plo(curriculumCode, programCode, ploName, ploDescription) VALUE (\"$curriculumId\",\"$programCode\"  ,\" $ploName\"  ,\" $ploDescription\" )";
             if ($this->databaseConnection->query($sql_statement) == TRUE)
                 $errorFlag = true;
         }

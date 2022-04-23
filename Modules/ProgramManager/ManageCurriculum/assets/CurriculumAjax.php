@@ -20,13 +20,12 @@ if (isset($_POST['creation']) and $_POST['creation']) {
         $curriculumName = $_POST['curriculumName'];
         $curriculumRelatedPlo = $_POST['curriculumPloArray'];
 
-        if ($curriculum->createCurriculum($assignYear, $curriculumName)) { // create the curriculum and store the CurriculumCode.
+        if ($curriculum->createCurriculum($programCode , $assignYear, $curriculumName)) { // create the curriculum and store the CurriculumCode.
             $curriculumCode = $curriculum->getCurriculumCode();
             /** Removed. */
             /*   $program = new Program();
               $program->createProgram($curriculumCode, $departmentCode, $programType);
               $programCode = $program->getProgramCode();*/
-
             if ($plo->createProgramOutcomeCurriculum($programCode, $curriculumCode, $curriculumRelatedPlo))
                 $resultBackServer = updateServer(1, "successfully", "none");
             else

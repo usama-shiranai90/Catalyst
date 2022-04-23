@@ -1,9 +1,5 @@
 <?php
 
-use JetBrains\PhpStorm\ArrayShape;
-
-include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\db.php";
-
 class Course implements JsonSerializable
 {
     protected $databaseConnection;

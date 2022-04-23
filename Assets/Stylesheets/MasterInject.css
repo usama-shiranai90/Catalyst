@@ -91,7 +91,7 @@
     @apply bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4;
 }
 
-.cprofile-container-centertxt, .weekly-topic-container-centertxt, .student-profile-header-text {
+.cprofile-container-centertxt, .weekly-topic-container-centertxt, .student-profile-header-text , .tab-context-header {
     @apply text-xl text-center my-2 font-bold;
 }
 
@@ -227,11 +227,11 @@
                 transition: 0.2s all ease-in; */
 }
 
-.drop-zone .dragged{
+.drop-zone .dragged {
     @apply bg-blue-300 border-catalystBlue-l2;
 }
 
-.drop-zone input{
+.drop-zone input {
     @apply hidden;
 }
 
@@ -298,6 +298,21 @@
 }
 
 /* old Design references. */
+
+/* Tab Options Design */
+
+.selected-tab-section {
+    @apply sm:px-6 sm:w-auto sm:justify-start cursor-pointer inline-flex justify-center items-center
+    py-2 w-1/2 rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none my-0 text-base;
+/*student-profile-header-text*/
+}
+
+.non-selected-tab-section{
+    @apply  sm:px-6 sm:w-auto cursor-pointer inline-flex justify-center items-center py-2 w-1/2 rounded-t border-b-2 text-gray-400 font-semibold tracking-normal
+    leading-none my-0 transform transition ease-out duration-300 hover:scale-100 hover:-translate-y-0 hover:translate-x-0
+    hover:text-black hover:border-black text-base;
+}
+
 
 /** gray solid-border with rounded shape. */
 .sutareta-waku-gray-p {
