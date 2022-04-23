@@ -47,6 +47,54 @@ class Curriculum
         }
     }
 
+    public function retrieveCurriculumList($programCode): ?array
+    {
+        $sql = /** @lang text */
+            "select  p.programCode, p.curriculumCode,c.curriculumYear, c.dateCreated, c.curriculumName
+            from curriculum c join programcurriculum p on c.curriculumCode = p.curriculumCode where programCode = \"$programCode\" ;";
+
+        $result = $this->databaseConnection->query($sql);
+        $curriculumList = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    'programCode' => $row['programCode'],
+                    'curriculumCode' => $row['curriculumCode'],
+                    'curriculumYear' => $row['curriculumYear'],
+                    'curriculumName' => $row['curriculumName']
+                );
+                array_push($curriculumList, $temp);
+            }
+            return $curriculumList;
+        } else
+            echo "No curriculum found";
+        return null;
+    }
+
+    public function retrieveEntireCurriculumList(): ?array
+    {
+        $sql = /** @lang text */
+            "select  p.programCode, p.curriculumCode,c.curriculumYear, c.dateCreated, c.curriculumName
+             from curriculum c join programcurriculum p on c.curriculumCode = p.curriculumCode group by programCode,curriculumName limit 10";
+
+        $result = $this->databaseConnection->query($sql);
+        $curriculumList = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    'programCode' => $row['programCode'],
+                    'curriculumCode' => $row['curriculumCode'],
+                    'curriculumYear' => $row['curriculumYear'],
+                    'curriculumName' => $row['curriculumName']
+                );
+                array_push($curriculumList, $temp);
+            }
+            return $curriculumList;
+        } else
+            echo "No curriculum found";
+        return null;
+    }
+
     public function retrievePLOsList($programCode): array
     {
         $sql = /** @lang text */

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['departmentCode']) and isset($_POST['programCode'])) {
             $departmentCode = $_POST['departmentCode'];
             $programCode = $_POST['programCode'];
-            $curriculumCode = 1;
+            $curriculumCode = $_POST['curriculumCode'];
             $programName = $_POST['programName'];
             $seasonFName = $_POST['seasonFullName']; // fall 2021
             $seasonName = $_POST['seasonName'];     //  fall 21

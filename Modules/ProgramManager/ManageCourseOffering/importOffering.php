@@ -2,20 +2,27 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
+$admin = unserialize($_SESSION['adminInstance']);
+$personalDetails = $admin->getInstance();
+
 $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];
 $programCode = $_SESSION['programCode'];
 
-$admin = unserialize($_SESSION['adminInstance']);
-$personalDetails = $admin->getInstance();
-//print $departmentCode . " " . $programCode;
+$season = new Season();
+$seasonList = $season->retrieveSeasonList();
+//print json_encode($seasonList) . "<br>";
+
+$program = new Program();
+$programInstance = $programList = $program->retrieveProgram($programCode);
+//print json_encode($programInstance) . "<br>";
+
+$curriculum = new Curriculum();
+$curriculumList = $curriculum->retrieveCurriculumList($programInstance->getProgramCode());
+//print json_encode($curriculumList) . "<br>";
 
 $batchList = (new Batch())->retrieveAllEligibleBatches();
 
-foreach ($batchList as $batch) {
-    echo json_encode($batch) . "<br>";
-//    echo $batch->getprogramCode();
-}
 ?>
 
 <!doctype html>
@@ -31,6 +38,7 @@ foreach ($batchList as $batch) {
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
+    <script src="../../../node_modules/xlsx/dist/xlsx.full.min.js" rel="script"></script>
     <style>
 
         .icon-container {
@@ -72,7 +80,7 @@ foreach ($batchList as $batch) {
             border: 2px solid white;
             height: 70px;
             border-radius: 10px;
-            margin: 15px 0px;
+            margin: 15px 0;
             position: relative;
         }
 
@@ -111,85 +119,108 @@ foreach ($batchList as $batch) {
         }
 
     </style>
-
+    <!-- BCSE , FALL-2021 , SECTION    -->
 </head>
 <body>
 <div class="w-full min-h-full" style="background-color: #ECECF3">
-
     <main class="main-content-alignment min-h-full">
         <section>
             <div class="flex flex-col px-10 py-2 my-5 rounded-lg shadow bg-white">
                 <h2 class="font-semibold text-2xl text-gray-700 capitalize">Import Box</h2>
-                <p class="font-normal text-base text-gray-700 capitalize">Please select the respective <span
-                            class="capitalize font-semibold">Batch/Season , semester </span> along with the allocated
-                    <span class="capitalize font-semibold">curriculum year</span></p>
-                <div class="inline-flex rounded" style="background-color: #F4F8F9">
-                    <div class="flex flex-grow justify-end items-center pt-3 pb-2 text-white text-base font-medium ml-20 w-3/4">
+                <p class="font-normal text-base text-gray-700 capitalize">
+                    Please provide the necessary information to create new allocation of courses.
+                </p>
+                <p class="font-bold italic text-center">Note:
+                    <label class="font-normal antialiased tracking-tight leading-loose">
+                        Your can import one Batch Offering at a time to avoid collision or any other data mishape.
+                    </label></p>
 
+                <div class="inline-flex rounded" style="background-color: #F4F8F9">
+                    <div class="flex flex-grow justify-center items-center pt-3 pb-2 text-white text-base font-medium ml-20 w-3/4">
                         <div class="textField-label-content w-3/12">
-                            <label for="importCourseOfferingBatchSelectId"></label>
-                            <select class="select" name="importCourseOfferingBatchSelect"
+                            <label for="importCourseOfferingSeasonSelectID"></label>
+                            <select class="select" name="importCourseOfferingSeasonSelect"
                                     onclick="this.setAttribute('value', this.value);"
                                     onchange="this.setAttribute('value', this.value);" value=""
-                                    id="importCourseOfferingBatchSelectId">
+                                    id="importCourseOfferingSeasonSelectID">
                                 <option value="" hidden=""></option>
                                 <?php
-                                $isRepeatedBatch = array();
-
-                                foreach ($batchList as $index => $batch) {
-                                    $current = $batch->getbatchName();
-                                    if (!in_array($current, $isRepeatedBatch)) {
-                                        print sprintf("<option  value=\"%s\" >%s</option>", $batch->getbatchCode(), $batch->getbatchName());
-                                        $isRepeatedBatch[] = $batch->getbatchCode();
-                                    }
-                                }
+                                if ($seasonList !== null)
+                                    foreach ($seasonList as $index => $value)
+                                        print sprintf("<option  value=\"%s\" >%s</option>", $value->getSeasonCode(), $value->getSeasonName());
+                                else
+                                    print sprintf("<option disabled >%s</option>", "No Season Found");
                                 ?>
                             </select>
-                            <label class="select-label top-1/4 sm:top-3">Batch/Season</label>
+                            <label class="select-label top-1/4 sm:top-3">Season</label>
                         </div>
+
                         <div class="textField-label-content w-3/12">
-                            <label for="importCourseOfferingSemesterSelectId"></label>
-                            <select class="select" name="importCourseOfferingSemesterSelect"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
-                                    id="importCourseOfferingSemesterSelectId">
-                                <option value="" hidden=""></option>
-                            </select>
-                            <label class="select-label top-1/4 sm:top-3">Semester</label>
-                        </div>
-                        <div class="textField-label-content w-3/12">
-                            <label for="importCourseOfferingCurriculumSelectId"></label>
+                            <label for="importCourseOfferingCurriculumSelectID"></label>
                             <select class="select" name="importCourseOfferingCurriculumSelect"
                                     onclick="this.setAttribute('value', this.value);"
                                     onchange="this.setAttribute('value', this.value);" value=""
-                                    id="importCourseOfferingCurriculumSelectId">
+                                    id="importCourseOfferingCurriculumSelectID">
                                 <option value="" hidden=""></option>
+                                <?php
+                                foreach ($curriculumList as $index => $role) {
+                                    print sprintf("<option  value=\"%s\" data-select-id=\"%s\">%s</option>", $role['curriculumCode'], $role['curriculumYear'], $role['curriculumName']);
+                                }
+                                ?>
                             </select>
-
                             <label class="select-label top-1/4 sm:top-3">Curriculum</label>
                         </div>
+                        <div class="textField-label-content w-3/12">
+                            <label for="importCourseOfferingBatchSelectID"></label>
+                            <select class="select" name="importCourseOfferingBatchSelect"
+                                    onclick="this.setAttribute('value', this.value);"
+                                    onchange="this.setAttribute('value', this.value);" value=""
+                                    id="importCourseOfferingBatchSelectID">
+                                <option value="" hidden=""></option>
+                            </select>
+                            <label class="select-label top-1/4 sm:top-3">Batch</label>
+                        </div>
+                       <!-- <div class="textField-label-content w-3/12">
+                            <label for="importCourseOfferingSemesterSelectID"></label>
+                            <select class="select" name="importCourseOfferingSemesterSelect"
+                                    onclick="this.setAttribute('value', this.value);"
+                                    onchange="this.setAttribute('value', this.value);" value=""
+                                    id="importCourseOfferingSemesterSelectID">
+                                <option value="" hidden=""></option>
+                            </select>
+                            <label class="select-label top-1/4 sm:top-3">Semester</label>
+                        </div>-->
                     </div>
-                    <div class="flex justify-end items-center w-1/6">
-                        <button type="button"
-                                class="text-white rounded-md border-0  font-medium bg-catalystBlue-l2 px-8 mx-5 py-1"
-                                name="importBoxCreateBtn" id="importBoxCreateBtnID">Create
-                        </button>
+
+                    <div class="flex justify-center  items-center w-24">
+                        <svg id="refreshAdministrativeRoleBtn" xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-8 transform transition hover:scale-90" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
                     </div>
                 </div>
             </div>
-
             <div id="importedTableContainer"
                  class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 h-1/2 weeklytopics-primary-border-n">
 
-                <div class="db-table-header-topic border-b-0 rounded-b-none pb-0" style="background-color: #F4F8F9">
-                    <h2 class="flex items-center justify-center text-lg text-center font-semibold  text-gray-700 tracking-wide text-center capitalize">
-                        Imported Program Courses and allocation information will be shown here.</h2>
-                    <div class="flex mx-auto flex-wrap justify-center work-sheet-container">
+                <div class="db-table-header-topic items-center border-b-0 rounded-b-none pb-0"
+                     style="background-color: #F4F8F9">
+                    <div class="flex flex-row justify-center items-center">
+                        <img class="mx-2 h-6 transition duration-800 ease-in-out hidden" width="25" height="20"
+                             src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
+                        <h2 class="flex items-center justify-center text-lg text-center font-semibold  text-gray-700 tracking-wide text-center capitalize">
+                            Imported Program Courses and allocation information will be shown here.
+                        </h2>
+                    </div>
+
+                    <div id="sheetNoId" class="flex mx-auto flex-wrap justify-center work-sheet-container">
                     </div>
                 </div>
 
                 <form class="px-10 py-6" enctype="multipart/form-data">
-                    <div class="drop-zone py-10" style="min-height: 50%">
+                    <div class="drop-zone py-10">
                         <div class="icon-container">
                             <img src="/Assets/Images/vectorFiles/Uploader/file.svg" draggable="false" class="center"
                                  alt="File Icon">
@@ -224,18 +255,25 @@ foreach ($batchList as $batch) {
                 </form>
 
                 <div id="generatedTableContainer"
-                     class="bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0">
+                     class="bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0 transform transition ease-out duration-700">
 
                 </div>
 
+                <div class="text-right mx-10 my-0">
+                    <button id="saveCourseOfferingBtn" class="my-4 sm:mt-0 inline-flex
+                     items-start justify-start px-10 py-2.5 bg-blue-500 hover:bg-blue-600
+                        focus:outline-none rounded hidden">
+                        <label class="text-sm font-medium leading-none text-white">Save</label>
+                    </button>
+                </div>
 
             </div>
-
-
         </section>
     </main>
-
 </div>
 </body>
+<script>
+    let programInstance = <?php echo json_encode($programInstance);?>;
+</script>
 <script src="assets/js/FileUploadScript.js"></script>
 </html>

@@ -1,9 +1,23 @@
+$(document).on('input', 'tr > td', function (e) {
+    $(this).removeClass('bg-red-300 text-white');
+})
+
+
 /** function is used to return list of options for program field for both classes. */
 function createOptionsListForProgramField(currentValue, programList) {
     let optionsList = '';
     for (let i = 0; i < programList.length; i++) {
         if (currentValue === programList[i].departmentCode)
             optionsList += `<option value="${programList[i].programCode}">${programList[i].programSN}</option>`;
+    }
+    return optionsList;
+}
+
+function createOptionsListForCurriculumField(currentValue, curriculumList) {
+    let optionsList = '';
+    for (let i = 0; i < curriculumList.length; i++) {
+        if (currentValue === curriculumList[i].programCode)
+            optionsList += `<option value="${curriculumList[i].curriculumCode}">${curriculumList[i].curriculumName}</option>`;
     }
     return optionsList;
 }
@@ -125,7 +139,6 @@ function checkDuplication(TableContainer) {
             $(tValue).find('td').each(function (i) {
                 if (i < 2 || i === 7 || i === 8) {
                     if (values[index][i].indexOf($(this).text().replace(/\s\s+/g, ' ')) > -1) {
-                        console.log("excuse me ?")
                         $(this).addClass('bg-red-300 text-white');
                         hasDuplication = true;
                     }

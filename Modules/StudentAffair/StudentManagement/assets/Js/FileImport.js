@@ -15,6 +15,7 @@ const maxSizeAllowed = 15 * 1024 * 1024;
 /** Fields list.  */
 const departmentField = document.getElementById('importStudentDepartmentSelectId');
 const programField = document.getElementById('importStudentProgramSelectId');
+const curriculumYearField = document.getElementById('importStudentCurriculumSelectId');
 const seasonField = document.getElementById('importStudentSeasonSelectId');
 
 const backArrowBtn = document.getElementById('backArrowId');
@@ -28,10 +29,19 @@ $(document).ready(function () {
         const departmentFieldValue = this.value;
         if (departmentFieldValue.length !== 0 && (programList !== null)) {
             let optionsList = createOptionsListForProgramField(departmentFieldValue, programList)
-
             $(programField).children().slice(1).remove();
             $(programField).append(optionsList);
         }
+    });
+
+    $(programField).on('change', function (e) {
+        const programFieldValue = this.value;
+        if (departmentField.value.length !== 0 && (programList !== null) && (curriculumList !== null)) {
+            let optionsList = createOptionsListForCurriculumField(programFieldValue, curriculumList)
+            $(curriculumYearField).children().slice(1).remove();
+            $(curriculumYearField).append(optionsList);
+        }
+
     });
 
     /** applying animation for dragover when a file is placed and when file is removed from the container. */
@@ -66,10 +76,6 @@ $(document).ready(function () {
             }
         }
     });
-
-    $(document).on('input', 'tr > td', function (e) {
-        $(this).removeClass('bg-red-300 text-white');
-    })
 
     /** Browse Button and Input Excel File... */
     $(browseBtnSpan).on('click', function (e) {
@@ -162,7 +168,20 @@ $(document).ready(function () {
     });
 
     $(document).on('click', 'img[id^="addMoreBtn-"]', function (e) {
-        addStudentTableRecord(this, false);
+        let unqStdReg = -1;
+        $(this).closest('.border-collapse.table-auto').children(':nth-child(2)').children(':last-child').each(function () {
+            const findElement = $(this).find(':first-child')[0];
+            let innerText;
+            let lastThreeDigit;
+            if (findElement === undefined)
+                return
+            else {
+                innerText = findElement.innerText.replace(/\s\s+/g, '');
+                lastThreeDigit = ('000' + (parseInt(innerText.match("(.{3})\s*$", "i")[0]) + 1)).slice(-3);
+                unqStdReg = innerText.slice(0, -3) + lastThreeDigit;
+            }
+        });
+        addStudentTableRecord(this, unqStdReg, false);
     });
 
     const uploadFileProcess = () => {
@@ -188,6 +207,7 @@ $(document).ready(function () {
         let isCorrectFormat = false;
         let departmentCode = departmentField.value.replace(/\s\s+/g, '');
         let programCode = programField.value.replace(/\s\s+/g, '');
+        let curriculumCode = curriculumYearField.value.replace(/\s\s+/g, '');
 
         let programName = $("#importStudentProgramSelectId option:selected").text().replace(/\s\s+/g, ''); // Saves BCSE, BCCS
         let seasonName = $("#importStudentSeasonSelectId option:selected").text().replace(/\s\s+/g, ''); //  Fall 24
@@ -214,7 +234,7 @@ $(document).ready(function () {
 
         if (isCorrectFormat && !hasDuplication) { // working fine
             let studentSectionWiseList = passIntoStudentList(generatedTableContainer, sectionNameList, true, 0);
-            callAjaxForCreation(departmentCode, programCode, programName, seasonFullName, seasonName, seasonShortName, studentSectionWiseList)
+            callAjaxForCreation(departmentCode, programCode, programName, curriculumCode, seasonFullName, seasonName, seasonShortName, studentSectionWiseList)
 
         } else if (!isCorrectFormat) {
             $('body').append(popupErrorNotifier("Mismatch Provided Format", "Please check the parameters of Program or Season, wrong sheet is uploaded."));
@@ -375,10 +395,7 @@ function sheetToHtml(work_book, sheet_name) {
 }
 
 
-function callAjaxForCreation(departmentCode, programCode, programName, seasonFullName, seasonName, seasonShortName, studentSectionWiseList) {
-
-    console.log(studentSectionWiseList)
-
+function callAjaxForCreation(departmentCode, programCode, programName, curriculumCode, seasonFullName, seasonName, seasonShortName, studentSectionWiseList) {
     $.ajax({
         type: "POST",
         url: "assets/Operation/ManageStudentAjax.php",
@@ -387,6 +404,7 @@ function callAjaxForCreation(departmentCode, programCode, programName, seasonFul
             departmentCode: departmentCode,
             programCode: programCode,
             programName: programName,
+            curriculumCode: curriculumCode,
             seasonFullName: seasonFullName,
             seasonName: seasonName,
             seasonShortName: seasonShortName,

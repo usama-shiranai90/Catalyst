@@ -37,7 +37,7 @@ class Program implements JsonSerializable
         return false;
     }
 
-    public function modifyProgram($programCode , $programName , $programSName)
+    public function modifyProgram($programCode, $programName, $programSName)
     {
         $sql = /** @lang text */
             "UPDATE program p    SET p.programName = \"$programName\" , p.programShortName = \"$programSName\"
@@ -46,7 +46,7 @@ class Program implements JsonSerializable
         if ($this->databaseConnection->query($sql) === TRUE) {
             return true;
         } else
-            return false.$this->databaseConnection->error;
+            return false . $this->databaseConnection->error;
     }
 
     public function retrieveProgram($programCode): Program
@@ -56,7 +56,7 @@ class Program implements JsonSerializable
         $result = $this->databaseConnection->query($sql);
 
         $programName = array();
-
+        $newProgram = '';
         if (mysqli_num_rows($result) > 0) {
 
             while ($row = $result->fetch_assoc()) {

@@ -97,6 +97,29 @@ class Batch implements JsonSerializable
     }
 
 
+    public function retrieveBatchListOfProgram($seasonCode, $programCode, $curriculumCode): array
+    {
+        $sql = /** @lang text */
+            "select * from batch where programCode = \"$programCode\" and seasonCode = \"$seasonCode\" and curriculumCode = \"$curriculumCode\"; ";
+        $result = $this->databaseConnection->query($sql);
+        $listOfBatches = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    'batchCode' => $row['batchCode'],
+                    'batchName' => $row['batchName'],
+                    'curriculumCode' => $row['curriculumCode'],
+                    'seasonCode' => $row['seasonCode'],
+                    'programCode' => $row['programCode'],
+                );
+                array_push($listOfBatches, $temp);
+            }
+        } else
+            echo "No batches found";
+        return $listOfBatches;
+    }
+
+
     public function retrieveBatchList($programCode): ?array
     {
         $listOfBatches = array();

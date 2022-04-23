@@ -7,6 +7,8 @@ $program = new Program();
 $departmentList = $program->retrieveEntireDepartmentList();
 $programList = $program->retrieveEntireProgramList();
 
+$curriculum = new Curriculum();
+$curriculumList = $curriculum->retrieveEntireCurriculumList();
 
 $season = new Season();
 $seasonList = $season->retrieveSeasonList();
@@ -37,7 +39,6 @@ foreach ($seasonList as $sName)
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
-    <!--    <script src="../../../node_modules/xlsx/xlsx.mjs" rel="script"></script>-->
     <script src="../../../node_modules/xlsx/dist/xlsx.full.min.js" rel="script"></script>
     <style>
 
@@ -138,10 +139,9 @@ foreach ($seasonList as $sName)
                             <label for="importStudentDepartmentSelectId"></label>
                             <select class="select" name="importStudentDepartmentSelect"
                                     onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value="xxxx"
+                                    onchange="this.setAttribute('value', this.value);" value=""
                                     id="importStudentDepartmentSelectId">
                                 <option value="" hidden=""></option>
-                                <option value="xxx" selected>xxx</option>
 
                                 <?php
                                 $refineDepartmentList = array();
@@ -161,22 +161,33 @@ foreach ($seasonList as $sName)
                             <label for="importStudentProgramSelectId"></label>
                             <select class="select" name="importStudentProgramSelect"
                                     onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value="xxx"
+                                    onchange="this.setAttribute('value', this.value);" value=""
                                     id="importStudentProgramSelectId">
                                 <option value="" hidden=""></option>
-                                <option value="xxx" selected>xxx</option>
                             </select>
 
                             <label class="select-label top-1/4 sm:top-3">Program</label>
                         </div>
+
+                        <div class="textField-label-content w-3/12">
+                            <label for="importStudentCurriculumSelectId"></label>
+                            <select class="select" name="importStudentCurriculumSelect"
+                                    onclick="this.setAttribute('value', this.value);"
+                                    onchange="this.setAttribute('value', this.value);" value=""
+                                    id="importStudentCurriculumSelectId">
+                                <option value="" hidden=""></option>
+                            </select>
+
+                            <label class="select-label top-1/4 sm:top-3">Curriculum Year</label>
+                        </div>
+
                         <div class="textField-label-content w-3/12">
                             <label for="importStudentSeasonSelectId"></label>
                             <select class="select" name="importStudentSeasonSelect"
                                     onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value="xxx"
+                                    onchange="this.setAttribute('value', this.value);" value=""
                                     id="importStudentSeasonSelectId">
                                 <option value="" hidden=""></option>
-                                <option value="xxx" selected>xxx</option>
                                 <?php
                                 foreach (range(date('Y', strtotime("+2 year")), $earliestYear) as $key => $value) { // value stores the year.
                                     foreach (['Fall', 'Spring'] as $iterativeSeason) {
@@ -202,7 +213,6 @@ foreach ($seasonList as $sName)
                     </div>
                 </div>
             </div>
-
             <div id="importedTableContainer"
                  class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 h-1/2 weeklytopics-primary-border-n">
 
@@ -269,7 +279,6 @@ foreach ($seasonList as $sName)
                 </div>
 
             </div>
-
         </section>
     </main>
 
@@ -278,7 +287,8 @@ foreach ($seasonList as $sName)
 <script>
 
     let departmentList = <?php echo json_encode($departmentList);?>;
-    let programList =  <?php echo json_encode($programList);?>
+    let programList =  <?php echo json_encode($programList);?>;
+    let curriculumList =  <?php echo json_encode($curriculumList);?>;
 </script>
 
 <script src="assets/Js/FileImport.js"></script>
