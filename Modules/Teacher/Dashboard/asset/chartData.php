@@ -1,5 +1,8 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\ServerPerformance.php";
+
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
@@ -13,12 +16,7 @@ $sectionCode = $_SESSION['selectedSection'];
 $batchCode = $_SESSION['selectedBatch'];
 
 if (isset($_POST['toLoadAverageCLO']) and $_POST['toLoadAverageCLO']) {
-    include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\Util\SearchUtil.php";
-        $getCourseOutcomeAveragePerformanceArray = $cloObject->retrieveCLOAveragePerCourse($courseCode, $sectionCode, $batchCode, $curriculumCode);
-    if ($getCourseOutcomeAveragePerformanceArray == null)
-        $resultBackServer = updateServer(0, "Some-time went wrong ,try again.", "registration-error");
-    else {
-        /*        // applying the standard deviation.
+    /*        // applying the standard deviation.
                 $resultantArrayList = array(); // storing the accumulated values for each result.
                 $uniqueCLOList = array();
                 foreach ($getCourseOutcomeAveragePerformanceArray as $key => $value) { // loop is used to get Unique CLO Name.
@@ -34,25 +32,20 @@ if (isset($_POST['toLoadAverageCLO']) and $_POST['toLoadAverageCLO']) {
                         $resultantArrayList[] = standardDeviation($temp);
                     }
                 }*/
-        $resultBackServer = updateServer(1, $getCourseOutcomeAveragePerformanceArray, "none");
-    }
+    $getCourseOutcomeAveragePerformanceArray = $cloObject->retrieveCLOAveragePerCourse($courseCode, $sectionCode, $batchCode, $curriculumCode);
+    if ($getCourseOutcomeAveragePerformanceArray == null)
+        $resultBackServer = updateServer(400, "No Related Course Learning Outcome Found For Student. No Found !", SERVER_STATUS_CODES[400]);
+    else
+        $resultBackServer = updateServer(200, $getCourseOutcomeAveragePerformanceArray, SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
     die(json_encode($resultBackServer));
+
 } elseif (isset($_POST['toLoadStudentAverageCLO']) and $_POST['toLoadStudentAverageCLO']) {
     $getStudentAverageCourseOutcomeArray = $cloObject->retrieveCLOAveragePerStudent($courseCode, $sectionCode);
     if ($getStudentAverageCourseOutcomeArray == null)
-        $resultBackServer = updateServer(0, "Some-time went wrong ,try again.", "registration-error");
+        $resultBackServer = updateServer(400, "No Related Course Learning Outcome Found For Student. No Found !", SERVER_STATUS_CODES[400]);
     else
-        $resultBackServer = updateServer(1, $getStudentAverageCourseOutcomeArray, "none");
+        $resultBackServer = updateServer(200, $getStudentAverageCourseOutcomeArray, SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
     die(json_encode($resultBackServer));
-}
-
-
-function updateServer($status, $message, $error): array
-{
-    $resultBackServer['status'] = $status;
-    $resultBackServer['message'] = $message;
-    $resultBackServer['errors'] = $error;
-    return $resultBackServer;
 }
 
 ?>

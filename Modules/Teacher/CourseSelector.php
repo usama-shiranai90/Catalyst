@@ -35,7 +35,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     array_push($allottedBatchCodes, $listOfAllocations[$x]->getBatchCode());
 }
 
-//echo json_encode($allottedCourseNames) . "<br>";
+echo json_encode($allottedUserIsCoordinator) . "<br>";
 
 
 /*echo "Curriculum: <br>" . PHP_EOL;
@@ -44,7 +44,6 @@ echo "<br>Programs: <br>";
 print_r($allottedProgramCodes);
 echo "<br>Batch: <br>";
 print_r($allottedBatchCodes);*/
-
 /*echo "<br>Total Allocations:" . sizeof($listOfAllocations);
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     $listOfAllocations[$x]->toString();
@@ -230,7 +229,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             // console.log($('input[name="curriculumCode"]').val())
             // console.log($('input[name="programCode"]').val())
             // console.log("Batch Codes: ", allottedBatchCodes)
-            // console.log("status of corridantor", $('input[name="facultyAllocationStatus"]').val())
+            console.log("status of corridantor", $('input[name="facultyAllocationStatus"]').val())
         })
 
         containsErrors = false

@@ -24,8 +24,8 @@ $courseMid = array();
 $courseFinal = array();
 
 
-if ($assignmentSessional != null) {
-    $counter = 1;
+$counter = 1;
+if ($assignmentSessional != null)
     foreach ($assignmentSessional as $currentSessional) {
 //        echo $currentSessional->__toString() . " " . $currentSessional->getActivityCode() . "<br><br><br>";
         $key = $currentSessional->getActivityCode();
@@ -37,7 +37,9 @@ if ($assignmentSessional != null) {
 
         $counter = $counter + 1;
     }
-    $counter = 1;
+
+$counter = 1;
+if ($quizSessional != null)
     foreach ($quizSessional as $currentSessional) {
         $key = $currentSessional->getActivityCode();
         $courseSessional[$key] = array();
@@ -48,7 +50,8 @@ if ($assignmentSessional != null) {
 
         $counter = $counter + 1;
     }
-    $counter = 1;
+$counter = 1;
+if ($projectSessional != null)
     foreach ($projectSessional as $currentSessional) {
         $key = $currentSessional->getActivityCode();
         $courseSessional[$key] = array();
@@ -58,9 +61,8 @@ if ($assignmentSessional != null) {
         $courseSessional[$key][3] = $currentSessional->getTotalMarks();
         $counter = $counter + 1;
     }
-}
 
-if ($retrievedMidterm != null) {
+if ($retrievedMidterm != null)
     foreach ($retrievedMidterm as $currentMidterm) {
         $key = $currentMidterm->getActivityCode();
         $courseMid[$key] = array();
@@ -70,9 +72,8 @@ if ($retrievedMidterm != null) {
         $courseMid[$key][3] = $currentMidterm->getTotalMarks();
         break;
     }
-}
 
-if ($retrievedFinalTerm != null) {
+if ($retrievedFinalTerm != null)
     foreach ($retrievedFinalTerm as $currentFinalTerm) {
         $key = $currentFinalTerm->getActivityCode();
         $courseFinal[$key] = array();
@@ -82,7 +83,6 @@ if ($retrievedFinalTerm != null) {
         $courseFinal[$key][3] = $currentFinalTerm->getTotalMarks();
         break;
     }
-}
 
 ?>
 <!doctype html>

@@ -2,8 +2,8 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
 
-$admin = unserialize($_SESSION['adminInstance']);
-$personalDetails = $admin->getInstance();
+//$admin = unserialize($_SESSION['adminInstance']);
+//$personalDetails = $admin->getInstance();
 
 $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];

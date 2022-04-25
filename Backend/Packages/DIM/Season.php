@@ -25,11 +25,28 @@ class Season implements JsonSerializable
         return false;
     }
 
+
+    public function retrieveLatestSeason(): ?array
+    {
+        $seasonList = array();
+        $sql ="select seasonCode, seasonName from Season;";
+
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $newSeason = new Season();
+                $newSeason->seasonCode = $row["seasonCode"];
+                $newSeason->seasonName = $row["seasonName"];
+                array_push($seasonList, $newSeason);
+            }
+        } else
+            return null;
+        return $seasonList;
+    }
+
     public function retrieveLatestSeasonForAllocation(): ?array
     {
         $seasonList = array();
-//        $sql ="select seasonCode, seasonName from Season;";
-
         $sql = /** @lang text */
             "select * from season where dateCreated between
                               DATE_SUB(current_date, INTERVAL 4 month)

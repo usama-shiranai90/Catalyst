@@ -148,7 +148,7 @@ class WeeklyTopic
         } else
             echo "No Weekly Information:" . $this->databaseConnection->error;
 
-        print_r("what is the result" . json_encode($weeklyTopicListArray));
+//        print_r("what is the result" . json_encode($weeklyTopicListArray));
 
         return $weeklyTopicListArray;
     }
@@ -181,8 +181,9 @@ class WeeklyTopic
                 array_push($soloWeeklyTopic, $row['weeklyNo'], $row['topicDetail'], $row['assessmentCriteria'], $weekCLOList);
                 return $soloWeeklyTopic;
             }
-        } else
-            echo "No Weekly Information:" . $this->databaseConnection->error;
+        }
+//        else
+//            echo "No Weekly Information:" . $this->databaseConnection->error;
 
         return null;
     }

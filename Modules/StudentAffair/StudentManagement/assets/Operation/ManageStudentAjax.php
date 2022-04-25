@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                    To Modified Students: %s <br> ', json_encode($failedToModified)),
                     SERVER_STATUS_CODES[207]);
         } else
-            $resultBackServer = updateServer(200, "Please check your section code ", SERVER_STATUS_CODES[200] . "|" . SERVER_STATUS_CODES[201]);
+            $resultBackServer = updateServer(400, "Please check your section code ", SERVER_STATUS_CODES[400] . "|" . SERVER_STATUS_CODES[201]);
         die(json_encode($resultBackServer));
     }
 

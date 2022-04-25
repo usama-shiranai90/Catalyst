@@ -97,7 +97,7 @@ class CourseProfile implements Persistable
             while ($row = $result->fetch_assoc()) {
                 $cp_id = (int)$row['courseProfileCode'];
                 $this->setCourseProfileCode($cp_id);
-                echo sprintf("\n<br> CourseProfile Code got successfully: %d\n<br>", $cp_id);
+//                echo sprintf("\n<br> CourseProfile Code got successfully: %d\n<br>", $cp_id);
                 return true;
             }
         } else {
@@ -120,7 +120,7 @@ class CourseProfile implements Persistable
         $this->batchCode = $batchCode;
     }
 
-    public function saveCourseProfileData($CLOsPerCourseList, $CLOToPLOMapping, $ploArray)       // TODO: Implement saveCourseProfileData() method.  will save data in database and temporary in session variable.
+    public function saveCourseProfileData($CLOsPerCourseList, $CLOToPLOMapping, $ploArray, $courseInstructorList)       // TODO: Implement saveCourseProfileData() method.  will save data in database and temporary in session variable.
     {
         $courseID = $this->saveEssential();
         $this->saveAssessment($courseID);
@@ -189,23 +189,28 @@ class CourseProfile implements Persistable
 
     private function saveCourseInstructor($cCourseCode)
     {
-        $instructor_name = $this->instructorInfo->getInstructorName();
-        $instructor_designation = $this->instructorInfo->getInstructorDesignation();
-        $instructor_qualification = $this->instructorInfo->getInstructorQualification();
-        $instructor_spec = $this->instructorInfo->getInstructorSpecialization();
-        $instructor_contact = $this->instructorInfo->getInstructorContactNumber();
-        $instructor_email = $this->instructorInfo->getInstructorPersonalEmail();
 
-        $sql_statement = /** @lang text */
-            "INSERT INTO courseprofileinstructordetail(courseProfileCode, instructorName, designation, qualification, specialization, contactNumber, personalEmail)
-                 VALUES  (\"$cCourseCode\",\"$instructor_name\",\"$instructor_designation\", \"$instructor_qualification\", \"$instructor_spec\", \"$instructor_contact\", \"$instructor_email\")";
+        if (!empty($courseInstructorList) and count($courseInstructorList) > 0)
+            foreach ($courseInstructorList as $key => $faculty) {
+                self::setInstructorInfo($faculty['_name'], $faculty['_designation'], $faculty['_qualification'], $faculty['_specialization'], $faculty['_contactNumber'], $faculty['_personalEmail']);
+                $instructor_name = $this->instructorInfo->getInstructorName();
+                $instructor_designation = $this->instructorInfo->getInstructorDesignation();
+                $instructor_qualification = $this->instructorInfo->getInstructorQualification();
+                $instructor_spec = $this->instructorInfo->getInstructorSpecialization();
+                $instructor_contact = $this->instructorInfo->getInstructorContactNumber();
+                $instructor_email = $this->instructorInfo->getInstructorPersonalEmail();
+                $instructorFacultyCode = $faculty['_fkey'];
 
-        if ($this->databaseConnection->query($sql_statement) === TRUE) {
-            echo sprintf("\n<br>Instructor Information : %s.\n<br>", $this->databaseConnection->error);
-        } else {
-            echo sprintf("\n<br>Error, can not create Instructor information: %s.\n<br>", $this->databaseConnection->error);
-        }
+                $sql_statement = /** @lang text */
+                    "INSERT INTO courseprofileinstructordetail(courseProfileCode ,facultyCode , instructorName, designation, qualification, specialization, contactNumber, personalEmail)
+                 VALUES  (\"$cCourseCode\", $instructorFacultyCode ,\"$instructor_name\",\"$instructor_designation\", \"$instructor_qualification\",
+                  \"$instructor_spec\", \"$instructor_contact\", \"$instructor_email\")";
 
+//                if ($this->databaseConnection->query($sql_statement) !== TRUE)
+//                    array_push($failedToPerformUpdation, -2);
+            }
+
+        
     }
 
     public function createCourseCLOs($CLOsPerCourseList, $CLOToPLOMapping, $ploArray, $cloIDList = array())
@@ -282,11 +287,13 @@ class CourseProfile implements Persistable
             "update clo set cloName = \"$cloName\", description = \"$cldescription\",domain = \"$clodomain\",btLevel =  \"$clobtlevel\"
               where  CLOCode =\"$cloCode\" and curriculumCode = \"$curriculumCode\";";
 
-        if ($this->databaseConnection->query($sql1) === TRUE) {
-            echo "\n<br> Successfully updated CLO-Description Table.\n<br>";
-        } else {
-            echo sprintf("\n<br>Error while updating CLO-Description : %s\n<br>Server Error:%s\n<br>", json_encode($rowData), $this->databaseConnection->error);
-        }
+//        if ($this->databaseConnection->query($sql1) === TRUE) {
+//            echo "\n<br> Successfully updated CLO-Description Table.\n<br>";
+//        } else {
+//            echo sprintf("\n<br>Error while updating CLO-Description : %s\n<br>Server Error:%s\n<br>", json_encode($rowData), $this->databaseConnection->error);
+//        }
+
+        return $this->databaseConnection->query($sql1) == TRUE;
     }
 
     public function loadCourseProfileData($courseProfileID, $facultyCode)
@@ -324,16 +331,18 @@ class CourseProfile implements Persistable
             echo sprintf("\n<br>Error , can not find CourseProfile Information : %s\n<br>Server Error:%s\n<br>", $courseProfileID, $this->databaseConnection->error);
     }
 
-    public function deleteCourseProfileDistributionRecord($currentCLOID, $programID, $batchCode)
+    public function deleteCourseProfileDistributionRecord($currentCLOID, $programID, $batchCode): bool
     {
         $sql = /** @lang text */
             "delete from clo where CLOCode = \"$currentCLOID\" and programCode =\"$programID\" and batchCode = \"$batchCode\"";
         $result = $this->databaseConnection->query($sql);
-        if ($result === TRUE) {
-            echo sprintf("\n<br>Record Deleted successfully for CourseProfile ID:%s .\n<br>", (string)$currentCLOID);
-        } else {
-            echo sprintf("\n<br>Error while deleting record from CLO-Description Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($currentCLOID, $programID, $batchCode)), $this->databaseConnection->error);
-        }
+        //        if ($result === TRUE) {
+        //            echo sprintf("\n<br>Record Deleted successfully for CourseProfile ID:%s .\n<br>", (string)$currentCLOID);
+        //        } else {
+        //            echo sprintf("\n<br>Error while deleting record from CLO-Description Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($currentCLOID, $programID, $batchCode)), $this->databaseConnection->error);
+        //        }
+
+        return $result == TRUE;
     }
 
     public function deleteCourseProfileCLOPLOMapping($CLOCode)
@@ -343,15 +352,19 @@ class CourseProfile implements Persistable
 
         $result = $this->databaseConnection->query($sql);
 
-        if ($result === TRUE) {
-            echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode . "\n";
-        } else {
-            echo sprintf("\n<br>Error while deleting record from CLO-TO-PLO Mapping Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($CLOCode)), $this->databaseConnection->error);
-        }
+//        if ($result === TRUE) {
+//            echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode . "\n";
+//        } else {
+//            echo sprintf("\n<br>Error while deleting record from CLO-TO-PLO Mapping Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($CLOCode)), $this->databaseConnection->error);
+//        }
+
+        return $result == TRUE;
     }
 
-    public function modifyCourseProfileData($courseProfileID, $courseInstructorList)
+    public function modifyCourseProfileData($courseProfileID, $courseInstructorList): array
     {
+        $failedToPerformUpdation = array();
+
         $sql1 = /** @lang text */
             "UPDATE courseprofile SET courseTitle = \"$this->courseTitle\", creditHours = \"$this->courseCreditHr\", semester = \"$this->courseSemester\",
                           programName = \"$this->courseProgram\", programLevel = \"$this->courseProgramLevel\", courseEffective = \"$this->courseCourseEffective\", 
@@ -361,11 +374,9 @@ class CourseProfile implements Persistable
                           referenceBooks = \"$this->courseReferenceBook\", courseDescription = \"$this->courseDescription\", otherReferences = \"$this->courseOtherReference\"
                            WHERE courseProfileCode = \"$courseProfileID\"";
 
-        if ($this->databaseConnection->query($sql1) === TRUE) {
-            echo "Record updated successfully" . "\n<br>";
-        } else {
-            echo sprintf("\n<br>Error while updating Course Profile Basic Info : %s\n<br>Server Error:%s\n<br>", json_encode(array($courseProfileID)), $this->databaseConnection->error);
-        }
+        if ($this->databaseConnection->query($sql1) !== TRUE)
+            array_push($failedToPerformUpdation, -1);
+//              echo sprintf("\n<br>Error while updating Course Profile Basic Info : %s\n<br>Server Error:%s\n<br>", json_encode(array($courseProfileID)), $this->databaseConnection->error);
 
         if (!empty($courseInstructorList) and count($courseInstructorList) > 0) {
             foreach ($courseInstructorList as $key => $faculty) {
@@ -379,16 +390,16 @@ class CourseProfile implements Persistable
                 $instructor_email = $this->instructorInfo->getInstructorPersonalEmail();
                 $instructorFacultyCode = $faculty['_fkey'];
 
+                print "ajeeb Faculty Key is : " . $instructorFacultyCode . "\n";
+
                 $sql2 = /** @lang text */
                     "update courseprofileinstructordetail SET instructorName = \"$instructor_name\", designation = \"$instructor_designation\", 
             qualification = \"$instructor_qualification\", specialization = \"$instructor_spec\", contactNumber = \"$instructor_contact\", 
             personalEmail = \"$instructor_email\" WHERE courseProfileCode = \"$courseProfileID\" and facultyCode = \"$instructorFacultyCode\" ";
 
-                if ($this->databaseConnection->query($sql2) === TRUE)
-                    echo "Record of courseProfile Instructor updated successfully" . "\n<br>";
-                else
-                    echo sprintf("\n<br>Error while Updating Course Profile Instructor Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
-
+                if ($this->databaseConnection->query($sql2) !== TRUE)
+                    array_push($failedToPerformUpdation, -2);
+//                        echo sprintf("\n<br>Error while Updating Course Profile Instructor Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
             }
         }
 
@@ -404,11 +415,10 @@ class CourseProfile implements Persistable
             projectWeightage = \"$c_project_weight\", midtermWeightage = \"$c_mid_weight\", finalExamWeightage = \"$c_final_weight\" 
             WHERE courseProfileCode = \"$courseProfileID\";";
 
-        if ($this->databaseConnection->query($sql2) === TRUE) {
-            echo "Record  courseProfile Assessment updated successfully" . "\n<br>";
-        } else
-            echo sprintf("\n<br>Error while Updating Course Profile Assessment Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
-
+        if ($this->databaseConnection->query($sql2) !== TRUE)
+            array_push($failedToPerformUpdation, -3);
+//            echo sprintf("\n<br>Error while Updating Course Profile Assessment Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
+        return $failedToPerformUpdation;
     }
 
     public function retrieveAllInstructorDetail($courseProfileCode, $affiliatedFacultyList): array

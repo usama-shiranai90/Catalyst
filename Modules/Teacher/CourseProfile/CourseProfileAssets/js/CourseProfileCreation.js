@@ -87,7 +87,7 @@ window.onload = function (e) {
             if (hasSessionalFlag) {
                 $('input[name="allowWeightAssessmentToggle"]').attr("disabled", true).css({cursor: 'no-drop'});
                 $('input[name="allowWeightAssessmentToggle"]').parent().parent().append(`<p class="leading-normal tracking-tight font-normal text-xs w-1/3 px-5 text-gray-600">
- It seems like the different section has already created activity for class. </p>`);
+                It seems like the different section has already created activity for class. </p>`);
             } else
                 $('input[name="allowWeightAssessmentToggle"]').removeClass().removeAttr("disabled").html("");
         }
@@ -508,16 +508,14 @@ window.onload = function (e) {
 
             console.log("in deletion Mode ", deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))
 
-            if (deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))) {
-                updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
-            }
+            deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
 
         } else {
             console.log("DETAIL Added Description :", allCourseCLOsDescriptionValues);
             console.log("MAP Description  :", allCourseCLOsMapValues);
             console.log("Essentail  :", courseEssentialFieldValue);
 
-            creationAjaxCall(allCourseCLOsDescriptionValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue)
+            creationAjaxCall(allCourseCLOsDescriptionValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue , courseInstructorList)
         }
 
 
@@ -670,7 +668,7 @@ window.onload = function (e) {
 
 }
 
-function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue) {
+function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue,courseInstructorList) {
 
     $.ajax({
         type: "POST",
@@ -678,6 +676,7 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
         data: {
             arrayCLO: arrayCLO, arrayMapping: arrayMapping,
             courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue,
+            courseInstructorList: courseInstructorList,
             saved: true
         },
         beforeSend: function () {
@@ -703,7 +702,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, cours
 
     $.ajax({
         type: "POST",
-        // dataType: "json",
+        async: false,
         url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=update',
         data: {
             courseEssentialFieldValue: courseEssentialFieldValue,
@@ -718,14 +717,20 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, cours
             $("main").toggleClass("blur-filter");
             $('#loader').toggleClass('hidden')
         },
-        success: function (data) {
-            console.log(data);
+        success: function (serverResponse, status) {
+            console.log(serverResponse);
         },
-        complete: function () {
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+        },
+        complete: function (response) {
+            // let responseText = JSON.parse(response.responseText)
+            // console.log("AFTER UPDATION STATUS:", responseText);
+
             setInterval(function () {
                 $("main").toggleClass("blur-filter");
                 $('#loader').toggleClass('hidden');
-                // location.href = "courseprofile_view.php";
+                location.href = "courseprofile_view.php";
             }, 3000);
         },
     });
@@ -740,13 +745,48 @@ function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) { // deleted
             remainingCLOIds: remainingCLOIds,
             del: true
         },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+            return false;
+        },
         success: function (data, textStatus) {
-            return true;
-            // console.log(data)
-            // location.href = "courseprofile_view.php";
+        },
+        complete: function (response) {
+            let responseText = JSON.parse(response.responseText)
+            console.log("MY STATUS :", responseText);
+
+            switch (responseText.status) {
+                case 200:
+                    updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
+                    break;
+
+                case 207:
+                    // Warning message as few records are unable to CRUD.
+                    loadAlertMessage(responseText)
+                    break;
+
+                case 400:
+                    // Warning message as few records are unable to CRUD.
+                    loadAlertMessage(responseText)
+                    break;
+                case 501:
+                    // Warning message as few records are unable to CRUD.
+                    loadAlertMessage(responseText)
+                    break;
+            }
         }
     });
-    return true;
+}
+
+function loadAlertMessage(responseText, timerS = 5000, timerE = 3000) {
+    if (responseText.status === 207)
+        $('body').append(popupErrorNotifier("Alert " + responseText.errors, responseText.message));
+    else if (responseText.status === 400)
+        $('body').append(popupErrorNotifier("SERVER RESPONSE " + responseText.errors, responseText.message));
+    $("#errorMessageDiv").toggle("hidden").animate(
+        {right: 0,}, timerS, function () {
+            $(this).delay(timerE).fadeOut().remove();
+        });
 }
 
 function addKeyupEventForTextarea() {

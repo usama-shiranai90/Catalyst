@@ -12,7 +12,8 @@ $facultyCode = $_SESSION['facultyCode'];
 $faculty = unserialize($_SESSION['facultyInstance']);
 $listOfAllocations = $faculty->retrieveAllocations($facultyCode);
 
-//print sprintf("Program Code : %s <br> Curriculum Code : %s <br> batchCode : %s <br> sectionCode : %s <br> courseCode %s ", $programCode, $curriculumCode, $batchCode, $sectionCode, $courseCode);
+//print sprintf("Program Code : %s <br> Curriculum Code : %s <br> batchCode : %s <br> sectionCode : %s <br> courseCode %s \n<br>", $programCode, $curriculumCode, $batchCode, $sectionCode, $courseCode);
+//print "Allocation LIST :" .json_encode($listOfAllocations)."<br>";
 
 $courseProfile = new CourseProfile();
 $courseLearningOutcome = new CLO();
@@ -33,7 +34,9 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
 }
 $allottedCourseNames = $courseNamesBeingShown;
 unset($courseNamesBeingShown);
+//print "allotted course name :".json_encode($allottedCourseNames);
 
+$fetchWeeklyTopic = null;
 if ($isProfileCreated === TRUE) {
     $courseProfileCode = $courseProfile->getCourseProfileCode();
     $weeklyTopic = new WeeklyTopic();
@@ -85,7 +88,7 @@ if ($assessmentObject != null)
                 <div class="grid grid-cols-4 gap-6">
 
                     <!-- Top Section , CGPA , CS , CH , EC -->
-                    <div class="shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
+                    <div class="hidden shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
                         <div class="flex flex-col items-center justify-center">
                             <div class="rounded-full relative">
                                 <p class="text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">Student
@@ -95,7 +98,7 @@ if ($assessmentObject != null)
                                style="color: #003C9C"></p>
                         </div>
                     </div>
-                    <div class="shadow-lg col-span-2 rounded-2xl w-full h-40  p-4 py-4 bg-white">
+                    <div class="hidden shadow-lg col-span-2 rounded-2xl w-full h-40  p-4 py-4 bg-white">
                         <div class="flex flex-col items-center justify-center">
                             <div class="rounded-full relative">
                                 <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-12 mt-4">
@@ -104,7 +107,7 @@ if ($assessmentObject != null)
                             <p class="text-3xl font-semibold" style="color: #003C9C"></p>
                         </div>
                     </div>
-                    <div class="shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
+                    <div class="hidden shadow-lg col-span-1 rounded-2xl w-full h-40  p-4 py-4 bg-white">
                         <div class="flex flex-col items-center justify-center">
                             <div class="rounded-full relative">
                                 <p class="capitalize text-catalystBlue-d1 text-2xl text-center font-bold mb-4 mt-4">

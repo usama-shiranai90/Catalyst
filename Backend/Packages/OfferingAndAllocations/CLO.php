@@ -119,9 +119,9 @@ class CLO implements JsonSerializable
                 }
             }
             return $CLOlist;
-//            echo "List Of Respective CLOs :<br>";
-        } else
-            echo "Cant retrieve clo : " . $this->databaseConnection->error;
+        }
+//        else
+//            echo "Cant retrieve clo : " . $this->databaseConnection->error;
         return null;
     }
 

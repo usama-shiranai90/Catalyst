@@ -42,8 +42,6 @@ class Curriculum
             while ($row = $result->fetch_assoc()) {
                 $this->setCurriculumCode($row['curriculumCode']);
             }
-        } else {
-            echo "No Curriculum exist";
         }
     }
 
@@ -109,8 +107,9 @@ class Curriculum
                 $plo->setPloDescription($row['ploDescription']);
                 $this->listOfPLOs[] = array($plo->getPloCode(), $plo->getPloName(), $plo->getPloDescription());
             }
-        } else
-            echo "No Curriculum code found" . $this->curriculumCode . '';
+        }
+//        else
+//            echo "No Curriculum code found" . $this->curriculumCode . '';
 
         return $this->listOfPLOs;
     }

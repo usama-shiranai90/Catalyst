@@ -3,16 +3,20 @@ const colors = ['#016ADD', '#0183FB', '#4DBFFE']
 
 window.onload = function () {
 
+    /** For CLOs List Table. */
     let cloDashboardTableBody = document.getElementById('cloDashboardTableBodyID');
 
+    /** For Assessment List Table. */
     let assessmentDashboardContainer = document.getElementById('assessmentDashboardContainerID');
     let assessmentDashboardInnerBody = document.getElementById('assessmentDashboardBodyID');
     let assessmentDashboardQuestion = document.getElementById('assessmentDashboardBodyTableQuestionID');
 
+    /** For Weekly covered topic. */
     let weeklyTopicDashboardContainer = document.getElementById('weeklyTopicDashboardContainerID');
     let weeklyTopicDashboardInnerBody = document.getElementById('weeklyTopicDashboardBodyID');
     let weeklyTopicDashboardQuestion = document.getElementById('weeklyTopicDashboardBodyCloListID');
 
+    /** For Student Performance Matrix. */
     let studentsPerformanceContainer = document.getElementById('studentPerformanceContainerID');
     let studentsPerformanceSubHeader = document.getElementById('studentPerformanceDashboardTableSubHeaderID');
     let studentsPerformanceDashboardInnerBody = document.getElementById('studentPerformanceDashboardBodyID');
@@ -21,8 +25,8 @@ window.onload = function () {
         loadCloDashboardData(cloDashboardTableBody)
         loadLatestAssessmentDashboardData(assessmentDashboardContainer, assessmentDashboardInnerBody, assessmentDashboardQuestion);
         loadWeeklyTopicDashboardData(weeklyTopicDashboardContainer, weeklyTopicDashboardInnerBody, weeklyTopicDashboardQuestion)
-        loadStudentCLOPerformanceDashboardData(studentsPerformanceContainer, studentsPerformanceSubHeader, studentsPerformanceDashboardInnerBody)
         loadCourseOverallAverageOutcome();
+        loadStudentCLOPerformanceDashboardData(studentsPerformanceContainer, studentsPerformanceSubHeader, studentsPerformanceDashboardInnerBody)
     });
 };
 
@@ -32,7 +36,7 @@ function loadCloDashboardData(cloDashboardTableBody) {
     if (courseLearningArray !== null && courseLearningArray.length > 0) {
         for (let i = courseLearningArray.length - 1; i >= 0; i--) {
             tableRowData = `<tr class="text-center text-sm font-base tracking-tight capitalize px-3 py-3  border-b-2 border-t-2 border-solid border-gray-200
-                              hover:text-base hover:bg-catalystBlue-l6 transition ease-out duration-300 hover:text-white hover:">
+                              hover:text-base hover:bg-catalystBlue-l6 transition ease-out duration-300 hover:text-white ">
                                 <td class="px-2 py-2">${courseLearningArray[i][1]}</td>
                                 <td class="px-2 py-2 ">${courseLearningArray[i][2]}
                                 </td>
@@ -40,25 +44,23 @@ function loadCloDashboardData(cloDashboardTableBody) {
             $(cloDashboardTableBody).prepend(tableRowData)
         }
     } else {
-        tableRowData = `<tr class="text-center text-sm font-base tracking-tight capitalize px-3 py-3  border-b-2 border-t-2 border-solid border-gray-200
-                              hover:text-base hover:bg-catalystBlue-l6 transition ease-out duration-300 hover:text-white hover:">
-                                <td class="px-2 py-2"></td>
-                                idk
+        tableRowData = `<tr class="text-center text-sm font-base tracking-tight capitalize px-3 py-3 border-t-2 border-solid border-gray-200
+                              hover:text-base ">
+                                <td colspan="12" class="px-2 py-2">
+                                <h2 class="px-3 text-lg leading-6 font-medium text-indigo-400">No Course learning outcome created.</h2>
                                 </td>
                             </tr>`;
         $(cloDashboardTableBody).prepend(tableRowData)
     }
-
-
 }
 
 /** Show Assessment List with questions. */
 function loadLatestAssessmentDashboardData(assessmentDashboardContainer, assessmentDashboardInnerBody, assessmentDashboardQuestion) {
 
     if (recentAssessmentArray !== null && recentAssessmentArray.length > 0) {
-        $(assessmentDashboardInnerBody).children(":first").html(recentAssessmentArray[0]);
-        $(assessmentDashboardInnerBody).children(":nth-child(2)").find("span").html(recentAssessmentArray[1]);
-        $(assessmentDashboardInnerBody).children(":last-child").find("span").html(recentAssessmentArray[2] + " %");
+        $(assessmentDashboardInnerBody).children(":first").html(recentAssessmentArray[0]); // Assessment Type
+        $(assessmentDashboardInnerBody).children(":nth-child(2)").find("span").html(recentAssessmentArray[1]); // topic name
+        $(assessmentDashboardInnerBody).children(":last-child").find("span").html(recentAssessmentArray[2] + " %"); // weightage
         for (let i = 0; i < recentAssessmentArray[4].length; i++) { //Object.values(recentAssessmentArray[4]).length      Object.values(recentAssessmentArray[4])[i][0]
             const cloNumber = `
             <tr class="text-center text-sm font-base tracking-tight">
@@ -68,9 +70,13 @@ function loadLatestAssessmentDashboardData(assessmentDashboardContainer, assessm
              </tr>`;
             $(assessmentDashboardQuestion).append(cloNumber);
         }
-
+    } else {
+        $(assessmentDashboardInnerBody).addClass('blur-filter')
+        $(assessmentDashboardContainer).append(`
+                                    <div class="absolute px-32 flex items-center -mt-32">
+                                                <span class="px-0 text-2xl leading-6 font-semibold text-indigo-500">No Assessment has been created.</span>
+                                            </div>`)
     }
-
 }
 
 
@@ -85,6 +91,11 @@ function loadWeeklyTopicDashboardData(weeklyTopicDashboardContainer, weeklyTopic
             const cloNumber = `<a class="capitalize font-semibold text-base w-full">${recentWeeklyCoveredTopic[3][i]}</a>`;
             $(weeklyTopicDashboardQuestion).append(cloNumber);
         }
+    } else {
+        $(weeklyTopicDashboardInnerBody).addClass('blur-filter');
+        $(weeklyTopicDashboardContainer).append(`<div class="absolute px-32 flex items-center -mt-32">
+                                                <span class="px-0 text-2xl leading-6 font-semibold text-indigo-500 text-center">No Weekly Covered Topic has been created.</span>
+                                            </div>`);
     }
 }
 
@@ -106,7 +117,7 @@ function loadCourseOverallAverageOutcome() {
         success: function (data, status) {
             responseText = JSON.parse(data);
             console.log("PIE CHART : ", responseText);
-            if (responseText.errors === 'none') {
+            if (responseText.status === 200) {
                 const fetchedData = responseText.message;
                 for (let i = 0; i < fetchedData.length; i++) {
                     totalCLO.push(fetchedData[i].cloName)
@@ -122,81 +133,86 @@ function loadCourseOverallAverageOutcome() {
         },
         complete: function (format) {
             responseText = JSON.parse(format.responseText)
-            if ((responseText.status === 1 && responseText.errors === 'none') || format.status !== 200) {
-                let averageCLOAchievedChart = new ApexCharts(document.querySelector("#averageCLOAchievedID"), {
-                    series: avgScorePerCLO,
-                    chart: {
-                        height: 410,
-                        type: 'radialBar',
-                    },
-                    plotOptions: {
-                        radialBar: {
-                            offsetY: 0,
-                            startAngle: 0,
-                            endAngle: 270,
-                            hollow: {
-                                margin: 5,
-                                size: '30%',
-                                background: 'transparent',
-                                image: undefined,
+            let averageCLOAchievedChart = new ApexCharts(document.querySelector("#averageCLOAchievedID"), {
+                series: avgScorePerCLO,
+                chart: {
+                    height: 410,
+                    type: 'radialBar',
+                },
+                plotOptions: {
+                    radialBar: {
+                        offsetY: 0,
+                        startAngle: 0,
+                        endAngle: 270,
+                        hollow: {
+                            margin: 5,
+                            size: '30%',
+                            background: 'transparent',
+                            image: undefined,
+                        },
+                        dataLabels: {
+                            name: {
+                                show: false,
                             },
-                            dataLabels: {
-                                name: {
-                                    show: false,
-                                },
-                                value: {
-                                    show: false,
-                                }
+                            value: {
+                                show: false,
                             }
                         }
+                    }
+                },
+                noData: {
+                    text: responseText.message,
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    offsetX: 0,
+                    offsetY: 0,
+                    style: {
+                        color: '#0084ff',
+                        fontSize: '17px',
+                        fontWeight: 'bold',
+                    }
+                },
+                colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
+                labels: totalCLO,
+                legend: {
+                    show: true,
+                    floating: true,
+                    fontSize: '14px',
+                    position: 'left',
+                    offsetX: 150,
+                    offsetY: 15,
+                    labels: {
+                        useSeriesColors: true,
                     },
-
-                    colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
-                    labels: totalCLO,
-                    legend: {
+                    markers: {
+                        size: 0
+                    },
+                    formatter: function (seriesName, opts) {
+                        return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
+                    },
+                    itemMargin: {
+                        vertical: 3
+                    }
+                },
+                xaxis: {
+                    title: {
                         show: true,
-                        floating: true,
-                        fontSize: '14px',
-                        position: 'left',
-                        offsetX: 150,
-                        offsetY: 15,
-                        labels: {
-                            useSeriesColors: true,
-                        },
-                        markers: {
-                            size: 0
-                        },
-                        formatter: function (seriesName, opts) {
-                            return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
-                        },
-                        itemMargin: {
-                            vertical: 3
-                        }
+                        text: "Program Learning Outcome",
+                        offsetX: 0,
+                        offsetY: 0,
                     },
-                    xaxis: {
-                        title: {
-                            show: true,
-                            text: "Program Learning Outcome",
-                            offsetX: 0,
-                            offsetY: 0,
-                        },
 
-                    },
-                    responsive: [{
-                        breakpoint: 480,
-                        options: {
-                            legend: {
-                                show: false
-                            }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            show: false
                         }
-                    }],
-                });
-                averageCLOAchievedChart.render();
-            } else {
-                $("#averageCLOAchievedID").html(`<div class="container min-h-full min-w-full px-5 mx-auto flex flex-col items-center ">
-                    <h2 class="px-3 font-bold text-lg ">Can not update the graph. No record found!</h2>
-                </div>`);
-            }
+                    }
+                }],
+            });
+            averageCLOAchievedChart.render();
         }
     });
 }
@@ -218,29 +234,26 @@ function loadStudentCLOPerformanceDashboardData(studentsPerformanceContainer, st
         },
         success: function (data, status) {
             responseText = JSON.parse(data);
-            console.log("PERFORMANCE MATRIX : " ,responseText);
-            if (responseText.errors === 'none') {
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+
+        },
+        complete: function (format) {
+            responseText = JSON.parse(format.responseText)
+            console.log("PERFORMANCE MATRIX : ", responseText);
+            if (responseText.status === 200) {
                 const fetchedData = responseText.message;
                 for (let i = 0; i < fetchedData.length; i++)
                     iterateAndCreatePerformanceRow(fetchedData, i, true)
                 for (let i = fetchedData.length - extra; i < fetchedData.length; i++)
                     iterateAndCreatePerformanceRow(fetchedData, i, false)
                 $("#teacherDashboardTotalStudentID").html(stuStrength)
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
-            $("#averageCLOAchievedID").html(`<div class="container min-h-full min-w-full px-5 mx-auto flex flex-col items-center ">
-                    <h2 class="px-3 font-bold text-lg ">Sometime went wrong.</h2>
-                </div>`)
-        },
-        complete: function (format) {
-            responseText = JSON.parse(format.responseText)
-            if ((responseText.status === 1 && responseText.errors === 'none') || format.status !== 200) {
             } else {
-                $("#averageCLOAchievedID").html(`<div class="container min-h-full min-w-full px-5 mx-auto flex flex-col items-center ">
-                    <h2 class="px-3 font-bold text-lg ">Can not update the graph. No record found!</h2>
-                </div>`);
+                $(studentsPerformanceContainer).append(`
+                                    <div class=" px-32 flex items-center h-1/2">
+                                                <span class="px-0 text-2xl leading-6 font-semibold text-indigo-500">No Student Activity Found.</span>
+                                            </div>`)
             }
         }
     });
