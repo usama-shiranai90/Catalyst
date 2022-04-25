@@ -13,13 +13,77 @@ $batchCode = $_SESSION['selectedBatch'];
 $sectionCode = $_SESSION['selectedSection'];
 $courseCode = $_SESSION['selectedCourse'];
 $facultyCode = $_SESSION['facultyCode'];
+$semesterCode = $_SESSION['selectedSemester'];
 $programOutcomeList = $_SESSION['ploList'];
-
+$isCoordinator = $_SESSION['courseCoordinatorStatus'];
+//print $sectionCode."  ".$courseCode."  ".$semesterCode."<br>" ;
 $courseProfile = new CourseProfile();
 $viewCLODescription = '';
 $viewCLOMapping = '';
 
+$isFailedToPerformCourseProfile = array();
+$affiliatedFacultyList = array();
+$courseProfileInstructorList = array();
+$containsSessional = false;
+//print "Is Coordinator : " . $isCoordinator . "<br>";
+
 /** check if there exist Program learning outcome (curriculum) */
+if (count($programOutcomeList) != 0 and $isCoordinator != 0) {
+    $isProfileCreated = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);
+    $_SESSION['batchCode'] = $courseProfile->getBatchCode();
+    if ($courseProfile->getBatchCode() != $batchCode)
+        echo "course profile returning different batch code (something went wrong) : " . $courseProfile->getBatchCode() . "<br>";
+
+
+    /** To check if profile exist or not.
+     *  if exist return with code and #typeOfProfile with two
+     *  otherwise return #typeOfProfile with one.
+     */
+    if ($isProfileCreated !== true)
+        $_SESSION['typeOfProfile'] = 1; // CREATION COURSE PROFILE
+    else {
+        $_SESSION['typeOfProfile'] = 2; // UPDATE COURSE PROFILE
+        $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
+    }
+
+    /** function is used to return faculty List belonging to this course */
+    $affiliatedFacultyList = (new Allocations())->retrieveSameAllocatedFacultyList($semesterCode, $courseCode); // $affiliatedFacultyList is only use to return sectionName , code , facultyCode etc.
+    $prerequisiteList = (new Course())->retrieveCoursePrerequisite($courseCode);
+
+    /** Has sessional been created before for any of the given sections then disable the toggle button. */
+    $containsSessional = (new Sessional())->hasSessionalForAllSections($affiliatedFacultyList, $courseCode);
+
+    /** Is executed when faculty member is in update mode. */
+    if ($_SESSION['typeOfProfile'] != 1) { // in Update Mode.
+        if (isset($_GET['profileID'])) {
+            $courseProfile->loadCourseProfileData($_SESSION['cp_id'], $facultyCode);
+            $courseProfileInstructorList = $courseProfile->retrieveAllInstructorDetail($_SESSION['cp_id'], $affiliatedFacultyList);
+
+            $cloObject = new CLO();
+            $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($_SESSION['selectedCurriculum'],
+                $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], $_SESSION['selectedBatch'], 'PLODescription');  // add batchCode in the future.
+            $viewCLOMapping = $cloObject->mappedPLOs;
+
+        } // if in editor mode.
+        else
+            header("Location: courseprofile_view.php");
+    }
+
+} elseif (count($programOutcomeList) == 0 and $isCoordinator == 0) {
+    $isFailedToPerformCourseProfile[] = array("alert-1" => "No Curriculum related found or Program Learning outcome has not been set"
+    , "alert-2" => "Only Coordinator are allow to create profile for this course.");
+} elseif ($isCoordinator == 0) {
+    $isFailedToPerformCourseProfile[] = array("alert-2" => "Only Coordinator are allow to create profile for this course.");
+} else {
+    $isFailedToPerformCourseProfile[] = array("alert-1" => "No Curriculum related found or Program Learning outcome has not been set");
+}
+
+print json_encode($courseProfileInstructorList);
+
+//$mem_usage = memory_get_usage();
+//$mem_peak = memory_get_peak_usage();
+//echo 'The script is now using: <strong>' . round(memory_get_usage() / 1024) . 'KB</strong> of memory.<br>';
+//echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<br><br>';
 /*$PLOsArray = ['PLO 1' => "Data fetched via a separate HTTP request won't include any information from the HTTP request that fetched the HTML document. You may need this information (e.g., if the HTML document is generated in response to a form submission",
   'PLO 2' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
   'PLO 3' => "Allows for asynchronous data transfer - Getting the information from PHP might be time/resources expensive. Sometimes you just don't want to wait for the information, load the page, and have the information reach whenever",
@@ -32,46 +96,6 @@ $viewCLOMapping = '';
   'PLO 10' => "Date & time for a given IANA timezone (such as America/Chicago, Asia/Kolkata etc) can be found by using the Date.toLocaleString() method",
   'PLO 11' => "This tutorial discusses two ways of removing a property from an object. The first way is using the delete operator, and the second way is object destructuring which is useful to remove multiple object properties in a single",
   'PLO 12' => "Playing & pausing a CSS animation can be done by using the animation-play-state property. Completely restarting the animation can be done by first removing the animation"];*/
-if (count($programOutcomeList) != 0) {
-    $isProfileCreated = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);
-    $_SESSION['batchCode'] = $courseProfile->getBatchCode();
-    if ($courseProfile->getBatchCode() === $batchCode)
-        echo "course profile returning same batch code (working fine) : " . $courseProfile->getBatchCode() . "<br>";
-
-
-    /** To check if profile exist or not.
-     *  if exist return with code and #typeOfProfile with two
-     *  otherwise return #typeOfProfile with one.
-     */
-    if ($isProfileCreated !== true)
-        $_SESSION['typeOfProfile'] = 1;
-    else {
-        $_SESSION['typeOfProfile'] = 2;
-        $_SESSION['cp_id'] = $courseProfile->getCourseProfileCode();
-    }
-
-
-    if ($_SESSION['typeOfProfile'] != 1) { // in Update Mode.
-        if (isset($_GET['profileID'])) {
-            $courseProfile->loadCourseProfileData($_SESSION['cp_id']);
-
-            $cloObject = new CLO();
-            $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($_SESSION['selectedCurriculum'],
-                $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], $_SESSION['selectedBatch'], 'PLODescription');  // add batchCode in the future.
-            $viewCLOMapping = $cloObject->mappedPLOs;
-
-        } // if in editor mode.
-        else
-            header("Location: courseprofile_view.php");
-    }
-
-}
-
-$mem_usage = memory_get_usage();
-$mem_peak = memory_get_peak_usage();
-echo 'The script is now using: <strong>' . round(memory_get_usage() / 1024) . 'KB</strong> of memory.<br>';
-echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<br><br>';
-
 ?>
 
 <!doctype html>
@@ -93,41 +117,76 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
     <script src="CourseProfileAssets/js/cpm_common.js" rel="script"></script>
     <link href="../../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
+    <style>
 
-    <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
-    <!--
-    <script type="text/javascript">
-        writeRandomQuote = function () {
-            var quotes = new Array();
-            quotes[0] = "Action is the real measure of intelligence.";
-            quotes[1] = "Baseball has the great advantage over cricket of being sooner ended.";
-            quotes[2] = "Every goal, every action, every thought, every feeling one experiences, whether it be consciously or unconsciously known, is an attempt to increase one's level of peace of mind.";
-            quotes[3] = "A good head and a good heart are always a formidable combination.";
-            var rand = Math.floor(Math.random() * quotes.length);
-            document.write(quotes[rand]);
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 23px;
         }
-        // writeRandomQuote();
-    </script>
-    <script src="../asset/TeacherDashScripts.js"></script>
--->
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 17px;
+            width: 17px;
+            left: 2px;
+            bottom: 3px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(17px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+
+    </style>
+    <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
 </head>
 <body>
 <div class="w-full min-h-full">
-
     <main class="main-content-alignment">
         <div class="cprofile-grid">
-
-            <div id="errorMessageDiv"
-                 class="hidden fixed bottom-0 right-0 z-50 flex p-4 mb-4 text-md w-2/12 font-sm text-red-700 bg-red-100 rounded-lg">
-                <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
-                     001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                </svg>
-                <div id="errorID">
-                    <span class="font-medium">missing field alert!</span><br>try submitting again.
-                </div>
-            </div>
 
             <!--       Course-Profile-Main-Head         -->
             <div class="cprofile-content-head">
@@ -141,17 +200,14 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                 <div class="flex flex-row items-center">
                     <img class="hidden mx-2 h-6 transition duration-800 ease-in-out"
                          src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
-                    <!--<svg  class="mx-2 h-6 hover:bg-gray-700 relative" width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.3333 7.7085L4.625 15.4168L12.3333 23.1252" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M4.625 15.417H16.9583C25.473 15.417 32.375 22.319 32.375 30.8337V32.3753" stroke="#3B3E43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>-->
                     <h2 class="min-w-full cprofile-container-centertxt">Course Profile Creation</h2>
                 </div>
+
                 <form method="post">
 
-                    <!--     course essential section            -->
+                    <!--     course essential section -->
                     <section id="cpEssentialID"
-                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                             class="cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
 
                         <div class="cprofile-left-container mx-3 w-1/4">
                             <!--                        course title-->
@@ -184,9 +240,9 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                     $chours = array('1', '2', '3');
                                     foreach ($chours as $value) {
                                         if ($value === $courseProfile->getCourse()->getCourseCreditHour())
-                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                            print sprintf('<option value="%s" selected> %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                         else
-                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                            print sprintf('<option value="%s" > %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                     }
                                     ?>
                                 </select>
@@ -203,11 +259,11 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                         id="preRequisiteID">
                                     <option value="" hidden></option>
                                     <?php
-                                    foreach ($courseProfile->getCourse()->getPreReqList() as $value) {
-                                        if ($courseProfile->getCoursePreReq() == $value)
-                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                    foreach ($courseProfile->getCourse()->getPreReqList() as $index => $value) {
+                                        if (in_array($value, $prerequisiteList) || $prerequisiteList[$index] == $value)
+                                            print sprintf('<option value="%s" selected> %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                         else
-                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                            print sprintf('<option value="%s" > %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                     }
                                     ?>
 
@@ -229,9 +285,9 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                     foreach ($semesters as $value) {
                                         $value = (int)filter_var($value, FILTER_SANITIZE_NUMBER_INT);
                                         if ($value == $courseProfile->getCourseSemester())
-                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                            print sprintf('<option value="%s" selected> %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                         else
-                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                            print sprintf('<option value="%s" > %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                     }
                                     ?>
                                 </select>
@@ -259,9 +315,9 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                     $programs = array('BCSE', 'BSIT', 'BCCS');
                                     foreach ($programs as $value) {
                                         if ($value === $courseProfile->getCourseProgram())
-                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                            print sprintf('<option value="%s" selected> %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                         else
-                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                            print sprintf('<option value="%s" > %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                     }
                                     ?>
 
@@ -284,9 +340,9 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                     $programs = array("Fall-16 Batch Onwards", 'Fall-18 Batch Onwards', 'Fall-22 Batch Onwards');
                                     foreach ($programs as $value) {
                                         if ($value == $courseProfile->getCourseCourseEffective())
-                                            echo '<option value=' . $value . ' selected>' . $value . '</option>';
+                                            print sprintf('<option value="%s" selected> %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                         else
-                                            echo '<option value=' . $value . '>' . $value . '</option>';
+                                            print sprintf('<option value="%s" > %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                     }
                                     ?>
 
@@ -302,7 +358,6 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                        value="<?php echo $courseProfile->getCourseCoordination() ?>">
                                 <label class="textField-label sm:top-2">Co-ordinating Unit</label>
                             </div>
-
                             <!--<div class="textField-label-content w-full" id="coordinatingUnitDivID">
                                 <label for="coordinatingUnitID"></label>
                                 <select class="select" name="courseEffective"
@@ -316,7 +371,6 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                 </select>
                                 <label class="select-label top-1/4 sm:top-3">Co-ordinating Unit</label>
                             </div>-->
-
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 sm:ml-10 pb-5 mr-5">
 
@@ -434,6 +488,16 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
 
                                     </div>
 
+                                    <div class="assessment-wrap px-12 py-2">
+                                        <h3>Allow Assessment</h3>
+                                        <div class="vertical-line"></div>
+                                        <label class="switch">
+                                            <input class="cursor-not-allowed" type="checkbox"
+                                                   name="allowWeightAssessmentToggle" disabled>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+
                                 </div>
                             </div>
                             <!-- unit , method and model of course -->
@@ -467,71 +531,67 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                         </div>
                     </section>
 
-                    <!--        course detail section            -->
-                    <section id="cpDetaillID"
-                             class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
-
+                    <!--     old design for course detail section  -->
+                    <!--<section id="cpDetaillID" class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
                         <div class="cprofile-left-container mx-3 w-1/4">
-                            <!---------------------Reference Books--------------------------->
+
                             <div class="textField-label-content w-full" id="ReferenceBooksDivId">
                                 <label for="referenceBooksID"></label>
                                 <input class="textField" type="text" placeholder=" " id="referenceBooksID"
-                                       value="<?php echo $courseProfile->getCourseReferenceBook() ?>"
+                                       value="<?php /*echo $courseProfile->getCourseReferenceBook() */ ?>"
                                        name="ReferenceBooks">
                                 <label class="textField-label">ReferenceBooks</label>
                             </div>
-                            <!-------------------------------RecommendedTextbooks----------------------->
+
                             <div class="textField-label-content w-full" id="recommendedTextbooksDivId">
                                 <label for="recommendedTextbooksID"></label>
                                 <input class="textField" type="text" placeholder=" " id="recommendedTextbooksID"
-                                       value="<?php echo $courseProfile->getCourseTextBook() ?>"
+                                       value="<?php /*echo $courseProfile->getCourseTextBook() */ ?>"
                                        name="RecommendedTextbooks">
 
                                 <label class="textField-label">RecommendedTextbooks</label>
                             </div>
-                            <!--                        course Description-->
+
                             <div class="textField-label-content w-full" id="courseDescriptionDivId">
                                 <label for="courseDescriptionID"></label>
                                 <textarea class="textarea-h textField" type="text" placeholder=" "
                                           id="courseDescriptionID" name="assignmentDetail"
-                                          value="<?php echo $courseProfile->getCourseDescription() ?>"
-                                          style="height: 9em"><?php echo $courseProfile->getCourseDescription() ?></textarea>
+                                          value="<?php /*echo $courseProfile->getCourseDescription() */ ?>"
+                                          style="height: 9em"><?php /*echo $courseProfile->getCourseDescription() */ ?></textarea>
                                 <label class="textField-label">Course Description</label>
                             </div>
-                            <!--                        OtherreferenceMaterial-->
+
                             <div class="textField-label-content w-full" id="otherRefDivId">
                                 <label for="otherReferenceId"></label>
                                 <textarea class="textarea-h textField" type="text" placeholder=" "
                                           id="otherReferenceId" name="otherReference"
-                                          value="<?php echo $courseProfile->getCourseOtherReference() ?>"
-                                          style="height: 9em"><?php echo $courseProfile->getCourseOtherReference() ?></textarea>
+                                          value="<?php /*echo $courseProfile->getCourseOtherReference() */ ?>"
+                                          style="height: 9em"><?php /*echo $courseProfile->getCourseOtherReference() */ ?></textarea>
                                 <label class="textField-label">Other reference Material</label>
                             </div>
                         </div>
                         <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
-                            <!--  text-md rounded-t-lg border-gray-300 border-t-2 border-r-2 border-l-2
-                                    border-b-2 border-solid mb-10 -->
+
 
                             <div class="course-assessment-border border-t-2 shadow-sm mb-5"
                                  style="background-color: #0284fc">
                                 <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
                                 <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
 
-                                    <!-- Name -->
                                     <div class="assessment-wrap mx-35">
                                         <h3>Name</h3>
                                         <div class="vertical-line"></div>
                                         <div class="textField-label-content w-full" id="nameWeightDivId">
                                             <label for="nameDetailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?>"
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorName() */ ?>"
                                                       id="nameDetailID"
                                                       name="nameDetail"
-                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorName() ?></textarea>
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorName() */ ?></textarea>
                                             <label class="textField-label my-2 sm:my-4">Detail</label>
                                         </div>
                                     </div>
-                                    <!-- Designation-->
+
                                     <div class="assessment-wrap mx-35 ">
                                         <h3>Designation</h3>
                                         <div class="vertical-line"></div>
@@ -540,21 +600,21 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="DesignationDetailID"
                                                       name="DesignationDetail"
-                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorDesignation() ?></textarea>
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorDesignation() */ ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
-                                    <!--                                                          Qualification-->
+
                                     <div class="assessment-wrap mx-35">
                                         <h3>Qualification</h3>
                                         <div class="vertical-line"></div>
                                         <div class="textField-label-content w-full" id=" qualificationWeightDivId">
                                             <label for=" qualificationID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?>"
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorQualification() */ ?>"
                                                       id="qualificationID"
                                                       name=" QualificationDetail"
-                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorQualification() ?></textarea>
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorQualification() */ ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -564,10 +624,10 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                         <div class="textField-label-content w-full" id=" SpecializationWeightDivId">
                                             <label for="specializationID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?>"
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() */ ?>"
                                                       id="specializationID"
                                                       name="SpecializationDetail"
-                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() ?></textarea>
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() */ ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -578,9 +638,9 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                             <label for="contactsID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="contactsID"
-                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?>"
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() */ ?>"
                                                       name="ContactsDetail"
-                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() ?></textarea>
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() */ ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -591,9 +651,9 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                                             <label for="personalEmailID"></label>
                                             <textarea class="textarea-h textField" type="text" placeholder=" "
                                                       id="personalEmailID"
-                                                      value="<?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?>"
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() */ ?>"
                                                       name="PersonalEmailDetail"
-                                                      style="height: 6em"><?php echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() ?></textarea>
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() */ ?></textarea>
                                             <label class="textField-label">Detail</label>
                                         </div>
                                     </div>
@@ -607,10 +667,99 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
                             </div>
 
                         </div>
+                    </section>-->
+
+                    <section class="hidden bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4
+                    flex max-w-full mx-2 flex-col flex  mx-0 my-0 transition duration-700 ease-in-out" id="cpDetaillID">
+
+                        <div class="cprofile-left-container flex flex-row mx-3 items-center justify-center">
+                            <!---------------------Reference Books--------------------------->
+                            <div class="textField-label-content w-full" id="ReferenceBooksDivId">
+                                <label for="referenceBooksID"></label>
+                                <input class="textField" id="referenceBooksID" name="ReferenceBooks" placeholder=" "
+                                       type="text" value="Programming Fundamental 2">
+                                <label class="textField-label">ReferenceBooks</label>
+                            </div>
+                            <!-------------------------------RecommendedTextbooks----------------------->
+                            <div class="textField-label-content w-full" id="recommendedTextbooksDivId">
+                                <label for="recommendedTextbooksID"></label>
+                                <input class="textField" id="recommendedTextbooksID" name="RecommendedTextbooks"
+                                       placeholder=" "
+                                       type="text" value="<?php echo $courseProfile->getCourseReferenceBook() ?>">
+
+                                <label class="textField-label">RecommendedTextbooks</label>
+                            </div>
+                            <!--                        course Description-->
+                            <div class="textField-label-content w-full" id="courseDescriptionDivId">
+                                <label for="courseDescriptionID"></label>
+                                <textarea class="textarea-h textField" id="courseDescriptionID" name="assignmentDetail"
+                                          placeholder=" " style="height: 36px" type="text"
+                                          value="ABC"><?php echo $courseProfile->getCourseDescription() ?></textarea>
+                                <label class="textField-label">Course Description</label>
+                            </div>
+                            <!--                        OtherreferenceMaterial-->
+                            <div class="textField-label-content w-full" id="otherRefDivId">
+                                <label for="otherReferenceId"></label>
+                                <textarea class="textarea-h textField" id="otherReferenceId" name="otherReference"
+                                          placeholder=" "
+                                          style="height: 36px" type="text"
+                                          value="<?php echo $courseProfile->getCourseOtherReference() ?>"><?php echo $courseProfile->getCourseOtherReference() ?></textarea>
+                                <label class="textField-label">Other reference Material</label>
+                            </div>
+                        </div>
+
+                        <div class="cprofile-right-container flex-1 pb-5 mx-5">
+
+                            <div class="course-assessment-border border-t-2 shadow-sm mb-5"
+                                 style="background-color: #0284fc">
+                                <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
+                                <div class="grid bg-white border-solid">
+                                    <div class="learning-outcome-head learning-week-header-dp overflow-hidden">
+                                        <div class="lweek-column text-black col-start-1 col-end-3">
+                                            <span class="wlearn-cell-data">Name</span>
+                                        </div>
+                                        <div class="lweek-column col-start-3 col-end-5">
+                                            <span class="wlearn-cell-data">Designation</span>
+                                        </div>
+                                        <div class="lweek-column col-start-5 col-end-7">
+                                            <span class="wlearn-cell-data">Qualification</span>
+                                        </div>
+                                        <div class="lweek-column col-start-7 col-end-9">
+                                            <span class="wlearn-cell-data">Specialization</span>
+                                        </div>
+                                        <div class="lweek-column col-start-9 col-end-11">
+                                            <span class="wlearn-cell-data">Contacts</span>
+                                        </div>
+                                        <div class="lweek-column col-start-11 col-end-13">
+                                            <span class="wlearn-cell-data">Personal Email</span>
+                                        </div>
+                                    </div>
+
+
+                                    <?php
+                                    // $affiliatedFacultyList
+
+                                    if (!empty($courseProfileInstructorList))
+                                        foreach ($courseProfileInstructorList as $index => $value) {
+                                            $counter = $index + 1;
+                                            readInstructorDetail($counter, $value->getInstructorInfo());
+                                        }
+                                    else
+                                        readInstructorDetail(1, $courseProfile->getInstructorInfo());
+                                    ?>
+                                </div>
+
+                            </div>
+                            <div class="text-right mx-4">
+                                <button class="loginButton" id="coursepContinuebtn-2" name="profileContinue1st"
+                                        type="button">Continue
+                                </button>
+                            </div>
+
+                        </div>
                     </section>
 
-                    <!--      course CLO Distribution            -->
-                    <section id="cpDistributionID" class=" cprofile-content-box-border mx-0 my-0  ">
+                    <section id="cpDistributionID" class="hidden cprofile-content-box-border mx-0 my-0  ">
 
                         <!--                                Course Learning Outcome-->
                         <div class="mx-3 mr-5 clo-container">
@@ -721,6 +870,14 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
 
         </div>
     </main>
+    <?php
+    if ($isCoordinator == 0 and empty($programOutcomeList))
+        print showErrorMessage($isFailedToPerformCourseProfile[0]['alert-1'] . "<br>" . $isFailedToPerformCourseProfile[0]['alert-2']);
+    elseif ($isCoordinator != 0 and empty($programOutcomeList))
+        print showErrorMessage($isFailedToPerformCourseProfile[0]['alert-1']);
+    elseif ($isCoordinator == 0 and !empty($programOutcomeList))
+        print showErrorMessage($isFailedToPerformCourseProfile[0]['alert-2']);
+    ?>
 </div>
 
 <div id="loader" class="hidden m-auto fixed top-1/4 left-1/2 z-5">
@@ -767,7 +924,17 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
         </div>
     </div>
 </div>
-
+<div id="errorMessageDiv"
+     class="hidden fixed bottom-0 right-0 z-50 flex p-4 mb-4 text-md w-2/12 font-sm text-red-700 bg-red-100 rounded-lg">
+    <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+         xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
+                     001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+    </svg>
+    <div id="errorID">
+        <span class="font-medium">missing field alert!</span><br>try submitting again.
+    </div>
+</div>
 <div class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
@@ -808,6 +975,7 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
             </div>
         </div>
     </div>
+
 </div>
 
 </body>
@@ -818,21 +986,18 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
     let hasPLOs, ploArray;
     let initialCLODescription;
     let initialCLOMapping;
-    let viewType;
+    let viewType, hasSessionalFlag, affiliatedList;
 
     viewType = <?php echo json_encode($_SESSION['typeOfProfile'], JSON_HEX_TAG)  ?>;
     ploArray = Object.values(<?php echo json_encode($programOutcomeList, JSON_HEX_TAG)  ?>);
-
+    hasSessionalFlag = <?php echo json_encode($containsSessional, JSON_HEX_TAG)  ?>;
+    affiliatedFacultyList = <?php echo json_encode($affiliatedFacultyList, JSON_HEX_TAG)  ?>;
+    console.log("affiliatedFacultyList :", affiliatedFacultyList);
     if (viewType !== 1) {
         iframeContainUpdate("Course Profile Update", "Catalyst | Course Profile Update");
         initialCLODescription = <?php echo json_encode($viewCLODescription, JSON_HEX_TAG) ?>;
-
         initialCLOMapping = <?php echo json_encode($viewCLOMapping, JSON_HEX_TAG)  ?>;
         coursTitle = <?php echo json_encode($courseProfile->getCourse()->getCourseTitle()) ?>;
-
-        // console.log("Initial Values List :")
-        // console.log("Description", initialCLODescription);
-        // console.log("Mapping", initialCLOMapping)
         updationTextSet(coursTitle);
     }
 
@@ -843,19 +1008,88 @@ echo 'Peak usage: <strong>' . round($mem_peak / 1024) . 'KB</strong> of memory.<
         $('.min-w-full.cprofile-container-centertxt').text(courseTitle + " update");
     }
 </script>
-<script src="CourseProfileAssets/js/CourseProfileCreationScript.js" rel="script"></script>
 <?php
-/*if ($_SESSION['typeOfProfile'] == 1) {
+if ($isCoordinator != 0 and !empty($programOutcomeList)) {
+    print ('<script src="CourseProfileAssets/js/CourseProfileCreation.js" rel="script"></script>');
+} else
+    print ('<script rel="script">
+            let removal = document.querySelector("main");
+            removal.remove();
+            </script>');
 
-    echo "
-<script>
-    let hasPLOs, ploArray;
-        hasPLOs = " . $hasPlo . ";
-        let ploObject = " . json_encode($ploArray, JSON_HEX_TAG) . ";
-        ploArray = Object.values(ploObject);
-        console.log(ploArray)
-</script>
-";
+function showErrorMessage($message): string
+{
+    return sprintf('<div class="main-content-alignment p-0 bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 h-1/2 weeklytopics-primary-border-n">
+
+                <div class="db-table-header-topic items-center border-b-0 rounded-b-none pb-5" style="background-color: rgba(220,71,71,0.92)">
+                    <div class="flex flex-row justify-center items-center">
+                        <h2 class="flex items-center justify-center text-lg text-center font-semibold  text-white tracking-wide text-center capitalize">It seems like something has happen</h2>
+                    </div>
+                </div>
+                <div class="h-60 text-center text-red-400 font-medium text-2xl flex justify-center items-center">%s
+                            </div>
+
+            </div>', $message);
 }
-*/ ?>
+
+function readInstructorDetail($counter, $getInstructorInfo)
+{
+    print sprintf('<div class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden">
+                                        <div class="lweek-column border-l-0 text-black col-start-1 col-end-3">
+                                            <label for="nameDetailID-%d">
+                                                <textarea
+                                                        class="cell-input py-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                                        id="nameDetailID-%d" placeholder="Name here"
+                                                        type="text" value="">%s</textarea>
+                                            </label>
+                                        </div>
+                                        <div class="lweek-column border-l-0 col-start-3 col-end-5">
+                                            <label for="DesignationDetailID-%d">
+                                                <textarea
+                                                        class="cell-input py-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                                        id="DesignationDetailID-%d" placeholder="Designation here" type="text" value="">%s</textarea>
+                                            </label>
+                                        </div>
+                                        <div class="lweek-column border-l-0 col-start-5 col-end-7">
+                                            <label for="qualificationID-%d">
+                                                <textarea
+                                                        class="cell-input py-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                                        id="qualificationID-%d"
+                                                        placeholder="Qualification here"
+                                                        type="text" value="">%s</textarea>
+                                            </label>
+                                        </div>
+                                        <div class="lweek-column border-l-0 col-start-7 col-end-9">
+                                            <label for="specializationID-%d">
+                                                <textarea
+                                                        class="cell-input py-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                                        id="specializationID-%d"
+                                                        placeholder="Specialization here"
+                                                        type="text" value="">%s</textarea>
+                                            </label>
+                                        </div>
+                                        <div class="lweek-column border-l-0 col-start-9 col-end-11">
+                                            <label for="contactsID-%d">
+                                                <textarea
+                                                        class="cell-input py-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                                        id="contactsID-%d" name="ContactsDetail"
+                                                         placeholder="Contacts here"
+                                                        type="text" value="">%s</textarea>
+                                            </label>
+                                        </div>
+                                        <div class="lweek-column border-l-0 col-start-11 col-end-13">
+                                            <label for="personalEmailID-%d">
+                                                <textarea
+                                                        class="cell-input py-4 px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                                        id="personalEmailID-%d"
+                                                        placeholder="Personal Email here"
+                                                        type="text" value="">%s</textarea>
+                                            </label>
+                                        </div>
+                                    </div>',
+        $counter, $counter, $getInstructorInfo->getInstructorName(), $counter, $counter, $getInstructorInfo->getInstructorDesignation(), $counter, $counter, $getInstructorInfo->getInstructorQualification(),
+        $counter, $counter, $getInstructorInfo->getInstructorSpecialization(), $counter, $counter, $getInstructorInfo->getInstructorContactNumber(), $counter, $counter, $getInstructorInfo->getInstructorPersonalEmail());
+}
+
+?>
 </html>

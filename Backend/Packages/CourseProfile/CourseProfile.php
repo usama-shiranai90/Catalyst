@@ -69,7 +69,7 @@ class CourseProfile implements Persistable
         $this->batchCode = $bcode;
     }
 
-    public function isCourseProfileExist($currentProgramCode, $currentBatchCode , $currentCourseCode): bool
+    public function isCourseProfileExist($currentProgramCode, $currentBatchCode, $currentCourseCode): bool
     {
         $this->setCourseCode($currentCourseCode);
         $this->setProgramCode($currentProgramCode);
@@ -156,6 +156,16 @@ class CourseProfile implements Persistable
         } else
             echo sprintf("\n<br>Error, No Course profile code found: %s\n<br>", $this->databaseConnection->error);
         return $courseID;
+    }
+
+    public function getCourseProfileCode()
+    {
+        return $this->courseProfileCode;
+    }
+
+    public function setCourseProfileCode($courseProfileCode): void
+    {
+        $this->courseProfileCode = $courseProfileCode;
     }
 
     private function saveAssessment($cCourseCode)
@@ -279,14 +289,15 @@ class CourseProfile implements Persistable
         }
     }
 
-    public function loadCourseProfileData($courseProfileID)
+    public function loadCourseProfileData($courseProfileID, $facultyCode)
     {
         // TODO: Implement loadCourseProfileData() method.
 
         $sql = /** @lang text */
             "select * from courseprofile as cp inner join courseprofileassessmentinstruments c on cp.courseProfileCode = c.courseProfileCode
             inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
-            where cp.courseProfileCode =\"$courseProfileID\";";
+            where cp.courseProfileCode =\"$courseProfileID\" and facultyCode =  \"$facultyCode\" ";
+
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
@@ -339,7 +350,7 @@ class CourseProfile implements Persistable
         }
     }
 
-    public function modifyCourseProfileData($courseProfileID)
+    public function modifyCourseProfileData($courseProfileID, $courseInstructorList)
     {
         $sql1 = /** @lang text */
             "UPDATE courseprofile SET courseTitle = \"$this->courseTitle\", creditHours = \"$this->courseCreditHr\", semester = \"$this->courseSemester\",
@@ -356,22 +367,31 @@ class CourseProfile implements Persistable
             echo sprintf("\n<br>Error while updating Course Profile Basic Info : %s\n<br>Server Error:%s\n<br>", json_encode(array($courseProfileID)), $this->databaseConnection->error);
         }
 
-        $instructor_name = $this->instructorInfo->getInstructorName();
-        $instructor_designation = $this->instructorInfo->getInstructorDesignation();
-        $instructor_qualification = $this->instructorInfo->getInstructorQualification();
-        $instructor_spec = $this->instructorInfo->getInstructorSpecialization();
-        $instructor_contact = $this->instructorInfo->getInstructorContactNumber();
-        $instructor_email = $this->instructorInfo->getInstructorPersonalEmail();
+        if (!empty($courseInstructorList) and count($courseInstructorList) > 0) {
+            foreach ($courseInstructorList as $key => $faculty) {
+                self::setInstructorInfo($faculty['_name'], $faculty['_designation'], $faculty['_qualification'], $faculty['_specialization'], $faculty['_contactNumber'], $faculty['_personalEmail']);
 
-        $sql2 = /** @lang text */
-            "update courseprofileinstructordetail SET instructorName = \"$instructor_name\", designation = \"$instructor_designation\", 
+                $instructor_name = $this->instructorInfo->getInstructorName();
+                $instructor_designation = $this->instructorInfo->getInstructorDesignation();
+                $instructor_qualification = $this->instructorInfo->getInstructorQualification();
+                $instructor_spec = $this->instructorInfo->getInstructorSpecialization();
+                $instructor_contact = $this->instructorInfo->getInstructorContactNumber();
+                $instructor_email = $this->instructorInfo->getInstructorPersonalEmail();
+                $instructorFacultyCode = $faculty['_fkey'];
+
+                $sql2 = /** @lang text */
+                    "update courseprofileinstructordetail SET instructorName = \"$instructor_name\", designation = \"$instructor_designation\", 
             qualification = \"$instructor_qualification\", specialization = \"$instructor_spec\", contactNumber = \"$instructor_contact\", 
-            personalEmail = \"$instructor_email\" WHERE courseProfileCode = \"$courseProfileID\"";
+            personalEmail = \"$instructor_email\" WHERE courseProfileCode = \"$courseProfileID\" and facultyCode = \"$instructorFacultyCode\" ";
 
-        if ($this->databaseConnection->query($sql2) === TRUE)
-            echo "Record of courseProfile Instructor updated successfully" . "\n<br>";
-        else
-            echo sprintf("\n<br>Error while Updating Course Profile Instructor Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
+                if ($this->databaseConnection->query($sql2) === TRUE)
+                    echo "Record of courseProfile Instructor updated successfully" . "\n<br>";
+                else
+                    echo sprintf("\n<br>Error while Updating Course Profile Instructor Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
+
+            }
+        }
+
 
         $c_quiz_weight = $this->assessmentInfo->getQuizWeightage();
         $c_assignment_weight = $this->assessmentInfo->getAssignmentWeightage();
@@ -391,17 +411,79 @@ class CourseProfile implements Persistable
 
     }
 
-
-    public function getCourseProfileCode()
+    public function retrieveAllInstructorDetail($courseProfileCode, $affiliatedFacultyList): array
     {
-        return $this->courseProfileCode;
-    }
+        $professorList = array();
+        /** if all section has same faculty  */
+        $noIterate = false;
+        $filterFacultyList = array();
+        if (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0)
+            foreach ($affiliatedFacultyList as $index => $faculty) {
+                $currentFaculty = $faculty['facultyCode'];
+                if (!in_array($currentFaculty, $filterFacultyList))
+                    $filterFacultyList[] = $currentFaculty; // unique or different faculty List.
+                else
+                    $noIterate = true;
+            }
 
-    public function setCourseProfileCode($courseProfileCode): void
-    {
-        $this->courseProfileCode = $courseProfileCode;
-    }
+        /** IF ALL SECTION HAS DIFFERENT FACULTY MEMBERS */
+        if (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0 and !$noIterate and (count($affiliatedFacultyList) == count($filterFacultyList)))
+            foreach ($affiliatedFacultyList as $faculty) {
+                $facultyCode = $faculty['facultyCode'];
+                $sql = /** @lang text */
+                    "select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
+                     where cp.courseProfileCode =\"$courseProfileCode\" and facultyCode = \"$facultyCode\" ";
 
+                $result = $this->databaseConnection->query($sql);
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = $result->fetch_assoc()) {
+//                        print "running time :" . $row['instructorName'] . "<br>";
+                        $newCourseProfile = new self();
+                        $newCourseProfile->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
+                        $professorList[] = $newCourseProfile;
+                    }
+                } else
+                    echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
+            }
+        /** IF ALL SECTION HAS SAME FACULTY MEMBER  */
+        elseif (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0 and $noIterate and count($filterFacultyList) == 1) {
+            $facultyCode = $filterFacultyList[0];
+            $sql = /** @lang text */
+                "select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
+                     where cp.courseProfileCode =\"$courseProfileCode\" and facultyCode = \"$facultyCode\" ";
+
+            $result = $this->databaseConnection->query($sql);
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $newCourseProfile = new self();
+                    $newCourseProfile->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
+                    $professorList[] = $newCourseProfile;
+                }
+            } else
+                echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
+        } /** IF SOME SECTION HAS SAME AND SOME HAS DIFFERENT FACULTY MEMBER  */
+        elseif (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0 and $noIterate and (count($filterFacultyList) > 1 and count($affiliatedFacultyList) > count($filterFacultyList))) {
+            foreach ($filterFacultyList as $faculty) {
+                $facultyCode = $faculty;
+                $sql = /** @lang text */
+                    "select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
+                     where cp.courseProfileCode =\"$courseProfileCode\" and facultyCode = \"$facultyCode\" ";
+
+                $result = $this->databaseConnection->query($sql);
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $newCourseProfile = new self();
+                        $newCourseProfile->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
+                        $professorList[] = $newCourseProfile;
+                    }
+                } else
+                    echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
+            }
+        }
+
+
+        return $professorList;
+    }
 
     /**
      * @return Course

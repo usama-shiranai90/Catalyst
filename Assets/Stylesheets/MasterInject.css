@@ -109,8 +109,7 @@
 
 
 .assessment-wrap, .cprofile-content-division, .row-flex {
-    @apply flex flex-row max-w-full items-center
-    mx-2;
+    @apply flex flex-row max-w-full items-center mx-2;
 }
 
 .assessment-wrap > h3 {

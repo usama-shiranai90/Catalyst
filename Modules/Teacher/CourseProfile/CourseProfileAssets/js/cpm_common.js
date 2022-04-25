@@ -1,4 +1,6 @@
-function checkEmptyFields(fieldsArray, counter, storeValue, instrumentWeight) {  //textField-error-input
+let completeFlag = true;
+
+function checkEmptyFields(fieldsArray, counter, storeValue,) {  //textField-error-input
     for (let i = 0; i < fieldsArray.length; i++)
         errorInputType(fieldsArray[i]);
 
@@ -30,6 +32,7 @@ function checkEmptyFields(fieldsArray, counter, storeValue, instrumentWeight) { 
 function errorInputType(currentField) {
     if (currentField.value.length === 0) {
         completeFlag = false;
+        console.log("ajeeb ", completeFlag)
         if (currentField.tagName === "SELECT")
             currentField.parentElement.classList.add("select-error-input")
         else if (currentField.tagName === "INPUT" || currentField.tagName === "TEXTAREA")
@@ -157,3 +160,74 @@ function createFirstCLOMapRow(totalPlo, outcomeMapContainer) {
 
 }
 
+class CourseInstructor {
+    _name = ''
+
+    get name() {
+        return this._name;
+    }
+
+    set name(value) {
+        this._name = value;
+    }
+
+    _designation = ''
+
+    get designation() {
+        return this._designation;
+    }
+
+    set designation(value) {
+        this._designation = value;
+    }
+
+    _qualification = ''
+
+    get qualification() {
+        return this._qualification;
+    }
+
+    set qualification(value) {
+        this._qualification = value;
+    }
+
+    _specialization = ''
+
+    get specialization() {
+        return this._specialization;
+    }
+
+    set specialization(value) {
+        this._specialization = value;
+    }
+
+    _contactNumber = ''
+
+    get contactNumber() {
+        return this._contactNumber;
+    }
+
+    set contactNumber(value) {
+        this._contactNumber = value;
+    }
+
+    _personalEmail = ''
+
+    get personalEmail() {
+        return this._personalEmail;
+    }
+
+    set personalEmail(value) {
+        this._personalEmail = value;
+    }
+
+    _fkey =''
+
+    get fkey() {
+        return this._fkey;
+    }
+
+    set fkey(value) {
+        this._fkey = value;
+    }
+}

@@ -31,6 +31,7 @@ if (isset($_POST['selectClass'])) {
     $selectedCurriculum = $_POST['curriculumCode'];
     $selectedProgram = $_POST['programCode'];
     $selectedBatch = $_POST['batchCode'];
+    $facultyCourseCoordinatorStatus = $_POST['facultyAllocationStatus'];
 
 
     $_SESSION['selectedCourse'] = $selectedCourse;
@@ -39,6 +40,7 @@ if (isset($_POST['selectClass'])) {
     $_SESSION['selectedCurriculum'] = $selectedCurriculum;
     $_SESSION['selectedProgram'] = $selectedProgram;
     $_SESSION['selectedBatch'] = $selectedBatch;
+    $_SESSION['courseCoordinatorStatus'] = $facultyCourseCoordinatorStatus;
 
 //    echo "selectedCourse :".$selectedCourse."<br>";
 //    echo "selectedSemester :".$selectedSemester."<br>";
@@ -59,7 +61,7 @@ if (isset($_POST['selectClass'])) {
     /*Getting Selected Course Title then generating its acronym to show in Side Panel*/
     $course = new Course();
     $course->retrieveCourseName($selectedCourse);
-    $courseTitle = preg_split("/[\s,_-]+/", $course->getCourseTitle());;
+    $courseTitle = preg_split("/[\s,_-]+/", $course->getCourseTitle());
     $courseTitleAcronym = "";
 
     foreach ($courseTitle as $w) {

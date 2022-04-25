@@ -2,7 +2,7 @@
 /*include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\ClassActivities\ClassActivity.php";
 include $_SERVER['DOCUMENT_ROOT']."\Backend\Packages\OfferingAndAllocations\CLO.php";*/
 
-require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 
 class Sessional extends ClassActivity
 {
@@ -58,7 +58,7 @@ class Sessional extends ClassActivity
                 $sumOfWeightages = $row['SUM(weightage)'];
             }
 
-            if($sumOfWeightages == null){
+            if ($sumOfWeightages == null) {
                 return 0;
             }
             return $sumOfWeightages;
@@ -81,7 +81,7 @@ class Sessional extends ClassActivity
             while ($row = $result->fetch_assoc()) {
                 $sumOfWeightages = $row['SUM(weightage)'];
             }
-            if($sumOfWeightages == null)
+            if ($sumOfWeightages == null)
                 return 0;
 
             return $sumOfWeightages;
@@ -153,4 +153,24 @@ class Sessional extends ClassActivity
 
     }
 
+    public function hasSessionalForAllSections($affiliatedFacultyList, $courseCode): bool
+    {
+        $hasPreAssessment = false;
+        //{"facultyCode":"FUI-FURC-060","courseCode":"SEN-28","sectionCode":"42","sectionName":"A","isCoordinator":"0"}
+        foreach ($affiliatedFacultyList as $faculty) {
+            $sectionCode = $faculty['sectionCode'];
+
+            $sql = /** @lang text */
+                "select * from assessment where assessmentType = 'Sessional' and sectionCode = \"$sectionCode\" and courseCode = \"$courseCode\" and 
+                 (assessmentSubType= 'Assignment' or assessmentSubType='Project'  or assessmentSubType= 'Quiz')  ";
+            $result = $this->databaseConnection->query($sql);
+            if (mysqli_num_rows($result) > 0) {
+//                echo "size :" . mysqli_num_rows($result) . " " . $sectionCode . "  " . $courseCode . "<br><br>";
+                $hasPreAssessment = true;
+                break;
+            }
+        }
+
+        return $hasPreAssessment;
+    }
 }

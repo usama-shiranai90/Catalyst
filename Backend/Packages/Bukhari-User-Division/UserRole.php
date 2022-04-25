@@ -17,9 +17,7 @@ class UserRole implements Visitor
     {
         $personalDetails = array();
         $sql = $query;
-//        $sql = "select * from faculty where facultyCode = '$userCode'";
         $result = $this->databaseConnection->query($sql);
-//        echo json_encode($result)."<br><br>";
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
                 $personalDetails = $row;
@@ -99,17 +97,11 @@ class UserRole implements Visitor
 
 
 
-    /**
-     * @return mixed
-     */
     public function getNavigationUrl()
     {
         return $this->navigationUrl;
     }
 
-    /**
-     * @param mixed $navigationUrl
-     */
     public function setNavigationUrl($navigationUrl): void
     {
         $this->navigationUrl = $navigationUrl;

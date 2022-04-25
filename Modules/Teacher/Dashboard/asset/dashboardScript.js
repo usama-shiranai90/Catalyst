@@ -29,7 +29,7 @@ window.onload = function () {
 /** Show Course Learning Outcome List. */
 function loadCloDashboardData(cloDashboardTableBody) {
     let tableRowData;
-    if (courseLearningArray !== null) {
+    if (courseLearningArray !== null && courseLearningArray.length > 0) {
         for (let i = courseLearningArray.length - 1; i >= 0; i--) {
             tableRowData = `<tr class="text-center text-sm font-base tracking-tight capitalize px-3 py-3  border-b-2 border-t-2 border-solid border-gray-200
                               hover:text-base hover:bg-catalystBlue-l6 transition ease-out duration-300 hover:text-white hover:">
@@ -55,7 +55,7 @@ function loadCloDashboardData(cloDashboardTableBody) {
 /** Show Assessment List with questions. */
 function loadLatestAssessmentDashboardData(assessmentDashboardContainer, assessmentDashboardInnerBody, assessmentDashboardQuestion) {
 
-    if (recentAssessmentArray !== null) {
+    if (recentAssessmentArray !== null && recentAssessmentArray.length > 0) {
         $(assessmentDashboardInnerBody).children(":first").html(recentAssessmentArray[0]);
         $(assessmentDashboardInnerBody).children(":nth-child(2)").find("span").html(recentAssessmentArray[1]);
         $(assessmentDashboardInnerBody).children(":last-child").find("span").html(recentAssessmentArray[2] + " %");
@@ -81,7 +81,6 @@ function loadWeeklyTopicDashboardData(weeklyTopicDashboardContainer, weeklyTopic
         $(weeklyTopicDashboardInnerBody).children(":first").html(recentWeeklyCoveredTopic[0]);
         $(weeklyTopicDashboardInnerBody).children(":nth-child(2)").html(recentWeeklyCoveredTopic[1]);
         $(weeklyTopicDashboardInnerBody).children(":last-child").find("span").html(recentWeeklyCoveredTopic[2]);
-
         for (let i = 0; i < recentWeeklyCoveredTopic[3].length; i++) {
             const cloNumber = `<a class="capitalize font-semibold text-base w-full">${recentWeeklyCoveredTopic[3][i]}</a>`;
             $(weeklyTopicDashboardQuestion).append(cloNumber);
@@ -222,21 +221,6 @@ function loadStudentCLOPerformanceDashboardData(studentsPerformanceContainer, st
             console.log("PERFORMANCE MATRIX : " ,responseText);
             if (responseText.errors === 'none') {
                 const fetchedData = responseText.message;
-                /*let tableData = "";
-                let tempArray = [];
-                for (let i = 0; i < fetchedData.length; i++) {
-                    const currentCLOName = fetchedData[i].cloName; // CLO-1
-                    if (tempArray.indexOf(currentCLOName) !== -1) { // if exist , reset.
-                        const tableEntireRow = `<tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight" >`
-                            + `<td class="px-1 py-3 w-full">${fetchedData[i-2].regNumber}</td>` + tableData + `</tr>`;
-                        $(studentsPerformanceDashboardInnerBody).append(tableEntireRow)
-                        tempArray = []
-                        tableData = "";
-                    } else {
-                        tableData += `<td class="px-1 py-3 w-full">${fetchedData[i].result}</td>`
-                        tempArray.push(currentCLOName)
-                    }
-                }*/
                 for (let i = 0; i < fetchedData.length; i++)
                     iterateAndCreatePerformanceRow(fetchedData, i, true)
                 for (let i = fetchedData.length - extra; i < fetchedData.length; i++)

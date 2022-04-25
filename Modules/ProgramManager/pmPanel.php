@@ -196,7 +196,7 @@ $personalDetails = $admin->getInstance();
     </div>
     <div class="ml-48 w-full h-full" id="programManagerMainContent">
         <!--        Pages to load go here through scripts-->
-        <iframe class="h-full" src="" style="width: 100%"></iframe>
+        <iframe class="h-full" src="ManageCourseOffering/importOffering.php" style="width: 100%"></iframe>
     </div>
 </div>
 </body>

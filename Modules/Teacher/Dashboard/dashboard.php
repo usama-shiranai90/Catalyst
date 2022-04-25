@@ -12,14 +12,14 @@ $facultyCode = $_SESSION['facultyCode'];
 $faculty = unserialize($_SESSION['facultyInstance']);
 $listOfAllocations = $faculty->retrieveAllocations($facultyCode);
 
-print sprintf("Program Code : %s <br> Curriculum Code : %s <br> batchCode : %s <br> sectionCode : %s <br> courseCode %s ", $programCode, $curriculumCode, $batchCode, $sectionCode, $courseCode);
+//print sprintf("Program Code : %s <br> Curriculum Code : %s <br> batchCode : %s <br> sectionCode : %s <br> courseCode %s ", $programCode, $curriculumCode, $batchCode, $sectionCode, $courseCode);
 
 $courseProfile = new CourseProfile();
 $courseLearningOutcome = new CLO();
 $activity = new ClassActivity();
 
 $courseOutcomeList = $courseLearningOutcome->retrieveCLOlist($programCode, $curriculumCode, $batchCode, $courseCode); // 1 , 1  ,4, SEN-28
-print json_encode($courseOutcomeList);
+//print json_encode($courseOutcomeList);
 
 /** the following function may change depending on our current scenario (for coordinator) */
 $isProfileCreated = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);  //$_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedBatch']        //  ,$_SESSION['selectedCurriculum']
@@ -41,15 +41,12 @@ if ($isProfileCreated === TRUE) {
 }
 
 $assessmentObject = $activity->getLatestCourseSpecificAssessment($_SESSION['selectedSection'], $_SESSION['selectedCourse']);
-$fetchAssessment = array(
-    $assessmentObject->getActivityType(),
-    $assessmentObject->getTitle(),
-    $assessmentObject->getWeightage(),
-    $assessmentObject->getTopic(),
-    $assessmentObject->getListOfQuestions(),
-);
-
-
+$fetchAssessment = array();
+if ($assessmentObject != null)
+    $fetchAssessment = array($assessmentObject->getActivityType(),
+        $assessmentObject->getTitle(), $assessmentObject->getWeightage(),
+        $assessmentObject->getTopic(), $assessmentObject->getListOfQuestions(),
+    );
 
 ?>
 <!doctype html>

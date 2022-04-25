@@ -2,13 +2,14 @@
 
 class Allocations
 {
-        protected $databaseConnection; // composition of Course-object.
+    protected $databaseConnection; // composition of Course-object.
     private $course;// composition of section-object.
-private $section;
+    private $section;
     private $programCode;
-        private $curriculumCode; // array list of allocations.
-private $allocations;
+    private $curriculumCode; // array list of allocations.
+    private $allocations;
     private $batchCode;
+    private $isCoordinator;
 
     public function __construct()
     {
@@ -19,7 +20,7 @@ private $allocations;
     public function retrieveAllocations($facultyCode): array
     {
         $sql = /** @lang text */
-            "select fa.sectionCode, ca.courseCode,ca.batchCode,ca.programCode, co.curriculumCode from facultyallocations fa join courseallocation ca on 
+            "select fa.sectionCode, ca.courseCode,ca.batchCode,ca.programCode, co.curriculumCode,isCoordinator from facultyallocations fa join courseallocation ca on 
             ca.allocationCode = fa.allocationCode join courseoffering co on co.offeringCode = ca.offeringCode where 
             fa.facultyCode = \"$facultyCode\" and fa.seasonCode = 4;";
 //(select seasonCode from season order by seasonCode desc limit 1)
@@ -34,6 +35,7 @@ private $allocations;
                 $newAllocation->setCurriculumCode($row["curriculumCode"]);
                 $newAllocation->setProgramCode($row["programCode"]);
                 $newAllocation->setBatchCode($row["batchCode"]);
+                $newAllocation->setIsCoordinator($row['isCoordinator']);
                 array_push($this->allocations, $newAllocation);
             }
         } else
@@ -50,6 +52,7 @@ private $allocations;
         echo "<br>Curriculum: " . $this->getCurriculumCode();
         echo "<br>Program: " . $this->getProgramCode();
         echo "<br>Batch: " . $this->getBatchCode();
+        echo "<br>isCoordinator: " . $this->getIsCoordinator();
     }
 
     public function getCourse()
@@ -110,4 +113,42 @@ private $allocations;
         $this->batchCode = $batchCode;
     }
 
+    public function getIsCoordinator()
+    {
+        return $this->isCoordinator;
+    }
+
+    public function setIsCoordinator($isCoordinator): void
+    {
+        $this->isCoordinator = $isCoordinator;
+    }
+
+    public function retrieveSameAllocatedFacultyList($semesterCode, $courseCode): array
+    {
+        $affiliatedFacultyList = array();
+        $sql = /** @lang text */
+            "select semesterCode, facultyCode, courseCode, f.sectionCode, sectionName ,isCoordinator from section
+         join facultyallocations f on section.sectionCode = f.sectionCode
+         join courseallocation c on c.allocationCode = f.allocationCode
+         where semesterCode = \"$semesterCode\"
+         and courseCode = \"$courseCode\";";
+
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $temp = array(
+                    "facultyCode" => $row['facultyCode'],
+                    "courseCode" => $row['courseCode'],
+                    "sectionCode" => $row['sectionCode'],
+                    "sectionName" => $row['sectionName'],
+                    "isCoordinator" => $row['isCoordinator'],
+                );
+                $affiliatedFacultyList[] = $temp;
+            }
+        } else
+            echo "No Same Faculty Allocations found";
+
+        return $affiliatedFacultyList;
+    }
 }

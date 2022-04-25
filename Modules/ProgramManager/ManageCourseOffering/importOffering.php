@@ -10,18 +10,15 @@ $departmentCode = $_SESSION['departmentCode'];
 $programCode = $_SESSION['programCode'];
 
 $season = new Season();
-$seasonList = $season->retrieveSeasonList();
+$seasonList = $season->retrieveLatestSeasonForAllocation();
 //print json_encode($seasonList) . "<br>";
 
 $program = new Program();
 $programInstance = $programList = $program->retrieveProgram($programCode);
-//print json_encode($programInstance) . "<br>";
 
-$curriculum = new Curriculum();
+/*$curriculum = new Curriculum();
 $curriculumList = $curriculum->retrieveCurriculumList($programInstance->getProgramCode());
-//print json_encode($curriculumList) . "<br>";
-
-$batchList = (new Batch())->retrieveAllEligibleBatches();
+print json_encode($curriculumList) . "<br>";*/
 
 ?>
 
@@ -141,9 +138,10 @@ $batchList = (new Batch())->retrieveAllEligibleBatches();
                             <label for="importCourseOfferingSeasonSelectID"></label>
                             <select class="select" name="importCourseOfferingSeasonSelect"
                                     onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
+                                    onchange="this.setAttribute('value', this.value);" value="xxx"
                                     id="importCourseOfferingSeasonSelectID">
                                 <option value="" hidden=""></option>
+                                <option value="xxx" selected>xxx</option>
                                 <?php
                                 if ($seasonList !== null)
                                     foreach ($seasonList as $index => $value)
@@ -154,8 +152,7 @@ $batchList = (new Batch())->retrieveAllEligibleBatches();
                             </select>
                             <label class="select-label top-1/4 sm:top-3">Season</label>
                         </div>
-
-                        <div class="textField-label-content w-3/12">
+                        <!--<div class="textField-label-content w-3/12">
                             <label for="importCourseOfferingCurriculumSelectID"></label>
                             <select class="select" name="importCourseOfferingCurriculumSelect"
                                     onclick="this.setAttribute('value', this.value);"
@@ -163,14 +160,14 @@ $batchList = (new Batch())->retrieveAllEligibleBatches();
                                     id="importCourseOfferingCurriculumSelectID">
                                 <option value="" hidden=""></option>
                                 <?php
-                                foreach ($curriculumList as $index => $role) {
-                                    print sprintf("<option  value=\"%s\" data-select-id=\"%s\">%s</option>", $role['curriculumCode'], $role['curriculumYear'], $role['curriculumName']);
-                                }
-                                ?>
+                        /*                                foreach ($curriculumList as $index => $role) {
+                                                            print sprintf("<option  value=\"%s\" data-select-id=\"%s\">%s</option>", $role['curriculumCode'], $role['curriculumYear'], $role['curriculumName']);
+                                                        }
+                                                        */ ?>
                             </select>
                             <label class="select-label top-1/4 sm:top-3">Curriculum</label>
-                        </div>
-                        <div class="textField-label-content w-3/12">
+                        </div>-->
+                        <!--<div class="textField-label-content w-3/12">
                             <label for="importCourseOfferingBatchSelectID"></label>
                             <select class="select" name="importCourseOfferingBatchSelect"
                                     onclick="this.setAttribute('value', this.value);"
@@ -179,17 +176,17 @@ $batchList = (new Batch())->retrieveAllEligibleBatches();
                                 <option value="" hidden=""></option>
                             </select>
                             <label class="select-label top-1/4 sm:top-3">Batch</label>
-                        </div>
-                       <!-- <div class="textField-label-content w-3/12">
-                            <label for="importCourseOfferingSemesterSelectID"></label>
-                            <select class="select" name="importCourseOfferingSemesterSelect"
-                                    onclick="this.setAttribute('value', this.value);"
-                                    onchange="this.setAttribute('value', this.value);" value=""
-                                    id="importCourseOfferingSemesterSelectID">
-                                <option value="" hidden=""></option>
-                            </select>
-                            <label class="select-label top-1/4 sm:top-3">Semester</label>
                         </div>-->
+                        <!-- <div class="textField-label-content w-3/12">
+                             <label for="importCourseOfferingSemesterSelectID"></label>
+                             <select class="select" name="importCourseOfferingSemesterSelect"
+                                     onclick="this.setAttribute('value', this.value);"
+                                     onchange="this.setAttribute('value', this.value);" value=""
+                                     id="importCourseOfferingSemesterSelectID">
+                                 <option value="" hidden=""></option>
+                             </select>
+                             <label class="select-label top-1/4 sm:top-3">Semester</label>
+                         </div>-->
                     </div>
 
                     <div class="flex justify-center  items-center w-24">

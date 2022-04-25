@@ -14,11 +14,11 @@ const maxSizeAllowed = 15 * 1024 * 1024;
 
 /** Fields list.  */
 const seasonField = document.getElementById('importCourseOfferingSeasonSelectID');
-const curriculumField = document.getElementById('importCourseOfferingCurriculumSelectID');
-const batchField = document.getElementById('importCourseOfferingBatchSelectID');
+// const curriculumField = document.getElementById('importCourseOfferingCurriculumSelectID');
+// const batchField = document.getElementById('importCourseOfferingBatchSelectID');
 // const semesterField = document.getElementById('importCourseOfferingSemesterSelectID');
 
-const generatedTableContainer = document.getElementById('generatedTableContainer');
+const courseOfferingTableContainer = document.getElementById('generatedTableContainer');
 const saveCourseOfferingBtn = document.getElementById('saveCourseOfferingBtn');
 
 $(document).ready(function () {
@@ -28,13 +28,6 @@ $(document).ready(function () {
             $(this).parent().removeClass("textField-error-input");
         else if (this.type === "select-one")
             $(this).parent().removeClass("select-error-input");
-    });
-
-    $(seasonField).add(curriculumField).on('change', function (e) {
-        if (seasonField.value.length !== 0 && curriculumField.value.length) {
-            callAjaxForBatchDropDown(seasonField.value, curriculumField.value, programInstance.programCode);
-
-        }
     });
 
     $(dropAreaContainer).bind({
@@ -47,18 +40,18 @@ $(document).ready(function () {
         },
         drop: function (e) {
             e.preventDefault();
-            if (containsEmptyField([seasonField , curriculumField , batchField])) {
+            if (containsEmptyField([seasonField])) {
                 const files = event.dataTransfer.files;
                 if (files.length === 1) {
                     if (files[0].size < maxSizeAllowed) {
                         courseOfferingAndAllocationExcelField.files = files;
-                        // method call here.
+                        event.target.files = files;
+                        uploadFileProcess()
                     } else
                         console.log("Max file size is 15MB")
                 }
                 dropAreaContainer.classList.remove("dragged");
             } else {
-                alert("please complete all fields to import file");
                 dropAreaContainer.classList.remove("dragged");
                 $(courseOfferingAndAllocationExcelField).val("");
             }
@@ -71,7 +64,7 @@ $(document).ready(function () {
     })
 
     courseOfferingAndAllocationExcelField.addEventListener("change", () => {
-        if (containsEmptyField([seasonField , curriculumField , batchField])) {
+        if (containsEmptyField([seasonField])) {
             if (courseOfferingAndAllocationExcelField.files[0].size > maxSizeAllowed) {
                 showToast("Max file size is 15");
                 courseOfferingAndAllocationExcelField.value = ""; // reset the input
@@ -79,15 +72,307 @@ $(document).ready(function () {
             }
             uploadFileProcess();
         } else {
-            alert("please complete all fields to import file");
             $(courseOfferingAndAllocationExcelField).val("");
         }
         dropAreaContainer.classList.remove("dragged");
     });
 
+    $(document).on('click', 'a[id^="importCourseOfferingSheetTabID-"]', function (event) {
+        const panel = $(this).parent(); //.work-sheet-container
+        let selectedID = this.id;
+        $(panel).children().each(function (index, value) { // 0,1,2
+            if (selectedID !== value.id) {
+                $(value).removeClass().addClass("non-selected-tab-section tab-context-header")
+
+                if (index % 2 === 0) { // for case i , iii.
+                    if (index === 0) {
+                        $(courseOfferingTableContainer).children()[0].classList.add("hidden");
+                        $(courseOfferingTableContainer).children()[1].classList.add("hidden");
+                    } else if (index > 0) { // for iii
+                        let newIndex = index * 2;
+                        $(courseOfferingTableContainer).children()[newIndex].classList.add("hidden");
+                        $(courseOfferingTableContainer).children()[newIndex + 1].classList.add("hidden");
+                    }
+                } else {  // for case ii and iv.
+                    if (index === 1) {
+                        $(courseOfferingTableContainer).children()[2].classList.add("hidden");
+                        $(courseOfferingTableContainer).children()[3].classList.add("hidden");
+                    } else if (index > 0) { // for iii
+                        let newIndex = index * 2;
+                        $(courseOfferingTableContainer).children()[newIndex].classList.add("hidden");
+                        $(courseOfferingTableContainer).children()[newIndex + 1].classList.add("hidden");
+                    }
+                }
+            } else {
+                $(value).removeClass().addClass("selected-tab-section tab-context-header")
+                if (index % 2 === 0) { // for case i , iii.
+                    if (index === 0) {
+                        $(courseOfferingTableContainer).children()[0].classList.remove("hidden");
+                        $(courseOfferingTableContainer).children()[1].classList.remove("hidden");
+                    } else if (index > 0) { // for iii
+                        let newIndex = index * 2;
+                        $(courseOfferingTableContainer).children()[newIndex].classList.remove("hidden");
+                        $(courseOfferingTableContainer).children()[newIndex + 1].classList.remove("hidden");
+                    }
+                } else {  // for case ii and iv.
+                    if (index === 1) {
+                        $(courseOfferingTableContainer).children()[2].classList.remove("hidden");
+                        $(courseOfferingTableContainer).children()[3].classList.remove("hidden");
+                    } else if (index > 0) { // for iii
+                        let newIndex = index * 2;
+                        $(courseOfferingTableContainer).children()[newIndex].classList.remove("hidden");
+                        $(courseOfferingTableContainer).children()[newIndex + 1].classList.remove("hidden");
+                    }
+                }
+                $("#importedTableContainer > div > div > h2").text(offeringTableHeaderName[parseInt(selectedID.match(/\d+/)[0]) - 1]);
+            }
+        });
+    });
+
+    const uploadFileProcess = () => {
+        let uploadedFiles = event.target.files;
+        let reader = new FileReader();
+        reader.readAsArrayBuffer(uploadedFiles[0]);
+        reader.onload = function (event) {
+            let data = new Uint8Array(reader.result);
+            let work_book = XLSX.read(data, {type: 'array'});
+            console.log("WorkBook :", work_book, "\n");
+            console.log(work_book.Sheets)
+
+            sheetToJson(work_book);
+            $("form.px-10.py-6").addClass("hidden");
+        }
+    };
+
 });
 
+let offeringTableHeaderName = [];
+let offeringPerSheetTotalCreditHour = [];
 
+function sheetToJson(work_book) {
+    let counter = 1
+    work_book.SheetNames.forEach(function (sheetName) {
+        let sheetCode = work_book.Sheets[sheetName];
+        const excelFormatParameter = {
+            editable: true,
+            blankrows: false,
+            raw: false, // Use raw values if true else formatted strings
+            skipUndfendVale: false,
+            defaultValue: "",
+            defval: '', // Use specified value in place of null or undefined
+            sheetStubs: false,  //  Create cell objects of type z for null values
+            skipHeader: false,  // If true, do not include header row in output
+            header: 1,
+        }
+        let offeringJsonFormatList = XLSX.utils.sheet_to_json(sheetCode, excelFormatParameter);
+        let tableHeaderFormatter = work_book.Sheets[sheetName]['A1']['v'];
+        console.log("offeringJsonFormatList : ", offeringJsonFormatList, tableHeaderFormatter)
+
+        createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJsonFormatList, sheetName, counter);
+        createDifferentSheetWorkSection(sheetName, counter++);
+    });
+}
+
+function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJsonFormatList, workSheetName, counter) {
+    if (offeringJsonFormatList.length > 0) {
+
+        /** Top Section Data */
+        let headerName;
+        if (offeringJsonFormatList[0].length !== null || offeringJsonFormatList[0].length > 0) {
+            offeringJsonFormatList[0] = offeringJsonFormatList[0].filter(n => n); // removing empty
+            headerName = (offeringJsonFormatList[0][0] === tableHeaderFormatter ? tableHeaderFormatter : "ERROR");
+            if (headerName.length > 5) {
+                let ref = headerName.split(/(\s+)/).filter(e => e.trim().length > 0) // ["BCSE-1" , "(Fall-2021" , "Batch") ]
+                $("#importedTableContainer > div > div > h2").text("Course Offering For " + ref[0] + " of Batch " + removeBrackets(ref[1]));
+                offeringTableHeaderName.push("Course Offering For " + ref[0] + " of Batch " + removeBrackets(ref[1]));
+            } else {
+                $("#importedTableContainer > div > div > h2").text("ERROR WHILE PERFORMING COURSE OFFERING FOR " + tableHeaderFormatter);
+                return;
+            }
+        }
+
+        let convertorOfHeader = headerName.split(/(\s+)/).filter(e => e.trim().length > 0) // ["BCSE-1" , "(Fall-2021" , "Batch") ]
+        let programName = extractFirstString(convertorOfHeader[0]);
+        let semesterNumber = extractFirstNumeric(convertorOfHeader[0]);
+        let batchYear = removeBrackets(convertorOfHeader[1]);
+        console.log(programName, semesterNumber, batchYear);
+
+        /** Header Content */
+        // const tableSectionDivision = document.createElement('div');
+        // $(tableSectionDivision).attr("class", "relative rounded w-full whitespace-no-wrap bg-white").attr("aria-disabled", "false").attr("aria-describedby", `table-sector-offering-${counter}`);
+        // $(tableSectionDivision).append(`<h2 class="font-semibold text-2xl tracking-wider leading-relaxed p-2">Regular Course</h2>`);
+
+        const table = document.createElement('table');
+        $(table).addClass("border-collapse table-auto whitespace-no-wrap table-striped");
+        const tableHeader = document.createElement('thead');
+        table.append(tableHeader);
+        let tableHeaderRow = document.createElement('tr');
+        $(tableHeaderRow).addClass("text-center bg-catalystLight-f5");
+        tableHeader.append(tableHeaderRow);
+        let tableID = 'offeringTable-' + programName + counter;
+        table.setAttribute("id", tableID);
+
+        let maxLengthPerRow = Object.entries(offeringJsonFormatList[3]).length; // where the header lies.
+        // console.log("header length : ", maxLengthPerRow);
+
+        Object.entries(offeringJsonFormatList[3]).forEach(function (value, index) {
+            if (value[1] !== 'S.No') {
+                $(tableHeaderRow).append(`<th class="capitalize px-4 py-3  tracking-wider font-medium text-sm">
+                                ${value[1]}
+                            </th>`);
+            }
+            if (maxLengthPerRow === index + 1) { // adding buttons.
+                $(tableHeaderRow).append(`
+             <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs"> </td>`);
+            }
+        });
+        // $(tableSectionDivision).append(table);
+        $(courseOfferingTableContainer).append(table);
+
+        let tcIndex = -1;
+        /** Data Set Content */
+        const tableBody = document.createElement('tbody');
+        for (let row = 4; row < offeringJsonFormatList.length; row++) {
+            let tableHeaderRow = document.createElement('tr');
+            tableBody.append(tableHeaderRow);
+            let maxLengthPerRow = Object.entries(offeringJsonFormatList[row]).length;
+
+            let BreakException = {};
+            try {
+                let emptyCounter = 0;
+                offeringJsonFormatList[row].forEach(function (value, index) {
+                    // let relatedEvent = getRelatedKeyDownForTabularRow(index);
+                    // relatedEvent = (relatedEvent === undefined ? '' : relatedEvent)
+
+                    if ((index < (maxLengthPerRow / 2) && value.length === 0)) {
+                        emptyCounter++;
+                        if (emptyCounter === (index / maxLengthPerRow))
+                            throw BreakException;
+                    } else {
+                        if (value !== "__EMPTY" && maxLengthPerRow > index) {
+                            if (index === 4) {
+                                $(tableHeaderRow).append(`
+                            <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs">
+                               <select class="select" name="t1" onclick="this.setAttribute('value', this.value);" 
+                                onchange="this.setAttribute('value', this.value);"  id="t1">
+                                <option value="" hidden=""></option>
+                                <option value="xxx" selected="">xxx</option>
+                                <option value="2">Fall 15</option><option value="4">Fall 16</option><option value="1">Spring 15</option><option value="3">Spring 16</option></select>
+                            </td>`);
+                            }
+                            else{
+                                $(tableHeaderRow).append(`
+                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
+                                <span class="text-gray-700 flex justify-center items-center" >${value}</span>
+                            </td>`);
+                            }
+                        }
+
+                        if (maxLengthPerRow === index + 1) { // adding buttons.
+                            $(tableHeaderRow).append(`
+             <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="false">
+                                           <img class="h-10 w-6 cursor-pointer" alt="" 
+                        src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg" data-std-delete="remove">
+                                        </td>`);
+                        }
+                    }
+                });
+            } catch (e) {
+                if (e !== BreakException) throw e;
+            }
+
+            // check next is Total Credits hour.
+            let nextRowFirstValue = offeringJsonFormatList[row + 1][0].toLowerCase();
+            console.log(nextRowFirstValue.match(/(Total|Credits|credit)+/ig))
+            //nextRowFirstValue.search("total credits".toLowerCase()) || nextRowFirstValue.match(/total credits/i)
+            if (nextRowFirstValue.match(/(Total|Credits|credit)+/ig)) {
+                tcIndex = row + 1;
+                break;
+            }
+        }
+        $(table).append(tableBody);
+        $(table).append(createAddMoreBtn(counter));
+
+        /** pagination Design */
+        createPaginationBar(tableID);
+
+        if (counter !== 1) {
+            $(table).addClass("hidden");
+            $("#" + tableID).removeAttr("style");
+            $("#" + tableID).next().addClass('hidden');
+        }
+
+    }
+}
+
+function createDifferentSheetWorkSection(sheetList, counter) {
+    console.log("working ?")
+    if (counter !== 1)
+        $("#sheetNoId").append(` <a id="importCourseOfferingSheetTabID-${counter}" class="non-selected-tab-section tab-context-header">
+                            ${sheetList} </a>`);
+    else
+        $("#sheetNoId").append(`  <a id="importCourseOfferingSheetTabID-${counter}" class="selected-tab-section tab-context-header">
+                            ${sheetList}</a>`);
+}
+
+/** function is used to create add more button. */
+function createAddMoreBtn(value) {
+    return ` <td colspan="12" class="py-5 text-center">
+                     <button type="button" aria-label="add_offer_button_label" class="max-w-2xl rounded-full" id="add-offering-btn-${value}" aria-expanded="false" aria-haspopup="true">
+                            <img id="addMoreBtn${-value}" class="h-8 w-8 rounded-full" src="../../../Assets/Images/vectorFiles/Icons/add-button.svg" alt="">
+                        </button>
+            </td>`
+}
+
+function createPaginationBar(tableID) {
+    $("#" + tableID).each(function () {
+        let currentPage = 0;
+        const numPerPage = 8;
+        const $table = $(this);
+        $table.bind('cOfferingPaginate' + tableID, function () {
+            $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).fadeIn("fast").animate({}, "linear", function () {
+                // $table.fadeIn();
+            }).show().removeAttr("style");
+            // $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).fadeIn("slow").show();
+        });
+
+        $table.trigger('cOfferingPaginate' + tableID);
+        const totalTableRows = $table.find('tbody tr').length;
+        const NoOfPages = Math.ceil(totalTableRows / numPerPage);
+        const $paginationContainer = $('<div class="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6"></div>');
+        for (let page = 0; page < NoOfPages; page++) {
+            let cssClass = "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+            if (page === 0)
+                cssClass = "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium clickable z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
+
+            $(`<span class="${cssClass}" ></span>`).text(page + 1).bind('click', {
+                newPage: page
+            }, function (event) {
+                currentPage = event.data['newPage'];
+                $table.trigger('repaginate' + tableID);
+
+                $(this).fadeIn("slow").animate({}, "linear", function () {
+                    $(this).fadeIn();
+                }).addClass("z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium")
+                    .removeAttr("style").siblings()
+                    .removeClass().addClass('bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium');
+
+            }).appendTo($paginationContainer).addClass('clickable');
+
+        }
+        $paginationContainer.insertAfter($table).find('span.page-number:first').addClass('active');
+    });
+}
+
+
+// APPROACH WHEN USER WANT TO CREATE OFFERING FOR ONLY ONE BATCH AT A TIME.
+// CURRICULUM , BATCH FIELDS AS WELL.
+/*$(seasonField).add(curriculumField).on('change', function (e) {
+    if (seasonField.value.length !== 0 && curriculumField.value.length) {
+        callAjaxForBatchDropDown(seasonField.value, curriculumField.value, programInstance.programCode);
+    }
+});*/
+/*
 function callAjaxForBatchDropDown(season, curriculum, program) {
     let returnValue;
     $.ajax({
@@ -123,7 +408,6 @@ function callAjaxForBatchDropDown(season, curriculum, program) {
         }
     });
 }
-
 function createOptionForBatchDropDown(batchList) {
     let optionsList = '';
     for (let i = 0; i < batchList.length; i++) {
@@ -132,8 +416,6 @@ function createOptionForBatchDropDown(batchList) {
     $(batchField).children().slice(1).remove();
     $(batchField).append(optionsList);
 }
-
-
 function loadAlertMessage(responseText, timerS = 5000, timerE = 3000) {
     let duplicateList = responseText.message;
     console.log(duplicateList);
@@ -144,4 +426,4 @@ function loadAlertMessage(responseText, timerS = 5000, timerE = 3000) {
         {right: 0,}, timerS, function () {
             $(this).delay(timerE).fadeOut().remove();
         });
-}
+}*/

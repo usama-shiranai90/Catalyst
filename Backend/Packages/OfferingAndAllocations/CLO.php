@@ -68,7 +68,7 @@ class CLO implements JsonSerializable
             sort($tempArray);
             array_push($this->mappedPLOs, $tempArray);
 
-            echo "CLO list is :" . json_encode($CLOlist);
+//            echo "CLO list is :" . json_encode($CLOlist);
 
         } else
             echo "Cant find clo : " . $this->databaseConnection->error;
@@ -174,7 +174,7 @@ class CLO implements JsonSerializable
             }
             return $cloDataSet;
         } else {
-            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  wtf";
+//            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  wtf";
             return null;
         }
     }
@@ -210,7 +210,7 @@ class CLO implements JsonSerializable
             }
             return $cloDataSet;
         } else {
-            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  wtf";
+//            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  ";
             return null;
         }
     }

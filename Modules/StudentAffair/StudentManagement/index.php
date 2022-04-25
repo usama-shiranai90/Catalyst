@@ -11,7 +11,7 @@ $curriculum = new Curriculum();
 $curriculumList = $curriculum->retrieveEntireCurriculumList();
 
 $season = new Season();
-$seasonList = $season->retrieveSeasonList();
+$seasonList = $season->retrieveLatestSeasonForAllocation();
 
 if ($seasonList == null)
     $earliestYear = date('Y', strtotime("-4 year"));

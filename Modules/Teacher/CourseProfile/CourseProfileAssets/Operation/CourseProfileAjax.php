@@ -79,6 +79,7 @@ if (isset($_POST['saved']) and $_POST['saved']) {
 
         $courseEssentialArray = $_POST['courseEssentialFieldValue'];
         $courseDetailArray = $_POST['courseDetailFieldValue'];
+        $courseInstructorList = $_POST['courseInstructorList'];
         $courseMappingArray = $_POST['arrayMapping']; // mapped Clo to Plo two dimension matrix.
 
         $cloDescriptionKeyValue = $_POST['courseCLODescriptionUpdateArray'];  // existing Clo description array.
@@ -88,9 +89,9 @@ if (isset($_POST['saved']) and $_POST['saved']) {
             $courseDetailArray[0], $courseDetailArray[1], $courseDetailArray[2], $courseDetailArray[3], $programCode, $batchCode);
 
         $courseProfile->setAssessmentInfo($courseEssentialArray[11], $courseEssentialArray[12], $courseEssentialArray[13], $courseEssentialArray[14], $courseEssentialArray[15]);
-        $courseProfile->setInstructorInfo($courseDetailArray[4], $courseDetailArray[5], $courseDetailArray[6], $courseDetailArray[7], $courseDetailArray[8], $courseDetailArray[9]);
+//        $courseProfile->setInstructorInfo($courseDetailArray[4], $courseDetailArray[5], $courseDetailArray[6], $courseDetailArray[7], $courseDetailArray[8], $courseDetailArray[9]);
 
-        $courseProfile->modifyCourseProfileData($_SESSION['cp_id']);
+        $courseProfile->modifyCourseProfileData($_SESSION['cp_id'] , $courseInstructorList);
         /** Modifies the Course Essential and Detail page information */
 
         $cloCodeArrayExisting = array();

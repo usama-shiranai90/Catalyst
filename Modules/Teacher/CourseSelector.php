@@ -18,8 +18,11 @@ $allottedSemesterNames = array();
 $allottedCurriculumCodes = array();
 $allottedProgramCodes = array();
 $allottedBatchCodes = array();
+$allottedUserIsCoordinator = array();
 
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
+    print $listOfAllocations[$x]->getIsCoordinator()."  ".$listOfAllocations[$x]->getCourse()->getCourseTitle()."  " .$listOfAllocations[$x]->getSection()->getSectionName() ."<br>";
+    array_push($allottedUserIsCoordinator, $listOfAllocations[$x]->getIsCoordinator());
     array_push($allottedCourseNames, $listOfAllocations[$x]->getCourse()->getCourseTitle());
     array_push($allottedCourseCodes, $listOfAllocations[$x]->getCourse()->getCourseCode());
     array_push($allottedSectionNames, $listOfAllocations[$x]->getSection()->getSectionName());
@@ -32,7 +35,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     array_push($allottedBatchCodes, $listOfAllocations[$x]->getBatchCode());
 }
 
-echo json_encode($allottedCourseNames) . "<br>";
+//echo json_encode($allottedCourseNames) . "<br>";
 
 
 /*echo "Curriculum: <br>" . PHP_EOL;
@@ -132,6 +135,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                     <input class="hidden" type="text" id="curr" name="curriculumCode">
                     <input class="hidden" type="text" name="programCode">
                     <input class="hidden" type="text" name="batchCode">
+                    <input class="hidden" type="text" name="facultyAllocationStatus">
 
                 </div>
 
@@ -158,6 +162,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             var allottedCoursesCodes = <?php echo json_encode($allottedCourseCodes);?>;
             var allottedSemesterCodes = <?php echo json_encode($allottedSemesterCodes);?>;
             var allottedSemesterNames = <?php echo json_encode($allottedSemesterNames);?>;
+            var allottedIsCoordinator = <?php echo json_encode($allottedUserIsCoordinator);?>;
             var selectedCourseCode = $(this).val();
             console.log("Allocation Info : \nCourseCode:", allottedCoursesCodes, "\nSemesterCode : ", allottedSemesterCodes, "\nSemesterNames : ", allottedSemesterNames)
 
@@ -210,7 +215,7 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
             var allottedCurriculumCodes = <?php echo json_encode($allottedCurriculumCodes);?>;
             var allottedProgramCodes = <?php echo json_encode($allottedProgramCodes);?>;
             var allottedBatchCodes = <?php echo json_encode($allottedBatchCodes);?>;
-
+            var allottedIsCoordinator = <?php echo json_encode($allottedUserIsCoordinator);?>;
             var selectedSectionCode = $('#sectionSelectorID').val();
             let i;
             for (i = 0; i < allottedSectionCodes.length; i++) {
@@ -218,13 +223,14 @@ for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
                     $('input[name="curriculumCode"]').val(allottedCurriculumCodes[i])
                     $('input[name="programCode"]').val(allottedProgramCodes[i])
                     $('input[name="batchCode"]').val(allottedBatchCodes[i])
+                    $('input[name="facultyAllocationStatus"]').val(allottedIsCoordinator[i])
                     break;
                 }
             }
             // console.log($('input[name="curriculumCode"]').val())
             // console.log($('input[name="programCode"]').val())
             // console.log("Batch Codes: ", allottedBatchCodes)
-            // console.log("Selected Batch Code", $('input[name="batchCode"]').val())
+            // console.log("status of corridantor", $('input[name="facultyAllocationStatus"]').val())
         })
 
         containsErrors = false

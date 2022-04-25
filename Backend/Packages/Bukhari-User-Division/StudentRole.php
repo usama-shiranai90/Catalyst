@@ -39,7 +39,6 @@ class StudentRole extends UserRole
         return false;
     }
 
-
     function modifiedStudentRecord($oldReg, $sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode): mysqli_result|bool
     {
         $sql = /** @lang text */
@@ -49,7 +48,6 @@ class StudentRole extends UserRole
 
         return $this->databaseConnection->query($sql);
     }
-
 
     public function deleteStudentRecord($studentRegCode): bool
     {

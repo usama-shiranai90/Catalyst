@@ -33,7 +33,6 @@ dropZone.addEventListener("drop", (e) => {
     console.log(event.files)
     console.log(event.dataTransfer.files)
 
-
     const files = e.dataTransfer.files;
     if (files.length === 1) {
         if (files[0].size < maxAllowedSize) {
@@ -70,21 +69,12 @@ fileInput.addEventListener("change", () => {
     uploadFile();
 });
 
-// sharing container listenrs
-copyURLBtn.addEventListener("click", () => {
-    fileURL.select();
-    document.execCommand("copy");
-    showToast("Copied to clipboard");
-});
-
-fileURL.addEventListener("click", () => {
-    fileURL.select();
-});
-
 const uploadFile = () => {
     console.log("file added uploading");
-
     files = fileInput.files;
+
+    console.log(files)
+
     const formData = new FormData();
     formData.append("myfile", files[0]);
 

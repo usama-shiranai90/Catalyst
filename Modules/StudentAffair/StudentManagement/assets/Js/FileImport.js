@@ -55,15 +55,15 @@ $(document).ready(function () {
             dropAreaContainer.classList.remove("dragged");
         },
         drop: function (e) {
-            // console.log(event.files)
-            // console.log(event.dataTransfer.files)
             e.preventDefault();
+            console.log("on drop :" ,  event.files , event.dataTransfer.files)
 
             if (departmentField.value.length !== 0 && programField.value.length !== 0 && seasonField.value.length !== 0) {
                 const files = event.dataTransfer.files;
                 if (files.length === 1) {
                     if (files[0].size < maxSizeAllowed) {
                         studentInputExcelField.files = files;
+                        event.target.files = files;
                         uploadFileProcess();
                     } else
                         console.log("Max file size is 15MB")

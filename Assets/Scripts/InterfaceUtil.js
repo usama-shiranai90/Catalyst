@@ -228,6 +228,18 @@ function extractFirstNumeric(text) {
     return text.match(/\d+/)[0];
 }
 
+function extractFirstString(text) {
+    return text.replace(/[^A-Za-z]/g, '');
+}
+
+function removeBrackets(text) {
+    return text.replace(/[()]/g, '');
+}
+
+function replaceSpaceByDash(text) {
+    return text.replace(/\s+/g, '-');
+}
+
 function controlContactSize(current) {
     console.log(parseInt($(current).children('span').text().length))
 
@@ -307,7 +319,7 @@ const generateSize = (test) => {
 
 /** Function List to control the height of provided DOM-input */
 function autoHeight(element) {
-    const inputField = document.getElementById(element);
+    const inputField = document.getElementById(''+element);
     inputField.style.height = "5px";
     inputField.style.height = (inputField.scrollHeight) + "px";
 }

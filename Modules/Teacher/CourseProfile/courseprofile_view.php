@@ -1,5 +1,4 @@
 <?php
-//use phpcode\AssessmentWeight;
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\CourseProfile\CourseProfile.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DIM\Curriculum.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
@@ -7,6 +6,25 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\Databa
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
+
+print $_SESSION['courseCoordinatorStatus']."  ".$_SESSION['cp_id'] . "<br>";
+
+$courseProfile = new CourseProfile();
+$courseProfile->loadCourseProfileData($_SESSION['cp_id'] ,  $_SESSION['facultyCode']);
+
+$curriculum = new Curriculum();
+
+$curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
+$ploArray = $curriculum->retrievePLOsList($_SESSION['selectedProgram']); // get from server // returns array of PLO with id , name , description.
+
+$cloObject = new CLO();
+
+
+$viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(),
+    $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], $_SESSION['selectedBatch'], 'PLOCode');
+$viewCLOMapping = $cloObject->mappedPLOs;
+
+//var_dump($viewCLODescription);
 /*$course_essential = $_SESSION['currentSubjectEssential_array'];
 $course_detail = $_SESSION['currentSubjectDetail_array'];
 print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
@@ -19,24 +37,6 @@ $courseProfile = new CourseProfile($course_essential[0] , $course_essential[1] ,
 print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
 print_r(json_encode( $_SESSION['currentSubjectEssential_array']));
 $profileID = 1;*/
-
-$courseProfile = new CourseProfile();
-$courseProfile->loadCourseProfileData($_SESSION['cp_id']);
-
-$curriculum = new Curriculum();
-
-$curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
-$ploArray = $curriculum->retrievePLOsList($_SESSION['selectedProgram']); // get from server // returns array of PLO with id , name , description.
-
-$cloObject = new CLO();
-
-
-$viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(),
-    $_SESSION['selectedProgram'], $_SESSION['selectedCourse'],$_SESSION['selectedBatch'] ,'PLOCode');
-$viewCLOMapping = $cloObject->mappedPLOs;
-
-//var_dump($viewCLODescription);
-
 ?>
 
 <!doctype html>
@@ -126,7 +126,8 @@ $viewCLOMapping = $cloObject->mappedPLOs;
             <h2 class="cprofile-container-centertxt"> Course-Name Course Profile</h2>
 
             <!--    course profile whole section     -->
-            <section id="cpWholeDetail" class="cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
+            <section id="cpWholeDetail"
+                     class="cprofile-content-box-border cprofile-grid mx-0 my-0 border-0 rounded-none">
                 <!--   base information   -->
                 <div class="cprofile-content-division bg-white">
                     <div class="cprofile-left-container mx-3 w-2/5 ml-5">
@@ -384,9 +385,14 @@ $viewCLOMapping = $cloObject->mappedPLOs;
 
                 <!--   Update Button   -->
                 <div class="text-right mx-4">
-                    <button type="button" class="loginButton font-medium" name="updatecpbtn"
+
+                    <?php
+                    if ($_SESSION['courseCoordinatorStatus'] == 1){
+                        print '<button type="button" class="loginButton font-medium" name="updatecpbtn"
                             id="updateCourseProfilebtn">Update
-                    </button>
+                    </button>';
+                    }
+                    ?>
 
                     <script>
                         $('#updateCourseProfilebtn').on('click', function () {

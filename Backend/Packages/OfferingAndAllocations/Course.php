@@ -87,7 +87,7 @@ class Course implements JsonSerializable
         $this->preReqList = $preReqList;
     }
 
-    public function getEnrolledCourses($studentCode, $semesterCode,$batchCode , $programCode): ?array
+    public function getEnrolledCourses($studentCode, $semesterCode, $batchCode, $programCode): ?array
     {
         $enrolledCourses = array();
         $dbStatement = /** @lang text */
@@ -101,7 +101,7 @@ class Course implements JsonSerializable
                 $courseObject->courseCode = $row['courseCode'];
                 $courseObject->courseName = $row['courseTitle'];
                 $courseObject->courseCreditHour = $row['creditHours'];
-                $courseObject->retrieveEntireCLOList($row['courseCode'] , $programCode ,$batchCode); // cc , pm , bc
+                $courseObject->retrieveEntireCLOList($row['courseCode'], $programCode, $batchCode); // cc , pm , bc
                 array_push($enrolledCourses, $courseObject);
             }
             return $enrolledCourses;
@@ -233,11 +233,20 @@ class Course implements JsonSerializable
             'CourseCLOList' => $this->courseCLOList
         );
     }
+
+    public function retrieveCoursePrerequisite($courseCode): ?array
+    {
+        $sql = /** @lang text */
+            "select p.courseCode, courseTitle, creditHours, curriculumCode, preRequisiteName
+            from course join prerequisites p on course.courseCode = p.courseCode where p.courseCode = \"$courseCode\" ";
+
+        $result = $this->databaseConnection->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $this->preReqList[] = $row['preRequisiteName'];
+            }
+            return $this->preReqList;
+        } else
+            return null;
+    }
 }
-
-
-//    protected $preReqList;
-//    private $courseCode;
-//    private $courseName;
-//    private $courseCreditHour;
-//    private $courseCLOList;

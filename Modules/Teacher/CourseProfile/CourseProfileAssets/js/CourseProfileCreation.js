@@ -1,5 +1,4 @@
 let incrementClo = 0;
-let completeFlag = true;
 
 /** Course Profile Container arrays */
 let courseEssentialFieldValue = [];  // contains all Essential field values.
@@ -17,6 +16,7 @@ let deletedCLOsDescriptionIDs = [];
 // let deletedCLOsPLOsMapIDs = [];
 // let recentlyAddedCLOsToPLOsMap = [];
 // let updateCLOsToPLOsMap = {};
+let courseInstructorList;
 
 window.onload = function (e) {
 
@@ -55,19 +55,11 @@ window.onload = function (e) {
         cReferenceField: document.getElementById("referenceBooksID"),
         cRecommendedBooksField: document.getElementById("recommendedTextbooksID"),
         cCourseDetailField: document.getElementById("courseDescriptionID"),
-        cOtherReferenceMaterialField: document.getElementById("otherReferenceId"),
-        cNameDetailField: document.getElementById("nameDetailID"),
-        cDesignationField: document.getElementById("DesignationDetailID"),
-        cQualificationField: document.getElementById("qualificationID"),
-        cSpecializationFiled: document.getElementById("specializationID"),
-        cContactsField: document.getElementById("contactsID"),
-        cPersonalEmailFiled: document.getElementById("personalEmailID"),
+        cOtherReferenceMaterialField: document.getElementById("otherReferenceId")
     }
     let courseDetailFieldsArray = [
-        cDetailField.cReferenceField, cDetailField.cRecommendedBooksField, cDetailField.cCourseDetailField
-        , cDetailField.cOtherReferenceMaterialField, cDetailField.cNameDetailField, cDetailField.cDesignationField
-        , cDetailField.cQualificationField, cDetailField.cSpecializationFiled, cDetailField.cContactsField, cDetailField.cPersonalEmailFiled
-    ];
+        cDetailField.cReferenceField, cDetailField.cRecommendedBooksField,
+        cDetailField.cCourseDetailField, cDetailField.cOtherReferenceMaterialField];
 
     // Bottom progress:
     const progressSet = {
@@ -90,6 +82,17 @@ window.onload = function (e) {
     let backArrow = document.getElementsByClassName('mx-2 h-6')[0]
 
     $(document).ready(function () {
+        /**  To disable the toggle button if sessional is already exist.   **/
+        const disableToggleButton = () => {
+            if (hasSessionalFlag) {
+                $('input[name="allowWeightAssessmentToggle"]').attr("disabled", true).css({cursor: 'no-drop'});
+                $('input[name="allowWeightAssessmentToggle"]').parent().parent().append(`<p class="leading-normal tracking-tight font-normal text-xs w-1/3 px-5 text-gray-600">
+ It seems like the different section has already created activity for class. </p>`);
+            } else
+                $('input[name="allowWeightAssessmentToggle"]').removeClass().removeAttr("disabled").html("");
+        }
+        disableToggleButton()
+
         /**  Checks if fields and selectors are empty or not are empty   **/
         $('.textField , .select').on('input', function (e) {
             if (this.classList.contains("px-12")) {
@@ -104,22 +107,24 @@ window.onload = function (e) {
 
         let insertedWeightLimit = 0;
         /** weight limit check */
-        $(Object.values(instrumentWeight)).on('focus', function (e) {
-            this.oldvalue = this.value;
-        });
-        $(Object.values(instrumentWeight)).on('change', function (e) {
 
-            if (!isNaN(parseInt(this.oldvalue)))
-                insertedWeightLimit += (parseInt(e.target.value) - parseInt(this.oldvalue));
-            else
-                insertedWeightLimit += parseInt(e.target.value);
+        $(Object.values(instrumentWeight)).bind({
+            focus: function (e) {
+                this.oldvalue = this.value;
+            },
+            change: function (e) {
+                if (!isNaN(parseInt(this.oldvalue)))
+                    insertedWeightLimit += (parseInt(e.target.value) - parseInt(this.oldvalue));
+                else
+                    insertedWeightLimit += parseInt(e.target.value);
 
-            console.log("value is ", parseInt(this.oldvalue), insertedWeightLimit, this.oldvalue)
-            if (insertedWeightLimit > 100) {
-                isExceededValueWeights(true)
-                showErrorBox("Assessment Weight limit exceeded , please insert below 100.")
-            } else
-                isExceededValueWeights(false)
+                console.log("value is ", parseInt(this.oldvalue), insertedWeightLimit, this.oldvalue)
+                if (insertedWeightLimit > 100) {
+                    isExceededValueWeights(true)
+                    showErrorBox("Assessment Weight limit exceeded , please insert below 100.")
+                } else
+                    isExceededValueWeights(false)
+            }
         });
 
         function isExceededValueWeights(flag) {
@@ -136,15 +141,56 @@ window.onload = function (e) {
         $("#coursepContinuebtn-1").on("click", function (e) {
             e.preventDefault();
             completeFlag = true;
-            checkEmptyFields(courseEssentialFieldsArray, 1, courseEssentialFieldValue, instrumentWeight);
+            checkEmptyFields(courseEssentialFieldsArray, 1, courseEssentialFieldValue);
             arrowPositionCheck();
         });
+
+        addKeyupEventForTextarea();
 
         /**  Course Detail Section Continue Button , checks empty fields and back-arrow pointer   **/
         $('#coursepContinuebtn-2').on('click', function (e) {
             e.preventDefault();
             completeFlag = true;
-            checkEmptyFields(courseDetailFieldsArray, 2, courseDetailFieldValue, null);
+            checkEmptyFields(courseDetailFieldsArray, 2, courseDetailFieldValue);
+            const storeCourseInstructorDetail = () => {
+                courseInstructorList = [];
+                let instructorObject = new CourseInstructor();
+                let c = 0;
+                $("#cpDetaillID .cprofile-right-container textarea").each(function (index, value) {
+                    let counter = index % 6;
+                    switch (counter) {
+                        case 0:
+                            instructorObject.name = value.value;
+                            break;
+
+                        case 1:
+                            instructorObject.designation = value.value;
+                            break;
+
+                        case 2:
+                            instructorObject.qualification = value.value;
+                            break;
+                        case 3:
+                            instructorObject.specialization = value.value;
+                            break;
+
+                        case 4:
+                            instructorObject.contactNumber = value.value;
+                            break;
+
+                        case 5:
+                            instructorObject.personalEmail = value.value;
+                            instructorObject.fkey = affiliatedFacultyList[c].facultyCode;
+                            courseInstructorList.push(instructorObject);
+                            instructorObject = new CourseInstructor();
+                            c++;
+                            break;
+                    }
+
+                });
+            };
+            storeCourseInstructorDetail()
+            console.log("courseInstructorList :", courseInstructorList);
             arrowPositionCheck();
         });
 
@@ -198,6 +244,7 @@ window.onload = function (e) {
             console.log("Deleted Index is :", dischargedIndex);
 
             if (viewType !== 1) {
+                insertedWeightLimit = 100;
                 deletedOutcomeID = $(event.target).closest('.learning-outcome-row').first().children(":first").attr("id");
 
                 if ((typeof deletedOutcomeID != 'undefined' && deletedOutcomeID !== null) && !isCharacterALetter(deletedOutcomeID)) { // If its
@@ -461,10 +508,9 @@ window.onload = function (e) {
 
             console.log("in deletion Mode ", deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))
 
-            if (deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))){
-                updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
+            if (deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))) {
+                updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
             }
-
 
         } else {
             console.log("DETAIL Added Description :", allCourseCLOsDescriptionValues);
@@ -653,7 +699,7 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
     });
 }
 
-function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription) {
+function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription) {
 
     $.ajax({
         type: "POST",
@@ -662,6 +708,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCo
         data: {
             courseEssentialFieldValue: courseEssentialFieldValue,
             courseDetailFieldValue: courseDetailFieldValue,
+            courseInstructorList: courseInstructorList,
             arrayMapping: allCourseCLOsMapValues,
             courseCLODescriptionUpdateArray: updateCLOsDescription,
             recentlyAddedCLOsDescriptionArray: recentlyAddedCLOsDescription,
@@ -678,7 +725,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, allCo
             setInterval(function () {
                 $("main").toggleClass("blur-filter");
                 $('#loader').toggleClass('hidden');
-                location.href = "courseprofile_view.php";
+                // location.href = "courseprofile_view.php";
             }, 3000);
         },
     });
@@ -700,4 +747,10 @@ function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) { // deleted
         }
     });
     return true;
+}
+
+function addKeyupEventForTextarea() {
+    $("#cpDetaillID .cprofile-right-container textarea").each(function (index, value) {
+        $(value).attr("onkeyup", `autoHeight('${this.id}')`)
+    })
 }
