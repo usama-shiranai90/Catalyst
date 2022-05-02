@@ -345,7 +345,7 @@ class CourseProfile implements Persistable
         return $result == TRUE;
     }
 
-    public function deleteCourseProfileCLOPLOMapping($CLOCode)
+    public function deleteCourseProfileCLOPLOMapping($CLOCode): bool
     {
         $sql = /** @lang text */
             "DELETE FROM clotoplomapping WHERE CLOCode = \"$CLOCode\"";

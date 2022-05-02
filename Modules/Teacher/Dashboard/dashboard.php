@@ -349,15 +349,13 @@ if ($assessmentObject != null)
     // ploArray = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38]; // fetch from server.
     // totalCLO = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4'];  // fetch from server
     // avgScorePerCLO = [66, 51, 33, 10];  // fetch from server
+    //const courseLearningArray = <?php //echo json_encode($courseOutcomeList);?>//;
+    //const recentWeeklyCoveredTopic = JSON.parse(<?php //echo json_encode($fetchWeeklyTopic);?>//);
+    //const recentAssessmentArray = <?php //echo json_encode($fetchAssessment);?>//;
 
-    const courseLearningArray =<?php echo json_encode($courseOutcomeList);?>;
-    const recentWeeklyCoveredTopic =<?php echo json_encode($fetchWeeklyTopic);?>;
-    const recentAssessmentArray =<?php echo json_encode($fetchAssessment);?>;
-
-    console.log("recently weekly topic", recentWeeklyCoveredTopic)
-    console.log("recently clo", courseLearningArray)
-    console.log("recently assessment", recentAssessmentArray)
-
+    <?php echo " const courseLearningArray = " . json_encode($courseOutcomeList) . ";"; ?>
+    <?php echo " const recentWeeklyCoveredTopic = " . json_encode($fetchWeeklyTopic) . ";"; ?>
+    <?php echo " const recentAssessmentArray = " . json_encode($fetchAssessment) . ";"; ?>
 
 </script>
 <script src="asset/dashboardScript.js" rel="script" async></script>

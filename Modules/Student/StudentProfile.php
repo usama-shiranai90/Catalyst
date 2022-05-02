@@ -36,6 +36,7 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
 
 </head>
 <body>
+
 <div class="w-full min-h-full">
     <main class="main-content-alignment">
         <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2 bg-catalystLight-f5 deleted-min-full-height">
@@ -108,6 +109,7 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Personal Email:</h4>
                                 <span class=" w-full mt-1 font-normal text-sm text-justify text-gray-900"
                                       id="smpStudentEmailId-view"><?php echo $personalDetails['personalEmail'] ?></span>
+
                             </div>
                             <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-solid border-b-2">
                                 <h4 class="text-md text-gray-500 text-left font-semibold w-1/3">Contact:</h4>
@@ -142,6 +144,7 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
                                       id="otherReferenceID-view"><?php echo $personalDetails['address'] ?></span>
                             </div>
                         </div>
+
                         <div id="smpUpdateSectionId" class="hidden w-full flex pl-10">
                             <form method="post" class="w-full flex flex-col justify-center">
                                 <div class="mt-3 w-3/6 flex flex-col">
@@ -156,7 +159,7 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
                                                value="<?php echo $personalDetails['personalEmail'] ?>">
                                         <label class="textField-label">Personal Email</label>
                                     </div>
-                                    <!-- onkeyup="this.value=this.value.replace(/(\d{4})(\d{4})/, '$1-$2')"-->
+                                    <!-- onkeyup="this.v alue=this.value.replace(/(\d{4})(\d{4})/, '$1-$2')"-->
                                     <div class="textField-label-content w-full">
                                         <input class="textField" type="email" placeholder=" "
                                                name="studentContactField" id="studentContactFieldID"
@@ -227,10 +230,8 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
 
 
                         <?php
-
-                        $output = '';
                         foreach ($programLearningOutcomeList as $key => $plo) {
-                            $output .= sprintf('
+                            print sprintf('
                         <div class="flex flex-row w-full bg-white border-solid border-b-2">
                             <div class="text-md text-gray-500 text-left font-semibold border-0 w-48 border-r-2">
                                 <span class="cprofile-cell-data">%s</span>
@@ -240,7 +241,6 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
                             </div>
                         </div>', $plo['ploName'], $plo['ploDescription']);
                         }
-                        print $output;
                         ?>
 
                     </div>
@@ -291,11 +291,6 @@ $programLearningOutcomeList = $curriculumPLO->retrieveCurriculumPLOsList($progra
                         </div>
                     </div>
                 </div>
-
-            </section>
-
-            <!-- LOGIN HISTORY -->
-            <section id="studentloginHistorySectionID">
 
             </section>
 

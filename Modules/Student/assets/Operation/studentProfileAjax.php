@@ -4,8 +4,8 @@ if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
 $resultBackServer = array("status" => -1, "message" => 'no message', "errors" => 'no error');
-$student = new StudentRole();
 
+$student = new StudentRole();
 if (isset($_POST['update_student_p']) and $_POST['update_student_p']) {
 
     if (isset($_POST['stuName']) and isset($_POST['stuContact']) and isset($_POST['stuEmail'])) {
@@ -22,7 +22,8 @@ if (isset($_POST['update_student_p']) and $_POST['update_student_p']) {
         die(json_encode($resultBackServer));
     }
 
-} elseif (isset($_POST['update_p']) and $_POST['update_p']) {
+}
+elseif (isset($_POST['update_p']) and $_POST['update_p']) {
 
     if (isset($_POST['oldpass']) and isset($_POST['newpass']) and isset($_POST['ops'])) {
         $encryptedPassword = $_POST['ops'];

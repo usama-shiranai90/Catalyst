@@ -16,26 +16,30 @@ $plo = new PLO();
 /** Curriculum Program Outcome Creation */
 if (isset($_POST['creation']) and $_POST['creation']) {
     if (isset($_POST['curriculumPloArray']) and isset($_POST['assignCurriculumYear'])) {
-        $assignYear = $_POST['assignCurriculumYear'];
-        $curriculumName = $_POST['curriculumName'];
-        $curriculumRelatedPlo = $_POST['curriculumPloArray'];
+        $assignCurriculumYear = $_POST['assignCurriculumYear']; //  2022
+        $curriculumName = $_POST['curriculumName']; // spring 2022
+        $curriculumRelatedPloArray = $_POST['curriculumPloArray'];
 
-        if ($curriculum->createCurriculum($programCode , $assignYear, $curriculumName)) { // create the curriculum and store the CurriculumCode.
-            $curriculumCode = $curriculum->getCurriculumCode();
+        if ($curriculum->createCurriculum($programCode, $assignCurriculumYear, $curriculumName)) { // create the curriculum and store the CurriculumCode.
+            $curriculumCode = $curriculum->getCurriculumCode(); // newly created curriculum ID/ CurriculumCode.
             /** Removed. */
             /*   $program = new Program();
               $program->createProgram($curriculumCode, $departmentCode, $programType);
               $programCode = $program->getProgramCode();*/
-            if ($plo->createProgramOutcomeCurriculum($programCode, $curriculumCode, $curriculumRelatedPlo))
+
+            if ($plo->createProgramOutcomeCurriculum($programCode, $curriculumCode, $curriculumRelatedPloArray))
                 $resultBackServer = updateServer(1, "successfully", "none");
             else
-                $resultBackServer = updateServer(0, "Some-time went wrong ,try again.", "no-record");
+                $resultBackServer = updateServer(0, "Can not create Program Learning Outcome , please try again.", "Failed");
         } else
-            $resultBackServer = updateServer(0, "Some-time went wrong ,try again.", "no-record");
+            $resultBackServer = updateServer(0, "Can not create curriculum , please try again.", "Failed");
 
         die(json_encode($resultBackServer));
     }
-} /** Curriculum Program Outcome Deletion */
+}
+
+
+/** Curriculum Program Outcome Deletion */
 elseif (isset($_POST['deletionOutcome']) and $_POST['deletionOutcome']) {
 
     if ($_POST['deletedCurriculumOutcomeList'] !== "" and isset($_POST['deletedCurriculumOutcomeList'])) {
@@ -56,15 +60,18 @@ elseif (isset($_POST['deletionOutcome']) and $_POST['deletionOutcome']) {
         $resultBackServer = updateServer(0, $message, "no-record");
     die(json_encode($resultBackServer));
 
-} /** Curriculum Program Outcome Update and creation of recently create one*/
+}
+
+
+/** Curriculum Program Outcome Update and creation of recently create one*/
 elseif (isset($_POST['modifyOutcome']) and $_POST['modifyOutcome']) {
 
     if (isset($_POST['updateCurriculumOutcomeList'])) {
-        $curriculumRelatedPlo = $_POST['updateCurriculumOutcomeList'];
+        $curriculumRelatedPloArray = $_POST['updateCurriculumOutcomeList'];
         $curriculumPloKeyList = $_POST['curriculumOutcomeKeyList'];
         $curriculumCode = $_POST['curriculumCode'];
 
-        foreach ($curriculumRelatedPlo as $index => $currentPlo) {
+        foreach ($curriculumRelatedPloArray as $index => $currentPlo) {
             $ploCode = $curriculumPloKeyList[$index];
             if ($plo->updateProgramOutcome($ploCode, $curriculumCode, $currentPlo) === false)
                 $message[] = "PLO Code : " . $curriculumCode . " could not be updated.";
@@ -80,17 +87,18 @@ elseif (isset($_POST['modifyOutcome']) and $_POST['modifyOutcome']) {
 
         die(json_encode($resultBackServer));
     }
-} /** Curriculum Program Outcome Creation */
+}
+
+/** Respective Curriculum Against Us ky PLOs List. */
 elseif (isset($_POST['requestPlo']) and $_POST['requestPlo']) {
-    if (isset($_POST['curriculumCode'])) {
-        $curriculumCode = $_POST['curriculumCode'];
-        $plo = new PLO();
-        $ploArray = $plo->retrieveSelectedCurriculumPlo($curriculumCode, $programCode);
-        if (sizeof($ploArray) > 1)
-            $resultBackServer = updateServer(1, $ploArray, "none");
-        else
-            $resultBackServer = updateServer(0, $ploArray, "no-record");
-    }
+
+    $curriculumCode = $_POST['curriculumCode'];
+
+    $programLearningOutcomeList = $plo->retrieveSelectedCurriculumPlo($curriculumCode, $programCode);
+    if ($programLearningOutcomeList !== null)
+        $resultBackServer = updateServer(1, $programLearningOutcomeList, "none");
+    else
+        $resultBackServer = updateServer(0, "No Program Learning Outcome list is available, try again.", "no-record");
     die(json_encode($resultBackServer));
 }
 

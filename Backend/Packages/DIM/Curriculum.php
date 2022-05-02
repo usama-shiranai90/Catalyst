@@ -16,6 +16,12 @@ class Curriculum
         $this->listOfPLOs = array();
     }
 
+
+    /** S# creates new curriculum of a program.
+     * if true created successfully.
+     * if false not created.
+     * programCode is must.
+     */
     public function createCurriculum($programCode, $assignYear, $curriculumName): bool
     {
         $sql_statement = "insert into curriculum(curriculumYear, dateCreated , curriculumName) VALUE (\"$assignYear\" ,NOW() , \"$curriculumName\")";
@@ -115,7 +121,13 @@ class Curriculum
     }
 
 
-    public function getPreviousFewCurriculumYear($hasLimit): ?array
+    /** S# function is used to fetch curriculum list .
+     * if limit is true > get latest 4 years curriculum list.
+     * if limit is false >  get all curriculum list.
+     *  no record found = null.
+     *  record found = array.
+     */
+    public function getPreviousCurriculumList($programCode, $hasLimit): ?array
     {
         $curriculumYearList = array();
         $format = "desc limit 4";
@@ -123,7 +135,9 @@ class Curriculum
             $format = "";
 
         $sql = /** @lang text */
-            "select * from curriculum order by curriculumCode $format ";
+            "select * from curriculum join programcurriculum p on curriculum.curriculumCode = p.curriculumCode join program p2 on p.programCode = p2.programCode
+             where p.programCode = \"$programCode\"
+             order by curriculum.curriculumCode $format ";
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {
@@ -131,7 +145,8 @@ class Curriculum
                 $temp = array(
                     "code" => $row['curriculumCode'],
                     "year" => $row['curriculumYear'],
-                    "date" => $row['dateCreated']
+                    "date" => $row['dateCreated'],
+                    "programSName" => $row['programShortName']
                 );
                 array_push($curriculumYearList, $temp);
             }

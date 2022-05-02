@@ -78,6 +78,7 @@ class Program implements JsonSerializable
         return $newProgram;
     }
 
+
     public function retrieveProgramList($departmentCode): array
     {
         $programList = array();

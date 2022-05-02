@@ -100,11 +100,11 @@ class StudentRole extends UserRole
 
     }
 
-    function updatePassword($password, $idk): bool
+    function updatePassword($password, $studentRegCode): bool
     {
         $this->databaseConnection = DatabaseSingleton:: getConnection();
         $sql = /** @lang text */
-            "UPDATE student stu SET stu.password = '$password' WHERE stu.studentRegCode = '$idk'";
+            "UPDATE student stu SET stu.password = '$password' WHERE stu.studentRegCode = '$studentRegCode'";
 
         if ($this->databaseConnection->query($sql) === TRUE) {
             return true;

@@ -15,10 +15,11 @@ class PLO implements JsonSerializable
         $this->databaseConnection = DatabaseSingleton:: getConnection();
     }
 
-    public function createProgramOutcomeCurriculum($programCode, $curriculumId, $curriculumRelatedPlo): bool
+    public function createProgramOutcomeCurriculum($programCode, $curriculumId, $curriculumRelatedPloArray): bool
     {
+        //   $curriculumRelatedPloArray  = [ {plo_number :PLO-1 , plo_description : xxxxx } , {plo_number :PLO-2 , plo_description : asdasd } ]
         $errorFlag = false;
-        foreach ($curriculumRelatedPlo as $plo) {
+        foreach ($curriculumRelatedPloArray as $plo) {
             $ploName = $plo['plo_number'];
             $ploDescription = $plo['plo_description'];
             $sql_statement = /** @lang text */
@@ -61,7 +62,7 @@ class PLO implements JsonSerializable
     public function retrieveSelectedCurriculumPlo($curriculumCode, $programCode): ?array
     {
         $sql = /** @lang text */
-            "select * from plo  where curriculumCode = \"$curriculumCode\" and programCode = \"$programCode\";";
+            "select * from plo where curriculumCode = \"$curriculumCode\" and programCode = \"$programCode\";";
 
         $result = $this->databaseConnection->query($sql);
         $PLOList = array();
@@ -71,11 +72,11 @@ class PLO implements JsonSerializable
                 $newPLO->setPloCode($row["PLOCode"]);
                 $newPLO->setPloName($row["ploName"]);
                 $newPLO->setPloDescription($row["ploDescription"]);
-                $PLOList[] = $newPLO;
+                array_push($PLOList , $newPLO);
             }
             return $PLOList;
         } else
-            return array();
+            return null;
     }
 
     public function retrieveCurriculumPLOsList($programCode): array

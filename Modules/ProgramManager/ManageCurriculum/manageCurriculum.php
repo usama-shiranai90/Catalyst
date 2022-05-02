@@ -4,14 +4,12 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
 session_start();
 
 $adminCode = $_SESSION['adminCode'];
+$programCode = $_SESSION['programCode'];
 
 $curriculum = new Curriculum();
-$curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
-//echo json_encode($curriculumList) . PHP_EOL . PHP_EOL . "<br>";
-//foreach ($curriculumList as $year) {
-//    echo json_encode($year['year'])."<br>";
-//}
+$curriculumList = $curriculum->getPreviousCurriculumList($programCode , false);
 
+print json_encode($curriculumList);
 ?>
 <!doctype html>
 <html lang="en">
@@ -33,10 +31,10 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
 <body>
 <div class="w-full min-h-full " style="background-color: #ECECF3">
     <main class="main-content-alignment min-h-full">
-
-        <section id="curriculumSearchBoxSectionId" class="">
+        <section id="curriculumSearchBoxSectionId">
             <div id="curriculumBoxContainerID" class="flex flex-col rounded-lg shadow bg-white">
                 <div class="px-10 my-5">
+                    <h2 class="font-semibold text-2xl text-gray-700 capitalize">Search Box</h2>
                     <p class="font-normal text-base text-gray-700">Please select the program learning outcome<span
                                 class="capitalize font-semibold"> assigned year</span> and <span
                                 class="capitalize font-semibold">Program Name</span>
@@ -63,19 +61,20 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
                             <select class="select" name="curriculumAllocationYear"
                                     onclick="this.setAttribute('value', this.value);"
                                     onchange="this.setAttribute('value', this.value);"
-                                    value="<?php echo $currentOnGoingYear = date('Y') ?>"
+                                    value=""
                                     id="curriculumAllocationYearId">
                                 <option value="" hidden=""></option>
                                 <?php
-                                foreach ($curriculumList as $year)
-                                    print sprintf("<option  value=\"%s\" data-select-id=\"%s\">%d</option>", $year['year'], $year['code'], $year['year']);
+                                foreach ($curriculumList as $curriculum)
+                                    print sprintf("<option  value=\"%d\" data-select-id=\"%s\">%d</option>",
+                                        $curriculum['year'], $curriculum['code'], $curriculum['year']);
                                 ?>
                             </select>
                             <label class="select-label top-1/4 sm:top-3">Assign Year</label>
                         </div>
                     </div>
                     <div class="flex justify-center items-center w-1/6">
-                        <svg id="refreshCurriculumBtn" xmlns="http://www.w3.org/2000/svg" class="h-6 w-8 " fill="none"
+                        <svg id="refreshCurriculumBtn" xmlns="http://www.w3.org/2000/svg" class="h-6 w-8 cursor-pointer" fill="none"
                              viewBox="0 0 24 24"
                              stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -85,29 +84,32 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
                 </div>
             </div>
 
+
+            <!-- ignore -->
             <div class="mt-6 flex justify-between items-center">
-                <div class="flex-1 pr-4" aria-disabled="true">
-                    <div class="relative md:w-1/3">
-                        <input type="search"
-                               class="w-full pl-10 pr-4 py-2 rounded-md shadow focus:outline-none focus:shadow-outline text-gray-900 font-medium"
-                               placeholder="Search..." disabled>
-                        <div class="absolute top-0 left-0 inline-flex items-center p-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" viewBox="0 0 24 24"
-                                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                                 stroke-linejoin="round">
-                                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-                                <circle cx="10" cy="10" r="7"></circle>
-                                <line x1="21" y1="21" x2="15" y2="15"></line>
-                            </svg>
+                <!--    <div class="flex-1 pr-4 hidden" aria-disabled="true">
+                        <div class="relative md:w-1/3">
+                            <input type="search"
+                                   class="w-full pl-10 pr-4 py-2 rounded-md shadow focus:outline-none focus:shadow-outline text-gray-900 font-medium"
+                                   placeholder="Search..." disabled>
+                            <div class="absolute top-0 left-0 inline-flex items-center p-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" viewBox="0 0 24 24"
+                                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+                                    <circle cx="10" cy="10" r="7"></circle>
+                                    <line x1="21" y1="21" x2="15" y2="15"></line>
+                                </svg>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </div>-->
             </div>
 
-            <div id="curriculumContainerId"
+
+            <div id="curriculumTabularContainerID"
                  class="bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 weeklytopics-primary-border-n">
-                <!--<div class="h-60 text-center font-medium text-2xl flex justify-center items-center"> Limit for program learning outcome not selected.</div>-->
-                <section class=" bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0">
+
+                <section class="bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0">
                     <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative  rounded">
                         <thead>
                         <tr class="text-center bg-catalystLight-f5">
@@ -124,6 +126,7 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
                             <th class="capitalize px-4 py-3 w-1/4 tracking-wider font-medium text-sm"></th>
                         </tr>
                         </thead>
+
                         <tbody>
                         <?php
                         $counter = 1;
@@ -138,25 +141,37 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
                             <td class="border-dashed border-t w-2/4 border-gray-200">
                                 <div class="">
                                     <span class="text-gray-700 px-6  py-3 flex justify-center items-center">%s</span>
-
                                 </div>
                             </td>
                             <td class="border-dashed w-1/4 border-t border-gray-200 ">
-                                <div class="flex items-center justify-center gap-3">
-                                    <button id="viewCurriculum-%d" class="focus:ring-2 focus:ring-offset-2  focus:ring-red-300 text-sm leading-none text-gray-600 py-3 px-5 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">
-                                        View
-                                    </button>
-                                    <button id="editCurriculum-%d" class="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 mt-4 sm:mt-0 inline-flex items-start justify-start px-6 py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
-                                        <p class="text-sm font-medium leading-none text-white">Edit</p>
-                                    </button>
-                                </div>
+                              <div class= "flex items-center justify-center gap-1" >
+                             <button type="button" id="viewCurriculum-%d">
+                           <svg enable-background="new 0 0 32 32"  class="w-6 h-6 text-blue-500 hover:text-blue-600 cursor-pointer transform hover:scale-105" viewBox="0 0 32 32"
+                            xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><polyline fill="none" points="   649,137.999 675,137.999 675,155.999 661,155.999  " stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><polyline fill="none" points="   653,155.999 649,155.999 649,141.999  " stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><polyline fill="none" points="   661,156 653,162 653,156  " stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/></g><g><g><path d="M16,25c-4.265,0-8.301-1.807-11.367-5.088c-0.377-0.403-0.355-1.036,0.048-1.413c0.404-0.377,1.036-0.355,1.414,0.048    C8.778,21.419,12.295,23,16,23c4.763,0,9.149-2.605,11.84-7c-2.69-4.395-7.077-7-11.84-7c-4.938,0-9.472,2.801-12.13,7.493    c-0.272,0.481-0.884,0.651-1.363,0.377c-0.481-0.272-0.649-0.882-0.377-1.363C5.147,10.18,10.333,7,16,7    c5.668,0,10.853,3.18,13.87,8.507c0.173,0.306,0.173,0.68,0,0.985C26.853,21.819,21.668,25,16,25z"/></g><g><path d="M16,21c-2.757,0-5-2.243-5-5s2.243-5,5-5s5,2.243,5,5S18.757,21,16,21z M16,13c-1.654,0-3,1.346-3,3s1.346,3,3,3    s3-1.346,3-3S17.654,13,16,13z"/></g></g></svg>
+                                </button>
+                                 <button type="button" id="editCurriculum-%d">
+                                   <svg xmlns="http://www.w3.org/2000/svg" 
+                                   class="w-6 h-6 text-blue-500 hover:text-blue-600 cursor-pointer transform hover:scale-105" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path  stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"  />
+                            </svg>
+                                </button>
+                                 <button type="button" id="deleteCurriculum-%d">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="w-6 h-6 text-red-500 hover:text-red-600 cursor-pointer transform hover:scale-105"
+                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
                             </td>
-                        </tr>', $counter, "BCSE", $curriculum['year'], $curriculum['code'], $curriculum['code']);
+                        </tr>', $counter, "BCSE", $curriculum['year'], $curriculum['code'], $curriculum['code'], $curriculum['code']);
                             $counter++;
                         }
                         ?>
                         </tbody>
                     </table>
+
 
                     <div id="selectedProgramOutcomeDetailDivId"
                          class="hidden container px-5 my-5 mx-auto flex flex-col sm:rounded-sm">
@@ -181,7 +196,7 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
         </section>
 
         <div id="editCurriculumSectionId"
-             class="hidden bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 h-1/2 weeklytopics-primary-border-n">
+             class="hidden bg-white outline-none ring-2 ring-catalystLight-e1 text-black rounded-md mt-2 my-5 weeklytopics-primary-border-n">
 
             <div class="flex flex-row items-center bg-catalystBlue-l8">
                 <label id="backArrowId" class="transform hover:scale-90 cursor-pointer">
@@ -266,8 +281,8 @@ $curriculumList = $curriculum->getPreviousFewCurriculumYear(false);
 
 <script src="assets/js/Common.js"></script>
 <script>
-    let curriculumArray = <?php echo json_encode($curriculumList);?>;
-    console.log(curriculumArray);
+    let curriculumList = <?php echo json_encode($curriculumList);?>;
+    console.log(curriculumList);
 </script>
 
 </html>

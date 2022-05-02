@@ -19,13 +19,16 @@ $('.textField , .select').on('input', function (e) {
         $(this).parent().removeClass("select-error-input");
 });
 
+/** Is use to change the row data of PLO-table.
+ *  setFromIndex = dischargedIndex (3)
+ * */
 function iterateCurriculumRow(parentContainer, setFromIndex, curriculumCounter, hasKeyFlag) {
-    --curriculumCounter;
+    --curriculumCounter; // 5
     if (curriculumCounter !== 0) {
-        $(parentContainer).children().each(function (index) {
-            if (index !== 0 && setFromIndex <= index) {
+        $(parentContainer).children().each(function (index, value) { // iterate ->  header and all curriculumRows
+            if (index !== 0 && setFromIndex <= index) { // index !== 0 for skipping header and  setFromIndex <= index for skipping us sa chota row.
                 this.setAttribute("id", "creationCurriculumRow-" + index)
-                $(this).children().each(function (i) {
+                $(this).children().each(function (i) { //  label ,PNO , PDescription , DStatus
                     overrideCurriculumRow(index, i, this, hasKeyFlag)
                 });
             }
@@ -41,21 +44,23 @@ function overrideCurriculumRow(index, i, currentTag, hasKey) {
         input.setAttribute("id", "coc-r" + index)
     }
 
-    if (i === 1) {
+    if (i === 1) { // Plo NO
         currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // div us ka ID change ki hai.  coc-number-r1
         let label = currentTag.firstElementChild;
         let input = label.firstElementChild;
         label.setAttribute("for", "creationCurriculum-No-r-" + index)
         input.setAttribute("id", "creationCurriculum-No-r-" + index)
-        input.value = "PLO-" + index;
+        input.placeholder = "PLO-" + index;
 
-    } else if (i === 2) { //
+    } else if (i === 2) { // PLO Description
         currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // coc-description-r1
         let label = currentTag.firstElementChild;
         let textarea = label.firstElementChild;
         label.setAttribute("for", "detail-r-" + index)
         textarea.setAttribute("id", "detail-r-" + index)
         textarea.setAttribute("onkeyup", "autoHeight('detail-r-" + index + "')");
+    } else if (i === 3){
+        currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // coc-description-r1
     }
 }
 
@@ -68,18 +73,14 @@ function createAdditionalRow(currentCurriculumNo, plo) {
         }
     }
 
-    // let hasPlo = ""
-    // if (currentCurriculumNo === 1)
-    //     hasPlo = "PLO-" + currentCurriculumNo;
-
     const str = `<div id="creationCurriculumRow-${currentCurriculumNo}"
                              class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden ">
                             <label for=""><input class="hidden" id="coc-r${currentCurriculumNo}" value="${plo.ploCode}"></label>
                             <div id="coc-number-r${currentCurriculumNo}"
-                                 class="lweek-column border-l-0 bg-catalystBlue-l61 text-white col-start-1 col-span-1 border-b-0">
+                                 class="lweek-column border-l-0 text-white col-start-1 col-span-1 border-b-0">
                                 <label for="creationCurriculum-No-r-${currentCurriculumNo}">
                                     <input type="text" id="creationCurriculum-No-r-${currentCurriculumNo}" value="${plo.ploName}"
-                                           class="text-black cell-input pt-4px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                                           class="bg-catalystBlue-l61 cell-input pt-4px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
                                            placeholder="PLO-${currentCurriculumNo}">
                                 </label>
                             </div>

@@ -45,7 +45,8 @@ function loadStudentGraphs() {
 
     // Student Radial Bar Chart For Accumulated CGPA.
     if (hasPreviousGPA) {
-        new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(cgpa.CGPA)).render();
+        let radialChart = new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(CumulativeGradePointAverageObject.CGPA));
+        radialChart.render();
     } else
         new ApexCharts(document.querySelector("#studentCGPA_ProgressCircle"), createCgpRadialChartStructure(0)).render();
 
@@ -58,31 +59,34 @@ function loadStudentGraphs() {
 
 
     // PLO Chart.
-    new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure([])).render();
+    if (programLearningOutcomeList !== null)
+        new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure(programLearningOutcomeList)).render();
+    else
+        new ApexCharts(document.querySelector("#studentCurrentPLOProgress"), createOverallPLOLinearChartStructure([])).render();
 }
 
 
 /** TABLE: Registered Course along with Respective CLO's. */
 function setRegisterCoursesDashboard() {
-    if (courseWithOutcomeArray != null) {
+    if (courseWithCLOArray != null) {
         let $withH = `sm:px-6 sm:w-auto sm:justify-center cursor-pointer inline-flex justify-center items-center py-3 w-1/2
                       rounded-t border-b-2 border-indigo-500 text-black tracking-wide leading-none student-profile-header-text my-0 font-medium text-base`;
         let withoutH = `sm:px-6 sm:w-auto sm:justify-center cursor-pointer inline-flex justify-center items-center py-3 w-1/2
                         rounded-t border-b-2 text-gray-400 tracking-normal leading-none student-profile-header-text my-0 transform transition ease-out duration-300
                         hover:scale-100 hover:-translate-y-0 hover:translate-x-0 hover:text-black hover:font-normal hover:border-black font-medium text-base`;
-        for (let i = 0; i < courseWithOutcomeArray.length; i++) {
+        for (let i = 0; i < courseWithCLOArray.length; i++) {
             let courseDiv = '';
             if (i !== 0) {
                 courseDiv = `<div class="${withoutH}" id="daregcor-${(i + 1)}">
                                     <div class="flex flex-row justify-around items-center min-w-full">
-                                        <label class="px-5">${courseWithOutcomeArray[i].courseName}</label>
+                                        <label class="px-5">${courseWithCLOArray[i].courseName}</label>
                                         <img class="w-5" alt="" src="../../Assets/Images/bottom-arrow.svg" data-reg-course="ico">
                                     </div>
                                 </div>`
             } else {
                 courseDiv = `<div class="${$withH}"  id="daregcor-${(i + 1)}"> 
                                     <div class="flex flex-row justify-around items-center min-w-full">
-                                        <label class="px-5">${courseWithOutcomeArray[i].courseName}</label>
+                                        <label class="px-5">${courseWithCLOArray[i].courseName}</label>
                                         <img class="w-5" alt="" src="../../Assets/Images/left-arrow.svg" data-reg-course="ico">
                                     </div>
                                 </div>`
@@ -100,10 +104,11 @@ function setOutcomeDescription(index) {
     if ((index) !== 0) {
         tableBody.setAttribute("class", "hidden");
     }
-    for (let i = 0; i < courseWithOutcomeArray[index].CourseCLOList.length; i++) {
+
+    for (let i = 0; i < courseWithCLOArray[index].CourseCLOList.length; i++) {
         const outcomeRow = `<tr class="text-center text-sm font-base tracking-tight">
-                                    <td class="px-4 py-3">${courseWithOutcomeArray[index].CourseCLOList[i].cloName}</td>
-                                    <td class="px-4 py-3 ">${courseWithOutcomeArray[index].CourseCLOList[i].description}
+                                    <td class="px-4 py-3">${courseWithCLOArray[index].CourseCLOList[i].cloName}</td>
+                                    <td class="px-4 py-3 ">${courseWithCLOArray[index].CourseCLOList[i].description}
                                     </td>
                                 </tr>`;
         $(tableBody).append(outcomeRow);
@@ -194,23 +199,29 @@ function createCgpRadialChartStructure(currentCGPA, message = "CGPA") {
 }
 
 function createOverallPLOLinearChartStructure(ploArrayList) {
-    // ploArrayList = [{"score": 24, "plodescription": "xxxxxxxxxxxxxxxxxx"}, {"score": 24, "plodescription": "xxxxxxxxxxxxxxxxxx"},]; // fetch from server.
-    ploArrayList = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38];
+    /*  // ploArrayList = [{"score": 24, "plodescription": "xxxxxxxxxxxxxxxxxx"}, {"score": 24, "plodescription": "xxxxxxxxxxxxxxxxxx"},]; // fetch from server.
+           ploArrayList = [24, 55, 99.9, 52, 72, 57, 0, 0, 0, 18, 51, 38];
+    */
+
+    let ploAverageScoreList = [];
+    let ploNameList = [];
+    if (ploArrayList.length > 0) {
+        ploArrayList.forEach(function (value, index) {
+            ploAverageScoreList.push(value.percentage);
+            ploNameList.push(extractFirstNumeric(value.ploName));
+        });
+
+    }
+
     return {
         series: [{
             name: 'PLO',
-            data: ploArrayList,  // data we fetch from php of students overall PLOs score.
+            data: ploAverageScoreList,  // data we fetch from php of students overall PLOs score.
         }],
         chart: {
             height: 400,
             type: 'bar',
             stacked: true,
-            events: {
-                click: function (chart, w, e) {
-
-                }
-            },
-            // toolbar: {show: false}
             tooltip: {
                 /*  enabled: true,
                   custom: function ({series, seriesIndex, dataPointIndex, w}) {
@@ -223,16 +234,14 @@ function createOverallPLOLinearChartStructure(ploArrayList) {
             }
         },
         noData: {
-            text: "Program Outcome Result is not updated."
+            text: "No Program Learning Outcome List Found."
         },
         colors: [
             function ({value, seriesIndex, w}) {
                 if (value < 50)
                     return colors[3]
-                else if (value > 50 && value < 75)
-                    return colors[0]
                 else
-                    return colors[5]
+                    return colors[1]
             }
         ],
         plotOptions: {
@@ -270,9 +279,8 @@ function createOverallPLOLinearChartStructure(ploArrayList) {
         xaxis: {
             min: 1,
             max: ploArrayList.size,
-            categories: [ // Mention each PLO  here.
-                ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12']],
-
+            categories: ploNameList ,
+            // [['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12']]
             labels: {
                 enabled: true,
                 style: {colors: ['#111']},
@@ -306,15 +314,15 @@ function createOverallPLOLinearChartStructure(ploArrayList) {
     };
 }
 
-function createSemesterGpaLineChartStructure(semesterArray) {
+function createSemesterGpaLineChartStructure(semesterGPAArray) { //
     let totalSemester = [];
-    semesterArray.forEach(function (key, value) {
-        totalSemester.push((value + 1))
+    semesterGPAArray.forEach(function (value, index) {
+        totalSemester.push((index + 1)) // [1,2,3,4.......]
     });
 
     return {
         series: [{
-            name: "Semester No ", data: semesterArray,
+            name: "Semester No ", data: semesterGPAArray,
         }],
         chart: {
             height: 400,
@@ -376,7 +384,6 @@ function createSemesterGpaLineChartStructure(semesterArray) {
                 fontSize: 18,
             },
             align: 'center',
-            // offsetX:100,
             offsetY: -6,
         },
         noData: {
@@ -384,7 +391,7 @@ function createSemesterGpaLineChartStructure(semesterArray) {
         },
         xaxis: {
             min: 0,
-            max: semesterArray.size,
+            max: semesterGPAArray.size,
             categories: totalSemester,
             labels: {
                 enabled: true,
@@ -402,6 +409,26 @@ function createSemesterGpaLineChartStructure(semesterArray) {
                 },
             },
         },
+        yaxis: {
+            min: 1,
+            max: 4,
+            categories: [1,2,3,4],
+            labels: {
+                enabled: true,
+                style: {colors: ['#111']},
+                background: {enabled: true, foreColor: '#fff', borderWidth: 0},
+            },
+            title: {
+                text: "GPA Score",
+                offsetX: 0,
+                offsetY: 0,
+                style: {
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cssClass: '',
+                },
+            },
+        }
 
     };
 }

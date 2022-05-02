@@ -5,46 +5,61 @@ include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\ServerPerformance.ph
 session_start();
 
 $program = new Program();
-$departmentCode = $_SESSION['departmentCode'];
-$programList = $program->retrieveEntireProgramList();
+$departmentCode = $_SESSION['departmentCode']; // 1
+$deletedProgramList = $program->retrieveEntireProgramList();
 
-foreach ($programList as $index => $currentProgram)
-    if ($departmentCode !== $currentProgram['departmentCode'])
-        unset($programList[$index]);
+print json_encode($deletedProgramList) . "<br><br><br>";
+
+/** delete any irrelevant program which is not against our currently login department. */
+foreach ($deletedProgramList as $index => $currentProgram) {
+    print sprintf("index : %s   %s<br>", $index, json_encode($currentProgram));
+    if ($departmentCode !== $currentProgram['departmentCode']) // 1 !== 1
+        unset($deletedProgramList[$index]);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST["createProgramBtn"])) {
-    print $_POST['programNameField'] . "  " . $_POST['programAbbreviationNameField'];
-    $FLAG = $program->createProgram($departmentCode, $_POST['programNameField'], $_POST['programAbbreviationNameField']);
+//    print $_POST['programNameField'] . "  " . $_POST['programAbbreviationNameField'];
+
+    $programName = $_POST['programNameField'];
+    $programAbbName = $_POST['programAbbreviationNameField'];
+
+    $FLAG = $program->createProgram($departmentCode, $programName, $programAbbName);
     unset($_POST['createProgramBtn']);
     header('Location: manageProgram.php');
 }
 
 $resultBackServer = array("status" => -1, "message" => 'no message', "errors" => 'no error');
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
-    if (isset($_POST['programList'])) {
-        $programList = $_POST['programList'];
-        $notDeletedArray = array();
-        foreach ($programList as $programCode) {
+    if (isset($_POST['deletedProgramList'])) {
+        $deletedProgramList = $_POST['deletedProgramList']; // array.  // [ 1,6,8,11,12,13 ,15]
+        $notDeletedArray = array(); /** agr list empty ho gye ha , program codes successfully deleted*/
+
+        foreach ($deletedProgramList as $programCode) {
             if (!$program->deleteProgram($programCode))
-                array_push($notDeletedArray , true);
+                array_push($notDeletedArray, $programCode);
         }
     } else
         $resultBackServer = updateServer(-1, "No program code found , try again.", "no-record");
 
+
     if (!empty($notDeletedArray))
-        $resultBackServer = updateServer(0, "Could not delete some program. try again" , "Failure");
+        $resultBackServer = updateServer(0, "Could not delete some program. try again", "Failure");
     else
         $resultBackServer = updateServer(1, "Program list has been deleted successfully.", "OK");
 
     die(json_encode($resultBackServer));
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['modify'])) {
-    if (isset($_POST['programObjectList']) and $_POST['programObjectList']) {
-        $programObjectList = $_POST['programObjectList'];
-        foreach ($programObjectList as $programCode => $value) {
-            if (($LET = !$program->modifyProgram($programCode, $value['programName'], $value['shortName'])) === TRUE) {
+    if (isset($_POST['updateProgramList']) and $_POST['updateProgramList']) {
+        $updateProgramList = $_POST['updateProgramList']; // 2 : { pname: name , pabb : abb }
+
+        foreach ($updateProgramList as $programCode => $value) {
+            $programName = $value['programName'];
+            $programAbbreviation = $value['shortName'];
+            if (($LET = !$program->modifyProgram($programCode, $programName, $programAbbreviation)) === TRUE) {
                 $resultBackServer = updateServer(0, $LET, "ERROR");
                 die(json_encode($resultBackServer));
             }
+
         }
     }
     $resultBackServer = updateServer(1, "successfully modified program list", "Modified");
@@ -81,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
             <p class="font-normal text-base text-gray-700 capitalize">
                 please complete all the fields to create program.
             </p>
+
             <form method="post" autocapitalize="on" autocomplete="on" class="inline-flex rounded">
                 <div class="flex flex-grow justify-center items-center pt-3 pb-2 text-white text-base font-medium ml-20 w-3/4">
                     <div class="textField-label-content w-3/12">
@@ -142,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
 
                     <?php
                     $iterate = 1;
-                    foreach ($programList as $key => $currentProgram) {
+                    foreach ($deletedProgramList as $key => $currentProgram) {
                         print sprintf("
                                  <tr data-record-target=\"\" aria-expanded=\"false\"
                         class=\"cursor-default text-sm tracking-tight transition-all transform hover:bg-catalystLight-89 accordion-toggle collapsed\"
@@ -180,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
                     ?>
                     </tbody>
                 </table>
+
                 <div class="text-right mx-4 my-5">
                     <button id="saveProgramBtn" class="mt-4 sm:mt-0 inline-flex
                      items-start justify-start px-10 py-2.5 bg-blue-500 hover:bg-blue-600

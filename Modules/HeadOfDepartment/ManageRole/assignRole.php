@@ -26,6 +26,8 @@ foreach ($facultyObjectList as $faculty) {
         'dc' => $faculty->getInstance()['departmentCode'],
     );
 }
+echo json_encode($facultyList);
+
 //setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
 
 ?>
@@ -119,7 +121,7 @@ foreach ($facultyObjectList as $faculty) {
                                         <?php
                                         $designationList = array();
                                         foreach ($facultyList as $index => $faculty) {
-                                            $currentDesignation = $faculty['designation']; // mama
+                                            $currentDesignation = $faculty['designation'];
                                             if (!in_array($currentDesignation, $designationList)) {
                                                 print sprintf("<option  value=\"%s\" >%s</option>",
                                                     $faculty['designation'], $faculty['designation']);
@@ -141,11 +143,14 @@ foreach ($facultyObjectList as $faculty) {
                                         <option value="all" selected>All</option>
 
                                         <?php
+
+                                        // change the iterate code.
+
                                         $program = new Program();
                                         $allocatedProgramList = array();
+
                                         $options = '';
                                         $getProgramList = $program->retrieveProgramList($departmentCode);
-
                                         foreach ($getProgramList as $program) {
                                             $options .= sprintf("<option  value=\"%s\" >%s</option>",
                                                 bin2hex($program->getProgramCode()), $program->getProgramName());
@@ -236,7 +241,8 @@ foreach ($facultyObjectList as $faculty) {
 
                                         <div class="flex justify-center items-center absolute top-0 -right-1/2 w-32 h-12 box-border cursor-default"
                                              id="roleCreationPasswordGeneratorID">
-                                            <span class="flex items-center justify-center text-gray-400 transform transition hover:scale-90 hover:text-indigo-700 cursor-pointer sm:text-sm">
+                                            <span class="flex items-center justify-center text-gray-400 transform transition
+                                            hover:scale-90 hover:text-indigo-700 cursor-pointer sm:text-sm">
                                                 <svg
                                                         xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
                                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -244,7 +250,7 @@ foreach ($facultyObjectList as $faculty) {
                                                     d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
                                             </svg>
                                                  <div class="w-32 h-full opacity-0 hover:opacity-100 duration-300 z-10
-                                                  flex justify-center items-center capitalize text-xs text-black font-semibold">Dafa ho</div>
+                                                  flex justify-center items-center capitalize text-xs text-black font-semibold">Random Password</div>
                                             </span>
                                         </div>
 
@@ -288,7 +294,6 @@ foreach ($facultyObjectList as $faculty) {
                                                 onchange="this.setAttribute('value', this.value);" value=""
                                                 id="carcRSeasonID">
                                             <option value="" hidden=""></option>
-                                            <option value="" >x</option>
 
                                         </select>
                                         <label class="select-label top-1/4 sm:top-3">Batch/Season</label>
@@ -355,8 +360,8 @@ foreach ($facultyObjectList as $faculty) {
     let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')*/
 
 
-    let facultyInstanceList = <?php echo json_encode($facultyList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
-    let programList = <?php echo json_encode($allocatedProgramList, JSON_HEX_QUOT | JSON_HEX_APOS);?>;
+    let facultyInstanceList = <?php echo json_encode($facultyList);?>;
+    let programList = <?php echo json_encode($allocatedProgramList);?>;
     console.log("\nFaculty Instance : ", facultyInstanceList, "\nProgram Code List : ", programList)
 
 </script>

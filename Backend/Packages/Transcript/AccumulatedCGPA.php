@@ -45,7 +45,6 @@ class AccumulatedCGPA implements JsonSerializable
         $result = $this->databaseConnection->query($dbStatement);
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
-                $this->cgpa = $row['cgpa'];
                 array_push($gpaArray, $row['cgpa']);
             }
         } else {
@@ -55,6 +54,39 @@ class AccumulatedCGPA implements JsonSerializable
 
 //        array_push($gpaArray, "3.3", "3.9", "2.6" , "1.3");
         return $gpaArray;
+    }
+
+
+    function getProgramLearningOutcomeTranscriptStudent($studentCode,$semesterCode): ?array
+    {
+        $programLearningOutcomeArray = [];
+        $dbStatement = /** @lang text */
+            "select semesterCode, studentRegCode, semesterCode, p.ploCode, ploName, percentage
+            from semestertranscript
+            join semesterobetranscriptplos s on semestertranscript.semtranscriptCode = s.semtranscriptCode
+            join plo p on s.ploCode = p.PLOCode
+            where studentRegCode = \"$studentCode\"
+            and semesterCode = (select max(semesterCode)
+            from semester
+            where batchCode = (select batchCode from semester where semesterCode = \"$semesterCode\")
+            and semesterCode < (select max(semesterCode)
+            from semester
+            where batchCode = (select batchCode from semester where semesterCode = \"$semesterCode\"))); ";
+
+        $result = $this->databaseConnection->query($dbStatement);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+               $temp = array(
+                 "regNumber" => $row['studentRegCode'],
+                 "ploName" => $row['ploName'],
+                 "percentage" => $row['percentage'],
+               );
+
+               array_push($programLearningOutcomeArray , $temp);
+            }
+            return $programLearningOutcomeArray;
+        } else
+            return null;
     }
 
     public function jsonSerialize(): mixed

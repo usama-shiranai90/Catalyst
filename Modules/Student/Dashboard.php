@@ -7,26 +7,34 @@ $batchCode = $_SESSION['batchCode']; // 4
 $programCode = $_SESSION['programCode'];
 
 $personalDetails = array();
-$student = unserialize($_SESSION['studentInstance']); //
+$student = unserialize($_SESSION['studentInstance']);
 $personalDetails = $student->getInstance();
 
-$currentSemester = new Semester();
-$cgpa = new AccumulatedCGPA();
-
+// variable declaration:
+$programLearningOutcomeList = null;
+$enrolledCourseWithCLOArray = null;
+$enrolledCourseWithCLOArray = null;
 $totalEnrolledCourses = 0;
 $totalCreditHour = 0;
 
+// 
+$cgpa = new AccumulatedCGPA();
 $hasPreviousRecord = $cgpa->retrieveLatestCGPA($studentRegCode); // true or false.
 $studentSemesterGpaArray = $cgpa->studentAllSemesterGPA($studentRegCode); // null or array
 
+$currentSemester = new Semester();
 $isPromotedToNewSemester = $currentSemester->retrieveCurrentSemester($batchCode);
 if ($isPromotedToNewSemester) {
+    $programLearningOutcomeList = $cgpa->getProgramLearningOutcomeTranscriptStudent($studentRegCode, $currentSemester->getSemesterCode());
+
     $enrolledCourses = new Course();
-    $enrolledCourseWithOutcomeArray = $enrolledCourses->getEnrolledCourses($studentRegCode, $currentSemester->getSemesterCode(), $batchCode, $programCode);
-    foreach ($enrolledCourseWithOutcomeArray as $course) {
-        $totalCreditHour += (int)$course->getCourseCreditHour();
-        $totalEnrolledCourses++;
-    }
+    $enrolledCourseWithCLOArray = $enrolledCourses->getEnrolledCourses($studentRegCode, $currentSemester->getSemesterCode(), $batchCode, $programCode);
+
+    if ($enrolledCourseWithCLOArray !== null && sizeof($enrolledCourseWithCLOArray) > 0)
+        foreach ($enrolledCourseWithCLOArray as $index => $course) {
+            $totalCreditHour += (int)$course->getCourseCreditHour();
+            $totalEnrolledCourses++;
+        }
 }
 
 ?>
@@ -41,6 +49,7 @@ if ($isPromotedToNewSemester) {
     <script async src="../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../Assets/Stylesheets/Master.css" rel="stylesheet">
+    <script src="../../Assets/Scripts/InterfaceUtil.js"></script>
     <script src="../../Assets/Frameworks/apexChart/apexcharts.js"></script>
     <link href="../../Assets/Frameworks/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script async src="../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
@@ -164,17 +173,17 @@ if ($isPromotedToNewSemester) {
 
 <script async src="assets/js/DashboardGraphicalData.js"></script>
 <script>
-    let cgpa = JSON.parse('<?php echo json_encode($cgpa); ?>');
+
+    let CumulativeGradePointAverageObject = JSON.parse('<?php echo json_encode($cgpa); ?>');
     let hasPreviousGPA = JSON.parse('<?php echo json_encode($hasPreviousRecord); ?>');
-
     let studentSemesterGpaArray = JSON.parse('<?php echo json_encode($studentSemesterGpaArray); ?>');
+    let courseWithCLOArray = JSON.parse('<?php echo json_encode($enrolledCourseWithCLOArray); ?>');
+    let programLearningOutcomeList = JSON.parse('<?php echo json_encode($programLearningOutcomeList); ?>');
 
-    let courseWithOutcomeArray = JSON.parse('<?php echo json_encode($enrolledCourseWithOutcomeArray); ?>');
-
-    console.log(courseWithOutcomeArray)
-    console.log(cgpa)
-    console.log(hasPreviousGPA)
-    console.log(studentSemesterGpaArray)
+    console.log("Courses List : " , courseWithCLOArray)
+    console.log("CGPA : " , CumulativeGradePointAverageObject)
+    console.log("PLO List " , programLearningOutcomeList)
+    console.log("Student Semester GPA List ", studentSemesterGpaArray)
 </script>
 </body>
 </html>

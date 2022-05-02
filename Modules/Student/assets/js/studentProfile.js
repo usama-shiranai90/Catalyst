@@ -34,7 +34,7 @@ window.onload = function () {
     const studentProfileStudentEmailField = document.getElementById('studentPersonalEmailFieldID');
     const studentProfileStudentContactField = document.getElementById('studentContactFieldID');
 
-    const myprofileArray = [studentProfileStudentNameField, studentProfileStudentEmailField, studentProfileStudentContactField];
+    const myprofileArray = [studentProfileStudentNameField, studentProfileStudentEmailField, studentProfileStudentContactField ];
 
     const viewStudentProfileButton = document.getElementById('viewStudentProfileBtn');
     const updateStudentProfileButton = document.getElementById('updateStudentProfileBtn');
@@ -45,11 +45,15 @@ window.onload = function () {
     let newPasswordField = document.getElementById('studentNewPasswordFieldID');
     let confirmNewPasswordField = document.getElementById('studentConfirmPasswordFieldID');
     const passwordArray = [oldPasswordField, newPasswordField, confirmNewPasswordField];
+
     ops = $(oldPasswordField).attr("data-ref");
 
     let studentPassBtn = document.getElementById('updateStudentPasswordProfileBtn');
+
+
     $(document).ready(function () {
-        /** click to hide view section and show input section. */
+
+        /** click to hide student information view section and show input section my profile. */
         $(viewStudentProfileButton).on('click', function () {
             $(studentProfileViewSectionSection).addClass("hidden");
             $(viewStudentProfileButton).addClass("hidden");
@@ -58,6 +62,7 @@ window.onload = function () {
             $(studentProfileInputSectionSection).removeClass("hidden");
         });
 
+        /** it is used to remove error box when field is left empty. */
         $(myprofileArray).add(passwordArray).each(function () {
             $(this).on("input", function () {
                 $(this).closest('div').removeClass('textField-error-input')
@@ -65,6 +70,7 @@ window.onload = function () {
                 containsErrors = false
             });
         })
+
 
         $(updateStudentProfileButton).on('click', function () {
             $(myprofileArray).each(function () {
@@ -125,7 +131,6 @@ window.onload = function () {
         $.ajax({
             type: "POST",
             url: 'assets/Operation/studentProfileAjax.php',
-            cache: false,
             data: {
                 stuName: newStudentName,
                 stuContact: newStudentContact,
@@ -139,10 +144,10 @@ window.onload = function () {
             success: function (data, status) {
                 const result = JSON.parse(data)
                 if (result.status === 1 && result.errors === 'none') {
-                    alert("updated successfully.");
                     $('#smpStudentNameId-view').html(newStudentName);
                     $('#smpStudentEmailId-view').html(newStudentPersonalEmail);
                     $('#smpStudentContactId-view').html(newStudentContact);
+
                     $(studentProfileViewSectionSection).removeClass("hidden");
                     $(viewStudentProfileButton).removeClass("hidden");
                     $(updateStudentProfileButton).addClass("hidden");

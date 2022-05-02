@@ -21,6 +21,8 @@ $(document).ready(function () {
 
     $(createProgramBtn).on('click', function (e) {
         e.preventDefault();
+
+        // if fields are empty then e.prevent else show successfully message.
         if (!containsEmptyField([programNameInputField, programAbbreviationNameInputField])) {
             e.preventDefault();
         } else {
@@ -53,7 +55,7 @@ $(document).ready(function () {
         },
         focusout: function (e) {
             // var str = value.toLowerCase().replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-            let value = $(e.target).val();
+            let value = $(e.target).val(); // this tag
             value = convertIntoAbb(value);
             $(programAbbreviationNameInputField).val(value);
         },
@@ -74,56 +76,58 @@ $(document).ready(function () {
     /** Section for Program Management. */
     $(document).on('click', 'button[id^=performRoleEdit-]', function (e) {
         // updateProgramList = $(this).closest("tr").attr("data-program-state");
-        let programStateId = $(this).closest("tr").attr("data-program-state");
-        updateProgramList.push(programStateId);
+        let programCode = $(this).closest("tr").attr("data-program-state");
+        updateProgramList.push(programCode);
 
         $(this).closest('tr').removeClass("hover:bg-catalystLight-89").addClass("hover:bg-catalystLight-f1") // change background color when hover for selected Table-Row....
         $(this).closest('tr').children().each(function (index, value) {
-            if (index > 0 && index < 3)
+            if (index > 0 && index < 3) // index 1 and 2
                 // value.setAttribute("contenteditable", true).addClass("italic");
                 $(value).attr("contenteditable", true).addClass("italic")
             else if (index === 3) {
                 $(value).find('button[id^="performRoleEdit"]').addClass("hidden");
             }
         });
-
-
     });
-
+    /** Here we store reference of a deleted element */
     let deletionReferenceElement;
     $(document).on('click', 'button[id^=performRoleDeletion-]', function (e) {
         $("body").append(alertConfirmationMessage("Delete Program", "Please reconsider, as the following program name :<br>",
             $(this).closest("tr").children(".f-name-representation").children(":first-child").text(), "", " will be deleted and can effect students belonging to that program "));
+
+        /** Blur filter is applied on main screen of Program Creation */
         $("main").addClass("blur-filter");
         deletionReferenceElement = this
     });
-
+    /**This is applied on both delete-btn and cancel-btn in program creation section*/
     $(document).on('click', "#alertDeleteBtnId ,#alertCancelBtnId ", function (event) {
+        //deletionReferenceElement is your selected performRoleDeletion tag i.e button .
+
         event.preventDefault();
         event.stopImmediatePropagation();
         $("main").removeClass("blur-filter");
         $("#alertMessageContainer").remove();
+
+        /** For alert delete Button */
         if (this.id === 'alertDeleteBtnId') {
-            let id = $(deletionReferenceElement).closest("tr").attr("data-program-state");
+            /** data-program-state(Custom Tag) */
+            let programCode = $(deletionReferenceElement).closest("tr").attr("data-program-state");
             $(deletionReferenceElement).closest('tr').remove();
-            deletedProgramList.push(id);
+            deletedProgramList.push(programCode);
         }
     });
 
     $(saveBtn).on('click', function (e) {
         e.preventDefault();
-        // update program list array .
         updateMyProgramList();
         if (deletedProgramList.length > 0 && Object.entries(updateProgramList).length > 0) {
             callAjaxForProgramDeletion(deletedProgramList);
             callAjaxForProgramModify(updateProgramList);
-        } else if (deletedProgramList.length > 0) {
+        } else if (deletedProgramList.length > 0)
             callAjaxForProgramDeletion(deletedProgramList)
-        } else if (updateProgramList.length > 0)
+        else if (updateProgramList.length > 0)
             callAjaxForProgramModify(updateProgramList);
-
-    })
-
+    });
 });
 
 
@@ -138,8 +142,7 @@ function convertIntoAbb(name) {
 
 function updateMyProgramList() {
     let tempList = {};
-    console.log('updateProgramList : ', updateProgramList)
-    console.log('deleteProgramList : ', deletedProgramList)
+    console.log("before updateProgramList " , updateProgramList)
     if (Object.entries(updateProgramList).length !== 0) {
         $("tbody").children().each(function (tableRowIndex, tableRowValue) { // iterate for tr.
             let currentRowId = $(tableRowValue).attr("data-program-state");
@@ -156,16 +159,17 @@ function updateMyProgramList() {
             }
         });
         updateProgramList = tempList;
+        console.log("updateProgramList ",  updateProgramList);
     }
 }
 
-function callAjaxForProgramDeletion(programList) {
+function callAjaxForProgramDeletion(deletedProgramList) {
     $.ajax({
         type: "POST",
         url: "manageProgram.php",
         data: {
             deletion: true,
-            programList: programList,
+            deletedProgramList: deletedProgramList,
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
@@ -181,13 +185,13 @@ function callAjaxForProgramDeletion(programList) {
 }
 
 
-function callAjaxForProgramModify(programObject) {
+function callAjaxForProgramModify(updateProgramList) {
     $.ajax({
         type: "POST",
         url: "manageProgram.php",
         data: {
             modify: true,
-            programObjectList: programObject,
+            updateProgramList: updateProgramList,
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)

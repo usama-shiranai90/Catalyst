@@ -3,13 +3,16 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\Util\SearchUtil.php";
 
 session_start();
-$adminCode = $_SESSION['adminCode'];
+$adminCode = $_SESSION['adminCode']; // FUI-FURC-057
+$programCode = $_SESSION['programCode'];
 
+/** Curriculum Object is created */
 $curriculum = new Curriculum();
-$curriculumList = $curriculum->getPreviousFewCurriculumYear(true);
-$currentOnGoingYear = date('Y'); // current year : 2022
+$curriculumList = $curriculum->getPreviousCurriculumList($programCode ,true); // get latest curriculum list (array/null)
+$currentOnGoingYear = date('Y'); // date is a built-in function use to get current year. i.e. 2022
 
 echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<br>";
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -26,7 +29,11 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
     <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
     <script src="assets/js/creationJs.js" type="text/javascript"></script>
-
+    <style>
+        input::placeholder {
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <div class="w-full min-h-full " style="background-color: #ECECF3">
@@ -52,41 +59,50 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
                         </select>
                         <label class="select-label top-1/4 sm:top-3">Program</label>
                     </div>
+
                     <div class="textField-label-content w-3/12">
-                        <label for="curriculumAllocationYearId"></label>
-                        <select class="select" name="curriculumAllocationYear"
+                        <label for="curriculumAssignYearID"></label>
+                        <select class="select" name="curriculumAssignYear"
                                 onclick="this.setAttribute('value', this.value);"
                                 onchange="this.setAttribute('value', this.value);"
-                                value="<?php echo $currentOnGoingYear = date('Y') ?>"
-                                id="curriculumAllocationYearId">
+                                value=""
+                                id="curriculumAssignYearID">
                             <option value="" hidden=""></option>
                             <?php
+
+                            /** used to generate year range from four years ago to four years after.
+                             * i.e. current year is 2022 then its -4 year will be 2018 ,  +4 years will be 2026.
+                             *   so we need to create a range set of years from 2018 to 2026.
+                             */
                             $tempKeyReference = "";
                             $tempValueReference = "";
-
                             if ($curriculumList == null)
-                                $earliestYear = date('Y', strtotime("-4 year"));
-                            elseif ($curriculumList[0]["year"] > date('Y')) {
-                                $earliestYear = date('Y', strtotime("-4 year"));
+                                $earliestYear = date('Y', strtotime("-4 year")); // 2018
+                            elseif ($curriculumList[0]["year"] > date('Y')) { // check if curriculumList first most
+                                $earliestYear = date('Y', strtotime("-4 year")); // 2018
                             } else
-                                $earliestYear = reset($curriculumList)['year'];
+                                $earliestYear = reset($curriculumList)['year'];  // reset function is use to get the first index ( value )
+                            // of an array and then get by key => year 2020.
 
-                            foreach (range(date('Y', strtotime("+4 year")), $earliestYear) as $year) {
+                            $nextFourYear = date('Y', strtotime("+4 year")); // 2026
+                            foreach (range($earliestYear, $nextFourYear) as $year) {
                                 if (iterateAndSearchValue($curriculumList, $year, $tempKeyReference, $tempValueReference)) {
-                                    print sprintf("<option  value=\"%s\"%sdata-select-id=\"%s\">%s</option>", $year, $year == $currentOnGoingYear ? ' selected="selected"' : '', $tempKeyReference, $year);
+                                    print sprintf("<option  value=\"%s\"%s data-select-id=\"%s\">%s</option>",
+                                        $year, $year == $currentOnGoingYear ? '' : '', $tempKeyReference, $year);
                                 } else
-                                    print '<option value="' . $year . '"' . ($year == $currentOnGoingYear ? ' selected="selected"' : '') . '>' . $year . '</option>';
+                                    print '<option value="' . $year . '"' .
+                                        ($year == $currentOnGoingYear ? '' : '') . '>' . $year . '</option>';
                             }
                             ?>
                         </select>
                         <label class="select-label top-1/4 sm:top-3">Assign Year</label>
                     </div>
                     <div class="textField-label-content w-3/12">
-                        <label for="curriculumRevisedSeasonId"></label>
-                        <select class="select" name="curriculumRevisedSeason"
+                        <label for="curriculumSeasonNameId"></label>
+                        <select class="select" name="curriculumSeasonName"
                                 onclick="this.setAttribute('value', this.value);"
                                 onchange="this.setAttribute('value', this.value);" value=""
-                                id="curriculumRevisedSeasonId">
+                                id="curriculumSeasonNameId">
                             <option value="" hidden=""></option>
 
                         </select>
@@ -129,15 +145,15 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
                 <h2 class="text-xl text-center font-bold text-white tracking-wide text-center capitalize">Creation Of
                     Curriculum</h2>
             </div>
-            <div class="h-60 text-center font-medium text-2xl flex justify-center items-center"> Limit for program
+            <div class="h-60 text-center font-medium text-2xl flex justify-center items-center"> Limit for
+                program
                 learning outcome not selected.
             </div>
             <section
-                    class="hidden bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0 cprofile-grid">
+                    class="hidden  bg-white rounded-t-none rounded-b-md border-solid px-5 pt-4 pb-4 border-t-0 cprofile-grid">
                 <form id="curriculumFormCreationId" method="post"
-                      class="flex flex-col overflow-hidden border-solid border-2 border-catalystLight-e1 rounded-md shadow-none">
-                    <div id="cCurriculumHeaderId"
-                         class="learning-outcome-head learning-week-header-dp overflow-hidden">
+                      class="flex flex-col overflow-hidden ring-2 ring-catalystLight-e1 rounded-md shadow-none">
+                    <div id="cCurriculumHeaderId" class="learning-outcome-head learning-week-header-dp overflow-hidden">
                         <div class="lweek-column border-l-0 bg-catalystLight-f5 col-start-1 col-span-1 rounded-tl-md">
                             <span class="wlearn-cell-data">PLO No</span>
                         </div>
@@ -149,7 +165,9 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
                         </div>
                     </div>
 
+
                 </form>
+
                 <div class="flex justify-center">
                     <button type="button" aria-label="add_clos_button_label" class="max-w-2xl rounded-full"
                             id="add-clo-btn" aria-expanded="false" aria-haspopup="true">
