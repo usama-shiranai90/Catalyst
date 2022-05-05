@@ -14,11 +14,11 @@ class Season implements JsonSerializable
 
     public function createNewSeason($seasonName): bool
     {
-        $sql = /** @lang text */
-            "insert into season(seasonName) VALUES ( \"$seasonName\");";
+        $prepareStatementInsertionQuery = $this->databaseConnection->prepare("insert into season(seasonName , dateCreated) VALUES (? , NOW())");
+        $sanitizeSeasonName = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($seasonName, 'string'));
 
-        $result = $this->databaseConnection->query($sql);
-        if ($result) {
+        $prepareStatementInsertionQuery->bind_param('s', $sanitizeSeasonName);
+        if ($prepareStatementInsertionQuery->execute()) {
             $this->setSeasonCode($this->databaseConnection->insert_id);
             return true;
         }
@@ -29,7 +29,7 @@ class Season implements JsonSerializable
     public function retrieveLatestSeason(): ?array
     {
         $seasonList = array();
-        $sql ="select seasonCode, seasonName from Season;";
+        $sql = "select seasonCode, seasonName from Season;";
 
         $result = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($result) > 0) {

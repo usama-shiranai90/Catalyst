@@ -17,12 +17,12 @@ class Section implements JsonSerializable
 
     public function createNewSection($semesterCode, $sectionName): bool
     {
-        $sql = /** @lang text */
-            "insert into section(semesterCode, sectionName)
-             VALUES (\"$semesterCode\" , \"$sectionName\" );";
-
-        $result = $this->databaseConnection->query($sql);
-        if ($result) {
+        $prepareStatementInsertionQuery = $this->databaseConnection->prepare("insert into section(semesterCode, sectionName)
+             VALUES (?,?)");
+        $sanitizeSemesterCode = FormValidator::sanitizeUserInput($semesterCode, 'int');
+        $sanitizeSectionName = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($sectionName, 'string'));
+        $prepareStatementInsertionQuery->bind_param('is', $sanitizeSemesterCode, $sanitizeSectionName);
+        if ($prepareStatementInsertionQuery->execute()) {
             $this->setSectionCode($this->databaseConnection->insert_id);
             return true;
         }
@@ -163,15 +163,19 @@ class Section implements JsonSerializable
         $sectionsList = array();
         $semester = new Semester();
         if ($semester->retrieveCurrentSemester($batchCode)) {
-            $sql = "/** @lang text */
-            select sectionCode, sectionName from section where semesterCode = \"$semester->semesterCode\"";
-            $result = $this->databaseConnection->query($sql);
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $newSection = new Section();
-                    $newSection->setSectionName($row["sectionName"]);
-                    $newSection->setSectionCode($row["sectionCode"]);
-                    array_push($sectionsList, $newSection);
+            $prepareStatementSearchQuery = $this->databaseConnection->prepare('select sectionCode, sectionName from section where semesterCode = ? ');
+
+            $sanitizeSemesterCode = FormValidator::sanitizeUserInput($semester->semesterCode, 'int');
+            $prepareStatementSearchQuery->bind_param('i', $sanitizeSemesterCode);
+            if ($prepareStatementSearchQuery->execute()) {
+                $result = $prepareStatementSearchQuery->get_result();
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $newSection = new Section();
+                        $newSection->setSectionName($row["sectionName"]);
+                        $newSection->setSectionCode($row["sectionCode"]);
+                        array_push($sectionsList, $newSection);
+                    }
                 }
             }
         }
@@ -206,29 +210,32 @@ class Section implements JsonSerializable
     public function retrieveStudentList($sectionCode): ?array
     {
         $studentList = array();
-        $sql = /** @lang text */
-            "select * from student where sectionCode = \"$sectionCode\"";
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $temp = array(
-                    'studentReg' => $row['studentRegCode'],
-                    'name' => $row['name'],
-                    'fatherName' => $row['fatherName'],
-                    'contact' => $row['contactNumber'],
-                    'bloodGroup' => $row['bloodGroup'],
-                    'address' => $row['address'],
-                    'dob' => $row['dateOfBirth'],
-                    'officialEmail' => $row['officialEmail'],
-                    'personalEmail' => $row['personalEmail'],
-                    'authCode' => $row['password'],
-                    'password' => $row['authenticationCode']
-                );
-                array_push($studentList, $temp);
-            }
-            return $studentList;
-        }
 
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from student where sectionCode = ?');
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeSectionCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $temp = array(
+                        'studentReg' => $row['studentRegCode'],
+                        'name' => $row['name'],
+                        'fatherName' => $row['fatherName'],
+                        'contact' => $row['contactNumber'],
+                        'bloodGroup' => $row['bloodGroup'],
+                        'address' => $row['address'],
+                        'dob' => $row['dateOfBirth'],
+                        'officialEmail' => $row['officialEmail'],
+                        'personalEmail' => $row['personalEmail'],
+                        'authCode' => $row['password'],
+                        'password' => $row['authenticationCode']
+                    );
+                    array_push($studentList, $temp);
+                }
+                return $studentList;
+            }
+        }
         return null;
     }
 

@@ -126,50 +126,46 @@ class Program implements JsonSerializable
 
     public function retrieveEntireProgramList(): ?array
     {
-        $sql = /** @lang text */
-            "select programCode, departmentCode, programName, programShortName from program;";
-
-        $result = $this->databaseConnection->query($sql);
         $programList = array();
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select programCode, departmentCode, programName, programShortName from program');
 
-                $temp = array(
-                    'programCode' => $row['programCode'],
-                    'departmentCode' => $row['departmentCode'],
-                    'programName' => $row['programName'],
-                    'programSN' => $row['programShortName']
-                );
-                array_push($programList, $temp);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $temp = array(
+                        'programCode' => $row['programCode'],
+                        'departmentCode' => $row['departmentCode'],
+                        'programName' => $row['programName'],
+                        'programSN' => $row['programShortName']
+                    );
+                    array_push($programList, $temp);
+                }
+                return $programList;
             }
-            return $programList;
-        } else
-            echo "Please Program List.";
+        }
 
         return null;
     }
 
     public function retrieveEntireDepartmentList(): ?array
     {
-        $sql = /** @lang text */
-            "select departmentCode, departmentName, departmentShortName from department;";
-
-        $result = $this->databaseConnection->query($sql);
         $departmentList = array();
-
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $temp = array(
-                    'departmentCode' => $row['departmentCode'],
-                    'departmentName' => $row['departmentName'],
-                    'departmentSN' => $row['departmentShortName']
-                );
-                array_push($departmentList, $temp);
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select departmentCode, departmentName, departmentShortName from department');
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $temp = array(
+                        'departmentCode' => $row['departmentCode'],
+                        'departmentName' => $row['departmentName'],
+                        'departmentSN' => $row['departmentShortName']
+                    );
+                    array_push($departmentList, $temp);
+                }
+                return $departmentList;
             }
-            return $departmentList;
-        } else
-            echo "Please Department List";
-
+        }
         return null;
     }
 

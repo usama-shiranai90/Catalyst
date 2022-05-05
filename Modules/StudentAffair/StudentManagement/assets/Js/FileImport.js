@@ -28,6 +28,7 @@ $(document).ready(function () {
     $(departmentField).on('change', function (e) {
         const departmentFieldValue = this.value;
         if (departmentFieldValue.length !== 0 && (programList !== null)) {
+            console.log("working fine ??" , departmentFieldValue, programList)
             let optionsList = createOptionsListForProgramField(departmentFieldValue, programList)
             $(programField).children().slice(1).remove();
             $(programField).append(optionsList);
@@ -160,6 +161,7 @@ $(document).ready(function () {
                 $("#importedTableContainer > div > div > h2").text(tableHeaderName[parseInt(selectedID.match(/\d+/)[0]) - 1]);
             }
         });
+
     });
 
     $(document).on('click', 'img[data-std-delete="remove"]', function (e) {
@@ -167,6 +169,7 @@ $(document).ready(function () {
         $(this).closest("tr").remove();
     });
 
+    // ADD MORE STUDENT EVENT.
     $(document).on('click', 'img[id^="addMoreBtn-"]', function (e) {
         let unqStdReg = -1;
         $(this).closest('.border-collapse.table-auto').children(':nth-child(2)').children(':last-child').each(function () {
@@ -185,11 +188,9 @@ $(document).ready(function () {
     });
 
     const uploadFileProcess = () => {
-        files = fileInput.files;
-        const formData = new FormData();
-        formData.append("myfile", files[0]);
+        let uploadedFiles = event.target.files;
         let reader = new FileReader();
-        reader.readAsArrayBuffer(event.target.files[0]);
+        reader.readAsArrayBuffer(uploadedFiles[0]);
         reader.onload = function (event) {
             let data = new Uint8Array(reader.result);
             let work_book = XLSX.read(data, {type: 'array'});
@@ -214,7 +215,8 @@ $(document).ready(function () {
         let sectionNameList = [];
 
         let seasonShortName = seasonField.value; // FA24
-        let seasonFullName = seasonField.getAttribute("data-season"); // Fall 2024
+        // let seasonFullName = seasonField.getAttribute("data-season"); // Fall 2024
+        let seasonFullName = $(seasonField).find('option:selected').attr('data-season') // Fall 2024
 
 
         $(tableHeaderName).each(function (k, text) {
@@ -232,7 +234,7 @@ $(document).ready(function () {
 
         let hasDuplication = checkDuplication(generatedTableContainer);
 
-        if (isCorrectFormat && !hasDuplication) { // working fine
+        if (false) {  //  isCorrectFormat && !hasDuplication  working fine
             let studentSectionWiseList = passIntoStudentList(generatedTableContainer, sectionNameList, true, 0);
             callAjaxForCreation(departmentCode, programCode, programName, curriculumCode, seasonFullName, seasonName, seasonShortName, studentSectionWiseList)
 

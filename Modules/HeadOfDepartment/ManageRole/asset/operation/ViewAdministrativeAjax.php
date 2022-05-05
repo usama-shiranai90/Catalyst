@@ -13,12 +13,14 @@ $respectiveRoles = [];
 
 if (isset($_POST['refreshSelectedRole']) and $_POST['refreshSelectedRole']) {
 
-    $designation = $_POST['designation'];
-    $role = $_POST['role'];
-
-    $listOfAllocatedAdministratorRolesList = AdministrativeRole::retrieveListOfAdminRoles($departmentCode, checkAdministrativePattern($role));
-
-    $resultBackServer = updateServer(1, loadAdminData($listOfAllocatedAdministratorRolesList, $respectiveRoles), "idk");
+    // !empty($_POST['designation'])
+    if (isset($_POST['designation']) && isset($_POST['role'])) {
+        $designation = $_POST['designation'];
+        $role = $_POST['role'];
+        $listOfAllocatedAdministratorRolesList = AdministrativeRole::retrieveListOfAdminRoles($departmentCode, checkAdministrativePattern($role));
+        $resultBackServer = updateServer(200, loadAdminData($listOfAllocatedAdministratorRolesList, $respectiveRoles), SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
+    } else
+        $resultBackServer = updateServer(400, "Incorrect designation / role type is provided , Try again. ", "ALERT " . SERVER_STATUS_CODES[400]);
     die(json_encode($resultBackServer));
 } elseif (isset($_POST['deleteAdministrativeRole']) and $_POST['deleteAdministrativeRole']) {
 
@@ -29,10 +31,9 @@ if (isset($_POST['refreshSelectedRole']) and $_POST['refreshSelectedRole']) {
         $sectionId = $_POST['courseAdvisorId'];
 
         if ($flag = AdministrativeRole::deleteAdministrativeRole($facultyID, $departmentId, $programId, $sectionId))
-            $resultBackServer = updateServer(1, $respectiveRoles[] = $flag, "successful");
+            $resultBackServer = updateServer(200, $respectiveRoles[] = $flag, SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
         else
-            $resultBackServer = updateServer(0, $respectiveRoles[] = false, "no-record");
-
+            $resultBackServer = updateServer(400, "Incorrect designation / role type is provided , Try again. ", "ALERT " . SERVER_STATUS_CODES[400]);
         die(json_encode($resultBackServer));
     }
 }

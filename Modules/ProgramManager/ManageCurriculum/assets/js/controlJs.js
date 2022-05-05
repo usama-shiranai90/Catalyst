@@ -3,7 +3,7 @@ let updateCurriculum = {};
 let deletedCurriculum = [];  // stores the id for deleted rows by saving their ID.
 let allCurriculumRecordValues = [];
 
-let selectedCurriculumToEditId = -1; // variable will store curriculumCode and which to edit.
+let selectToEditCurrciulumCode = -1; // variable will store curriculumCode and which to edit.
 let curriculumCounter = 0;  // stores the total curriculum Counter i.e. table rows header and curriculumPLOsRows.
 window.onload = function (e) {
 
@@ -45,14 +45,16 @@ window.onload = function (e) {
             loadRespectivePloAjax(curriculumCode, "view")
         })
 
+        /** when edit Button is clicked call AJAX and fetch its related PLO List. */
         $(document).on('click', "button[id^='editCurriculum']", function (event) {
-            selectedCurriculumToEditId = extractFirstNumeric($(this).attr("id"));
-            loadRespectivePloAjax(selectedCurriculumToEditId, "edit")
+            selectToEditCurrciulumCode = extractFirstNumeric(this.id); // extract curriculumCode. editCurriculum-5 extract only numeric i.e. 5
+            loadRespectivePloAjax(selectToEditCurrciulumCode, "edit")
         });
 
-        $(backArrowBtn).on('click' ,  function (e) {
+        $(backArrowBtn).on('click', function (e) {
             $("#curriculumSearchBoxSectionId").removeClass("hidden");
             $(editCurriculumSection).addClass("hidden");
+            $(parentFormCurriculumContainer).children().slice(1).remove();// curriculum form creation:first child ( 0-index ) => header chor kr sb delete kr do...
         })
 
         // When User click on edit option:
@@ -60,18 +62,25 @@ window.onload = function (e) {
             initialRowChecker(null);
         })
 
+
+        /** when delete icon is pressed remove the row and reiterate for PLO number.
+         *  if your record exist before ( i.e. label ploCode exist ) show confirm modal box.
+         *  if newly created directly delete.
+         * */
         let dischargedIndex = 0;
-        let deletedCurriculumID = 0;
+        let deletedPLOCode = 0;
         $(document).on('click', "img[data-coc-remove='remove']", function (event) {
             event.stopImmediatePropagation();
-            dischargedIndex = $(event.target).closest('.learning-outcome-row.h-auto').attr("id").match(/\d+/)[0]
-            deletedCurriculumID = $(event.target).closest(".learning-outcome-row.h-auto").children(":first").children(":first").attr("value");
 
-            if ((typeof deletedCurriculumID != 'undefined' && deletedCurriculumID !== null) && !isCharacterALetter(deletedCurriculumID) && deletedCurriculumID !== "") {
+            dischargedIndex = $(this).closest('.learning-outcome-row.h-auto').attr("id").match(/\d+/)[0] // extract the numeric value. i.e. creationCurriculumRow-3 > 3
+            deletedPLOCode = $(this).closest(".learning-outcome-row.h-auto").children(":first").children(":first").attr("value"); // label ploCode
+
+            console.log(deletedPLOCode)
+            if ((typeof deletedPLOCode != 'undefined' && deletedPLOCode !== null) && !isCharacterALetter(deletedPLOCode) && deletedPLOCode !== "") { // when ploCode exist.
                 $("main").addClass("blur-filter");
                 $("#alertContainer").removeClass("hidden");
-            } else // deletedOutcome ID is undefined.
-                deleteCurriculumRow(dischargedIndex, false);
+            } else // PLOCode is not define/null/empty .
+                deleteCurriculumRow(dischargedIndex, false); // 4 , false,
         });
 
         $(updateButtonCurriculumBtn).on('click', function (e) {
@@ -118,7 +127,7 @@ window.onload = function (e) {
             // const id = $(event.target).closest('.learning-outcome-row').find(".bg-catalystBlue-l61").attr("id");
             // console.log("Show when Alert-Delete Button is clicked. ", deletedCurriculumID , id)
             e.stopImmediatePropagation();
-            deletedCurriculum.push(deletedCurriculumID);
+            deletedCurriculum.push(deletedPLOCode);
             deleteCurriculumRow(dischargedIndex, true);
             $("main").removeClass("blur-filter");
             $("#alertContainer").addClass("hidden");
@@ -191,14 +200,22 @@ window.onload = function (e) {
         }, 1000);
     }
 
-    function initialRowChecker(plo) {
-        let size = $(parentFormCurriculumContainer).children().length;
-        curriculumCounter = size;
-        (size === 1) ?
-            $(parentFormCurriculumContainer).append(createAdditionalRow(1, plo))
-            : $(parentFormCurriculumContainer).append(createAdditionalRow(curriculumCounter, plo));
+    /** the function is used to create row of PLO table and an key/value of plo variable is used to set the ploCode into label.
+     *  addMoreCurriculumBtn is clicked , plo is null because wo phely ka to nhai exsit kr raha na.
+     *  successMessageLoadEdit function ka inder sa aa raha hai na ( database -> ploCode exist ) us ka format nechy likha hua hai...
+     * */
+    function initialRowChecker(plo) { // plo => {ploCode: 00 , ploName: 'PLO-N', ploDescription: 'xxxxx'}
+
+        let size = $(parentFormCurriculumContainer).children().length; // 4, get size of containers children i.e. header and curriculumRows.
+        curriculumCounter = size; // assign that into curriculumCounter
+        if (size === 1) { // no curriculumRows , only header exist.
+            $(parentFormCurriculumContainer).append(createAdditionalRow(1, plo));
+        } else {
+            $(parentFormCurriculumContainer).append(createAdditionalRow(curriculumCounter, plo));
+        }
     }
 
+    /** use to create delete row from curriclum table. */
     function deleteCurriculumRow(dischargedIndex, hasKeyFlag) {
         $(('#creationCurriculumRow-' + dischargedIndex)).remove();
         curriculumCounter = iterateCurriculumRow(parentFormCurriculumContainer, parseInt(dischargedIndex), curriculumCounter, hasKeyFlag);
@@ -229,7 +246,7 @@ window.onload = function (e) {
                     if (type === "view")
                         successMessageLoadView(responseText.message);
                     else if (type === "edit")
-                        successMessageLoadEdit(responseText);
+                        successMessageLoadEdit(responseText.message);
                 }
             },
         });
@@ -243,7 +260,7 @@ window.onload = function (e) {
                 deletionOutcome: true,
                 deletedCurriculumOutcomeList: deletedCurriculumOutcomeList,
                 // remainingCurriculumOutcomeKeyList: curriculumOutcomeKeyList, // redundant for now.
-                curriculumCode: selectedCurriculumToEditId,
+                curriculumCode: selectToEditCurrciulumCode,
             },
             beforeSend: function () {
             },
@@ -270,7 +287,7 @@ window.onload = function (e) {
                 updateCurriculumOutcomeList: updateCurriculumOutcomeList,
                 recentlyAddedCurriculumOutcomeList: recentlyAddedCurriculumOutcomeList,
                 curriculumOutcomeKeyList: curriculumOutcomeKeyList,
-                curriculumCode: selectedCurriculumToEditId
+                curriculumCode: selectToEditCurrciulumCode
             },
             beforeSend: function () {
                 $("body").append(addLoader());
@@ -293,9 +310,10 @@ window.onload = function (e) {
         });
     }
 
+    /** function is used when ajax for view is called. */
     function successMessageLoadView(ploArray) {
         $(programLearningOutcomeDetailListContainer).removeClass("hidden");
-        $(programLearningOutcomeDetailListContainer).children(":last-child").children().slice(1).remove();// 1 sa less children are not deleted. baki sary deleted.
+        $(programLearningOutcomeDetailListContainer).children(":last-child").children().slice(1).remove();// (0-child is header) 1 sa less children are not deleted. baki sary deleted.
 
         for (let i = 0; i < ploArray.length; i++) {
             const ploData = `<div class="flex flex-row w-full bg-white border-solid border-b-2">
@@ -312,14 +330,17 @@ window.onload = function (e) {
         }
     }
 
-    function successMessageLoadEdit(responseText) {
-        $("#curriculumSearchBoxSectionId").addClass("hidden");
-        $(editCurriculumSection).removeClass("hidden");
+    /** function is used when ajax for edit is called.
+     * i.e. edit icon is clicked and user wants to unhide the edit section and hide the view section.
+     * also add rows in table of curriculum update. */
+    function successMessageLoadEdit(ploArray) {
+        $("#curriculumSearchBoxSectionId").addClass("hidden"); // hide curriculumSearchBoxSectionId
+        $(editCurriculumSection).removeClass("hidden"); // unhidden edit section.
 
-        const size = responseText.message.length;
-        for (let i = 0; i < size; i++) {
-            initialRowChecker(responseText.message[i]);
+        for (let i = 0; i < ploArray.length; i++) {
+            initialRowChecker(ploArray[i]);
         }
+
     }
 
 }

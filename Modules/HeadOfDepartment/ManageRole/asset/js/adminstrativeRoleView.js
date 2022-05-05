@@ -16,14 +16,6 @@ window.onload = function () {
 
         });
 
-        $(administrativeDesignationField).on('change', function (event) {
-
-        })
-
-        $(administrativeRoleField).on('change', function (event) {
-
-        })
-
         $(refreshBtn).on('click', function (event) {
 
             if (containsEmptyField([administrativeDesignationField, administrativeRoleField])) {
@@ -130,7 +122,6 @@ window.onload = function () {
     }
 
     function callAjaxToDeleteAdministrative(facultyId, departmentId, programManagerId, courseAdvisorId) {
-        console.log(facultyId, departmentId, programManagerId, courseAdvisorId);
         $.ajax({
             type: "POST",
             url: "asset/operation/ViewAdministrativeAjax.php",
@@ -147,19 +138,17 @@ window.onload = function () {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (serverResponse, status) {
-            },
-            complete: function (response) {
-                let responseText = JSON.parse(response.responseText);
-                console.log("Message : ", JSON.parse(response.responseText))
-                if (responseText.message) {
+                let responseText = JSON.parse(serverResponse);
+                console.log("Message : ", JSON.parse(serverResponse))
+                if (responseText.status === 200) {
                     $("body").append(successfulMessageNotifier("Deleted Successfully", "The administrative role has been remove"));
                     $("#successNotifiedId").toggle("hidden").animate(
                         {right: 10}, 2000, function () {
+                            window.location.reload();
                             $(this).delay(100).fadeOut().remove();
                         });
                     $(toRemoveIndex).remove();
                 }
-
             }
         });
     }
@@ -180,10 +169,8 @@ window.onload = function () {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (serverResponse, status) {
-            },
-            complete: function (response) {
                 const refreshIntervalId = setInterval(function () {
-                    let responseText = JSON.parse(response.responseText)
+                    let responseText = JSON.parse(serverResponse)
                     $("tbody").children().slice(0).remove();
                     $("tbody").append(responseText.message);
                     $(refreshBtn).addClass("transform").removeClass("animate-spin")

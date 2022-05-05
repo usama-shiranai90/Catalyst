@@ -2,7 +2,7 @@
 /**
  * Things to Correct In Student Import Data Management.
  * 1.
-*/
+ */
 
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 session_start();
@@ -31,7 +31,7 @@ $duplicateList = array();
 $student = new StudentRole();
 $student->createStudentData(82, 'FUI/FURC-SP-15-BCSE-066', $studentList[0]['name'], $studentList[0]['fatherName'], $studentList[0]['contact'],
     $studentList[0]['bloodGroup'], $studentList[0]['address'], $studentList[0]['dob'], $studentList[0]['officialEmail'], $studentList[0]['personalEmail'], '324324', $duplicateList);
-print "wtf :" . json_encode($duplicateList);*/
+print "ajeeb :" . json_encode($duplicateList);*/
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['fetchSections'])) {
     if (isset($_POST['batchCode'])) {

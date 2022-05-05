@@ -27,37 +27,56 @@ class StudentRole extends UserRole
 
     function checkDuplication($studentCode, &$duplicateList): bool
     {
-        $sql = /** @lang text */
-            "select * from student where studentRegCode = '$studentCode'";
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from student where studentRegCode = ?');
+        $sanitizeStudentRegCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($studentCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('s', $sanitizeStudentRegCode);
 
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
-//            array_push($duplicateList, array($studentCode, true));
-            array_push($duplicateList, $studentCode);
-            return true;
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    array_push($duplicateList, $studentCode);
+                    return true;
+                }
+            }
         }
         return false;
     }
 
-    function modifiedStudentRecord($oldReg, $sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address, $dob, $officialMail, $personalMail, $authenticateCode): mysqli_result|bool
+    function modifiedStudentRecord($oldReg, $sectionCode, $registrationNumber, $name, $fatherName, $contact, $bloodGroup, $address,
+                                   $dob, $officialMail, $personalMail, $authenticateCode): mysqli_result|bool
     {
-        $sql = /** @lang text */
-            "UPDATE student SET studentRegCode= \"$registrationNumber\", name= \"$name\", fatherName= \"$fatherName\", contactNumber= \"$contact\", officialEmail= \"$officialMail\"
-            , personalEmail= \"$personalMail\", bloodGroup= \"$bloodGroup\", address= \"$address\", dateOfBirth= \"$dob\", authenticationCode = \"$authenticateCode\"
-             WHERE studentRegCode = \"$oldReg\" and  sectionCode= \"$sectionCode\"";
+        $prepareStatementUpdateQuery = $this->databaseConnection->prepare(query: "UPDATE student SET studentRegCode = ? , name= ? , fatherName= ?, contactNumber= ?,
+                   officialEmail= ?, personalEmail= ?, bloodGroup= ?, address= ?, dateOfBirth= ?, authenticationCode = ? 
+                    WHERE studentRegCode = ? and  sectionCode= ? ");
 
-        return $this->databaseConnection->query($sql);
+
+        $sanitizePreviousRegCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($oldReg, 'string'));
+        $sanitizeRegistrationCode = FormValidator::sanitizeUserInput($registrationNumber, 'string');
+
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $sanitizeName = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($name, 'string'));
+        $sanitizeFatherName = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($fatherName, 'string'));
+        $sanitizeContact = FormValidator::sanitizeUserInput($contact, 'int');
+        $sanitizeBloodGroup = FormValidator::sanitizeUserInput($bloodGroup, 'string');
+        $sanitizeAddress = FormValidator::sanitizeUserInput($address, 'string');
+        $sanitizeDOB = FormValidator::sanitizeUserInput($dob, 'string');
+        $sanitizeOfficialMail = FormValidator::sanitizeUserInput($officialMail, 'email');
+        $sanitizePersonalMail = FormValidator::sanitizeUserInput($personalMail, 'email');
+        $sanitizeAuthenticateCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($authenticateCode, 'string'));
+
+        $prepareStatementUpdateQuery->bind_param('sssisssssssi', $sanitizeRegistrationCode, $sanitizeName, $sanitizeFatherName,
+            $sanitizeContact, $sanitizeOfficialMail, $sanitizePersonalMail, $sanitizeBloodGroup, $sanitizeAddress, $sanitizeDOB, $sanitizeAuthenticateCode,
+            $sanitizePreviousRegCode, $sanitizeSectionCode);
+        return $prepareStatementUpdateQuery->execute() === TRUE;
     }
 
     public function deleteStudentRecord($studentRegCode): bool
     {
-        $sql = /** @lang text */
-            "delete from student where studentRegCode = \"$studentRegCode\";";
-        $result = $this->databaseConnection->query($sql);
-        if ($result === TRUE)
-            return true;
-        else
-            return false;
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "delete from student where studentRegCode = ? ");
+        $sanitizeStudentRegCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($studentRegCode, 'string'));
+        $prepareStatementDeleteQuery->bind_param('s', $sanitizeStudentRegCode);
+        return $prepareStatementDeleteQuery->execute() === TRUE;
     }
 
 
@@ -81,7 +100,7 @@ class StudentRole extends UserRole
         return false;
     }
 
-    function updateProfileInfo($name, $email, $contact , $regCode): bool
+    function updateProfileInfo($name, $email, $contact, $regCode): bool
     {
         $this->studentRegistrationCode = $regCode;
 
@@ -114,7 +133,6 @@ class StudentRole extends UserRole
         }
 
     }
-
 
 
     public function logout()

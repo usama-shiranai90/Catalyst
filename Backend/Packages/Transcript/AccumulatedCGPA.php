@@ -14,6 +14,11 @@ class AccumulatedCGPA implements JsonSerializable
         $this->databaseConnection = DatabaseSingleton::getConnection();
     }
 
+    /**
+     * S# function is used to get students latest cgpa.
+     * if no record found false.
+     * if record found true.
+     */
     function retrieveLatestCGPA($studentRegistrationCode): bool
     {
         $dbStatement = /** @lang text limit 1,1; */
@@ -34,7 +39,12 @@ class AccumulatedCGPA implements JsonSerializable
 //            echo "Cant fetch latest semester Data : " . $this->databaseConnection->error;
     }
 
-
+    /**
+     * S# function is used to get students all semester GPA List.
+     * if no record exist then return null
+     * if record exist/found return array.
+     * we only need to get student CGPA.
+     */
     function studentAllSemesterGPA($studentRegistrationCode): ?array
     {
         $gpaArray = [];
@@ -47,17 +57,17 @@ class AccumulatedCGPA implements JsonSerializable
             while ($row = $result->fetch_assoc()) {
                 array_push($gpaArray, $row['cgpa']);
             }
-        } else {
-//            echo "Cant fetch last semester Data : " . $this->databaseConnection->error;
+            return $gpaArray;
+        } else
             return null;
-        }
-
-//        array_push($gpaArray, "3.3", "3.9", "2.6" , "1.3");
-        return $gpaArray;
     }
 
-
-    function getProgramLearningOutcomeTranscriptStudent($studentCode,$semesterCode): ?array
+    /**
+     * S# function is used to get Student all Program Learning outcome PLO.
+     * if no record exist then return null
+     * if record exist/found return array.
+     */
+    function getProgramLearningOutcomeTranscriptStudent($studentCode, $semesterCode): ?array
     {
         $programLearningOutcomeArray = [];
         $dbStatement = /** @lang text */
@@ -76,13 +86,13 @@ class AccumulatedCGPA implements JsonSerializable
         $result = $this->databaseConnection->query($dbStatement);
         if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
-               $temp = array(
-                 "regNumber" => $row['studentRegCode'],
-                 "ploName" => $row['ploName'],
-                 "percentage" => $row['percentage'],
-               );
+                $temp = array(
+                    "regNumber" => $row['studentRegCode'],
+                    "ploName" => $row['ploName'],
+                    "percentage" => $row['percentage'],
+                );
 
-               array_push($programLearningOutcomeArray , $temp);
+                array_push($programLearningOutcomeArray, $temp);
             }
             return $programLearningOutcomeArray;
         } else

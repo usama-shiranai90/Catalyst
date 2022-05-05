@@ -51,100 +51,118 @@ class ProgramManagerRole extends UserRole
     public function getFacultyRole($facultyCode, &$respectiveRoles, $programCode = 'none'): bool
     {
         $flag = false;
-        $temp = array(
+        $adminStat = array(
             "hasRole" => false,
             "programCode" => 'none',
             "programName" => 'none',
         );
+
+        $prepareStatementSearchQuery = '';
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
         if (strcasecmp($programCode, 'none') === 0) {
-            $sql = /** @lang text */
-                "select facultyCode, p.programCode, departmentCode, programName from programmanager join program p on 
-                p.programCode = programmanager.programCode where facultyCode = \"$facultyCode\"; ";
+            $prepareStatementSearchQuery = $this->databaseConnection->prepare(query: "select facultyCode, p.programCode, departmentCode, programName from programmanager join program p on 
+                p.programCode = programmanager.programCode where facultyCode = ? ");
+            $prepareStatementSearchQuery->bind_param('s', $sanitizeFacultyCode);
 
         } else {
-            $sql = /** @lang text */
-                "select facultyCode, p.programCode, departmentCode, programName, programShortName from programmanager join program p on 
-                p.programCode = programmanager.programCode where facultyCode = \"$facultyCode\" and p.programCode = \"$programCode\" ";
-        }
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            while ($row = $authenticationResult->fetch_assoc()) {
-                $temp['hasRole'] = true;
-                $temp['programCode'] = $row['programCode'];
-                $temp['programName'] = $row['programShortName'];
-//                $temp['programName'] = checkProgramAbbreviation($row['programName']);
-                $respectiveRoles['PM'][] = $temp;
+            if (FormValidator::validateItem($programCode, 'int')) {
+                $prepareStatementSearchQuery = $this->databaseConnection->prepare(query: "select facultyCode, p.programCode, departmentCode, programName, programShortName from programmanager join program p on 
+                     p.programCode = programmanager.programCode where facultyCode = ? and p.programCode = ? ");
+                $sanitizeProgramCode = FormValidator::sanitizeUserInput($programCode, 'int');
+                $prepareStatementSearchQuery->bind_param('si', $sanitizeFacultyCode, $sanitizeProgramCode);
             }
-            $flag = true;
-        } else
-            $respectiveRoles['PM'][] = $temp;
+            // need to handle if invalid input is fetch.
+        }
 
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $adminStat['hasRole'] = true;
+                    $adminStat['programCode'] = $row['programCode'];
+                    $adminStat['programName'] = $row['programShortName'];
+//                $adminStat['programName'] = checkProgramAbbreviation($row['programName']);
+                    $respectiveRoles['PM'][] = $adminStat;
+                }
+                $flag = true;
+            } else
+                $respectiveRoles['PM'][] = $adminStat;
+        }
         return $flag;
     }
 
 
     public function assignProgramManagerRole($email, $password, $facultyCode, $programCode): bool
     {
-        $sql = /** @lang text */
-            "select facultyCode, programCode, officialEmail, password from programmanager where programCode = \"$programCode\"; ";
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select facultyCode, programCode, officialEmail, password 
+            from programmanager where programCode =  ? ;');
 
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            $secondSql = /** @lang text */
-                "UPDATE programmanager  SET facultyCode =  \"$facultyCode\" , officialEmail = \"$email\", password = \"$password\"
-            WHERE programCode = \"$programCode\";  ";
-            if ($this->databaseConnection->query($secondSql) === TRUE)
-                return true;
-        } else if (mysqli_num_rows($authenticationResult) === 0) {
+        $sanitizeProgramCode = FormValidator::sanitizeUserInput($programCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeProgramCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
 
-            $sql = /** @lang text */
-                "insert into programmanager(facultyCode, programCode, officialEmail, password)
-            VALUES (\"$facultyCode\" , \"$programCode\" , \"$email\", \"$password\"  );";
-            if ($this->databaseConnection->query($sql) === TRUE)
-                return true;
+            $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+            $sanitizeEmail = FormValidator::sanitizeUserInput($email, 'email');
+
+            if (mysqli_num_rows($result) > 0) {
+                $prepareStatementUpdateQuery = $this->databaseConnection->prepare(query: "UPDATE programmanager  SET facultyCode = ? , officialEmail = ?,
+                  password = ? WHERE programCode = ? ; ");
+                $prepareStatementUpdateQuery->bind_param('sssi', $sanitizeFacultyCode, $sanitizeEmail, $password, $sanitizeProgramCode);
+                return $prepareStatementUpdateQuery->execute() === TRUE;
+            } else if (mysqli_num_rows($result) === 0) {
+                $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "insert into programmanager(facultyCode, programCode, officialEmail, password)
+                     VALUES (? , ? ,? ,?) ;");
+                $prepareStatementInsertionQuery->bind_param('siss', $sanitizeFacultyCode, $sanitizeProgramCode, $sanitizeEmail, $password);
+                return $prepareStatementInsertionQuery->execute() === TRUE;
+            }
         }
         return false;
     }
-
 
     public function retrieveAdminRole($departmentCode, &$respectiveRoles): bool
     {
-        $temp = array("programCode" => '-', "facultyID" => '-', "name" => '-', "designation" => '-', "officialEmail" => '-', "roleName" => '-', 'ofOther' => '-');
-        $sql = /** @lang text */
-            "select pm.facultyCode, pm.programCode, pm.officialEmail, name, f.departmentCode ,designation , programName , programShortName
-            from programmanager pm
-                     join faculty f on pm.facultyCode = f.facultyCode join program p on pm.programCode = p.programCode
-            where f.departmentCode = \"$departmentCode\"; ";
+        $adminStat = array("programCode" => '-', "facultyID" => '-', "name" => '-', "designation" => '-', "officialEmail" => '-', "roleName" => '-', 'ofOther' => '-');
 
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            while ($row = $authenticationResult->fetch_assoc()) {
-                $temp['programCode'] = $row['programCode'];
-                $temp['facultyID'] = $row['facultyCode'];
-                $temp['name'] = $row['name'];
-                $temp['designation'] = $row['designation'];
-                $temp['officialEmail'] = $row['officialEmail'];
-                $temp['roleName'] = "Program Manager";
-//                $temp['ofOther'] = $row['programName'] . "( " . $row['programShortName'] . " )";
-                $temp['ofOther'] = $row['programShortName'];
-                $respectiveRoles['PM'][] = $temp;
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select pm.facultyCode, pm.programCode, pm.officialEmail, name, f.departmentCode ,
+            designation , programName , programShortName from programmanager pm join faculty f on pm.facultyCode = f.facultyCode 
+            join program p on pm.programCode = p.programCode where f.departmentCode  = ? ;');
+
+        $sanitizeDepartmentCode = FormValidator::sanitizeUserInput($departmentCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeDepartmentCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    print json_encode($row)."<br><br><br>";
+//                $adminStat['ofOther'] = $row['programName'] . "( " . $row['programShortName'] . " )";
+                    $adminStat['programCode'] = $row['programCode'];
+                    $adminStat['facultyID'] = $row['facultyCode'];
+                    $adminStat['name'] = $row['name'];
+                    $adminStat['designation'] = $row['designation'];
+
+                    $adminStat['officialEmail'] = $row['officialEmail'];
+                    $adminStat['roleName'] = "Program Manager";
+                    $adminStat['ofOther'] = $row['programShortName'];
+                    $respectiveRoles['PM'][] = $adminStat;
+                }
+                return true;
             }
-            return true;
         }
-        $respectiveRoles['HOD'][] = $temp;
+        $respectiveRoles['pm'][] = $adminStat;
         return false;
     }
 
-
-    public function deleteAdministrativeRole($facultyId, $programCode): bool
+    public function deleteAdministrativeRole($facultyCode, $programCode): bool
     {
-        $sql = /** @lang text */
-            "delete from programmanager where facultyCode = \"$facultyId\" and programCode =\"$programCode\" ;";
-        $result = $this->databaseConnection->query($sql);
-        if ($result === TRUE) {
-            return true;
-        } else
-            return false;
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "delete from programmanager 
+        where facultyCode = ? and programCode = ? ");
+
+        $sanitizeProgramCode = FormValidator::sanitizeUserInput($programCode, 'int');
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+        $prepareStatementDeleteQuery->bind_param('si', $sanitizeFacultyCode, $sanitizeProgramCode);
+        return $prepareStatementDeleteQuery->execute() === TRUE;
     }
 
 }

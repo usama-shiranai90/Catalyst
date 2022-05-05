@@ -7,7 +7,7 @@ $(document).on('input', 'tr > td', function (e) {
 function createOptionsListForProgramField(currentValue, programList) {
     let optionsList = '';
     for (let i = 0; i < programList.length; i++) {
-        if (currentValue === programList[i].departmentCode)
+        if (currentValue == programList[i].departmentCode)
             optionsList += `<option value="${programList[i].programCode}">${programList[i].programSN}</option>`;
     }
     return optionsList;
@@ -16,7 +16,7 @@ function createOptionsListForProgramField(currentValue, programList) {
 function createOptionsListForCurriculumField(currentValue, curriculumList) {
     let optionsList = '';
     for (let i = 0; i < curriculumList.length; i++) {
-        if (currentValue === curriculumList[i].programCode)
+        if (currentValue == curriculumList[i].programCode)
             optionsList += `<option value="${curriculumList[i].curriculumCode}">${curriculumList[i].curriculumName}</option>`;
     }
     return optionsList;
@@ -125,29 +125,35 @@ function createPaginationBar(tableID) {
 }
 
 
-function checkDuplication(TableContainer) {
+function checkDuplication(tableContainer) {
+    console.log(tableContainer)
+    console.log($(tableContainer).children("table"))
 
-    let values = [];
+    let uniqueTabularSetController = [];
     let hasDuplication = false;
-    $(TableContainer).children("table").each(function (index, value) {
-        values[index] = [];
+    let tabCounterShifter = 0;
+    $(tableContainer).children("table").each(function (index, value) {
+        console.log("inside table...");
+        let tabShifter = index + tabCounterShifter;
+        uniqueTabularSetController[tabShifter] = [];
         const col = $(value).eq(0).find('th').length;
         for (let i = 0; i < col; i++) {
-            values[index][i] = [];
+            uniqueTabularSetController[tabShifter][i] = [];
         }
         $(value).children("tbody").children("tr").each(function (tIndex, tValue) {
             $(tValue).find('td').each(function (i) {
                 if (i < 2 || i === 7 || i === 8) {
-                    if (values[index][i].indexOf($(this).text().replace(/\s\s+/g, ' ')) > -1) {
+                    if (uniqueTabularSetController[tabShifter][i].indexOf($(this).text().replace(/\s\s+/g, ' ')) > -1) {
                         $(this).addClass('bg-red-300 text-white');
                         hasDuplication = true;
                     }
-                    values[index][i].push($(this).text().replace(/\s\s+/g, ' '));
+                    uniqueTabularSetController[tabShifter][i].push($(this).text().replace(/\s\s+/g, ' '));
                 }
             });
         });
+        ++tabCounterShifter;
     });
-
+    console.log("uniqueTabularSetController : " , uniqueTabularSetController)
     return hasDuplication;
 }
 

@@ -19,7 +19,7 @@ $(document).ready(function () {
     /** Department Field */
     $(departmentField).on('change', function (e) {
         const departmentFieldValue = this.value;
-        if (departmentFieldValue.length !== 0 && (programList !== null)) {
+        if (departmentFieldValue.length != 0 && (programList !== null)) {
             let optionsList = createOptionsListForProgramField(departmentFieldValue, programList)
 
             $(programField).children().slice(1).remove();
@@ -32,12 +32,12 @@ $(document).ready(function () {
     /** program Field */
     $(programField).on('change', function (e) {
         let selectedSelection = this;
-        if (selectedSelection.value.length !== 0 && (programList !== null && batchList != null) &&
-            (departmentField.value.length !== 0 && programField.value.length !== 0)) {
-
+        if (selectedSelection.value.length != 0 && (programList !== null && batchList != null) &&
+            (departmentField.value.length != 0 && programField.value.length != 0)) {
             let optionsList = '';
             for (let i = 0; i < batchList.length; i++) {
-                if (programField.value === batchList[i].programCode) {
+                console.log(programField.value  ,  batchList[i].programCode)
+                if (programField.value == batchList[i].programCode) {
                     optionsList += `<option value="${batchList[i].batchCode}">${batchList[i].batchName}</option>`;
                 }
             }
@@ -54,8 +54,8 @@ $(document).ready(function () {
             // console.log(sectionList)
             if (sectionList[0] !== 0) {
                 let selectedSelection = this;
-                if (!(selectedSelection.value.length !== 0 && (programList !== null && batchList != null) &&
-                    (departmentField.value.length !== 0 && programField.value.length !== 0 && batchField.value.length !== 0))) {
+                if (!(selectedSelection.value.length != 0 && (programList != null && batchList != null) &&
+                    (departmentField.value.length != 0 && programField.value.length != 0 && batchField.value.length != 0))) {
                     return;
                 }
                 let optionsList = '';

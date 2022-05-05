@@ -76,6 +76,7 @@ function createAdditionalRow(currentCurriculumNo, plo) {
     const str = `<div id="creationCurriculumRow-${currentCurriculumNo}"
                              class="grid grid-cols-12 grid-rows-1 gap-0  w-auto learning-outcome-row h-auto overflow-hidden ">
                             <label for=""><input class="hidden" id="coc-r${currentCurriculumNo}" value="${plo.ploCode}"></label>
+                            
                             <div id="coc-number-r${currentCurriculumNo}"
                                  class="lweek-column border-l-0 text-white col-start-1 col-span-1 border-b-0">
                                 <label for="creationCurriculum-No-r-${currentCurriculumNo}">

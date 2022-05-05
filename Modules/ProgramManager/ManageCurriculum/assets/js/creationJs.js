@@ -123,7 +123,7 @@ window.onload = function (e) {
         curriculumCounter = iterateCurriculumRow(parentFormCurriculumContainer, parseInt(dischargedIndex), curriculumCounter, hasKeyFlag);
     }
 
-    /** the function is used to create additional row of PLO. */
+    /** the function is used to create row of PLO table. */
     function initialRowChecker() {
         let size = $(parentFormCurriculumContainer).children().length; // 2, get size of containers children i.e. header and curriculumRows.
         curriculumCounter = size; // assign that into curriculumCounter

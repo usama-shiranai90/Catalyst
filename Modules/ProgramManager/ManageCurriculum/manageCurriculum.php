@@ -26,7 +26,11 @@ print json_encode($curriculumList);
     <script src="assets/js/controlJs.js" rel="script"></script>
     <link href="../../../Assets/Stylesheets/Tailwind.css" rel="stylesheet">
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
-
+    <style>
+        input::placeholder {
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <div class="w-full min-h-full " style="background-color: #ECECF3">

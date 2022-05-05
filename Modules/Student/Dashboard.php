@@ -17,14 +17,17 @@ $enrolledCourseWithCLOArray = null;
 $totalEnrolledCourses = 0;
 $totalCreditHour = 0;
 
-// 
+// Object Creation for CGPA.
 $cgpa = new AccumulatedCGPA();
 $hasPreviousRecord = $cgpa->retrieveLatestCGPA($studentRegCode); // true or false.
 $studentSemesterGpaArray = $cgpa->studentAllSemesterGPA($studentRegCode); // null or array
 
+// Object Creation for Semester.
 $currentSemester = new Semester();
 $isPromotedToNewSemester = $currentSemester->retrieveCurrentSemester($batchCode);
-if ($isPromotedToNewSemester) {
+if ($isPromotedToNewSemester) { // check if student is promoted to new semester.
+
+    // gets students latest approved PLO List.
     $programLearningOutcomeList = $cgpa->getProgramLearningOutcomeTranscriptStudent($studentRegCode, $currentSemester->getSemesterCode());
 
     $enrolledCourses = new Course();

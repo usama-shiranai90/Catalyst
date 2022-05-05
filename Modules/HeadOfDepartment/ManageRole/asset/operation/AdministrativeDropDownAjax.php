@@ -21,9 +21,9 @@ if (isset($_POST['fetchAssociatedRole']) and $_POST['fetchAssociatedRole']) {
             $programCode = isProgramCodeArray($departmentCode);
             $respectiveRoles = AdministrativeRole::getAssociatedRoles($facultyCode, $programCode);
         }
-        $resultBackServer = updateServer(1, $respectiveRoles, "none");
+        $resultBackServer = updateServer(200, $respectiveRoles, SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
     } else
-        $resultBackServer = updateServer(-1, $respectiveRoles, "no-record");
+        $resultBackServer = updateServer(400, "Invalid program was provided / Internal Server issue. try again.", "ALERT " . SERVER_STATUS_CODES[400]);
 
     die(json_encode($resultBackServer));
 } elseif (isset($_POST['fetchBatch']) and $_POST['fetchBatch']) {
@@ -33,9 +33,9 @@ if (isset($_POST['fetchAssociatedRole']) and $_POST['fetchAssociatedRole']) {
     $batchList = $batch->retrieveBatchList($programCode);
 
     if ($batchList !== null)
-        $resultBackServer = updateServer(1, $batchList, "none");
+        $resultBackServer = updateServer(200, $batchList, SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
     else
-        $resultBackServer = updateServer(-1, $batchList, "no-record");
+        $resultBackServer = updateServer(500, "Error while fetching related batch list , try again or contact team. ", "ERROR " . SERVER_STATUS_CODES[500]);
 
     die(json_encode($resultBackServer));
 } elseif (isset($_POST['fetchSections']) and $_POST['fetchSections']) {
@@ -43,9 +43,9 @@ if (isset($_POST['fetchAssociatedRole']) and $_POST['fetchAssociatedRole']) {
     $section = new Section();
     $sectionlist = $section->retrieveSectionsList($batchCode);
     if ($sectionlist !== null)
-        $resultBackServer = updateServer(0, $sectionlist, "none");
+        $resultBackServer = updateServer(200, $sectionlist, SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
     else
-        $resultBackServer = updateServer(-1, $sectionlist, "no-record");
+        $resultBackServer = updateServer(500, "Error while fetching related section list , try again or contact team. ", "ERROR " . SERVER_STATUS_CODES[500]);
     die(json_encode($resultBackServer));
 }
 

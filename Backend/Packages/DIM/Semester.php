@@ -14,12 +14,13 @@ class Semester implements JsonSerializable
 
     public function createNewSemester($batchCode, $semesterName = 1): bool
     {
-        $sql = /** @lang text */
-            "insert into semester(batchCode, semesterName)
-             VALUES (\"$batchCode\" , \"$semesterName\" );";
+        $prepareStatementInsertionQuery = $this->databaseConnection->prepare("insert into semester(batchCode, semesterName)
+             VALUES (?,?)");
 
-        $result = $this->databaseConnection->query($sql);
-        if ($result) {
+        $sanitizeBatchCode = FormValidator::sanitizeUserInput($batchCode, 'int');
+        $sanitizeSemesterName = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($semesterName, 'string'));
+        $prepareStatementInsertionQuery->bind_param('is',  $sanitizeBatchCode, $sanitizeSemesterName);
+        if ($prepareStatementInsertionQuery->execute()) {
             $this->setSemesterCode($this->databaseConnection->insert_id);
             return true;
         }
@@ -48,18 +49,22 @@ class Semester implements JsonSerializable
     /**OneEyeOwl*/
     public function retrieveCurrentSemester($batchCode): bool
     {
-        $dbStatement = /** @lang text */
-            "select * from batch b join semester s on b.batchCode = s.batchCode where
-             b.batchCode = \"$batchCode\" order by s.semesterCode desc limit 1; ";
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from batch b join semester s on b.batchCode = s.batchCode where
+             b.batchCode = ? order by s.semesterCode desc limit 1; ;');
 
-        $result = $this->databaseConnection->query($dbStatement);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $this->semesterCode = $row["semesterCode"];
-                $this->semesterName = $row["semesterName"];
-                return true;
+        $sanitizeBatchCode = FormValidator::sanitizeUserInput($batchCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeBatchCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $this->semesterCode = $row["semesterCode"];
+                    $this->semesterName = $row["semesterName"];
+                    return true;
+                }
             }
         }
+
         return false;
     }
 

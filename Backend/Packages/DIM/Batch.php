@@ -18,15 +18,21 @@ class Batch implements JsonSerializable
         $this->databaseConnection = DatabaseSingleton::getConnection();
     }
 
-    public function createNewBatch($curriculumCode, $programCode, $seasonCode, $shortBatchName, $createdYear): bool
+    public function createNewBatch($curriculumCode, $programCode, $seasonCode, $shortBatchName, $seasonalName): bool
     {
-        $sql = /** @lang text */
-            "insert into batch(curriculumCode, programCode, year, seasonCode, batchName, dateCreated)
-             VALUES (\"$curriculumCode\" , \"$programCode\" , \"$createdYear\" ,\"$seasonCode\" ,
-             \"$shortBatchName\", NOW());";
 
-        $result = $this->databaseConnection->query($sql);
-        if ($result) {
+        $prepareStatementInsertionQuery = $this->databaseConnection->prepare("insert into batch(curriculumCode, programCode, year, seasonCode, batchName, dateCreated)
+             VALUES (?,?,?,?,? , NOW() )");
+
+        $sanitizeCurriculumCode = FormValidator::sanitizeUserInput($curriculumCode, 'int');
+        $sanitizeProgramCode = FormValidator::sanitizeUserInput($programCode, 'int');
+        $sanitizeSeasonCode = FormValidator::sanitizeUserInput($seasonCode, 'int');
+        $sanitizeCreatedYear = FormValidator::sanitizeUserInput($seasonalName, 'int'); // extract numeric from FALL 0000 .
+
+        $sanitizeShortBatchName = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($shortBatchName, 'string'));
+
+        $prepareStatementInsertionQuery->bind_param('iisis', $sanitizeCurriculumCode, $sanitizeProgramCode, $sanitizeCreatedYear, $sanitizeSeasonCode, $sanitizeShortBatchName);
+        if ($prepareStatementInsertionQuery->execute()) {
             $this->setBatchCode($this->databaseConnection->insert_id);
             return true;
         }
@@ -65,35 +71,30 @@ class Batch implements JsonSerializable
     }
 
 
-    public function retrieveEntireBatchList(): array
+    public function retrieveEntireBatchList(): ?array
     {
-        $sql = /** @lang text */
-            "select * from batch where year between
-    (select YEAR(DATE_SUB((select dateCreated from batch order by dateCreated desc limit 1), INTERVAL 5 year )))
-    and
-    (select year from batch order by year desc limit 1) order by dateCreated
-";
-        $result = $this->databaseConnection->query($sql);
-
         $listOfBatches = array();
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from batch where year between
+        (select YEAR(DATE_SUB((select dateCreated from batch order by dateCreated desc limit 1), INTERVAL 5 year )))
+        and (select year from batch order by year desc limit 1) order by dateCreated');
 
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = $result->fetch_assoc()) {
-                $temp = array(
-                    'batchCode' => $row['batchCode'],
-                    'batchName' => $row['batchName'],
-                    'curriculumCode' => $row['curriculumCode'],
-                    'seasonCode' => $row['seasonCode'],
-                    'programCode' => $row['programCode'],
-                );
-                array_push($listOfBatches, $temp);
-
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $temp = array(
+                        'batchCode' => $row['batchCode'],
+                        'batchName' => $row['batchName'],
+                        'curriculumCode' => $row['curriculumCode'],
+                        'seasonCode' => $row['seasonCode'],
+                        'programCode' => $row['programCode'],
+                    );
+                    array_push($listOfBatches, $temp);
+                }
             }
-        } else
-            echo "No batches found";
-
-        return $listOfBatches;
+            return $listOfBatches;
+        }
+        return null;
     }
 
 

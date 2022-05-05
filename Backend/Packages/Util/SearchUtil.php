@@ -100,4 +100,6 @@ function checkAdministrativePattern($word): int
     return -1;
 }
 
+
+
 ?>

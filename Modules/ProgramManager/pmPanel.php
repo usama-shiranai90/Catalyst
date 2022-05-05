@@ -4,7 +4,7 @@ session_start();
 
 $adminCode = $_SESSION['adminCode'];
 $programCode = $_SESSION['programCode'];
-$departmentCode = $_SESSION['departmentCode'];
+//$departmentCode = $_SESSION['departmentCode'];
 
 $program = new Program();
 $programName = $program->getProgramAbbreviation($programCode);

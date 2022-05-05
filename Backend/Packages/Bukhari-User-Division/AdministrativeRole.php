@@ -10,7 +10,7 @@ class AdministrativeRole
             return new HeadOfDepartmentRole();
         elseif ($containsPattern === 2)
             return new ProgramManagerRole();
-        elseif ($containsPattern === 3){
+        elseif ($containsPattern === 3) {
             return new CourseAdvisorRole();
         }
         return null;
@@ -34,15 +34,15 @@ class AdministrativeRole
     {
         $respectiveRoles = array();
         for ($i = 0; $i < 3; $i++) {
-            if ($i === 0) {
+            if ($i === 0)
                 self::forHeadOfDepartment($facultyCode, $respectiveRoles);
-            }
-            if ($i === 1) {
+
+            if ($i === 1)
                 self::forProgramManager($facultyCode, $programCode, $respectiveRoles);
-            }
-            if ($i === 2) {
+
+            if ($i === 2)
                 self::forCourseAdvisor($facultyCode, $programCode, $sectionCode, $respectiveRoles);
-            }
+
         }
         return $respectiveRoles;
     }

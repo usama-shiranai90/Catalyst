@@ -31,28 +31,30 @@ class FacultyRole extends UserRole implements JsonSerializable
         return false;
     }
 
-    public function retrieveFacultyListDepartment($departmentCode): ?array
+    /** retrieve all faculty list with respect to department. */
+    public function FetchFacultyListDepartment($departmentCode): ?array
     {
         $facultyList = array();
-        $dbStatement = /** @lang text */
-            "select facultyCode, name, CNIC, officialEmail, personalEmail, address, contactNumber, 
-             designation, departmentCode from faculty where departmentCode = \"$departmentCode\"";
+        $prepareStatementWithQuery = $this->databaseConnection->prepare(query: 'select facultyCode, name, CNIC, officialEmail, personalEmail, address, contactNumber, 
+             designation, departmentCode from faculty where departmentCode = ?');
+        $prepareStatementWithQuery->bind_param('i', $departmentCode);
 
-        $result = $this->databaseConnection->query($dbStatement);
-        if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $facultyObject = new FacultyRole();
-                $facultyObject->facultyCode = $row["facultyCode"] . "<br>";
-                $facultyObject->setPersonalInfo($row);
-                $facultyList[] = $facultyObject;
-                //                echo json_encode($row)."<br><br><br><br>";
-                //                $facultyObject->setUserDataInstance(/** @lang text */ "select * from faculty where facultyCode = '$facultyObject->facultyCode'", $facultyObject->facultyCode);
-                //                print_r(json_encode($facultyList)."<br><br>");
+        if ($prepareStatementWithQuery->execute()) {
+            $result = $prepareStatementWithQuery->get_result();
+            if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $facultyObject = new FacultyRole();
+                    $facultyObject->facultyCode = $row["facultyCode"] . "<br>";
+                    $facultyObject->setPersonalInfo($row);
+                    $facultyList[] = $facultyObject;
+                    /*  echo json_encode($row)."<br><br><br><br>";
+                      $facultyObject->setUserDataInstance("select * from faculty where facultyCode = '$facultyObject->facultyCode'", $facultyObject->facultyCode);
+                      print_r(json_encode($facultyList)."<br><br>");*/
+                }
+                return $facultyList;
             }
-            return $facultyList;
         }
         return null;
-
     }
 
 

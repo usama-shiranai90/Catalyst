@@ -7,9 +7,10 @@ $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];
 
 $listOfAllocatedAdministratorRolesList = AdministrativeRole::retrieveListOfAdminRoles($departmentCode);
-///*foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
-//    foreach ($role as $selectedFaculty)
-//        print json_encode($selectedFaculty);*/
+foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
+    foreach ($role as $selectedFaculty)
+        print json_encode($selectedFaculty)."<br>";
+
 
 ?>
 <!doctype html>

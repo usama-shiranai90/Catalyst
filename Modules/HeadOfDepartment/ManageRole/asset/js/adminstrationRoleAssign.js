@@ -222,22 +222,25 @@ window.onload = function () {
                 if (facultyBindField.value !== undefined && facultyBindField.value.length !== 0
                     && facultyBindField.value !== "") {
                     respectiveRolesList = callAjaxForFacultyRole(facultyBindField.value); // call the function ajax to get faculty instance role.
-                    console.log("respectiveRolesList " , respectiveRolesList)
-                    $(Object.entries(respectiveRolesList)).each(function (index, value) {
-                        checkRoleRepetition(value[0], value[1]);
-                        // first parameter = key , second parameter = key array of related role Object.
-                    })
-                    disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0);
-                    displayAdministrativeRole(respectiveRolesList)
-                    // name = $(selectedTag).children(`option[value=${facultyBindField.value}]`).text();
-                    generateUserEmail()
+
+                    if (respectiveRolesList !== -1) {
+                        console.log("respectiveRolesList ", respectiveRolesList)
+                        $(Object.entries(respectiveRolesList)).each(function (index, value) {
+                            checkRoleRepetition(value[0], value[1]);
+                            // first parameter = key , second parameter = key array of related role Object.
+                        })
+                        disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0);
+                        displayAdministrativeRole(respectiveRolesList)
+                        // name = $(selectedTag).children(`option[value=${facultyBindField.value}]`).text();
+                        generateUserEmail()
+                    }
 
                 }
                 break;
 
             case "faculty": // major role for binding of fields.
                 for (let i = 0; i < facultyInstanceList.length; i++) {
-                    console.log(userId, selectedTag.value, facultyInstanceList[i].fc)
+                    // console.log(userId, selectedTag.value, facultyInstanceList[i].fc)
 
                     if (userId === selectedTag.value && selectedTag.value === facultyInstanceList[i].fc)
                         // the current Head of department is selected.
@@ -246,21 +249,24 @@ window.onload = function () {
                     if (selectedTag.value === facultyInstanceList[i].fc) {
 
                         respectiveRolesList = callAjaxForFacultyRole(selectedTag.value); // call the function ajax to get faculty instance role.
-                        console.log("respectiveRolesList" , respectiveRolesList)
 
-                        $(Object.entries(respectiveRolesList)).each(function (index, value) {
-                            checkRoleRepetition(value[0], value[1]); // first parameter = key , second parameter = key array of related role Object.
-                        })
+                        if (respectiveRolesList !== -1) {
+                            $(Object.entries(respectiveRolesList)).each(function (index, value) {
+                                checkRoleRepetition(value[0], value[1]); // first parameter = key , second parameter = key array of related role Object.
+                            })
+                            if (facultyBindField.value.length !== 0 && programField.value.length !== 0)
+                                callAjaxForSeasonDropDown(programField.value);
+                        }
 
-                        if (facultyBindField.value.length !== 0 && programField.value.length !== 0)
-                            callAjaxForSeasonDropDown(programField.value);
                     }
                 }
 
-                disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0);
-                displayAdministrativeRole(respectiveRolesList)
-                // name = $(selectedTag).children(`option[value=${facultyBindField.value}]`).text();
-                generateUserEmail()
+                if (respectiveRolesList !== -1) {
+                    disabledSpecificRoleContainer(isHeadOfDepartment, isProgramManager, isCourseAdvisor, 0);
+                    displayAdministrativeRole(respectiveRolesList)
+                    // name = $(selectedTag).children(`option[value=${facultyBindField.value}]`).text();
+                    generateUserEmail()
+                }
                 break;
 
             case "season":
@@ -268,7 +274,7 @@ window.onload = function () {
                     let sectionList = callAjaxForSectionDropDown(caSeasonField.value);
                     // will execute only for course advisor.
                     $(Object.entries(respectiveRolesList)).each(function (index, value) {
-                        if (value.length > 1 && value[0] === 'CA')
+                        if (value.length > 1 && value[0] === 'CA' && sectionList !== -1)
                             checkRoleRepetition(value[0], value[1], sectionList);
                     });
                 }
@@ -362,8 +368,7 @@ window.onload = function () {
                     })
                     if (toSkipProgramArray.length === programList.length)
                         isProgramManager = true;
-                }
-                else if (adminRoleArray.length === 1 && sectionList.length === 0) {  // for single program manager.
+                } else if (adminRoleArray.length === 1 && sectionList.length === 0) {  // for single program manager.
                     $(adminRoleArray).each(function (index, value) {
                         if (value.hasRole && programList.includes(value.programCode))// programList[i] === v.programCode
                             toDisableSelectionOptions = true;
@@ -372,7 +377,7 @@ window.onload = function () {
 
                 if (toDisableSelectionOptions) {
                     $(programField).children(`option[value=${programField.value}]`).attr("disabled", true).css({cursor: 'no-drop'});
-                     programField.value = 'all';
+                    programField.value = 'all';
                 } else
                     $(programField).children().each(function (i, v) {
                         $(v).attr("disabled", false)
@@ -417,7 +422,7 @@ window.onload = function () {
             $(listNumber).addClass("flex text-gray-600 mb-1 text-sm font-medium");
 
             let key = rolesKeyList[i]; // PM
-            console.log("key :", key, respectiveRolesList[key], respectiveRolesList[key].length)
+            // console.log("key :", key, respectiveRolesList[key], respectiveRolesList[key].length)
             if (respectiveRolesList[key].length > 1) { // more than one role.
                 let hasRole = [];
                 for (let j = 0; j < respectiveRolesList[key].length; j++)
@@ -431,19 +436,16 @@ window.onload = function () {
                         createRolesListSection(listNumber, respectiveRolesList[key][j], rolesKeyList, i);
                         $("#roleDetailListId").append(listNumber);
                     }
-                }
-                else if (hasRole.includes(true) && totalTrues === 1) {
+                } else if (hasRole.includes(true) && totalTrues === 1) {
                     let indexOf = hasRole.indexOf(true);
                     createRolesListSection(listNumber, respectiveRolesList[key][indexOf], rolesKeyList, i);
                     $("#roleDetailListId").append(listNumber);
-                }
-                else {
+                } else {
                     createRolesListSection(listNumber, respectiveRolesList[key][0], rolesKeyList, i);
                     $("#roleDetailListId").append(listNumber);
                 }
 
-            }
-            else {
+            } else {
                 createRolesListSection(listNumber, respectiveRolesList[key][0], rolesKeyList, i);
                 $("#roleDetailListId").append(listNumber);
             }
@@ -509,19 +511,21 @@ window.onload = function () {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (serverResponse, status) {
-                getValue = JSON.parse(serverResponse).message;
-                // console.log("Call Ajax For Faculty Role Status : ", getValue)
-            },
-            complete: function (response) {
-                let responseText = JSON.parse(response.responseText)
-                if ((responseText.status === 1 && responseText.errors === 'none') || responseText.status !== 200) {
+
+                let responseText = JSON.parse(serverResponse)
+                if (responseText.status === 200) {
                     getValue = responseText.message;
+                } else {
+                    // ERROR Notification.
+                    getValue = -1;
                 }
             }
         });
         return getValue;
     }
 
+    /** function is called when faculty is selected for Course Advisor Season.
+     * return value is not used for now. */
     function callAjaxForSeasonDropDown(programCode) {
         let returnValue;
         $.ajax({
@@ -537,28 +541,31 @@ window.onload = function () {
             },
             success: function (serverResponse, status) {
 
-                returnValue = JSON.parse(serverResponse).message;
-            },
-            complete: function (response) {
-                let responseText = JSON.parse(response.responseText)
+                let responseText = JSON.parse(serverResponse)
                 console.log("Ajax Call status for Season : ", responseText)
-                if ((responseText.status === 1 && responseText.errors === 'none')) {
-                    if (response.status !== -1) {
-                        returnValue = responseText.message;
-                        let optionsList = '';
-                        for (let i = 0; i < returnValue.length; i++) {
-                            let option = `<option value="${returnValue[i].batchCode}">${returnValue[i].batchName}</option>`;
-                            optionsList += option;
-                        }
-                        $(caSeasonField).children().slice(1).remove();
-                        $(caSeasonField).append(optionsList);
+                if (responseText.status === 200) {
+                    returnValue = responseText.message;
+                    let optionsList = '';
+                    for (let i = 0; i < returnValue.length; i++) {
+                        let option = `<option value="${returnValue[i].batchCode}">${returnValue[i].batchName}</option>`;
+                        optionsList += option;
                     }
+                    $(caSeasonField).children().slice(1).remove();
+                    $(caSeasonField).append(optionsList);
+                    returnValue = responseText.message;            // returnValue = JSON.parse(serverResponse).message;
+                } else {
+                    // ERROR NOTIFICATION
+                    returnValue = -1;
                 }
+
             }
         });
         return returnValue;
     }
 
+    /** function is called when user select season.
+     * return value is -1 when server response with back request/ no record found.
+     * else returns a list of sections. */
     function callAjaxForSectionDropDown(batchCode) {
         let returnValue;
         $.ajax({
@@ -573,15 +580,19 @@ window.onload = function () {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (serverResponse, status) {
-                returnValue = JSON.parse(serverResponse).message;
-            },
-            complete: function (response) {
-                let responseText = JSON.parse(response.responseText)
-                returnValue = responseText.message;
+                let responseText = JSON.parse(serverResponse)
+                console.log("Ajax Call status for section : ", responseText)
+                if (responseText.status === 200)
+                    returnValue = responseText.message;            // returnValue = JSON.parse(serverResponse).message;
+                else {
+                    // ERROR NOTIFICATION
+                    returnValue = -1;
+                }
             }
         });
         return returnValue;
     }
+
 
     function callAjaxCreateNewRole(email, password, facultyCode, startDate,
                                    programCode = -1, seasonCode = -1, sectionCode = -1) {
@@ -600,24 +611,22 @@ window.onload = function () {
                 sectionCode: sectionCode,
             },
             beforeSend: function (request, settings) {
-                start_time = new Date().getTime();
-                console.log("start time : ", start_time);
+                // start_time = new Date().getTime();
+                // console.log("start time : ", start_time);
                 $("main").toggleClass("blur-filter");
                 $('body').append(processLoaderAnimation());
                 $('#loader').toggleClass('hidden')
-                $("#loader").fadeIn(start_time);
+                $("#loader").fadeIn(3000);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (serverResponse, status) {
+                // let request_time = new Date().getTime() - start_time;
+                // console.log("request_time : ", request_time);
 
-            },
-            complete: function (response) {
-                let request_time = new Date().getTime() - start_time;
-                console.log("request_time : ", request_time);
-
-                let responseText = JSON.parse(response.responseText)
+                let responseText = JSON.parse(serverResponse)
+                console.log("successful : " + responseText)
                 switch (responseText.status) {
                     case 200:
                         loaderAnimation(responseText, 3000);
@@ -659,6 +668,7 @@ window.onload = function () {
             $("body").append(successfulMessageNotifier(responseText.errors, responseText.message));
             $("#successNotifiedId").toggle("hidden").animate(
                 {right: 0}, timerS, function () {
+                    window.location.reload();
                     $(this).delay(timerE).fadeOut().remove();
                 }).removeAttr("style").removeClass("hidden");
         }
@@ -723,6 +733,10 @@ window.onload = function () {
         });
     }
 }
+
+// console.log(window.navigator.msSaveBlob)
+// var URL = window.URL || window.webkitURL;
+// console.log(URL)
 /** Old Code , when Faculty Object Instance is returned */
 /*$(designationField).on('change', function (event) {
     let optionsList = "";

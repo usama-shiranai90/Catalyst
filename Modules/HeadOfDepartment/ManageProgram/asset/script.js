@@ -25,14 +25,26 @@ $(document).ready(function () {
         // if fields are empty then e.prevent else show successfully message.
         if (!containsEmptyField([programNameInputField, programAbbreviationNameInputField])) {
             e.preventDefault();
-        } else {
-
-            $("body").append(successfulMessageNotifier("created successfully", "New Program Has been created successfully."));
-            $("#successNotifiedId").toggle("hidden").animate(
-                {right: 10}, 60000, function () {
-                    $(this).delay(4000).fadeOut().remove();
+            $("body").append(popupErrorNotifier("Empty Field", "Please Complete All fields to continue."));
+            $("#errorMessageDiv").toggle("hidden").animate(
+                {right: 0,}, 5000, function () {
+                    $(this).delay(1000).fadeOut().remove();
                 });
-            $(this).unbind('click').click();
+        } else {
+            console.log($('form[method="post"]').serialize())
+            $.post(
+                "manageProgram.php",
+                $("form").serialize() + "&createProgramBtn='true'",
+                function (data) {
+                    console.log("message :", JSON.parse(data))
+                    $("body").append(successfulMessageNotifier("created successfully", "New Program Has been created successfully."));
+                    $("#successNotifiedId").toggle("hidden").animate(
+                        {right: 0}, 4000, function () {
+                            window.location.reload();
+                            $(this).delay(5000).fadeOut().remove();
+                        });
+                }
+            );
         }
     });
 
@@ -75,7 +87,6 @@ $(document).ready(function () {
 
     /** Section for Program Management. */
     $(document).on('click', 'button[id^=performRoleEdit-]', function (e) {
-        // updateProgramList = $(this).closest("tr").attr("data-program-state");
         let programCode = $(this).closest("tr").attr("data-program-state");
         updateProgramList.push(programCode);
 
@@ -119,8 +130,10 @@ $(document).ready(function () {
 
     $(saveBtn).on('click', function (e) {
         e.preventDefault();
-        updateMyProgramList();
+        updateMyProgramList(updateProgramList);
+
         if (deletedProgramList.length > 0 && Object.entries(updateProgramList).length > 0) {
+            console.log("inside both")
             callAjaxForProgramDeletion(deletedProgramList);
             callAjaxForProgramModify(updateProgramList);
         } else if (deletedProgramList.length > 0)
@@ -140,9 +153,9 @@ function convertIntoAbb(name) {
         }).join('');
 }
 
-function updateMyProgramList() {
+function updateMyProgramList(updateProgramList) {
     let tempList = {};
-    console.log("before updateProgramList " , updateProgramList)
+    // console.log("before updateProgramList ", updateProgramList)
     if (Object.entries(updateProgramList).length !== 0) {
         $("tbody").children().each(function (tableRowIndex, tableRowValue) { // iterate for tr.
             let currentRowId = $(tableRowValue).attr("data-program-state");
@@ -159,7 +172,7 @@ function updateMyProgramList() {
             }
         });
         updateProgramList = tempList;
-        console.log("updateProgramList ",  updateProgramList);
+        // console.log("updateProgramList ", updateProgramList);
     }
 }
 
@@ -173,17 +186,31 @@ function callAjaxForProgramDeletion(deletedProgramList) {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
+            if (textStatus === 'timeout') {
+            } else if (textStatus === 'error') {
+            }
         },
         success: function (serverResponse, status) {
+            let responseText = JSON.parse(serverResponse)
+            console.log(responseText);
 
-        },
-        complete: function (response) {
-            let responseText = JSON.parse(response.responseText)
-            console.log("Well : ", responseText);
+            if (responseText.status !== 1) {
+                $("body").append(successfulMessageNotifier("Deleted successfully", responseText.message));
+                $("#successNotifiedId").toggle("hidden").animate(
+                    {right: 0}, 1000, function () {
+                        $(this).delay(2000).fadeOut().remove();
+                    });
+            } else {
+                $("body").append(popupErrorNotifier("SERVER RESPONSE", responseText.message));
+                $("#errorMessageDiv").toggle("hidden").animate(
+                    {right: 0,}, 5000, function () {
+                        $(this).delay(1000).fadeOut().remove();
+                    });
+            }
+
         }
     });
 }
-
 
 function callAjaxForProgramModify(updateProgramList) {
     $.ajax({
@@ -201,7 +228,7 @@ function callAjaxForProgramModify(updateProgramList) {
         },
         complete: function (response) {
             let responseText = JSON.parse(response.responseText)
-            console.log("Well : ", responseText);
+
         }
     });
 }

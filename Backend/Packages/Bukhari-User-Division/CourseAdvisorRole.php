@@ -70,94 +70,105 @@ class CourseAdvisorRole extends UserRole
 
     public function getFacultyRole($facultyCode, &$respectiveRoles, $programCode = 'none', $sectionCode = 'none'): bool
     {
-        /*select facultyCode, s.sectionCode, s2.semesterCode, sectionName ,programCode from courseadvisor join section s on s.sectionCode = courseadvisor.sectionCode inner join semester s2 on s.semesterCode = s2.semesterCode
-    inner join batch b on s2.batchCode = b.batchCode*/
-        /*select facultyCode, s.sectionCode, semesterCode, sectionName from courseadvisor join section s on
-                 s.sectionCode = courseadvisor.sectionCode where facultyCode*/
         $flag = false;
-        $temp = array(
+        $adminStat = array(
             "hasRole" => false,
             "programCode" => 'none',
             "sectionCode" => 'none',
             "sectionName" => 'none',
         );
-
-        if (strcasecmp($programCode, 'none') === 0 and strcasecmp($sectionCode, 'none') === 0)
-            $sql = /** @lang text */
-                "select facultyCode, s.sectionCode, s2.semesterCode, sectionName, batchName ,programCode from courseadvisor join section s on s.sectionCode = courseadvisor.sectionCode inner join semester s2 on s.semesterCode = s2.semesterCode
-                 inner join batch b on s2.batchCode = b.batchCode where facultyCode = \"$facultyCode\"; ";
-
-        else
-            $sql = /** @lang text */
-                "select facultyCode, s.sectionCode, s2.semesterCode, sectionName , batchName ,programCode from courseadvisor join section s on s.sectionCode = courseadvisor.sectionCode inner join semester s2 on s.semesterCode = s2.semesterCode
-                 inner join batch b on s2.batchCode = b.batchCode where facultyCode = \"$facultyCode\"  and programCode = \"$programCode\" and s.sectionCode =  \"$sectionCode\" ";
-
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            while ($row = $authenticationResult->fetch_assoc()) {
-                $temp['hasRole'] = true;
-                $temp['programCode'] = $row['programCode'];
-                $temp['sectionCode'] = $row['sectionCode'];
-                $temp['sectionName'] = $row['sectionName'];
-                $temp['batchName'] = $row['batchName'];
-                $respectiveRoles['CA'][] = $temp;
-            }
-            $flag = true;
+        $prepareStatementSearchQuery = '';
+        if (strcasecmp($programCode, 'none') === 0 and strcasecmp($sectionCode, 'none') === 0) {
+            $prepareStatementSearchQuery = $this->databaseConnection->prepare(query: "select facultyCode, s.sectionCode, s2.semesterCode, sectionName, batchName ,programCode from courseadvisor join section s on s.sectionCode = courseadvisor.sectionCode inner join semester s2 on s.semesterCode = s2.semesterCode
+                 inner join batch b on s2.batchCode = b.batchCode where facultyCode = ? ");
+            $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+            $prepareStatementSearchQuery->bind_param('s', $sanitizeFacultyCode);
         } else
-            $respectiveRoles['CA'][] = $temp;
+            if (FormValidator::validateItem($programCode, 'int') && FormValidator::validateItem($sectionCode, 'int')) {
+                $prepareStatementSearchQuery = $this->databaseConnection->prepare(query: "select facultyCode, s.sectionCode, s2.semesterCode, sectionName , batchName ,programCode from courseadvisor join section s on s.sectionCode = courseadvisor.sectionCode inner join semester s2 on s.semesterCode = s2.semesterCode
+                 inner join batch b on s2.batchCode = b.batchCode where facultyCode = ? and programCode = ? and s.sectionCode =  ? ");
 
+                $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+                $sanitizeProgramCode = FormValidator::sanitizeUserInput($programCode, 'int');
+                $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+                $prepareStatementSearchQuery->bind_param('sii', $sanitizeFacultyCode, $sanitizeProgramCode, $sanitizeSectionCode);
+            }
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $adminStat['hasRole'] = true;
+                    $adminStat['programCode'] = $row['programCode'];
+                    $adminStat['sectionCode'] = $row['sectionCode'];
+                    $adminStat['sectionName'] = $row['sectionName'];
+                    $adminStat['batchName'] = $row['batchName'];
+                    $respectiveRoles['CA'][] = $adminStat;
+                }
+                $flag = true;
+            } else
+                $respectiveRoles['CA'][] = $adminStat;
+        }
         return $flag;
     }
 
     public function assignCourseAdvisor($email, $password, $facultyCode, $sectionCode): bool
     {
-        $sql = /** @lang text */
-            "select facultyCode, sectionCode, officialEmail, password from courseadvisor where sectionCode = \"$sectionCode\"; ";
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select facultyCode, sectionCode, officialEmail, password
+        from courseadvisor where sectionCode = ? ;');
 
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            $secondSql = /** @lang text */
-                "UPDATE courseadvisor  SET facultyCode =  \"$facultyCode\" , officialEmail = \"$email\", password = \"$password\"
-            WHERE sectionCode = \"$sectionCode\";  ";
-            if ($this->databaseConnection->query($secondSql) === TRUE)
-                return true;
-        } else if (mysqli_num_rows($authenticationResult) === 0) {
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeSectionCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
 
-            $sql = /** @lang text */
-                "insert into courseadvisor(facultyCode, sectionCode, officialEmail, password)
-            VALUES (\"$facultyCode\" , \"$sectionCode\" , \"$email\", \"$password\"  );";
-            if ($this->databaseConnection->query($sql) === TRUE)
-                return true;
+            $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+            $sanitizeEmail = FormValidator::sanitizeUserInput($email, 'email');
+
+            if (mysqli_num_rows($result) > 0) {
+                $prepareStatementUpdateQuery = $this->databaseConnection->prepare(query: "UPDATE courseadvisor SET facultyCode =  ? , officialEmail = ?, password = ?
+                WHERE sectionCode = ? ;");
+                $prepareStatementUpdateQuery->bind_param('sssi', $sanitizeFacultyCode, $sanitizeEmail, $password, $sanitizeSectionCode);
+                return $prepareStatementUpdateQuery->execute() === TRUE;
+            } else if (mysqli_num_rows($result) === 0) {
+                $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "insert into courseadvisor(facultyCode, sectionCode, officialEmail, password)
+                values (? , ? ,? ,?);");
+                $prepareStatementInsertionQuery->bind_param('siss', $sanitizeFacultyCode, $sanitizeSectionCode, $sanitizeEmail, $password);
+                return $prepareStatementInsertionQuery->execute() === TRUE;
+            }
         }
         return false;
     }
 
     public function retrieveAdminRole($departmentCode, &$respectiveRoles): bool
     {
-        $temp = array("sectionCode" => '-', "facultyID" => '-', "name" => '-', "designation" => '-', "officialEmail" => '-', "roleName" => '-', 'ofOther' => '-');
-        $sql = /** @lang text */
-            "select ca.facultyCode,  ca.sectionCode, ca.officialEmail, name, designation, departmentCode , sectionName , batchName , semesterName
-                from courseadvisor ca
-                         join faculty f on ca.facultyCode = f.facultyCode  join section s on ca.sectionCode = s.sectionCode
-                        join semester s2 on s.semesterCode = s2.semesterCode join batch b on s2.batchCode = b.batchCode
-                where departmentCode  = \"$departmentCode\"; ";
+        $adminStat = array("sectionCode" => '-', "facultyID" => '-', "name" => '-', "designation" => '-', "officialEmail" => '-', "roleName" => '-', 'ofOther' => '-');
 
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            while ($row = $authenticationResult->fetch_assoc()) {
-                $temp['sectionCode'] = $row['sectionCode'];
-                $temp['facultyID'] = $row['facultyCode'];
-                $temp['name'] = $row['name'];
-                $temp['designation'] = $row['designation'];
-                $temp['officialEmail'] = $row['officialEmail'];
-                $temp['roleName'] = "Course Advisor";
-//                $temp['ofOther'] = $row['batchName']." for   of section ".$row['sectionName']." ";
-                $temp['ofOther'] = $this->ordinal($row['semesterName']) . " semester " . $row['batchName'] . " of section: " . $row['sectionName'];
-                $respectiveRoles['CA'][] = $temp;
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select ca.facultyCode,  ca.sectionCode, ca.officialEmail, name, designation, departmentCode , 
+            sectionName , batchName , semesterName from courseadvisor ca join faculty f on 
+            ca.facultyCode = f.facultyCode  join section s on ca.sectionCode = s.sectionCode
+            join semester s2 on s.semesterCode = s2.semesterCode join batch b on s2.batchCode = b.batchCode
+            where departmentCode  = ? ;');
+
+        $sanitizeDepartmentCode = FormValidator::sanitizeUserInput($departmentCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeDepartmentCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $adminStat['sectionCode'] = $row['sectionCode'];
+                    $adminStat['facultyID'] = $row['facultyCode'];
+                    $adminStat['name'] = $row['name'];
+                    $adminStat['designation'] = $row['designation'];
+                    $adminStat['officialEmail'] = $row['officialEmail'];
+                    $adminStat['roleName'] = "Course Advisor";
+                    $adminStat['ofOther'] = $this->ordinal($row['semesterName']) . " semester " . $row['batchName'] . " of section: " . $row['sectionName'];
+                    $respectiveRoles['CA'][] = $adminStat;
+                }
+                return true;
             }
-            return true;
         }
-        $respectiveRoles['HOD'][] = $temp;
+        $respectiveRoles['CA'][] = $adminStat;
         return false;
     }
 
@@ -171,15 +182,15 @@ class CourseAdvisorRole extends UserRole
     }
 
 
-    public function deleteAdministrativeRole($facultyId, $sectionCode): bool
+    public function deleteAdministrativeRole($facultyCode, $sectionCode): bool
     {
-        $sql = /** @lang text */
-            "delete from courseadvisor where facultyCode = \"$facultyId\" and sectionCode =  \"$sectionCode\" ;";
-        $result = $this->databaseConnection->query($sql);
-        if ($result === TRUE)
-            return true;
-        else
-            return false;
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "delete from courseadvisor where  
+                                   facultyCode = ? and sectionCode = ? ");
+
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+        $prepareStatementDeleteQuery->bind_param('si', $sanitizeFacultyCode, $sanitizeSectionCode);
+        return $prepareStatementDeleteQuery->execute() === TRUE;
     }
 
 }

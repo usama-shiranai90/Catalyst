@@ -23,7 +23,6 @@ foreach ($seasonList as $sName)
     array_push($tempSeasonNameList, $sName->getSeasonName());
 //    array_push($tempSeasonNameList, (int)filter_var($sName->getSeasonName(), FILTER_SANITIZE_NUMBER_INT));
 
-
 ?>
 
 <!doctype html>
@@ -289,6 +288,11 @@ foreach ($seasonList as $sName)
     let departmentList = <?php echo json_encode($departmentList);?>;
     let programList =  <?php echo json_encode($programList);?>;
     let curriculumList =  <?php echo json_encode($curriculumList);?>;
+
+    console.log(departmentList)
+    console.log(programList)
+    console.log(curriculumList)
+
 </script>
 
 <script src="assets/Js/FileImport.js"></script>

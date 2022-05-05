@@ -26,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             /**
              * Procedural action for performing newly imported data of student.
+             *
+             * firstly check if any of the given record code already exist in DB.
+             * if exist throw error and die.
+             * else continue the following:
              * 1. create new season.
              * 2. assign programCode , CurriculumCode and SeasonCode  , AND create new batch.
              * 3. create new semester and provide batchCode with semester no i.e. 1
@@ -33,16 +37,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              * 5. create new student
              */
 
+            // for checking any duplication exist...
+            foreach ($studentArrayList as $key => $studentListPerSection) {
+                $duplicateList = checkStudentDuplication($studentListPerSection);
+                if (!empty($duplicateList) and count($duplicateList) !== 0) { // $duplicateList is empty
+                    $resultBackServer = updateServer(501, $duplicateList, "ERROR |" . SERVER_STATUS_CODES[501]);
+                    die(json_encode($resultBackServer));
+                }
+            }
+
             // for creation of new season.
             $season = new Season();
             $isSeasonCreated = $season->createNewSeason($seasonName);
 
             if ($isSeasonCreated) {
                 $seasonCode = $season->getSeasonCode();
-                $createdYear = filter_var($seasonFName, FILTER_SANITIZE_NUMBER_INT);
+//                $createdYear = filter_var($seasonFName, FILTER_SANITIZE_NUMBER_INT);
+
                 // for creation of new batch.
                 $batch = new Batch();
-                $isBatchCreated = $batch->createNewBatch($curriculumCode, $programCode, $seasonCode, $seasonShortName, $createdYear);
+                $isBatchCreated = $batch->createNewBatch($curriculumCode, $programCode, $seasonCode, $seasonShortName, $seasonFName); // changing last parameter with $seasonFName
                 if ($isBatchCreated) {
                     $batchCode = $batch->getBatchCode();
                     // for creation of new semester.
@@ -52,13 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         //  now create new section first then create respective Student.
                         $semesterCode = $semester->getSemesterCode();
                         $failedToCreated = array();
-                        foreach ($studentArrayList as $key => $sectionList) {
+                        foreach ($studentArrayList as $key => $studentListPerSection) {
                             // create new section.
                             $section = new Section();
                             $isSectionCreated = $section->createNewSection($semesterCode, $key);
                             if ($isSectionCreated) {
                                 $sectionCode = $section->getSectionCode();
-                                performOperations($sectionList, $seasonShortName, $programName, $sectionCode, 1, $failedToCreated);
+                                performStudentOperation($studentListPerSection, $seasonShortName, $programName, $sectionCode, 1, $failedToCreated);
                             } else
                                 $resultBackServer = updateServer(500, "error while creating new section : " . $section->getDatabaseConnection()->error, "ERROR |" . SERVER_STATUS_CODES[500]);
                         }
@@ -104,18 +118,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             /** Perform Insertion First before Deletion and Update */
             if ($_POST['hasAddition']) {
                 if (is_array($newStudentList) == 1 and $newStudentList != null) {
-                    $duplicateList = array();
-                    $student = new StudentRole();
-                    foreach ($newStudentList as $key => $value) {
-                        foreach ($value as $k => $v) {
-                            $registrationNumber = $v['_reg'];
-                            $student->checkDuplication($registrationNumber, $duplicateList);
-                        }
-                    }
+                    $duplicateList = checkStudentDuplication($newStudentList);
                     $failedToCreated = array();
                     if (empty($duplicateList) and count($duplicateList) === 0) { // $duplicateList is empty
                         foreach ($newStudentList as $key => $studentRecord) {
-                            performOperations($studentRecord, -1, -1, $sectionCode, 2, $failedToCreated);
+                            performStudentOperation($studentRecord, -1, -1, $sectionCode, 2, $failedToCreated);
                         }
                     } else {
                         $resultBackServer = updateServer(501, $duplicateList, "ERROR |" . SERVER_STATUS_CODES[501]);
@@ -140,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $student = new StudentRole();
 
                     foreach ($updateStudentList as $key => $studentRecord) {
-                        performOperations($studentRecord, -1, -1, $sectionCode, 3, $failedToCreated);
+                        performStudentOperation($studentRecord, -1, -1, $sectionCode, 3, $failedToCreated);
                     }
                 }
             }
@@ -170,15 +177,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultBackServer = updateServer(400, "Please check your section code ", SERVER_STATUS_CODES[400] . "|" . SERVER_STATUS_CODES[201]);
         die(json_encode($resultBackServer));
     }
-
-
-//        $resultBackServer = updateServer(400, "Incorrect SectionCode or empty." . json_encode($_POST['sectionCode']), "ALERT |" . SERVER_STATUS_CODES[400]);
-//        $resultBackServer = updateServer(500, "Error While fetching record of student : " . $section->getDatabaseConnection()->error, "ERROR |" . SERVER_STATUS_CODES[500]);
-//        $resultBackServer = updateServer(200, $studentList, SERVER_STATUS_CODES[200] . "|" . SERVER_STATUS_CODES[201]);
+    /*$resultBackServer = updateServer(400, "Incorrect SectionCode or empty." . json_encode($_POST['sectionCode']), "ALERT |" . SERVER_STATUS_CODES[400]);
+    $resultBackServer = updateServer(500, "Error While fetching record of student : " . $section->getDatabaseConnection()->error, "ERROR |" . SERVER_STATUS_CODES[500]);
+    $resultBackServer = updateServer(200, $studentList, SERVER_STATUS_CODES[200] . "|" . SERVER_STATUS_CODES[201]);*/
 }
 
 
-function performOperations($studentList, $seasonShortName, $programName, $sectionCode, $CHECKER, &$failedToOperate)
+function performStudentOperation($studentList, $seasonShortName, $programName, $sectionCode, $CHECKER, &$failedToOperate)
 {
     $oldRegKey = '';
     $student = new StudentRole();
@@ -224,6 +229,19 @@ function performOperations($studentList, $seasonShortName, $programName, $sectio
             }
         }
     }
+}
+
+function checkStudentDuplication($newStudentList): array
+{
+    $duplicateList = array();
+    $student = new StudentRole();
+    foreach ($newStudentList as $key => $value) {
+        foreach ($value as $k => $v) {
+            $registrationNumber = $v['_reg'];
+            $student->checkDuplication($registrationNumber, $duplicateList);
+        }
+    }
+    return $duplicateList;
 }
 
 ?>

@@ -5,15 +5,16 @@ session_start();
 $adminInstance = $_SESSION['adminInstance'];
 $admin = unserialize($adminInstance);
 $personalDetails = $admin->getInstance();
+$facultyCode = $personalDetails['facultyCode'];
 
 $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];
 
 $faculty = new FacultyRole();
-$facultyObjectList = $faculty->retrieveFacultyListDepartment($departmentCode);
+$facultyObjectList = $faculty->FetchFacultyListDepartment($departmentCode);
 
 /*foreach ($facultyObjectList as $facultyDetail) {
-    print_r(json_encode($facultyDetail) . "<br><br>");
+    print_r(json_encode($facultyDetail) . "<br");
    echo $facultyDetail->getInstance()['facultyCode'];
 }*/
 
@@ -26,10 +27,20 @@ foreach ($facultyObjectList as $faculty) {
         'dc' => $faculty->getInstance()['departmentCode'],
     );
 }
-echo json_encode($facultyList);
+//echo json_encode($facultyList)."<br>";
 
-//setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)
+/*echo filter_var($facultyCode, FILTER_SANITIZE_ADD_SLASHES)."<br>";
+echo filter_var($facultyCode, FILTER_SANITIZE_FULL_SPECIAL_CHARS , FILTER_FLAG_NO_ENCODE_QUOTES)."<br>";
+echo filter_var($facultyCode, FILTER_SANITIZE_STRING , FILTER_FLAG_NO_ENCODE_QUOTES)."<br>";
 
+echo htmlspecialchars("He said  Hello, my \"name\" is Foo" , ENT_QUOTES)."<br>";
+echo htmlspecialchars("He said  Hello, my \"name\" is Foo" , ENT_NOQUOTES)."<br>";
+echo $result."<br>";
+$userInput = "A 'quote' is <b class='text-lg font-semibold' >bold</b>!";
+echo  htmlentities($userInput, ENT_QUOTES)."<br>";
+$i =  htmlspecialchars($userInput , ENT_QUOTES);
+echo htmlspecialchars_decode($i)."<br>";
+setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3600)*/
 ?>
 
 <!doctype html>
@@ -355,9 +366,9 @@ echo json_encode($facultyList);
 </body>
 
 <script>
-/*    const getCookieValue = (name) => (document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '')
-    var fetchedUser = getCookieValue('loggedUser')
-    let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')*/
+    /*    const getCookieValue = (name) => (document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '')
+        var fetchedUser = getCookieValue('loggedUser')
+        let userId = decodeURI(JSON.stringify(fetchedUser)).replace(/['"]+/g, '')*/
 
 
     let facultyInstanceList = <?php echo json_encode($facultyList);?>;

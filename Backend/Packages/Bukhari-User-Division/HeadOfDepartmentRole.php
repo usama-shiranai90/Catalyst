@@ -58,19 +58,25 @@ class HeadOfDepartmentRole extends UserRole
 
     function deletePreviousAssignHeadOfDepartment($departmentCode): bool
     {
-        $deleteSqlStatement = /** @lang text */
-            "delete from headofdepartment where departmentCode = \" $departmentCode \" and resignationDate <=> NULL;";
-        $resultDeletion = $this->databaseConnection->query($deleteSqlStatement);
-        if ($resultDeletion === TRUE)
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "delete from headofdepartment 
+            where departmentCode = ? and resignationDate <=> NULL; ");
+
+        $sanitizeDepartmentCode = FormValidator::sanitizeUserInput($departmentCode, 'int');
+        $prepareStatementDeleteQuery->bind_param('i', $sanitizeDepartmentCode);
+        if ($prepareStatementDeleteQuery->execute() === TRUE)
             return true;
         return false;
     }
 
     function moveResignationDateFromNewHOD($departmentCode, $facultyCode): bool
     {
-        $sqlStatement = /** @lang text */
-            "update headofdepartment set resignationDate = null where departmentCode = \"$departmentCode\" and facultyCode = \"$facultyCode\" ;  ";
-        return $this->databaseConnection->query($sqlStatement) === TRUE;
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "update headofdepartment set 
+        resignationDate = null where departmentCode = ? and facultyCode = ? ;");
+
+        $sanitizeDepartmentCode = FormValidator::sanitizeUserInput($departmentCode, 'int');
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+        $prepareStatementDeleteQuery->bind_param('is', $sanitizeDepartmentCode, $sanitizeFacultyCode);
+        return $prepareStatementDeleteQuery->execute() === TRUE;
     }
 
     public function getAdminCode()
@@ -90,32 +96,36 @@ class HeadOfDepartmentRole extends UserRole
 
     public function getFacultyRole($facultyCode, &$respectiveRoles): bool
     {
-        $temp = array("hasRole" => false, "departmentName" => 'none');
+//        $facultyCode = mysqli_real_escape_string($this->databaseConnection, $facultyCode);
 
-        $sql = /** @lang text */
-            "select facultyCode, d.departmentCode, departmentName,departmentShortName from headofdepartment join department d on
-             d.departmentCode = headofdepartment.departmentCode where facultyCode = \"$facultyCode\"; ";
+        $AdminStat = array("hasRole" => false, "departmentName" => 'none');
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
 
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            while ($row = $authenticationResult->fetch_assoc()) {
-                $temp['hasRole'] = true;
-//                $temp['departmentName'] = checkDepartmentAbbreviation($row['departmentName']);
-                $temp['departmentName'] = $row['departmentShortName'];
-                $respectiveRoles['HOD'][] = $temp;
+        $prepareStatementWithQuery = $this->databaseConnection->prepare('select facultyCode, d.departmentCode, departmentName,departmentShortName 
+            from headofdepartment join department d on d.departmentCode = headofdepartment.departmentCode where facultyCode = ?');
+        $prepareStatementWithQuery->bind_param('s', $sanitizeFacultyCode);
+        if ($prepareStatementWithQuery->execute()) {
+            $result = $prepareStatementWithQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+//                $AdminStat['departmentName'] = checkDepartmentAbbreviation($row['departmentName']);
+                    $AdminStat['hasRole'] = true;
+                    $AdminStat['departmentName'] = $row['departmentShortName'];
+                    $respectiveRoles['HOD'][] = $AdminStat;
+                }
+                return true;
             }
-            return true;
         }
-        $respectiveRoles['HOD'][] = $temp;
+        $respectiveRoles['HOD'][] = $AdminStat;
         return false;
     }
 
 
-    public function assignHeadOfDepartmentRole($email, $password, $facultyCode, $departmentCode ,$startDate): bool
+    public function assignHeadOfDepartmentRole($email, $password, $facultyCode, $departmentCode, $startDate): bool
     {
-        $flag = false;
         /** Old approach, first search department multiple times. then update. */
-        /*$sql = "select facultyCode, departmentCode, officialEmail, password from headofdepartment where departmentCode  = \"$departmentCode\"; ";
+        /*    $flag = false;
+         * $sql = "select facultyCode, departmentCode, officialEmail, password from headofdepartment where departmentCode  = \"$departmentCode\"; ";
         $authenticationResult = $this->databaseConnection->query($sql);
         if (mysqli_num_rows($authenticationResult) > 0) {
             foreach ($emailList as $email) {
@@ -129,53 +139,59 @@ class HeadOfDepartmentRole extends UserRole
             }
         }
         */
+        $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "insert into 
+        headofdepartment(facultyCode, departmentCode, officialEmail, password, resignationDate)  VALUES ( ? , ? , ? , ? , ? );");
 
-        $sql = /** @lang text */
-            "insert into headofdepartment(facultyCode, departmentCode, officialEmail, password, resignationDate)
-            VALUES ( \"$facultyCode\" , \"$departmentCode\" , \"$email\" , \"$password\" , \"$startDate\" );";
-        return ($this->databaseConnection->query($sql) === TRUE);
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+        $sanitizeEmail = FormValidator::sanitizeUserInput($email, 'email');
+        $sanitizeDepartmentCode = FormValidator::sanitizeUserInput($departmentCode, 'int');
+        $prepareStatementInsertionQuery->bind_param('sisss', $sanitizeFacultyCode, $sanitizeDepartmentCode,
+            $sanitizeEmail, $password, $startDate);
+        return $prepareStatementInsertionQuery->execute() === TRUE;
     }
 
 
     public function retrieveAdminRole($departmentCode, &$respectiveRoles): bool
     {
-        $temp = array("departmentCode" => '-', "facultyID" => '-', "name" => '-', "designation" => '-', "officialEmail" => '-', "roleName" => '-', 'ofOther' => '-');
-        $sql = /** @lang text */
-            "select f.departmentCode, f.facultyCode, f.officialEmail, name, designation , departmentName ,departmentShortName
-             from headofdepartment
+        $adminStat = array("departmentCode" => '-', "facultyID" => '-', "name" => '-', "designation" => '-', "officialEmail" => '-', "roleName" => '-', 'ofOther' => '-');
+
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select f.departmentCode, f.facultyCode, f.officialEmail, name, designation ,
+                     departmentName ,departmentShortName from headofdepartment
                      join faculty f on headofdepartment.facultyCode = f.facultyCode
                      join department d on f.departmentCode = d.departmentCode
-             where f.departmentCode  = \"$departmentCode\"; ";
+                     where f.departmentCode = ?');
 
-        $authenticationResult = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($authenticationResult) > 0) {
-            while ($row = $authenticationResult->fetch_assoc()) {
-                $temp['departmentCode'] = $row['departmentCode'];
-                $temp['facultyID'] = $row['facultyCode'];
-                $temp['name'] = $row['name'];
-                $temp['designation'] = $row['designation'];
-                $temp['officialEmail'] = $row['officialEmail'];
-                $temp['roleName'] = "Head Of Department";
-                $temp['ofOther'] = $row['departmentName'] . "( " . $row['departmentShortName'] . " )";
-                $respectiveRoles['HOD'][] = $temp;
+        $sanitizeDepartmentCode = FormValidator::sanitizeUserInput($departmentCode, 'int');
+        $prepareStatementSearchQuery->bind_param('s', $sanitizeDepartmentCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $adminStat['departmentCode'] = $row['departmentCode'];
+                    $adminStat['facultyID'] = $row['facultyCode'];
+                    $adminStat['name'] = $row['name'];
+                    $adminStat['designation'] = $row['designation'];
+                    $adminStat['officialEmail'] = $row['officialEmail'];
+                    $adminStat['roleName'] = "Head Of Department";
+                    $adminStat['ofOther'] = $row['departmentName'] . "( " . $row['departmentShortName'] . " )";
+                    $respectiveRoles['HOD'][] = $adminStat;
+                }
+                return true;
             }
-            return true;
         }
-        $respectiveRoles['HOD'][] = $temp;
+        $respectiveRoles['HOD'][] = $adminStat;
         return false;
     }
 
-    public function deleteAdministrativeRole($facultyId, $departmentCode): bool
+    public function deleteAdministrativeRole($facultyCode, $departmentCode): bool
     {
-        $sql = /** @lang text */
-            "delete from headofdepartment where facultyCode = \"$facultyId\" and departmentCode =  \"$departmentCode\" ;";
-        $result = $this->databaseConnection->query($sql);
-        if ($result === TRUE)
-//            echo sprintf("\n<br>Administrative record for department :%s .\n<br>", (string)$fac);
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "delete from headofdepartment where 
+                                   facultyCode = ? and departmentCode = ? ");
 
-            return true;
-        else
-            return false;
+        $sanitizeDepartmentCode = FormValidator::sanitizeUserInput($departmentCode, 'int');
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+        $prepareStatementDeleteQuery->bind_param('si', $sanitizeFacultyCode, $sanitizeDepartmentCode);
+        return $prepareStatementDeleteQuery->execute() === TRUE;
     }
 
 }
