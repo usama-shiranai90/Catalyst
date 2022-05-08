@@ -6,6 +6,12 @@ $personalDetails = array();
 $student = unserialize($_SESSION['studentInstance']);
 $personalDetails = $student->getInstance();
 
+if (isset($_POST["logout"])) {
+    session_destroy();
+    header("Location: ../Authentication/Authenticate.php");
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -158,6 +164,20 @@ $personalDetails = $student->getInstance();
                     <div class="menuItem" id="switchToGPATranscriptId">GPA</div>
                 </div>
             </div>
+            <!--            Logout-->
+            <form method="post" class="flex justify-center w-full bottom-3 absolute">
+                <div class="logout rounded-md bg-white w-2/3 p-0.5 cursor-pointer" id="logout">
+                    <svg class="inline-block" width="25" height="25" viewBox="0 0 30 31" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.75 20.5L8.75 15.5M8.75 15.5L13.75 10.5M8.75 15.5H26.25M20 20.5V21.75C20 22.7446 19.6049 23.6984 18.9017 24.4017C18.1984 25.1049 17.2446 25.5 16.25 25.5H7.5C6.50544 25.5 5.55161 25.1049 4.84835 24.4017C4.14509 23.6984 3.75 22.7446 3.75 21.75V9.25C3.75 8.25544 4.14509 7.30161 4.84835 6.59835C5.55161 5.89509 6.50544 5.5 7.5 5.5H16.25C17.2446 5.5 18.1984 5.89509 18.9017 6.59835C19.6049 7.30161 20 8.25544 20 9.25V10.5"
+                              stroke="#01409B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <button name="logout" type="submit" class="pl-3 inline-block cursor-pointer font-bold"
+                            style="color: #01409B">
+                        Logout
+                    </button>
+                </div>
+            </form>
 
         </div>
     </div>

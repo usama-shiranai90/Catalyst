@@ -29,10 +29,10 @@ $isFailedToPerformCourseProfile = array();
 $affiliatedFacultyList = array();
 $courseProfileInstructorList = array();
 $containsSessional = false;
-print "Is Coordinator : " . $isCoordinator . "<br>";
 
+$isProfileCreated = '';
 /** check if there exist Program learning outcome (curriculum) */
-if (count($programOutcomeList) != 0 and $isCoordinator != 0) {
+if (count($programOutcomeList) != 0 ) {
     $isProfileCreated = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);
     $_SESSION['batchCode'] = $courseProfile->getBatchCode();
     if ($courseProfile->getBatchCode() != $batchCode)
@@ -72,17 +72,23 @@ if (count($programOutcomeList) != 0 and $isCoordinator != 0) {
         else
             header("Location: courseprofile_view.php");
     }
-
-} elseif (count($programOutcomeList) == 0 and $isCoordinator == 0) {
+}
+if (count($programOutcomeList) == 0 and ($isCoordinator == 0 && !$isProfileCreated)) {
     $isFailedToPerformCourseProfile[] = array("alert-1" => "No Curriculum related found or Program Learning outcome has not been set"
     , "alert-2" => "Only Coordinator are allow to create profile for this course.");
-} elseif ($isCoordinator == 0) {
+}
+elseif ($isCoordinator == 0 && !$isProfileCreated){
+    $isFailedToPerformCourseProfile[] = array("alert-2" => "Only Coordinator are allow to create profile for this course.");
+}
+elseif ($isCoordinator == 0 && $isProfileCreated) {
     $isFailedToPerformCourseProfile[] = array("alert-2" => "Only Coordinator are allow to create profile for this course.");
 } else {
     $isFailedToPerformCourseProfile[] = array("alert-1" => "No Curriculum related found or Program Learning outcome has not been set");
 }
 
-//print json_encode($courseProfileInstructorList);
+//print $isCoordinator ."  ".var_dump($isProfileCreated)."<br><br><br>";
+//print $isCoordinator ."  ".$isProfileCreated == false."<br><br><br>";
+//print json_encode($isFailedToPerformCourseProfile);
 
 //$mem_usage = memory_get_usage();
 //$mem_peak = memory_get_peak_usage();

@@ -187,7 +187,7 @@ class CLO implements JsonSerializable
                 }
                 return $cloDataSet;
             } else {
-//            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  wtf";
+//            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . " ";
                 return null;
             }
 

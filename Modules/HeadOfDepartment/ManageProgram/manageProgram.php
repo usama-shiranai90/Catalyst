@@ -6,16 +6,17 @@ session_start();
 
 $program = new Program();
 $departmentCode = $_SESSION['departmentCode']; // 1
-$deletedProgramList = $program->retrieveEntireProgramList();
+$programList = $program->retrieveEntireProgramList();
 
-//print json_encode($deletedProgramList) . "<br><br><br>";
+//print json_encode($programList) . "<br><br><br>";
+
 $resultBackServer = array("status" => -1, "message" => 'no message', "errors" => 'no error');
 
 /** delete any irrelevant program which is not against our currently login department. */
-foreach ($deletedProgramList as $index => $currentProgram) {
+foreach ($programList as $index => $currentProgram) {
 //    print sprintf("index : %s   %s<br>", $index, json_encode($currentProgram));
-    if ($departmentCode !== $currentProgram['departmentCode']) // 1 !== 1
-        unset($deletedProgramList[$index]);
+    if ($departmentCode != $currentProgram['departmentCode']) // 1 !== 1
+        unset($programList[$index]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST["createProgramBtn"])) {
@@ -27,10 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST["createProgramBtn"]))
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
     if (isset($_POST['deletedProgramList'])) {
-        $deletedProgramList = $_POST['deletedProgramList']; // array.  // [ 1,6,8,11,12,13 ,15]
+        $programList = $_POST['deletedProgramList']; // array.  // [ 1,6,8,11,12,13 ,15]
         $notDeletedArray = array(); /** agr list empty ho gye ha , program codes successfully deleted*/
 
-        foreach ($deletedProgramList as $programCode) {
+        foreach ($programList as $programCode) {
             if (!$program->deleteProgram($programCode))
                 array_push($notDeletedArray, $programCode);
         }
@@ -153,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($_POST['deletion'])) {
 
                     <?php
                     $iterate = 1;
-                    foreach ($deletedProgramList as $key => $currentProgram) {
+                    foreach ($programList as $key => $currentProgram) {
                         print sprintf("
                                  <tr data-record-target=\"\" aria-expanded=\"false\"
                         class=\"cursor-default text-sm tracking-tight transition-all transform hover:bg-catalystLight-89 accordion-toggle collapsed\"

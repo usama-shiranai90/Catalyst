@@ -1,4 +1,4 @@
-let toRemoveIndex;
+let toRemoveTag;
 window.onload = function () {
 
     const administrativeDesignationField = document.getElementById('administrativeDesignationId');
@@ -16,6 +16,7 @@ window.onload = function () {
 
         });
 
+        /** refresh button is use when user wants to filter out some information. */
         $(refreshBtn).on('click', function (event) {
 
             if (containsEmptyField([administrativeDesignationField, administrativeRoleField] )) {
@@ -32,18 +33,20 @@ window.onload = function () {
             }
         })
 
-        /** when a particular record is selected. */
-        $(document).on('click', 'tbody tr[aria-expanded="false"]', function (event) {
+        /** when a particular record is selected. open its related row. */
+        $(document).on('click', 'tr[aria-expanded="false"]', function (e) {
             openTabular(this);
-            closeTabular(this, false);
-        })
-        $(document).on('click', 'tbody tr[aria-expanded="true"]', function (event) {
-            closeTabular(this, true);
+            closeTabular(this, false); // close all other table row except the selected one.
+        });
+
+        $(document).on('click', 'tr[aria-expanded="true"]', function (event) {
+            closeTabular(this, true); // works when a table row is already open then we wish to close it.
         });
 
         /** it is used when the user wants to edit the role idk what the add right now. */
-        $(document).on('click', 'button[id^="performRoleEdit-"]', function (event) {
-        });
+       /* $(document).on('click', 'button[id^="performRoleEdit-"]', function (event) {
+        });*/
+
 
         /** it is used when the user wants to delete the respective role for a user. */
         let hId, pmId, caId, facultyID;
@@ -54,24 +57,27 @@ window.onload = function () {
             hId = -1;
             pmId = -1;
             caId = -1;
-            facultyID = $(event.target).closest('.accordion-toggle.collapsed').children(":nth-child(1)").children(":first-child").text();
-            toRemoveIndex = $(event.target).closest('.accordion-toggle.collapsed');
-            if ($(event.target).closest('.accordion-toggle.collapsed').attr(`data-role-state-hod`) !== undefined) {
-                hId = $(event.target).closest('.accordion-toggle.collapsed').attr(`data-role-state-hod`);
+
+            facultyID = $(this).closest('.accordion-toggle.collapsed').children(":nth-child(1)").children(":first-child").text(); // FUI-FURC- Code.
+            toRemoveTag = $(this).closest('.accordion-toggle.collapsed');
+
+            if (toRemoveTag.attr(`data-role-state-hod`) !== undefined) {
+                hId = $(this).closest('.accordion-toggle.collapsed').attr(`data-role-state-hod`); // departmentCode
                 hasDepartment = true;
             }
-            if ($(event.target).closest('.accordion-toggle.collapsed').attr(`data-role-state-pm`) !== undefined) {
-                pmId = $(event.target).closest('.accordion-toggle.collapsed').attr(`data-role-state-pm`);
+            if (toRemoveTag.attr(`data-role-state-pm`) !== undefined) {
+                pmId = toRemoveTag.attr(`data-role-state-pm`); // prgramCode
                 hasProgram = true;
             }
-            if ($(event.target).closest('.accordion-toggle.collapsed').attr(`data-role-state-ca`) !== undefined) {
-                caId = $(event.target).closest('.accordion-toggle.collapsed').attr(`data-role-state-ca`);
+            if (toRemoveTag.attr(`data-role-state-ca`) !== undefined) {
+                caId = toRemoveTag.attr(`data-role-state-ca`); // sectionCode
                 hasAdvisor = true
             }
 
             if (hasDepartment || hasProgram || hasAdvisor) {
-                const name = $(event.target).closest('.accordion-toggle.collapsed').children(":nth-child(2)").children(":first-child").text();
-                const role = $(event.target).closest('.accordion-toggle.collapsed').children(":nth-child(4)").children(":first-child").text();
+                const name = toRemoveTag.children(":nth-child(2)").children(":first-child").text();
+                const role = toRemoveTag.children(":nth-child(4)").children(":first-child").text();
+
                 $("body").append(alertConfirmationMessage("Delete Administrative Role", "The faculty member ", name, "", " will be delete from as " + role));
                 $("main").addClass("blur-filter");
             }
@@ -89,20 +95,22 @@ window.onload = function () {
 
     });
 
-    function openTabular(selectedRecord) {
-        $(selectedRecord).fadeIn("fast").animate({}, "linear", function () {
-            $(selectedRecord).fadeIn();
+    /** applies smooth animation for opening hidden table row */
+    function openTabular(selectedTableRow) {
+        $(selectedTableRow).fadeIn("slow").animate({}, "linear", function () {
+            $(selectedTableRow).fadeIn();
         }).removeClass("hidden").removeAttr("style");
 
-        $(selectedRecord).attr("aria-expanded", "true");
-        $(selectedRecord).next().children(":first-child").removeClass("hidden");
+        $(selectedTableRow).attr("aria-expanded", "true");
+        $(selectedTableRow).next().children(":first-child").removeClass("hidden");
     }
 
-    function closeTabular(selectedRecord, flag) {
+    function closeTabular(selectedTableRow, flag) {
 
-        if (!flag)
+        if (!flag) // when flag is false. flag === false
             $('tbody tr[aria-expanded="true"]').each(function (index, value) {
-                if (this.getAttribute("data-record-target") !== selectedRecord.getAttribute("data-record-target")) {
+                if (this.getAttribute("data-record-target") !== selectedTableRow.getAttribute("data-record-target")) { // skips the currently selected table row.
+
                     $(this).fadeIn("fast").animate({}, "linear", function () {
                         $(this).fadeIn();
                     }).removeClass("hidden").removeAttr("style")
@@ -111,12 +119,12 @@ window.onload = function () {
                     $(this).next().children(":first-child").addClass("hidden");
                 }
             });
-        else {
-            $(selectedRecord).fadeIn("fast").animate({}, "linear", function () {
-                $(selectedRecord).fadeIn();
+        else { // works with a table row which is already open.
+            $(selectedTableRow).fadeIn("fast").animate({}, "linear", function () {
+                $(selectedTableRow).fadeIn();
             }).removeClass("hidden").removeAttr("style")
-            $(selectedRecord).attr("aria-expanded", "false");
-            $(selectedRecord).next().children(":first-child").addClass("hidden");
+            $(selectedTableRow).attr("aria-expanded", "false");
+            $(selectedTableRow).next().children(":first-child").addClass("hidden");
         }
 
     }
@@ -147,7 +155,7 @@ window.onload = function () {
                             window.location.reload();
                             $(this).delay(100).fadeOut().remove();
                         });
-                    $(toRemoveIndex).remove();
+                    $(toRemoveTag).remove();
                 }
             }
         });

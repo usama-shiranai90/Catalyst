@@ -19,6 +19,7 @@ class Allocations
 
     public function retrieveAllocations($facultyCode): array
     {
+        print $facultyCode."<br>";
         $sql = /** @lang text */
             "select fa.sectionCode, ca.courseCode,ca.batchCode,ca.programCode, co.curriculumCode,isCoordinator from facultyallocations fa join courseallocation ca on 
             ca.allocationCode = fa.allocationCode join courseoffering co on co.offeringCode = ca.offeringCode where 

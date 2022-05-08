@@ -155,8 +155,9 @@
 }
 
 .lweek-column {
-    @apply border-none ring-1 ring-catalystLight-e1 min-w-full min-h-full;
+    @apply border border-t-0 border-catalystLight-e1 min-w-full min-h-full;
 /*    border border-t-0 border-gray-300*/
+/*    border-none ring-1 ring-catalystLight-e1 */
 }
 
 .cprofile-column {

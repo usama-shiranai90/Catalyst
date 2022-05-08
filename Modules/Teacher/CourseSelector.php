@@ -23,6 +23,8 @@ $allottedUserIsCoordinator = array();
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
     print $listOfAllocations[$x]->getIsCoordinator()."  ".$listOfAllocations[$x]->getCourse()->getCourseTitle()."  " .$listOfAllocations[$x]->getSection()->getSectionName() ."<br>";
     array_push($allottedUserIsCoordinator, $listOfAllocations[$x]->getIsCoordinator());
+    print $listOfAllocations[$x]->getIsCoordinator();
+
     array_push($allottedCourseNames, $listOfAllocations[$x]->getCourse()->getCourseTitle());
     array_push($allottedCourseCodes, $listOfAllocations[$x]->getCourse()->getCourseCode());
     array_push($allottedSectionNames, $listOfAllocations[$x]->getSection()->getSectionName());

@@ -371,6 +371,7 @@ const generateSize = (test) => {
 /** Function List to control the height of provided DOM-input */
 function autoHeight(element) {
     const inputField = document.getElementById('' + element);
+    // console.log("working fine : " , inputField)
     inputField.style.height = "5px";
     inputField.style.height = (inputField.scrollHeight) + "px";
 }

@@ -29,6 +29,8 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
     <script src="../../../Assets/Scripts/MasterNavigationPanel.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
     <script src="assets/js/creationJs.js" type="text/javascript"></script>
+    <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
+
     <style>
         input::placeholder {
             color: white;
@@ -193,13 +195,7 @@ echo json_encode($curriculumList) . PHP_EOL . $currentOnGoingYear . PHP_EOL . "<
 </body>
 
 <script src="assets/js/Common.js"></script>
-<script>
-    function autoHeight(element) {
-        const el = document.getElementById(element);
-        el.style.height = "5px";
-        el.style.height = (el.scrollHeight) + "px";
-    }
-</script>
+
 
 </html>
 

@@ -1,6 +1,8 @@
 <?php
 
 //include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\DatabaseConnection\DatabaseSingleton.php";
+use JetBrains\PhpStorm\ArrayShape;
+
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 
 class WeeklyTopic
@@ -23,96 +25,98 @@ class WeeklyTopic
     }
 
 
-    public function createWeeklyTopic($courseProfileCode, $arrayWeeklyTopic)
+    public function createWeeklyTopic($courseProfileCode, $arrayWeeklyTopic): ?array
     {
+        $failedToCreateTopic = array("weeklyTopic" => 0, "respectiveOutcome" => 0); // if -1 failed , 1 successful.
         foreach ($arrayWeeklyTopic as $key => $value) {
-            $weekID = '';
+            $weekTopicCode = '';
             $weekNo = $value[0];
             $description = $value[1];
             $assessment = $value[2];
+            $weeklyTopicCourseOutcomeList = $value[3];
 
-            $sql_statement = /** @lang text */
-                "insert into weeklytopics(courseProfileCode, weeklyNo, topicDetail, assessmentCriteria , modifiedDate) 
-                        VALUES (\"$courseProfileCode\",\"$weekNo\",\"$description\",\"$assessment\" , ,NOW())";
+            $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "insert into weeklytopics(courseProfileCode, weeklyNo, topicDetail, assessmentCriteria , modifiedDate) 
+                        VALUES (? ,? ,? ,? , NOW() );");
 
-            $result = $this->databaseConnection->query($sql_statement);
-            if ($result) {
-                $weekID = (int)$this->databaseConnection->insert_id;
-                echo "New record has been added successfully !";
+            $sanitizeCourseProfileCode = FormValidator::sanitizeUserInput($courseProfileCode, 'int');
+            $sanitizeWeekNumber = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($weekNo, 'string'));
+            $sanitizeWeekDescription = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($description, 'string'));
+            $sanitizeWeekAssessment = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($assessment, 'string'));
+
+            $prepareStatementInsertionQuery->bind_param('isss', $sanitizeCourseProfileCode, $sanitizeWeekNumber, $sanitizeWeekDescription, $sanitizeWeekAssessment);
+            if ($prepareStatementInsertionQuery->execute()) {
+                $weekTopicCode = (int)$this->databaseConnection->insert_id;
+                $failedToCreateTopic['weeklyTopic'] = 1;
             } else
-                echo "Error on the wall" . $this->databaseConnection->error;
+                $failedToCreateTopic['weeklyTopic'] = -1;
 
-            foreach ($value[3] as $clo_id) {
-                $sql_statement1 = /** @lang text */
-                    "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values
-                    (\"$weekID\",\"$clo_id\")";
-
-                $result1 = $this->databaseConnection->query($sql_statement1);
-                if (!$result1)
-                    echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $clo_id . "   " . $weekID;
+            foreach ($weeklyTopicCourseOutcomeList as $cloCode) {
+                $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values  (? , ? );");
+                $prepareStatementInsertionQuery->bind_param('ii', $weekTopicCode, $cloCode);
+                if ($prepareStatementInsertionQuery->execute())
+                    $failedToCreateTopic['respectiveOutcome'] = 1;
                 else
-                    echo "Checking if data of Weekly row is created : " . $clo_id . "   " . $weekID;
+                    $failedToCreateTopic['respectiveOutcome'] = -1;
+
             }
-
         }
-
+        return $failedToCreateTopic;
     }
 
-    public function deleteWeeklyTopicRecord($weeklyCode, $courseProfileID)
+    public function deleteWeeklyTopicRecord($weeklyCode, $courseProfileID): bool
     {
         $sql = /** @lang text */
             "delete from weeklytopics where courseProfileCode = \"$courseProfileID\" and weeklyTopicCode =\"$weeklyCode\" ";
 
         $result = $this->databaseConnection->query($sql);
-        if ($result === TRUE) {
-            echo "Record deleted successfully";
-        } else {
-            echo "Error deleting record from Weekly Record: " . $this->databaseConnection->error;
-        }
+        return $result === TRUE;
     }
 
-    public function deleteWeeklyTopicClosRecord($weeklyCode)
+    public function deleteWeeklyTopicClosRecord($weeklyCode): bool
     {
         $sql = /** @lang text */
             "delete from weeklytopicclo where weeklyTopicCode = \"$weeklyCode\"";
 
         $result = $this->databaseConnection->query($sql);
-        if ($result === TRUE) {
-            echo "Record deleted successfully";
-        } else {
-            echo "Error deleting record from Weekly Allocated Clos Record: " . $this->databaseConnection->error;
-        }
+        return $result === TRUE;
     }
 
 
-    public function updateWeeklyTopicRecord($courseProfileID, $weeklyID, $weeklyRowData)
+    public function updateWeeklyTopicRecord($courseProfileCode, $weeklyID, $weeklyRowData): array
     {
+        $failedToUpdateTopic = array("weeklyTopic" => 1, "respectiveOutcome" => 0);
+
         $weekNo = $weeklyRowData[0];
         $description = $weeklyRowData[1];
         $assessment = $weeklyRowData[2];
 
-        $sql1 = /** @lang text */
-            "update weeklytopics set weeklyNo = \"$weekNo\",topicDetail = \"$description\",assessmentCriteria =  \"$assessment\" , modifiedDate = NOW()
-              where  courseProfileCode =\"$courseProfileID\" and weeklyTopicCode = \"$weeklyID\";";
+        $weeklyTopicCourseOutcomeList = $weeklyRowData[3];
+        $prepareStatementUpdateQuery = $this->databaseConnection->prepare(query: "update weeklytopics set weeklyNo = ?,topicDetail = ?,assessmentCriteria =  ? ,
+                        modifiedDate = NOW() where  courseProfileCode =? and weeklyTopicCode = ?  ");
 
-        if ($this->databaseConnection->query($sql1) === TRUE) {
-            echo " weekly topic updated";
-        } else {
-            echo "Error weekly topic updated : " . $this->databaseConnection->error . "<br>" . $weeklyRowData;
+        $sanitizeCourseProfileCode = FormValidator::sanitizeUserInput($courseProfileCode, 'int');
+        $sanitizeWeekNumber = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($weekNo, 'string'));
+        $sanitizeWeekDescription = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($description, 'string'));
+        $sanitizeWeekAssessment = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($assessment, 'string'));
+
+        $prepareStatementUpdateQuery->bind_param('sssii', $sanitizeWeekNumber, $sanitizeWeekDescription, $sanitizeWeekAssessment, $sanitizeCourseProfileCode, $weeklyID);
+
+        if (!$prepareStatementUpdateQuery->execute()) {
+            $failedToUpdateTopic['weeklyTopic'] = -1;
         }
 
-        if ($weeklyRowData[3] ?? null)
+        if ($weeklyTopicCourseOutcomeList ?? null)
             foreach ($weeklyRowData[3] as $clo_id) {
-                $sql_statement1 = /** @lang text */
-                    "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values
-                    (\"$weeklyID\",\"$clo_id\")";
+                $prepareStatementInsertionQuery_2 = $this->databaseConnection->prepare(query: "insert into weeklytopicclo(weeklyTopicCode, CLOCode) values (? , ?) ;");
 
-                $result1 = $this->databaseConnection->query($sql_statement1);
-                if (!$result1)
-                    echo "Weekly Row Clos not created" . $this->databaseConnection->error . "   " . $clo_id . "   " . $weeklyID;
+                $prepareStatementInsertionQuery_2->bind_param('ii', $weeklyID, $clo_id);
+                if ($prepareStatementInsertionQuery_2->execute())
+                    $failedToUpdateTopic['respectiveOutcome'] = 1;
+                else
+                    $failedToUpdateTopic['respectiveOutcome'] = -1;
             }
 
-
+        return $failedToUpdateTopic;
     }
 
 
@@ -269,6 +273,14 @@ class WeeklyTopic
     public function setWeekCLOList(array $weekCLOList): void
     {
         $this->weekCLOList = $weekCLOList;
+    }
+
+    /**
+     * @return mysqli|void|null
+     */
+    public function getDatabaseConnection(): ?mysqli
+    {
+        return $this->databaseConnection;
     }
 
 

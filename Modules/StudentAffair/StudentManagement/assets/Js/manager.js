@@ -6,7 +6,9 @@ $(document).on('input', 'tr > td', function (e) {
 /** function is used to return list of options for program field for both classes. */
 function createOptionsListForProgramField(currentValue, programList) {
     let optionsList = '';
+    console.log(programList , programList.length)
     for (let i = 0; i < programList.length; i++) {
+        console.log("ajeeb " ,currentValue , programList[i].departmentCode)
         if (currentValue == programList[i].departmentCode)
             optionsList += `<option value="${programList[i].programCode}">${programList[i].programSN}</option>`;
     }

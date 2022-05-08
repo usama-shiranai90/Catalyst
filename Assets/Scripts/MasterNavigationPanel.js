@@ -137,6 +137,17 @@ $(document).ready(function () {
         updateIframeWithPanelTitle($("#CaPanelTitleID"), "Dashboard", "Catalyst | Academic Issue Tracker");
     })
 
+
+    /** Student Affairs. */
+    $("#studentImportID").click(function () {
+        $("#studentAffairsMainContentId").html("<iframe class='h-full block' src='StudentManagement/index.php' style='width: 100%'></iframe>");
+        updateIframeWithPanelTitle($("#studentAffairsPanelTitleID"), "Dashboard", "Catalyst | Import Student Data");
+    })
+
+    $("#manageStudentID").click(function () {
+        $("#studentAffairsMainContentId").html("<iframe class='h-full block' src='StudentManagement/manageStudentView.php' style='width: 100%'></iframe>");
+        updateIframeWithPanelTitle($("#studentAffairsPanelTitleID"), "Dashboard", "Catalyst | Manage Student Data");
+    })
 });
 
 function updateIframeWithPanelTitle(titleContainerId, titleText, documentTitleText) {

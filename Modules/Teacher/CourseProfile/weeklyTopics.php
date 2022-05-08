@@ -26,14 +26,12 @@ if ($profileExist) {
 
     if ($curriculum->getCurriculumCode() == $curriculumCode) {
         $courseLearningOutcomeList = $cloObject->retrieveCLOlist($programCode, $curriculumCode, $batchCode, $courseCode); // array of clo-code and name.
-        foreach ($courseLearningOutcomeList as $key => $value) {
-            print $key."  ".json_encode($value)."<br>";
-            $courseLearningOutcomeList[$key][1] = removeCloDash($value[1]);
-        }
+        foreach ($courseLearningOutcomeList as $index => $value) // value is an array storing [ CLOKey , CloName , CloDescription ]
+            $courseLearningOutcomeList[$index][1] = removeCloDash($value[1]);
     }
-    print json_encode($courseLearningOutcomeList);
+//    print json_encode($courseLearningOutcomeList);
     $_SESSION['courseProfileCode'] = $courseProfile->getCourseProfileCode();
-    $viewWeeklyTopics = $weeklyInfo->retrieveWeeklyTopic($_SESSION['courseProfileCode']);
+    $viewWeeklyTopics = $weeklyInfo->retrieveWeeklyTopic($courseProfile->getCourseProfileCode());
 
     if (sizeof($viewWeeklyTopics) != 0 and !empty($viewWeeklyTopics)) {
         /** fetch weekly covered data */
@@ -54,10 +52,15 @@ if ($profileExist) {
                         </div>
                         <div id="wct-wdescription-r<?php echo $counter ?>" class="lweek-column col-start-2 col-end-7">
                             <label for="detail-<?php echo $counter ?>">
-            <textarea type="text" class="pt-4 px-2 h-auto cell-input w-full font-medium text-sm" value=""
-                      placeholder="Write weekly description here..."
-                      id="detail-r-<?php echo $counter ?>" readonly="readonly"
-                      style="height: 100px;"><?php echo $rowData[2]; ?></textarea></label>
+                    <textarea type="text"
+                              class="cell-input py-4  px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0"
+                              value=""
+                              placeholder="Write weekly description here..."
+                              onkeyup="autoHeight('detail-r-<?php echo $counter ?>')"
+                              id="detail-r-<?php echo $counter ?>" readonly="readonly"
+                              style="height: 100px;"><?php echo $rowData[2]; ?>
+                    </textarea>
+                            </label>
                         </div>
                         <div class="lweek-column  col-start-7 col-end-8">
                             <div id="wtc-clos-r<?php echo $counter ?>" class="flex flex-col overflow-y-visible ">
@@ -70,19 +73,21 @@ if ($profileExist) {
                         </div>
                         <div id="wct-wassessment-r<?php echo $counter ?>" class="lweek-column  col-start-8 col-end-12">
                             <label for="assessment-clo-<?php echo $counter ?>">
-            <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm" value=""
+            <textarea type="text"
+                      class="cell-input py-4  px-2 w-full h-full font-medium text-sm overflow-hidden min-h-0" value=""
                       placeholder="Write week assessment here..."
                       id="assessment-clo-<?php echo $counter ?>"
+                      onkeyup="autoHeight('assessment-clo-<?php echo $counter ?>')"
                       readonly="readonly"><?php echo $rowData[4]; ?></textarea></label>
 
                         </div>
                         <div class="lweek-column ">
                             <label for="clo-1-bt-level">
                                 <div class="flex flex-row flex-wrap cell-input w-full content-center justify-center">
-                                    <img class="h-10 w-6" alt=""
+                                    <img class="h-10 w-6 transform transition hover:scale-90 fill-current  cursor-pointer" alt=""
                                          src="../../../../../Assets/Images/vectorFiles/Icons/edit-button.svg"
                                          data-wtc-modify='modify'>
-                                    <img class="h-10 w-6" alt=""
+                                    <img class="h-10 w-6 transform transition hover:scale-90 fill-current  cursor-pointer" alt=""
                                          src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg"
                                          data-wtc-remove='remove'>
                                 </div>
@@ -196,7 +201,7 @@ function callStaticData($viewWeeklyTopics)
                         <div id="courseweekParentDivID" class="flex flex-col p-0">
                             <div id="courseLearningHeaderID"
                                  class="learning-outcome-head learning-week-header-dp overflow-hidden m-0">
-                                <div class="lweek-column bg-catalystBlue-l6 text-white col-start-1 col-end-2 border-b-2 border-black">
+                                <div class="lweek-column bg-catalystBlue-l6 text-white col-start-1 col-end-2">
                                     <span class="wlearn-cell-data">Week</span>
                                 </div>
                                 <div class="lweek-column col-start-2 col-end-7">
@@ -222,14 +227,16 @@ function callStaticData($viewWeeklyTopics)
                     </div>
 
                     <div class="flex justify-center">
-                        <button type="button" aria-label="add_clos_button_label" class="max-w-2xl rounded-full"
+                        <button type="button" aria-label="add_clos_button_label" class="max-w-2xl rounded-full my-2"
                                 id="add-clo-btn" aria-expanded="false" aria-haspopup="true">
-                            <img id="createWeeklyBtn" class="h-8 w-8 rounded-full"
+                            <img id="createWeeklyBtn" class="h-8 w-8 transform transition duration-300 ease-in-out hover:scale-110 cursor-pointer"
                                  src="../../../Assets/Images/vectorFiles/Icons/add-button.svg" alt="">
                         </button>
                     </div>
                 </div>
-                <!--   Update Button   -->
+                <!-- Update Button-->
+
+
                 <div class="text-right mx-4">
                     <button type="button" class="loginButton" name="updatecpbtn" id="updateweeklyTopicbtn">Save
                     </button>
@@ -266,29 +273,33 @@ function callStaticData($viewWeeklyTopics)
     </div>
 </div>
 
-<div id="loader" class="hidden m-auto fixed top-1/4 left-1/2 z-5">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class=" transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <!-- inline-block align-bottom bg-white rounded-lg text-center overflow-hidden-->
-            <div class=" px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <svg class="animate-spin fill-current text-catalystBlue-d2 opacity-100"
-                     xmlns="http://www.w3.org/2000/svg"
-                     width="55" height="55" viewBox="0 0 24 24">
-                    <path d="M13.75 22c0 .966-.783 1.75-1.75 1.75s-1.75-.784-1.75-1.75.783-1.75 1.75-1.75 1.75.784 1.75 1.75zm-1.75-22c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 10.75c.689 0 1.249.561 1.249 1.25 0 .69-.56 1.25-1.249 1.25-.69 0-1.249-.559-1.249-1.25 0-.689.559-1.25 1.249-1.25zm-22 1.25c0 1.105.896 2 2 2s2-.895 2-2c0-1.104-.896-2-2-2s-2 .896-2 2zm19-8c.551 0 1 .449 1 1 0 .553-.449 1.002-1 1-.551 0-1-.447-1-.998 0-.553.449-1.002 1-1.002zm0 13.5c.828 0 1.5.672 1.5 1.5s-.672 1.501-1.502 1.5c-.826 0-1.498-.671-1.498-1.499 0-.829.672-1.501 1.5-1.501zm-14-14.5c1.104 0 2 .896 2 2s-.896 2-2.001 2c-1.103 0-1.999-.895-1.999-2s.896-2 2-2zm0 14c1.104 0 2 .896 2 2s-.896 2-2.001 2c-1.103 0-1.999-.895-1.999-2s.896-2 2-2z"/>
-                </svg>
-                <span class=" text-lg font-medium antialiased tracking-tighter">Loading</span>
-            </div>
-        </div>
-
-    </div>
-</div>
-
 </body>
 <script>
-    let courseCLOList = <?php echo json_encode($courseLearningOutcomeList, JSON_HEX_TAG) ?>;
+    let courseLearningOutcomeList = <?php echo json_encode($courseLearningOutcomeList, JSON_HEX_TAG) ?>;
     let courseWeeklyTopicList = <?php echo json_encode($viewWeeklyTopics, JSON_HEX_TAG)  ?>;
-    console.log(courseCLOList, courseWeeklyTopicList)
-    // $('#courseweekParentDivID').load('CourseProfileAssets/record.php');
+    console.log(courseLearningOutcomeList, courseWeeklyTopicList)
 </script>
-<script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>
+<?php
+if ($profileExist) {
+    print ('<script src="CourseProfileAssets/js/weeklyTopicsScript.js" rel="script"></script>');
+} else
+    print ('<script rel="script">
+                let removal = document.querySelector("main");
+                $(removal).children().remove();
+                $("main").append(` <div class="flex flex-col my-5 rounded-lg shadow bg-white">
+                <div class="db-table-header-topic items-center border-b-0 rounded-b-none pb-5" style="background-color: rgba(220,71,71,0.92)">
+                    <div class="flex flex-row justify-center items-center">
+                        <h2 class="flex items-center justify-center text-lg text-center font-semibold  text-white tracking-wide text-center capitalize">Weekly Covered Topics</h2>
+                    </div>
+                </div>
+                <div class="h-60 text-center text-red-400 font-medium text-2xl flex justify-center items-center">
+                Please create Course profile before assigning weekly topic.
+                </div>
+
+        </div>`);
+                
+                </script>');
+
+?>
+
 </html>

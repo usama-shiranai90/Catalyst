@@ -145,7 +145,7 @@ $(document).ready(function () {
         // updateStudentRecordList = Object.entries(passIntoStudentList(null, null, false, 2, updateStudentRecordList , updateStudentTargetKList));
         updateStudentRecordList = (passIntoStudentList(null, null, false, 2, updateStudentRecordList, updateStudentTargetKList));
 
-        if (newlyAddedStudentRecordList.length === 0 && deleteStudentRecordList.length === 0 && Object.values(updateStudentRecordList).length === 0) {
+        if (newlyAddedStudentRecordList.length == 0 && deleteStudentRecordList.length == 0 && Object.values(updateStudentRecordList).length === 0) {
             $('body').append(popupErrorNotifier("Nothing To Update", "Please provide some addition information or perform some sort of action."));
             $("#errorMessageDiv").toggle("hidden").animate(
                 {right: 0,}, 5000, function () {
