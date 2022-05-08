@@ -7,10 +7,11 @@ $adminCode = $_SESSION['adminCode'];
 $departmentCode = $_SESSION['departmentCode'];
 
 $listOfAllocatedAdministratorRolesList = AdministrativeRole::retrieveListOfAdminRoles($departmentCode);
-foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
-    foreach ($role as $selectedFaculty)
-        print json_encode($selectedFaculty)."<br>";
-
+//foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
+//    foreach ($role as $selectedFaculty)
+//
+///         print json_encode($selectedFaculty)."<br>";
+//    print "Index is : " . $index . "   " . json_encode($role) . "<br>";
 
 ?>
 <!doctype html>
@@ -43,8 +44,8 @@ foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
                 <div class="inline-flex rounded-t-lg" style="background-color: #F4F8F9">
                     <h2 class="font-semibold text-lg text-gray-700 flex justify-center items-center w-1/4">Top
                         Filter</h2>
-                    <div class="flex justify-center items-center pt-3 pb-2 text-white text-base font-medium w-3/4">
 
+                    <div class="flex justify-center items-center pt-3 pb-2 text-white text-base font-medium w-3/4">
                         <div class="textField-label-content w-3/12">
                             <label for="administrativeDesignation"></label>
                             <select class="select" name="administrativeDesignation"
@@ -54,12 +55,17 @@ foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
                                 <option value="" hidden=""></option>
                                 <?php
                                 $designationList = array();
-                                foreach ($listOfAllocatedAdministratorRolesList as $index => $role) {
+                                foreach ($listOfAllocatedAdministratorRolesList as $key => $role) {
                                     foreach ($role as $selectedFaculty) {
-                                        $currentDesignation = $selectedFaculty['designation'];
+                                        $currentDesignation = $selectedFaculty['designation']; // assistant professor
+
+                                        /** in_array checks if a certain value is repeated/ already exist in an array.
+                                         * if already exist skip.
+                                         * if not exist then add option.
+                                         */
                                         if (!in_array($currentDesignation, $designationList)) {
                                             print sprintf("<option  value=\"%s\" >%s</option>", $selectedFaculty['designation'], $selectedFaculty['designation']);
-                                            $designationList[] = $selectedFaculty['designation'];
+                                            array_push($designationList, $currentDesignation);
                                         }
                                     }
                                 }
@@ -76,20 +82,18 @@ foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
                                     id="administrativeRoleId">
                                 <option value="" hidden=""></option>
                                 <?php
-
                                 $roleList = array();
-                                foreach ($listOfAllocatedAdministratorRolesList as $index => $role) {
+                                foreach ($listOfAllocatedAdministratorRolesList as $key => $role) {
                                     foreach ($role as $selectedFaculty) {
-                                        $currentRole = $selectedFaculty['roleName'];
-                                        if (!in_array($currentRole, $roleList)) {
+                                        $roleName = $selectedFaculty['roleName']; // Program Manager
+                                        if (!in_array($roleName, $roleList)) {
                                             print sprintf("<option  value=\"%s\" >%s</option>", $selectedFaculty['roleName'], $selectedFaculty['roleName']);
-                                            $roleList[] = $selectedFaculty['roleName'];
+                                            array_push($roleList, $roleName);
                                         }
                                     }
                                 }
                                 ?>
 
-                                <!--                                <option value="2018" data-select-id="1">2018</option>-->
                             </select>
                             <label class="select-label top-1/4 sm:top-3">Role</label>
                         </div>
@@ -129,9 +133,8 @@ foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
                         </tr>
                         </thead>
                         <tbody>
-
                         <?php
-                        include $_SERVER['DOCUMENT_ROOT']."\Modules\HeadOfDepartment\ManageRole\asset\operation\ViewAdministrativeAjax.php";
+                        include $_SERVER['DOCUMENT_ROOT'] . "\Modules\HeadOfDepartment\ManageRole\asset\operation\ViewAdministrativeAjax.php";
                         loadAdminData($listOfAllocatedAdministratorRolesList);
                         ?>
                         </tbody>
@@ -141,35 +144,6 @@ foreach ($listOfAllocatedAdministratorRolesList as $index => $role)
         </section>
     </main>
 </div>
-
-
-<div id="alertContainer"
-     class="hidden shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-80 m-auto fixed top-1/3 left-1/3 z-5">
-    <div class="w-full h-full text-center">
-        <div class="flex h-full flex-col justify-between">
-            <img src="../../../Assets/Images/vectorFiles/Others/Dot-section.svg" alt="cross"
-                 class="h-12 w-12 mt-4 m-auto" id="cmimageID">
-            <p class="text-gray-600 dark:text-gray-100 text-md py-2 px-6">
-                Do you wish to delete the selected <span class="text-gray-800 dark:text-white font-bold">Program Learning Outcome</span>?
-                <span class="text-gray-800 dark:text-white font-bold">Note : </span> It will be deleted from database.
-                <span class="text-red-500 dark:text-white font-semibold italic">By removing any PLO , it may affect the course or program relation. Please contact HOD.</span>
-            </p>
-            <div id="aboxcontainer" class="flex items-center justify-between gap-4 w-full mt-8">
-                <button id="alertBtnNoCurriculum" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
-                        text-black w-full transition ease-in duration-200 text-center text-base
-                         font-semibold shadow-md rounded-lg">No
-                </button>
-
-                <button id="alertBtndeleteCurriculum" type="button" class="loginButton py-2 px-4 hover:bg-indigo-700
-                        text-black w-full transition ease-in duration-200 text-center text-base
-                         font-semibold shadow-md rounded-lg">Yes
-                </button>
-
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <script>
 

@@ -22,14 +22,14 @@ $('.textField , .select').on('input', function (e) {
 /** Is use to change the row data of PLO-table.
  *  setFromIndex = dischargedIndex (3)
  * */
-function iterateCurriculumRow(parentContainer, setFromIndex, curriculumCounter, hasKeyFlag) {
-    --curriculumCounter; // 5
+function iterateCurriculumRow(parentContainer, setFromIndex, curriculumCounter, hasKeyFlag) { // setFromIndex = 13
+    --curriculumCounter; // 18
     if (curriculumCounter !== 0) {
         $(parentContainer).children().each(function (index, value) { // iterate ->  header and all curriculumRows
             if (index !== 0 && setFromIndex <= index) { // index !== 0 for skipping header and  setFromIndex <= index for skipping us sa chota row.
                 this.setAttribute("id", "creationCurriculumRow-" + index)
-                $(this).children().each(function (i) { //  label ,PNO , PDescription , DStatus
-                    overrideCurriculumRow(index, i, this, hasKeyFlag)
+                $(this).children().each(function (selectedRowColumnNo) { // label ,PNO , PDescription , DStatus
+                    overrideCurriculumRow(index, selectedRowColumnNo, this, hasKeyFlag) // 13 ,
                 });
             }
         });
@@ -37,30 +37,39 @@ function iterateCurriculumRow(parentContainer, setFromIndex, curriculumCounter, 
     return curriculumCounter;
 }
 
-function overrideCurriculumRow(index, i, currentTag, hasKey) {
+function overrideCurriculumRow(index, selectedRowColumnNo, currentTag, hasKey) {
 
-    if (i === 0 && hasKey) {
-        let input = currentTag.firstElementChild;
+    if (selectedRowColumnNo === 0 && hasKey) { // Label.
+        let input = currentTag.firstElementChild; // currentTag here is label.
         input.setAttribute("id", "coc-r" + index)
     }
 
-    if (i === 1) { // Plo NO
+    if (selectedRowColumnNo === 1) { // Plo NO
         currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // div us ka ID change ki hai.  coc-number-r1
         let label = currentTag.firstElementChild;
         let input = label.firstElementChild;
         label.setAttribute("for", "creationCurriculum-No-r-" + index)
         input.setAttribute("id", "creationCurriculum-No-r-" + index)
+        input.value = "PLO-" + index;
+
+        // $(input).removeAttr("value");
+
+        $(input).val(extractFirstString(input.value) + "-" + index);
+        input.value = extractFirstString(input.value) + "-" + index;
+
         input.placeholder = "PLO-" + index;
 
-    } else if (i === 2) { // PLO Description
+        console.log(input.value)
+
+    } else if (selectedRowColumnNo === 2) { // PLO Description
         currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // coc-description-r1
         let label = currentTag.firstElementChild;
         let textarea = label.firstElementChild;
         label.setAttribute("for", "detail-r-" + index)
         textarea.setAttribute("id", "detail-r-" + index)
         textarea.setAttribute("onkeyup", "autoHeight('detail-r-" + index + "')");
-    } else if (i === 3){
-        currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1)));  // coc-description-r1
+    } else if (selectedRowColumnNo === 3) { // STATUS
+        currentTag.setAttribute("id", uniqueName(currentTag.getAttribute("id"), index, (index + 1))); // coc-status-r13
     }
 }
 
@@ -68,7 +77,7 @@ function createAdditionalRow(currentCurriculumNo, plo) {
     if (plo === null) {
         plo = {
             "ploCode": "",
-            "ploName": "",
+            "ploName": "PLO-" + currentCurriculumNo,
             "ploDescription": "",
         }
     }

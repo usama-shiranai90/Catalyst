@@ -18,6 +18,11 @@ const seasonField = document.getElementById('importCourseOfferingSeasonSelectID'
 // const batchField = document.getElementById('importCourseOfferingBatchSelectID');
 // const semesterField = document.getElementById('importCourseOfferingSemesterSelectID');
 
+
+/** Credit Hour Label. */
+const totalCreditHourTab = document.getElementById('totalCreditHourTabID');
+const totalCreditHourLabel = document.getElementById('totalCreditHourLabelID');
+
 const courseOfferingTableContainer = document.getElementById('generatedTableContainer');
 const saveCourseOfferingBtn = document.getElementById('saveCourseOfferingBtn');
 
@@ -77,6 +82,21 @@ $(document).ready(function () {
         dropAreaContainer.classList.remove("dragged");
     });
 
+    const uploadFileProcess = () => {
+        let uploadedFiles = event.target.files;
+        let reader = new FileReader();
+        reader.readAsArrayBuffer(uploadedFiles[0]);
+        reader.onload = function (event) {
+            let data = new Uint8Array(reader.result);
+            let work_book = XLSX.read(data, {type: 'array'});
+            console.log("WorkBook :", work_book, "\n");
+            console.log(work_book.Sheets)
+
+            sheetToJson(work_book);
+            $("form.px-10.py-6").addClass("hidden");
+        }
+    };
+
     $(document).on('click', 'a[id^="importCourseOfferingSheetTabID-"]', function (event) {
         const panel = $(this).parent(); //.work-sheet-container
         let selectedID = this.id;
@@ -129,21 +149,6 @@ $(document).ready(function () {
         });
     });
 
-    const uploadFileProcess = () => {
-        let uploadedFiles = event.target.files;
-        let reader = new FileReader();
-        reader.readAsArrayBuffer(uploadedFiles[0]);
-        reader.onload = function (event) {
-            let data = new Uint8Array(reader.result);
-            let work_book = XLSX.read(data, {type: 'array'});
-            console.log("WorkBook :", work_book, "\n");
-            console.log(work_book.Sheets)
-
-            sheetToJson(work_book);
-            $("form.px-10.py-6").addClass("hidden");
-        }
-    };
-
 });
 
 let offeringTableHeaderName = [];
@@ -173,6 +178,7 @@ function sheetToJson(work_book) {
     });
 }
 
+
 function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJsonFormatList, workSheetName, counter) {
     if (offeringJsonFormatList.length > 0) {
 
@@ -198,9 +204,9 @@ function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJso
         console.log(programName, semesterNumber, batchYear);
 
         /** Header Content */
-        // const tableSectionDivision = document.createElement('div');
-        // $(tableSectionDivision).attr("class", "relative rounded w-full whitespace-no-wrap bg-white").attr("aria-disabled", "false").attr("aria-describedby", `table-sector-offering-${counter}`);
-        // $(tableSectionDivision).append(`<h2 class="font-semibold text-2xl tracking-wider leading-relaxed p-2">Regular Course</h2>`);
+            // const tableSectionDivision = document.createElement('div');
+            // $(tableSectionDivision).attr("class", "relative rounded w-full whitespace-no-wrap bg-white").attr("aria-disabled", "false").attr("aria-describedby", `table-sector-offering-${counter}`);
+            // $(tableSectionDivision).append(`<h2 class="font-semibold text-2xl tracking-wider leading-relaxed p-2">Regular Course</h2>`);
 
         const table = document.createElement('table');
         $(table).addClass("border-collapse table-auto whitespace-no-wrap table-striped");
@@ -249,32 +255,51 @@ function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJso
                         if (emptyCounter === (index / maxLengthPerRow))
                             throw BreakException;
                     } else {
-                        if (value !== "__EMPTY" && maxLengthPerRow > index) {
-                            if (index === 4) {
+                        if (value !== "__EMPTY" && maxLengthPerRow > index) { /** for creating allocation row. */
+
+                            if (index === 4) { // for course coordinator column
                                 $(tableHeaderRow).append(`
                             <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs">
                                <select class="select" name="t1" onclick="this.setAttribute('value', this.value);" 
                                 onchange="this.setAttribute('value', this.value);"  id="t1">
                                 <option value="" hidden=""></option>
-                                <option value="xxx" selected="">xxx</option>
-                                <option value="2">Fall 15</option><option value="4">Fall 16</option><option value="1">Spring 15</option><option value="3">Spring 16</option></select>
+                                ${makeOptionsForCoordinator()}
+                                </select>
                             </td>`);
-                            }
-                            else{
-                                $(tableHeaderRow).append(`
-                    <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
+                            } else {
+
+
+
+                                if (index > 4) {
+                                    let color= '';
+                                    if (!isFacultyExist(value))
+                                        color = "bg-red-400";
+
+                                    $(tableHeaderRow).append(`
+                            <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs ${color} " contenteditable="true" data-faculty-id = "${fCode}">
                                 <span class="text-gray-700 flex justify-center items-center" >${value}</span>
                             </td>`);
+
+
+
+                                } else {
+                                    $(tableHeaderRow).append(`
+                            <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
+                                <span class="text-gray-700 flex justify-center items-center" >${value}</span>
+                            </td>`);
+                                }
+
+
                             }
                         }
 
-                        if (maxLengthPerRow === index + 1) { // adding buttons.
+                        if (maxLengthPerRow === index + 1) // adding delete button.
                             $(tableHeaderRow).append(`
              <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="false">
                                            <img class="h-10 w-6 cursor-pointer" alt="" 
                         src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg" data-std-delete="remove">
                                         </td>`);
-                        }
+
                     }
                 });
             } catch (e) {
@@ -364,6 +389,38 @@ function createPaginationBar(tableID) {
     });
 }
 
+function makeOptionsForCoordinator() {
+    if (facultyList.length > 0) {
+        let optionsList = '';
+        for (let i = 0; i < facultyList.length; i++) {
+            let option = `<option value="${facultyList[i].facultyCode}">${facultyList[i].name}</option>`;
+            optionsList += option;
+        }
+        return optionsList;
+    }
+    return '';
+}
+
+let nonExistenceFacultyList = [];
+let fCode;
+
+function isFacultyExist(name) {
+    fCode = '';
+    if (facultyList.length > 0) {
+        let isFaculty = false;
+        for (let i = 0; i < facultyList.length; i++) {
+            console.log(name.toUpperCase() , facultyList[i].name.toUpperCase())
+            if (name.toUpperCase() == facultyList[i].name.toUpperCase()) { // name.localeCompare(facultyList[i].name, undefined, { sensitivity: 'accent' })
+                isFaculty = true;
+                fCode = facultyList[i].facultyCode;
+            }
+        }
+        if (!isFaculty)
+            nonExistenceFacultyList.push(name);
+
+        return isFaculty;
+    }
+}
 
 // APPROACH WHEN USER WANT TO CREATE OFFERING FOR ONLY ONE BATCH AT A TIME.
 // CURRICULUM , BATCH FIELDS AS WELL.

@@ -1,24 +1,18 @@
 let completeFlag = true;
 
-function checkEmptyFields(fieldsArray, counter, storeValue,) {  //textField-error-input
-    for (let i = 0; i < fieldsArray.length; i++)
-        errorInputType(fieldsArray[i]);
-
+function checkEmptyFields(fieldsArray, counter, storeValue) {  //textField-error-input
     if (counter === 1) {
-        if (completeFlag) {
-            // if (isWeightExceeded(instrumentWeight)) {
+        if (containsEmptyField(fieldsArray)) {
             $('#cpEssentialID').addClass("hidden");
             $('#cpDetaillID').removeClass("hidden");
             for (let i = 0; i < fieldsArray.length; i++) {
                 storeValue.push(fieldsArray[i].value);
             }
-            // } else {showErrorBox("Weight for assessment is exceeded");}
-
         } else {
             showErrorBox("Please complete all fields to continue")
         }
     } else if (counter === 2) {
-        if (completeFlag) {
+        if (containsEmptyField(fieldsArray)) {
             $('#cpDetaillID').addClass("hidden");
             $('#cpDistributionID').removeClass("hidden");
 
@@ -29,16 +23,15 @@ function checkEmptyFields(fieldsArray, counter, storeValue,) {  //textField-erro
     }
 }
 
-function errorInputType(currentField) {
-    if (currentField.value.length === 0) {
+/*function errorInputType(currentField) {
+    if (currentField.value.length == 0) {
         completeFlag = false;
-        console.log("ajeeb ", completeFlag)
         if (currentField.tagName === "SELECT")
             currentField.parentElement.classList.add("select-error-input")
         else if (currentField.tagName === "INPUT" || currentField.tagName === "TEXTAREA")
             currentField.parentElement.classList.add("textField-error-input")
     }
-}
+}*/
 
 let totalWeight;
 const isWeightExceeded = (instrumentWeight) => {

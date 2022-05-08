@@ -7,18 +7,17 @@ if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
 
-print $_SESSION['courseCoordinatorStatus']."  ".$_SESSION['cp_id'] . "<br>";
+//print sprintf("Course profile ID : %s <br>ProgramCode : %s <br>SectionCode : %s <br>BatchCode: %s <br>CourseCode %s <br>CurriculumCode: %s <br>",
+//    $_SESSION['cp_id'] , $_SESSION['selectedProgram'] , $_SESSION['selectedSection'] , $_SESSION['selectedBatch'] , $_SESSION['selectedCourse'] , $_SESSION['selectedCurriculum']);
 
 $courseProfile = new CourseProfile();
 $courseProfile->loadCourseProfileData($_SESSION['cp_id'] ,  $_SESSION['facultyCode']);
 
 $curriculum = new Curriculum();
-
 $curriculum->fetchCurriculumID($_SESSION['selectedSection']);   // provide with ongoing section code.
 $ploArray = $curriculum->retrievePLOsList($_SESSION['selectedProgram']); // get from server // returns array of PLO with id , name , description.
 
 $cloObject = new CLO();
-
 
 $viewCLODescription = $cloObject->retrieveAllCLOPerCourse($curriculum->getCurriculumCode(),
     $_SESSION['selectedProgram'], $_SESSION['selectedCourse'], $_SESSION['selectedBatch'], 'PLOCode');
@@ -122,7 +121,7 @@ $profileID = 1;*/
 
     <main class="main-content-alignment">
         <div class="cprofile-primary-border text-black rounded-t-md rounded-b-md mt-2
-        min-h-full bg-catalystLight-f5">
+         bg-catalystLight-f5 deleted-min-h-full">
             <h2 class="cprofile-container-centertxt"> Course-Name Course Profile</h2>
 
             <!--    course profile whole section     -->

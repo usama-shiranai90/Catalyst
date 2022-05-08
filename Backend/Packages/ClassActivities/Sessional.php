@@ -160,17 +160,21 @@ class Sessional extends ClassActivity
         foreach ($affiliatedFacultyList as $faculty) {
             $sectionCode = $faculty['sectionCode'];
 
-            $sql = /** @lang text */
-                "select * from assessment where assessmentType = 'Sessional' and sectionCode = \"$sectionCode\" and courseCode = \"$courseCode\" and 
-                 (assessmentSubType= 'Assignment' or assessmentSubType='Project'  or assessmentSubType= 'Quiz')  ";
-            $result = $this->databaseConnection->query($sql);
-            if (mysqli_num_rows($result) > 0) {
-//                echo "size :" . mysqli_num_rows($result) . " " . $sectionCode . "  " . $courseCode . "<br><br>";
-                $hasPreAssessment = true;
-                break;
+            $prepareStatementSearchQuery = $this->databaseConnection->prepare("select * from assessment where assessmentType = 'Sessional' and sectionCode = ? and courseCode = ? and 
+                 (assessmentSubType= 'Assignment' or assessmentSubType='Project'  or assessmentSubType= 'Quiz')");
+
+            $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+            $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+            $prepareStatementSearchQuery->bind_param('is', $sanitizeSectionCode, $sanitizeCourseCode);
+            if ($prepareStatementSearchQuery->execute()) {
+                $result = $prepareStatementSearchQuery->get_result();
+                if (mysqli_num_rows($result) > 0) {
+                    $hasPreAssessment = true;
+                    break;
+                }
             }
         }
-
+//                echo "size :" . mysqli_num_rows($result) . " " . $sectionCode . "  " . $courseCode . "<br><br>";
         return $hasPreAssessment;
     }
 }

@@ -40,15 +40,21 @@ class Curriculum
 
     public function fetchCurriculumID($sectionCode)
     {
-        $sql = /** @lang text */
-            "select b.curriculumCode , curriculumYear from section join semester s on section.semesterCode = s.semesterCode join
-             batch b on b.batchCode = s.batchCode join curriculum c on b.curriculumCode = c.curriculumCode where sectionCode =\"$sectionCode\";";
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $this->setCurriculumCode($row['curriculumCode']);
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select b.curriculumCode , curriculumYear from section join semester s on section.semesterCode = s.semesterCode join
+             batch b on b.batchCode = s.batchCode join curriculum c on b.curriculumCode = c.curriculumCode where sectionCode  = ? ;');
+
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeSectionCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $this->setCurriculumCode($row['curriculumCode']);
+                }
             }
         }
+
     }
 
     public function retrieveCurriculumList($programCode): ?array

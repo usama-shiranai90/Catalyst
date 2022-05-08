@@ -100,28 +100,35 @@ class CLO implements JsonSerializable
         }
     }
 
-    public function retrieveCLOlist($programCode , $curriculumCode , $batchCode , $courseCode): ?array
+    public function retrieveCLOlist($programCode, $curriculumCode, $batchCode, $courseCode): ?array
     {
         $CLOlist = array();
 
-        $sql = /** @lang text */
-            "select co.courseCode ,co.cloName ,co.description ,co.domain ,co.btLevel ,co.CLOCode  ,map.CLOCode,map.PLOCode , p.ploName , p.ploDescription
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select co.courseCode ,co.cloName ,co.description ,co.domain ,co.btLevel ,co.CLOCode  ,map.CLOCode,map.PLOCode , p.ploName , p.ploDescription
             from clo as co  join clotoplomapping map on co.CLOCode = map.CLOCode join plo p on map.PLOCode = p.PLOCode where 
-            co.programCode = \"$programCode\" and co.curriculumCode = \"$curriculumCode\" and batchCode =  \"$batchCode\" and co.courseCode = \"$courseCode\" ORDER BY co.cloName;";
+            co.programCode = ? and co.curriculumCode = ?  and batchCode =  ? and co.courseCode = ? ORDER BY co.cloName');
 
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
-            $currentCLO = '';
-            while ($row = $result->fetch_assoc()) {
-                if ($currentCLO != $row["cloName"]) {
-                    $currentCLO = $row["cloName"];
-                    $CLOlist[] = [$row['CLOCode'], $row["cloName"], $row['description']];
+        $sanitizeProgramCode = FormValidator::sanitizeUserInput($programCode, 'int');
+        $sanitizeCurriculumCode = FormValidator::sanitizeUserInput($curriculumCode, 'int');
+        $sanitizeBatchCode = FormValidator::sanitizeUserInput($batchCode, 'int');
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+
+        $prepareStatementSearchQuery->bind_param('iiis', $sanitizeProgramCode, $sanitizeCurriculumCode, $sanitizeBatchCode, $sanitizeCourseCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                $currentCLO = '';
+                while ($row = $result->fetch_assoc()) {
+                    if ($currentCLO != $row["cloName"]) {
+                        $currentCLO = $row["cloName"];
+                        $CLOlist[] = [$row['CLOCode'], $row["cloName"], $row['description']];
+                    }
                 }
+                return $CLOlist;
             }
-            return $CLOlist;
         }
-//        else
-//            echo "Cant retrieve clo : " . $this->databaseConnection->error;
+
         return null;
     }
 
@@ -147,8 +154,8 @@ class CLO implements JsonSerializable
     public function retrieveCLOAveragePerCourse($courseCode, $sectionCode, $batchCode, $curriculumCode): ?array
     {
         $cloDataSet = array();
-        $dbStatement = /** @lang text */
-            "select cloName,
+
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare(query: /** @lang text */ 'select cloName,
          sum(totalQuestionMarks)                                             as total,
          sum(obtainedMarks)                                                  as obtain,
          CAST(sum(obtainedMarks) / sum(totalQuestionMarks) * 100 as INTEGER) as result,
@@ -157,34 +164,43 @@ class CLO implements JsonSerializable
          join assessmentquestion a2 on a.assessmentCode = a2.assessmentCode
          join assessmentquestionstudentmarks a3 on a2.questionCode = a3.questionCode
          join clo c on c.CLOCode = a2.cloCode
-        where c.courseCode = \"$courseCode\" and sectionCode = \"$sectionCode\" and 
-        c.batchCode = \"$batchCode\" and c.curriculumCode = \"$curriculumCode\" group by a2.cloCode;";
+        where c.courseCode = ? and sectionCode = ? and 
+        c.batchCode = ? and c.curriculumCode = ? group by a2.cloCode;');
 
-        $result = $this->databaseConnection->query($dbStatement);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $temp = array(
-                    "cloName" => $row['cloName'],
-                    "totalMarks" => $row['total'],
-                    "obtainMarks" => $row['obtain'],
-                    "result" => $row['result'],
-                    "otherAvg" => $row['avg'],
-                );
-                array_push($cloDataSet, $temp);
-            }
-            return $cloDataSet;
-        } else {
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $sanitizeBatchCode = FormValidator::sanitizeUserInput($batchCode, 'int');
+        $sanitizeCurriculumCode = FormValidator::sanitizeUserInput($curriculumCode, 'int');
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('siii', $sanitizeCourseCode, $sanitizeSectionCode, $sanitizeBatchCode, $sanitizeCurriculumCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $temp = array(
+                        "cloName" => $row['cloName'],
+                        "totalMarks" => $row['total'],
+                        "obtainMarks" => $row['obtain'],
+                        "result" => $row['result'],
+                        "otherAvg" => $row['avg'],
+                    );
+                    array_push($cloDataSet, $temp);
+                }
+                return $cloDataSet;
+            } else {
 //            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  wtf";
-            return null;
+                return null;
+            }
+
         }
+        return null;
     }
 
 //    $courseCode, $sectionCode, $batchCode, $curriculumCode
     public function retrieveCLOAveragePerStudent($courseCode, $sectionCode): ?array
     {
         $cloDataSet = array();
-        $dbStatement = /** @lang text */
-            "select cloName, studentRegCode,
+
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare(/** @lang text */ 'select cloName, studentRegCode,
        sum(totalQuestionMarks)                                              tQMarks,
        sum(obtainedMarks)                                              obtainMarks,
        CAST(sum(obtainedMarks) / sum(totalQuestionMarks) * 100 as INTEGER) as result
@@ -192,27 +208,34 @@ class CLO implements JsonSerializable
          join assessmentquestion a2 on a.assessmentCode = a2.assessmentCode
          join assessmentquestionstudentmarks a3 on a2.questionCode = a3.questionCode
          join clo c on c.CLOCode = a2.cloCode
-        where c.courseCode = \"$courseCode\"
-          and sectionCode = \"$sectionCode\"
-        group by a3.studentRegCode,a2.cloCode;";
+        where c.courseCode = ?
+          and sectionCode = ?
+        group by a3.studentRegCode,a2.cloCode;');
 
-        $result = $this->databaseConnection->query($dbStatement);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $temp = array(
-                    "cloName" => $row['cloName'],
-                    "regNumber" => $row['studentRegCode'],
-                    "totalMarks" => $row['tQMarks'],
-                    "ObtainMarks" => $row['obtainMarks'],
-                    "result" => $row['result']
-                );
-                array_push($cloDataSet, $temp);
-            }
-            return $cloDataSet;
-        } else {
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('si', $sanitizeCourseCode, $sanitizeSectionCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $temp = array(
+                        "cloName" => $row['cloName'],
+                        "regNumber" => $row['studentRegCode'],
+                        "totalMarks" => $row['tQMarks'],
+                        "ObtainMarks" => $row['obtainMarks'],
+                        "result" => $row['result']
+                    );
+                    $cloDataSet[] = $temp;
+                }
+                return $cloDataSet;
+            } else {
 //            echo "Error while fetching clo's average of course : " . $this->databaseConnection->error . "  ";
-            return null;
+                return null;
+            }
         }
+        return null;
     }
 
 

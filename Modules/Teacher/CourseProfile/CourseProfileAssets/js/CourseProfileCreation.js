@@ -33,11 +33,12 @@ window.onload = function (e) {
         cCoordinationField: document.getElementById("coordinatingUnitID"),
         cMethodologyField: document.getElementById("teachingMethodologyID"),
         cModelField: document.getElementById("courseInteractionModelID"),
-
         getEssentialValue: function (field) {
             return $(field).val();
         }
     }
+    let allowWeightAssessmentToggle = document.getElementById('allowWeightAssessmentToggleId');
+
     const instrumentWeight = {
         quizz_weight: document.getElementById('quizWeightID'),
         assignment_weight: document.getElementById('assignmentWeightID'),
@@ -85,11 +86,11 @@ window.onload = function (e) {
         /**  To disable the toggle button if sessional is already exist.   **/
         const disableToggleButton = () => {
             if (hasSessionalFlag) {
-                $('input[name="allowWeightAssessmentToggle"]').attr("disabled", true).css({cursor: 'no-drop'});
-                $('input[name="allowWeightAssessmentToggle"]').parent().parent().append(`<p class="leading-normal tracking-tight font-normal text-xs w-1/3 px-5 text-gray-600">
+                $(allowWeightAssessmentToggle).attr("disabled", true).css({cursor: 'no-drop'});
+                $(allowWeightAssessmentToggle).parent().parent().append(`<p class="leading-normal tracking-tight font-normal text-xs w-1/3 px-5 text-gray-600">
                 It seems like the different section has already created activity for class. </p>`);
             } else
-                $('input[name="allowWeightAssessmentToggle"]').removeClass().removeAttr("disabled").html("");
+                $(allowWeightAssessmentToggle).removeClass().removeAttr("disabled").html("");
         }
         disableToggleButton()
 
@@ -105,9 +106,7 @@ window.onload = function (e) {
             }
         });
 
-        let insertedWeightLimit = 0;
         /** weight limit check */
-
         $(Object.values(instrumentWeight)).bind({
             focus: function (e) {
                 this.oldvalue = this.value;
@@ -126,6 +125,7 @@ window.onload = function (e) {
                     isExceededValueWeights(false)
             }
         });
+        let insertedWeightLimit = 0;
 
         function isExceededValueWeights(flag) {
             $(Object.values(instrumentWeight)).each(function (i, v) {
@@ -135,7 +135,6 @@ window.onload = function (e) {
                     $(this).parent().removeClass().addClass("textField-label-content w-2/5");
             });
         }
-
 
         /**  Course Essential Section Continue Button , checks empty fields and back-arrow pointer.   **/
         $("#coursepContinuebtn-1").on("click", function (e) {
@@ -454,6 +453,9 @@ window.onload = function (e) {
     /** to store value of outcome description and mapping value. */
     function storeDetailAndMappingToArray() {
 
+        // check the allowed assessment weightage.
+        let weightagedAssessment = checkBoxValue($(allowWeightAssessmentToggle));
+
         for (let i = 0; i < allCourseCLOsDescriptionValues.length; i++) /** create empty two-dimensional CLO Description matrix */
         allCourseCLOsDescriptionValues[i] = [];  // or you can simply use new Array()
 
@@ -508,14 +510,14 @@ window.onload = function (e) {
 
             console.log("in deletion Mode ", deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription))
 
-            deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription));
+            deleteAjaxCallOutcome(deletedCLOsDescriptionIDs, Object.keys(updateCLOsDescription) , weightagedAssessment);
 
         } else {
             console.log("DETAIL Added Description :", allCourseCLOsDescriptionValues);
             console.log("MAP Description  :", allCourseCLOsMapValues);
             console.log("Essentail  :", courseEssentialFieldValue);
 
-            creationAjaxCall(allCourseCLOsDescriptionValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue , courseInstructorList)
+            creationAjaxCall(allCourseCLOsDescriptionValues, allCourseCLOsMapValues, courseEssentialFieldValue, courseDetailFieldValue , courseInstructorList , weightagedAssessment)
         }
 
 
@@ -668,7 +670,7 @@ window.onload = function (e) {
 
 }
 
-function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue,courseInstructorList) {
+function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, courseDetailFieldValue,courseInstructorList , weightagedAssessment) {
 
     $.ajax({
         type: "POST",
@@ -677,6 +679,7 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
             arrayCLO: arrayCLO, arrayMapping: arrayMapping,
             courseEssentialFieldValue: courseEssentialFieldValue, courseDetailFieldValue: courseDetailFieldValue,
             courseInstructorList: courseInstructorList,
+            weightagedAssessment: weightagedAssessment,
             saved: true
         },
         beforeSend: function () {
@@ -698,7 +701,7 @@ function creationAjaxCall(arrayCLO, arrayMapping, courseEssentialFieldValue, cou
     });
 }
 
-function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription) {
+function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription, weightagedAssessment) {
 
     $.ajax({
         type: "POST",
@@ -711,6 +714,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, cours
             arrayMapping: allCourseCLOsMapValues,
             courseCLODescriptionUpdateArray: updateCLOsDescription,
             recentlyAddedCLOsDescriptionArray: recentlyAddedCLOsDescription,
+            weightagedAssessment: weightagedAssessment,
             update: true
         },
         beforeSend: function () {
@@ -736,7 +740,7 @@ function updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, cours
     });
 }
 
-function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) { // deletedCLOIdsArray = 'any existing IDs' and remainingCLOIds = 'to update Exisiting IDs'
+function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds ,wa) { // deletedCLOIdsArray = 'any existing IDs' and remainingCLOIds = 'to update Exisiting IDs'
     $.ajax({
         type: "POST",
         url: 'CourseProfileAssets/Operation/CourseProfileAjax.php?p=delete',
@@ -757,7 +761,7 @@ function deleteAjaxCallOutcome(deletedCLOIdsArray, remainingCLOIds) { // deleted
 
             switch (responseText.status) {
                 case 200:
-                    updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription);
+                    updateAjaxCall(courseEssentialFieldValue, courseDetailFieldValue, courseInstructorList, allCourseCLOsMapValues, updateCLOsDescription, recentlyAddedCLOsDescription , wa);
                     break;
 
                 case 207:
@@ -793,4 +797,11 @@ function addKeyupEventForTextarea() {
     $("#cpDetaillID .cprofile-right-container textarea").each(function (index, value) {
         $(value).attr("onkeyup", `autoHeight('${this.id}')`)
     })
+}
+
+function checkBoxValue(allowWeightAssessmentToggle) {
+   if ($(allowWeightAssessmentToggle).is(":checked"))
+       return 1;
+   else
+       return 0
 }

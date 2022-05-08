@@ -1,17 +1,17 @@
-let recentlyAddedCurriculum = [];
-let updateCurriculum = {};
-let deletedCurriculum = [];  // stores the id for deleted rows by saving their ID.
+let recentlyAddedCurriculumList = [];
+let updateCurriculumList = {};
+let deletedCurriculumList = [];           // stores the id for deleted rows by saving their ID.
 let allCurriculumRecordValues = [];
 
-let selectToEditCurrciulumCode = -1; // variable will store curriculumCode and which to edit.
-let curriculumCounter = 0;  // stores the total curriculum Counter i.e. table rows header and curriculumPLOsRows.
+let selectToEditCurriculumCode = -1; // variable will store curriculumCode and which to edit.
+let curriculumCounter = 0;          // stores the total curriculum Counter i.e. table rows header and curriculumPLOsRows.
 window.onload = function (e) {
 
     // view and load selected curriculum DOM:
-    const programLearningOutcomeDetailListContainer = document.getElementById('selectedProgramOutcomeDetailDivId');
     const curriculumContainer = document.getElementById('curriculumTabularContainerID');
-    const selectedProgramField = document.getElementById('curriculumProgramId');
 
+    const programLearningOutcomeDetailListContainer = document.getElementById('selectedProgramOutcomeDetailDivId');
+    const selectedProgramField = document.getElementById('curriculumProgramId');
     const selectedCurriculumProgramYearField = document.getElementById('curriculumAllocationYearId');
     const refreshCurriculumBtn = document.getElementById("refreshCurriculumBtn");
 
@@ -38,102 +38,125 @@ window.onload = function (e) {
             }
         });
 
-
         /** when view Button is clicked call AJAX and fetch its related PLO List. */
         $(document).on('click', "button[id^='viewCurriculum']", function (e) {
             const curriculumCode = extractFirstNumeric(this.id); // viewCurriculum-5 extract only numeric i.e. 5
             loadRespectivePloAjax(curriculumCode, "view")
-        })
+        });
 
         /** when edit Button is clicked call AJAX and fetch its related PLO List. */
         $(document).on('click', "button[id^='editCurriculum']", function (event) {
-            selectToEditCurrciulumCode = extractFirstNumeric(this.id); // extract curriculumCode. editCurriculum-5 extract only numeric i.e. 5
-            loadRespectivePloAjax(selectToEditCurrciulumCode, "edit")
+            selectToEditCurriculumCode = extractFirstNumeric(this.id); // extract curriculumCode. editCurriculum-5 extract only numeric i.e. 5
+            loadRespectivePloAjax(selectToEditCurriculumCode, "edit")
         });
+
 
         $(backArrowBtn).on('click', function (e) {
             $("#curriculumSearchBoxSectionId").removeClass("hidden");
             $(editCurriculumSection).addClass("hidden");
             $(parentFormCurriculumContainer).children().slice(1).remove();// curriculum form creation:first child ( 0-index ) => header chor kr sb delete kr do...
-        })
+        });
 
         // When User click on edit option:
         $(addMoreCurriculumBtn).on('click', function (e) {
             initialRowChecker(null);
-        })
+        });
 
+        $(document).on('keydown', 'input[id^="creationCurriculum-No-r-"]', function (e) {
+            let prefixedValue = $(this).val();
+            let currentField = this;
+            setTimeout(function () {
+                if (currentField.value.indexOf('PLO-') !== 0) {
+                    $(currentField).val(prefixedValue);
+                }
+            }, 1);
+        });
 
-        /** when delete icon is pressed remove the row and reiterate for PLO number.
-         *  if your record exist before ( i.e. label ploCode exist ) show confirm modal box.
-         *  if newly created directly delete.
-         * */
+        /** when delete icon is pressed remove  the row and reiterate for PLO number.
+         *  if your record exist before ( i.e.  label ploCode exist ) show confirm modal box.
+         *  if newly created directly delete.   **/
         let dischargedIndex = 0;
         let deletedPLOCode = 0;
         $(document).on('click', "img[data-coc-remove='remove']", function (event) {
             event.stopImmediatePropagation();
 
             dischargedIndex = $(this).closest('.learning-outcome-row.h-auto').attr("id").match(/\d+/)[0] // extract the numeric value. i.e. creationCurriculumRow-3 > 3
-            deletedPLOCode = $(this).closest(".learning-outcome-row.h-auto").children(":first").children(":first").attr("value"); // label ploCode
+            deletedPLOCode = $(this).closest(".learning-outcome-row.h-auto").children(":first").children(":first").attr("value"); // main row -> first label -> input -> value = PLOCode.
 
-            console.log(deletedPLOCode)
+            console.log("dischargedIndex : ", dischargedIndex, " deletedPLOCode ", deletedPLOCode)
             if ((typeof deletedPLOCode != 'undefined' && deletedPLOCode !== null) && !isCharacterALetter(deletedPLOCode) && deletedPLOCode !== "") { // when ploCode exist.
                 $("main").addClass("blur-filter");
                 $("#alertContainer").removeClass("hidden");
             } else // PLOCode is not define/null/empty .
-                deleteCurriculumRow(dischargedIndex, false); // 4 , false,
+                deleteCurriculumRow(dischargedIndex, false);
         });
 
         $(updateButtonCurriculumBtn).on('click', function (e) {
-            allCurriculumRecordValues = [];
+            // allCurriculumRecordValues = [];
+            // let counter = 0;
 
-            let counter = 0;
-            $(parentFormCurriculumContainer).children().each((index, node) => {
-                if (index !== 0) {
+            let isEmptyRecord = false;
+            $(parentFormCurriculumContainer).children().each((index, node) => { // including header and all creationCurriculumRow.
+                if (index !== 0) { // skip for header.
                     const temp_curriculum = new Curriculum();
-                    const hasId = $("#coc-r" + (index)).val();
-                    const curriculumRowRecordList = ['#creationCurriculum-No-r-' + index, '#detail-r-' + index];
-                    for (let i = 0; i < curriculumRowRecordList.length; i++) {
-                        if (i === 0) {
-                            if ($(curriculumRowRecordList[i]).val() === '')
-                                temp_curriculum.setploNumber = $(curriculumRowRecordList[i]).attr("placeholder")
-                            else
-                                temp_curriculum.setploNumber = $(curriculumRowRecordList[i]).val()
-                        } else {
-                            temp_curriculum.setploDescription = $(curriculumRowRecordList[i]).val()
+                    const labelInputValuePLOCode = $("#coc-r" + (index)).val(); // label-> input-> value ( ploCode ) // undefined/empty or number.
 
-                            allCurriculumRecordValues.push(temp_curriculum)
-                            // console.log(allCurriculumRecordValues[counter])
-                            if (hasId) {
-                                // console.log("Adding to Update ARRAY : ID ", hasId)
-                                updateCurriculum[hasId] = allCurriculumRecordValues[counter];
+                    const curriculumRowRecordList = ['#creationCurriculum-No-r-' + index, '#detail-r-' + index]; // [ PLONo , PloDescription ]
+                    for (let i = 0; i < curriculumRowRecordList.length; i++) {
+                        if (i === 0) {  // PLONo
+                            /*         if ($(curriculumRowRecordList[i]).val() === '') // if value is empty pick from placeholder.
+                                         temp_curriculum.setploNumber = $(curriculumRowRecordList[i]).attr("placeholder")
+                                     else
+                                         temp_curriculum.setploNumber = $(curriculumRowRecordList[i]).val()*/
+                            temp_curriculum.setploNumber = $(curriculumRowRecordList[i]).val()
+                        } else {
+                            // allCurriculumRecordValues.push(temp_curriculum)
+                            temp_curriculum.setploDescription = $(curriculumRowRecordList[i]).val()
+                            if (labelInputValuePLOCode) {
+                                updateCurriculumList[labelInputValuePLOCode] = temp_curriculum;
                             } else
-                                recentlyAddedCurriculum.push(allCurriculumRecordValues[counter])
-                            counter++;
+                                recentlyAddedCurriculumList.push(temp_curriculum)
                         }
+                        if (removeRedundantSpace($(curriculumRowRecordList[i]).val()) == "" && removeRedundantSpace($(curriculumRowRecordList[i]).val()).length == 0 )
+                            isEmptyRecord = true;
                     }
                 }
-            })
+            });
 
-            // console.log("All Weekly Topics List : ", allCurriculumRecordValues)
-            // console.log("Updated  Weekly Topics List : ", updateCurriculum)
-            // console.log("Recently Added Weekly Topics List : ", recentlyAddedCurriculum)
-            // console.log("Deleted Weekly Topics List : ", deletedCurriculum)
+            /*
+            console.log("Updated  Weekly Topics List : ", updateCurriculumList)
+            console.log("Recently Added Weekly Topics List : ", recentlyAddedCurriculumList)
+            console.log("Deleted Weekly Topics List : ", deletedCurriculumList)
+            console.log("selectToEditCurriculumCode ", selectToEditCurriculumCode)
+*/
 
-            deleteCurriculumPLOAjaxCall(deletedCurriculum, Object.keys(updateCurriculum));
+            if (!isEmptyRecord){
+                let curriculumOutcomeUpdateArrayKeyList = Object.keys(updateCurriculumList); // Object.keys(updateCurriculumList) -> (stores the ploCode of updated array list) array of all keys.
+                deleteCurriculumPLOAjaxCall(deletedCurriculumList, curriculumOutcomeUpdateArrayKeyList);
+            }
+            else{
+                $("body").append(popupErrorNotifier("Empty Field", "Complete all fields to continue"));
+                $("#errorMessageDiv").toggle("hidden").animate(
+                    {right: 0,}, 5000, function () {
+                        $(this).delay(1000).fadeOut().remove();
+                    });
+            }
+
         });
 
-        /** It is visible when ID is represent and user wants to delete . */
+        /** ALERT-YES BUTTON It is visible when ID is represent and user wants to delete . */
         $('#alertBtndeleteCurriculum').click(function (e) {
             // const id = $(event.target).closest('.learning-outcome-row').find(".bg-catalystBlue-l61").attr("id");
             // console.log("Show when Alert-Delete Button is clicked. ", deletedCurriculumID , id)
             e.stopImmediatePropagation();
-            deletedCurriculum.push(deletedPLOCode);
-            deleteCurriculumRow(dischargedIndex, true);
             $("main").removeClass("blur-filter");
             $("#alertContainer").addClass("hidden");
+
+            deletedCurriculumList.push(deletedPLOCode); //  label-> input -> value extract (deletedPLOCode)
+            deleteCurriculumRow(dischargedIndex, true);
         });
 
-        /** It is visible when ID is represent and user does not want to delete. */
+        /** ALERT-NO BUTTON It is visible when ID is represent and user does not want to delete. */
         $("#alertBtnNoCurriculum").on('click', function (e) {
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -145,7 +168,7 @@ window.onload = function (e) {
     /** function is used to refresh the curriculum table according to selected year. */
     function refreshTableCurriculum(assignYear) {
 
-        $(refreshCurriculumBtn).removeClass("transform").addClass("animate-spin")
+        $(refreshCurriculumBtn).addClass("animate-spin")
         const refreshIntervalId = setInterval(function () {
 
             $("tbody").children().remove(); // delete all children of curriculum table.
@@ -194,7 +217,7 @@ window.onload = function (e) {
                     counter++;
                 }
             }
-            $(refreshCurriculumBtn).addClass("transform").removeClass("animate-spin")
+            $(refreshCurriculumBtn).removeClass("animate-spin")
 
             clearInterval(refreshIntervalId);
         }, 1000);
@@ -215,7 +238,13 @@ window.onload = function (e) {
         }
     }
 
-    /** use to create delete row from curriclum table. */
+    /** use to create delete row from curriculum table.
+     * dischargedIndex represents the row number of which the user has selected to delete.
+     * if hasKeyFlag value is false then Label->input->value is empty. ( no PLOCode )
+     * if hasKeyFlag value is true then  Label->input->value is not empty ( has PLOCode )
+     *
+     * function iterateCurriculumRow(which parent container to follow TABLE , deleted Row Index , size of your curriculum-PLO Table
+     *  */
     function deleteCurriculumRow(dischargedIndex, hasKeyFlag) {
         $(('#creationCurriculumRow-' + dischargedIndex)).remove();
         curriculumCounter = iterateCurriculumRow(parentFormCurriculumContainer, parseInt(dischargedIndex), curriculumCounter, hasKeyFlag);
@@ -238,13 +267,13 @@ window.onload = function (e) {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (data, status) {
-                const responseText = JSON.parse(data)
+                const responseText = JSON.parse(data) // {status : -1 , message: array/key-value/text-> successfully , errors:  }
                 console.log(responseText)
                 // $("#selectedProgramOutcomeDetailDivId").children(":last-child").children(":first-child").slice(1).remove();
 
                 if (responseText.status === 1 && responseText.errors === 'none') {
                     if (type === "view")
-                        successMessageLoadView(responseText.message);
+                        successMessageLoadView(responseText.message); // responseText.message -> PLOArray.
                     else if (type === "edit")
                         successMessageLoadEdit(responseText.message);
                 }
@@ -252,15 +281,15 @@ window.onload = function (e) {
         });
     }
 
-    function deleteCurriculumPLOAjaxCall(deletedCurriculumOutcomeList, curriculumOutcomeKeyList) {
+    function deleteCurriculumPLOAjaxCall(deletedCurriculumList, curriculumOutcomeUpdateArrayKeyList) { // curriculumOutcomeUpdateArrayKeyList -> stores the ploCode of updated array list.
         $.ajax({
             type: "POST",
             url: "assets/CurriculumAjax.php",
             data: {
                 deletionOutcome: true,
-                deletedCurriculumOutcomeList: deletedCurriculumOutcomeList,
+                deletedCurriculumList: deletedCurriculumList,
+                curriculumCode: selectToEditCurriculumCode, // which curriculum was selected and its curriculumCode.
                 // remainingCurriculumOutcomeKeyList: curriculumOutcomeKeyList, // redundant for now.
-                curriculumCode: selectToEditCurrciulumCode,
             },
             beforeSend: function () {
             },
@@ -268,17 +297,18 @@ window.onload = function (e) {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (serverResponse, status) {
-                const responseText = JSON.parse(serverResponse);
-                if (responseText.status === 1 && responseText.errors === 'none')
-                    updateCurriculumOutcomeAjaxCall(updateCurriculum, recentlyAddedCurriculum, curriculumOutcomeKeyList);
-            },
-            complete: function (response) {
-                console.log("Response Status of Curriculum Deletion on completion : ", response);
+                const responseText = JSON.parse(serverResponse); // {status :  0,-1, 1 ;   message :"blaa"  ,errors: "error" }
+                if (responseText.status === 1 && responseText.errors === 'none') {
+                    console.log("inside ????", updateCurriculumList, recentlyAddedCurriculumList, curriculumOutcomeUpdateArrayKeyList);
+                    updateCurriculumOutcomeAjaxCall(updateCurriculumList, recentlyAddedCurriculumList, curriculumOutcomeUpdateArrayKeyList);
+                } else {
+                    // ERROR NOTIFICATION..
+                }
             }
         });
     }
 
-    function updateCurriculumOutcomeAjaxCall(updateCurriculumOutcomeList, recentlyAddedCurriculumOutcomeList, curriculumOutcomeKeyList) {
+    function updateCurriculumOutcomeAjaxCall(updateCurriculumOutcomeList, recentlyAddedCurriculumOutcomeList, curriculumOutcomeUpdateArrayKeyList) {
         $.ajax({
             type: "POST",
             url: "assets/CurriculumAjax.php",
@@ -286,8 +316,8 @@ window.onload = function (e) {
                 modifyOutcome: true,
                 updateCurriculumOutcomeList: updateCurriculumOutcomeList,
                 recentlyAddedCurriculumOutcomeList: recentlyAddedCurriculumOutcomeList,
-                curriculumOutcomeKeyList: curriculumOutcomeKeyList,
-                curriculumCode: selectToEditCurrciulumCode
+                curriculumOutcomeUpdateArrayKeyList: curriculumOutcomeUpdateArrayKeyList,
+                curriculumCode: selectToEditCurriculumCode
             },
             beforeSend: function () {
                 $("body").append(addLoader());
@@ -298,12 +328,11 @@ window.onload = function (e) {
                 console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
             },
             success: function (serverResponse, status) {
-
-            },
-            complete: function (response) {
-                setInterval(function () {
+                console.log(JSON.parse(serverResponse))
+                let s = setInterval(function () {
                     $("main").toggleClass("blur-filter");
                     $('#loader').remove();
+                    clearInterval(s);
                     location.href = "manageCurriculum.php";
                 }, 2000);
             }
@@ -313,7 +342,7 @@ window.onload = function (e) {
     /** function is used when ajax for view is called. */
     function successMessageLoadView(ploArray) {
         $(programLearningOutcomeDetailListContainer).removeClass("hidden");
-        $(programLearningOutcomeDetailListContainer).children(":last-child").children().slice(1).remove();// (0-child is header) 1 sa less children are not deleted. baki sary deleted.
+        $(programLearningOutcomeDetailListContainer).children(":last-child").children().slice(1).remove();// (0-child is header) 1 sa fewer children are not deleted. baki sary deleted.
 
         for (let i = 0; i < ploArray.length; i++) {
             const ploData = `<div class="flex flex-row w-full bg-white border-solid border-b-2">
@@ -336,11 +365,8 @@ window.onload = function (e) {
     function successMessageLoadEdit(ploArray) {
         $("#curriculumSearchBoxSectionId").addClass("hidden"); // hide curriculumSearchBoxSectionId
         $(editCurriculumSection).removeClass("hidden"); // unhidden edit section.
-
-        for (let i = 0; i < ploArray.length; i++) {
+        for (let i = 0; i < ploArray.length; i++)
             initialRowChecker(ploArray[i]);
-        }
-
     }
 
 }

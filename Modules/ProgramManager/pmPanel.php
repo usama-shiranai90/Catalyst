@@ -175,7 +175,8 @@ $personalDetails = $admin->getInstance();
                 </div>
                 <div class="menu menuClosed dropdownNavigationItemMenu" id="dropdownNavigationItemMenu">
                     <!--                    <div class="menuItem" id="importAllocationCourseID">Import Course </div>-->
-                    <div class="menuItem" id="importOfferAndAllocationCourseID">Import Course Offering & Allocation</div>
+                    <div class="menuItem" id="importOfferAndAllocationCourseID">Import Course Offering & Allocation
+                    </div>
                     <div class="menuItem" id="viewCourseDetailId">View Offer & Allocation</div>
                 </div>
             </div>

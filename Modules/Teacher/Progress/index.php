@@ -228,7 +228,7 @@ if ($retrievedFinalTerm != null)
     let sessionalAssessmentsArray = <?php echo json_encode($courseSessional); ?>;
     let midAssessmentsArray = <?php echo json_encode($courseMid); ?>;
     let finalAssessmentsArray = <?php echo json_encode($courseFinal); ?>;
-    console.log("Plan :", sessionalAssessmentsArray);
+    console.log("sessionalAssessmentsArray :", sessionalAssessmentsArray);
     console.log("midAssessmentsArray :", midAssessmentsArray);
     console.log("finalAssessmentsArray :", finalAssessmentsArray);
 

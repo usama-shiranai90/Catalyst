@@ -295,6 +295,6 @@ foreach ($seasonList as $sName)
 
 </script>
 
-<script src="assets/Js/FileImport.js"></script>
+<script src="assets/Js/StudentImportCreation.js"></script>
 <script src="assets/Js/manager.js"></script>
 </html>

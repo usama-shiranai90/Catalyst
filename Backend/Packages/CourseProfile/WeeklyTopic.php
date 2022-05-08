@@ -156,34 +156,37 @@ class WeeklyTopic
 
     public function retrieveLastInsertedWeeklyTopic($courseProfileCode): ?array
     {
-        $sql = /** @lang text */
-            "select weeklyTopicCode , weeklyNo , topicDetail , assessmentCriteria , modifiedDate from weeklytopics
-               where courseProfileCode = \"$courseProfileCode\" order BY weeklyTopicCode desc limit 1;";
-        $result = $this->databaseConnection->query($sql);
-
         $soloWeeklyTopic = array();
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select weeklyTopicCode , weeklyNo , topicDetail , assessmentCriteria , modifiedDate from weeklytopics
+               where courseProfileCode = ? order BY weeklyTopicCode desc limit 1 ;');
 
-        if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $weekCLOList = array();
-                $w_id = (int)$row['weeklyTopicCode'];
+        $sanitizeCourseProfileCode = FormValidator::sanitizeUserInput($courseProfileCode, 'int');
+        $prepareStatementSearchQuery->bind_param('i', $sanitizeCourseProfileCode);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $weekCLOList = array();
+                    $w_id = (int)$row['weeklyTopicCode'];
 
-                $statmentSecond = /** @lang text */
-                    "select weeklyTopicCode, c.CLOCode, c.cloName from weeklytopicclo join clo c 
-                     on c.CLOCode = weeklytopicclo.CLOCode where weeklyTopicCode = \"$w_id\";";
-                $result2 = $this->databaseConnection->query($statmentSecond);
-                if (!empty(mysqli_num_rows($result2)) && mysqli_num_rows($result2) > 0) {
-                    while ($row2 = $result2->fetch_assoc()) {
-                        $weekCLOList[] = $row2['cloName'];
+                    $prepareStatementSearchQuery_2 = $this->databaseConnection->prepare('select weeklyTopicCode, c.CLOCode, c.cloName from weeklytopicclo join clo c 
+                     on c.CLOCode = weeklytopicclo.CLOCode where weeklyTopicCode = ?');
+
+                    $prepareStatementSearchQuery_2->bind_param('i', $w_id);
+                    if ($prepareStatementSearchQuery_2->execute()) {
+                        $result = $prepareStatementSearchQuery_2->get_result();
+                        if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+                            while ($row2 = $result->fetch_assoc()) {
+                                $weekCLOList[] = $row2['cloName'];
+                            }
+                        }
                     }
+                    // add modifiedDate at the end of array.
+                    array_push($soloWeeklyTopic, $row['weeklyNo'], $row['topicDetail'], $row['assessmentCriteria'], $weekCLOList);
+                    return $soloWeeklyTopic;
                 }
-                // add modifiedDate at the end of array.
-                array_push($soloWeeklyTopic, $row['weeklyNo'], $row['topicDetail'], $row['assessmentCriteria'], $weekCLOList);
-                return $soloWeeklyTopic;
             }
         }
-//        else
-//            echo "No Weekly Information:" . $this->databaseConnection->error;
 
         return null;
     }

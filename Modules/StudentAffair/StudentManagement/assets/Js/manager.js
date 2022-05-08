@@ -131,27 +131,28 @@ function checkDuplication(tableContainer) {
 
     let uniqueTabularSetController = [];
     let hasDuplication = false;
-    let tabCounterShifter = 0;
+    // let tabCounterShifter = 0;
     $(tableContainer).children("table").each(function (index, value) {
-        console.log("inside table...");
-        let tabShifter = index + tabCounterShifter;
+        /*let tabShifter = index + tabCounterShifter;
         uniqueTabularSetController[tabShifter] = [];
         const col = $(value).eq(0).find('th').length;
         for (let i = 0; i < col; i++) {
             uniqueTabularSetController[tabShifter][i] = [];
-        }
-        $(value).children("tbody").children("tr").each(function (tIndex, tValue) {
-            $(tValue).find('td').each(function (i) {
-                if (i < 2 || i === 7 || i === 8) {
-                    if (uniqueTabularSetController[tabShifter][i].indexOf($(this).text().replace(/\s\s+/g, ' ')) > -1) {
+        }*/
+
+        $(value).children("tbody").children("tr").each(function (tRowIndex, tRowValue) {
+            $(tRowValue).find('td').each(function (tDataIndex) {
+                if (tDataIndex < 1) { // tDataIndex < 2 || tDataIndex === 7 || tDataIndex === 8
+                    // if (uniqueTabularSetController[tabShifter][tDataIndex].indexOf($(this).text().replace(/\s\s+/g, ' ')) > -1) {
+                    if (uniqueTabularSetController.indexOf(removeRedundantSpace($(this).text())) > -1) {
                         $(this).addClass('bg-red-300 text-white');
                         hasDuplication = true;
                     }
-                    uniqueTabularSetController[tabShifter][i].push($(this).text().replace(/\s\s+/g, ' '));
+                    uniqueTabularSetController.push(removeRedundantSpace($(this).text()));
                 }
             });
         });
-        ++tabCounterShifter;
+        // ++tabCounterShifter;
     });
     console.log("uniqueTabularSetController : " , uniqueTabularSetController)
     return hasDuplication;

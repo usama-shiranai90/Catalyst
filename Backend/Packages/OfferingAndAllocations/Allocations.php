@@ -126,29 +126,37 @@ class Allocations
     public function retrieveSameAllocatedFacultyList($semesterCode, $courseCode): array
     {
         $affiliatedFacultyList = array();
-        $sql = /** @lang text */
-            "select semesterCode, facultyCode, courseCode, f.sectionCode, sectionName ,isCoordinator from section
+        /*      $sql = "select semesterCode, facultyCode, courseCode, f.sectionCode, sectionName ,isCoordinator from section
+                 join facultyallocations f on section.sectionCode = f.sectionCode
+                 join courseallocation c on c.allocationCode = f.allocationCode
+                 where semesterCode = \"$semesterCode\"
+                 and courseCode = \"$courseCode\";";*/
+
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select semesterCode, facultyCode, courseCode, f.sectionCode, sectionName ,isCoordinator from section
          join facultyallocations f on section.sectionCode = f.sectionCode
          join courseallocation c on c.allocationCode = f.allocationCode
-         where semesterCode = \"$semesterCode\"
-         and courseCode = \"$courseCode\";";
+         where semesterCode = ?    and courseCode = ?');
 
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
+        $sanitizeSemesterCode = FormValidator::sanitizeUserInput($semesterCode, 'int');
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('is', $sanitizeSemesterCode, $sanitizeCourseCode);
 
-            while ($row = $result->fetch_assoc()) {
-                $temp = array(
-                    "facultyCode" => $row['facultyCode'],
-                    "courseCode" => $row['courseCode'],
-                    "sectionCode" => $row['sectionCode'],
-                    "sectionName" => $row['sectionName'],
-                    "isCoordinator" => $row['isCoordinator'],
-                );
-                $affiliatedFacultyList[] = $temp;
-            }
-        } else
-            echo "No Same Faculty Allocations found";
-
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $temp = array(
+                        "facultyCode" => $row['facultyCode'],
+                        "courseCode" => $row['courseCode'],
+                        "sectionCode" => $row['sectionCode'],
+                        "sectionName" => $row['sectionName'],
+                        "isCoordinator" => $row['isCoordinator'],
+                    );
+                    $affiliatedFacultyList[] = $temp;
+                }
+            } else
+                echo "No Same Faculty Allocations found";
+        }
         return $affiliatedFacultyList;
     }
 }

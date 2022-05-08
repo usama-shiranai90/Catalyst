@@ -135,7 +135,7 @@ class ProgramManagerRole extends UserRole
             $result = $prepareStatementSearchQuery->get_result();
             if (mysqli_num_rows($result) > 0) {
                 while ($row = $result->fetch_assoc()) {
-                    print json_encode($row)."<br><br><br>";
+//                    print json_encode($row)."<br><br><br>";
 //                $adminStat['ofOther'] = $row['programName'] . "( " . $row['programShortName'] . " )";
                     $adminStat['programCode'] = $row['programCode'];
                     $adminStat['facultyID'] = $row['facultyCode'];

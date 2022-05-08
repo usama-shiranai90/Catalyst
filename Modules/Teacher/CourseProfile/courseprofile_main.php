@@ -7,6 +7,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
+$personalDetails = array();
+$facultyInstance = unserialize($_SESSION['facultyInstance']);
+//$personalDetails = $facultyInstance->getInstance();
+
 $programCode = $_SESSION['selectedProgram'];
 $curriculumCode = $_SESSION['selectedCurriculum'];
 $batchCode = $_SESSION['selectedBatch'];
@@ -78,7 +82,7 @@ if (count($programOutcomeList) != 0 and $isCoordinator != 0) {
     $isFailedToPerformCourseProfile[] = array("alert-1" => "No Curriculum related found or Program Learning outcome has not been set");
 }
 
-print json_encode($courseProfileInstructorList);
+//print json_encode($courseProfileInstructorList);
 
 //$mem_usage = memory_get_usage();
 //$mem_peak = memory_get_peak_usage();
@@ -312,15 +316,15 @@ print json_encode($courseProfileInstructorList);
                                         id="programID">
                                     <option value="" hidden></option>
                                     <?php
-                                    $programs = array('BCSE', 'BSIT', 'BCCS');
-                                    foreach ($programs as $value) {
+
+                                    foreach ((new Program())->retrieveProgramList($personalDetails['departmentCode']) as $value) {
                                         if ($value === $courseProfile->getCourseProgram())
                                             print sprintf('<option value="%s" selected> %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                         else
                                             print sprintf('<option value="%s" > %s</option> ', htmlspecialchars($value), htmlspecialchars($value));
                                     }
                                     ?>
-
+                                    <option value="BCSE" SELECTED>BCSE</option>
                                 </select>
 
                                 <label class="select-label top-1/4 sm:top-3">Program</label>
@@ -493,7 +497,16 @@ print json_encode($courseProfileInstructorList);
                                         <div class="vertical-line"></div>
                                         <label class="switch">
                                             <input class="cursor-not-allowed" type="checkbox"
-                                                   name="allowWeightAssessmentToggle" disabled>
+                                                   id="allowWeightAssessmentToggleId"
+                                                   name="allowWeightAssessmentToggle"
+                                                   disabled
+                                                <?php
+                                                $toCheck = '';
+                                                if ($courseProfile->getHasWeightedAssessment() !== 0) {
+                                                    $toCheck = 'checked';
+                                                }
+                                                print $toCheck;
+                                                ?> >
                                             <span class="slider round"></span>
                                         </label>
                                     </div>
@@ -530,144 +543,6 @@ print json_encode($courseProfileInstructorList);
                             </div>
                         </div>
                     </section>
-
-                    <!--     old design for course detail section  -->
-                    <!--<section id="cpDetaillID" class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
-                        <div class="cprofile-left-container mx-3 w-1/4">
-
-                            <div class="textField-label-content w-full" id="ReferenceBooksDivId">
-                                <label for="referenceBooksID"></label>
-                                <input class="textField" type="text" placeholder=" " id="referenceBooksID"
-                                       value="<?php /*echo $courseProfile->getCourseReferenceBook() */ ?>"
-                                       name="ReferenceBooks">
-                                <label class="textField-label">ReferenceBooks</label>
-                            </div>
-
-                            <div class="textField-label-content w-full" id="recommendedTextbooksDivId">
-                                <label for="recommendedTextbooksID"></label>
-                                <input class="textField" type="text" placeholder=" " id="recommendedTextbooksID"
-                                       value="<?php /*echo $courseProfile->getCourseTextBook() */ ?>"
-                                       name="RecommendedTextbooks">
-
-                                <label class="textField-label">RecommendedTextbooks</label>
-                            </div>
-
-                            <div class="textField-label-content w-full" id="courseDescriptionDivId">
-                                <label for="courseDescriptionID"></label>
-                                <textarea class="textarea-h textField" type="text" placeholder=" "
-                                          id="courseDescriptionID" name="assignmentDetail"
-                                          value="<?php /*echo $courseProfile->getCourseDescription() */ ?>"
-                                          style="height: 9em"><?php /*echo $courseProfile->getCourseDescription() */ ?></textarea>
-                                <label class="textField-label">Course Description</label>
-                            </div>
-
-                            <div class="textField-label-content w-full" id="otherRefDivId">
-                                <label for="otherReferenceId"></label>
-                                <textarea class="textarea-h textField" type="text" placeholder=" "
-                                          id="otherReferenceId" name="otherReference"
-                                          value="<?php /*echo $courseProfile->getCourseOtherReference() */ ?>"
-                                          style="height: 9em"><?php /*echo $courseProfile->getCourseOtherReference() */ ?></textarea>
-                                <label class="textField-label">Other reference Material</label>
-                            </div>
-                        </div>
-                        <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
-
-
-                            <div class="course-assessment-border border-t-2 shadow-sm mb-5"
-                                 style="background-color: #0284fc">
-                                <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
-                                <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
-
-                                    <div class="assessment-wrap mx-35">
-                                        <h3>Name</h3>
-                                        <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id="nameWeightDivId">
-                                            <label for="nameDetailID"></label>
-                                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorName() */ ?>"
-                                                      id="nameDetailID"
-                                                      name="nameDetail"
-                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorName() */ ?></textarea>
-                                            <label class="textField-label my-2 sm:my-4">Detail</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="assessment-wrap mx-35 ">
-                                        <h3>Designation</h3>
-                                        <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id="designationWeightDivId">
-                                            <label for="DesignationDetailID"></label>
-                                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      id="DesignationDetailID"
-                                                      name="DesignationDetail"
-                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorDesignation() */ ?></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="assessment-wrap mx-35">
-                                        <h3>Qualification</h3>
-                                        <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id=" qualificationWeightDivId">
-                                            <label for=" qualificationID"></label>
-                                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorQualification() */ ?>"
-                                                      id="qualificationID"
-                                                      name=" QualificationDetail"
-                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorQualification() */ ?></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
-                                    </div>
-                                    <div class="assessment-wrap mx-35">
-                                        <h3>Specialization</h3>
-                                        <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id=" SpecializationWeightDivId">
-                                            <label for="specializationID"></label>
-                                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() */ ?>"
-                                                      id="specializationID"
-                                                      name="SpecializationDetail"
-                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() */ ?></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
-                                    </div>
-                                    <div class="assessment-wrap mx-35">
-                                        <h3>Contacts</h3>
-                                        <div class="vertical-line"></div>
-                                        <div class="textField-label-content w-full" id=" contactsWeightDivId">
-                                            <label for="contactsID"></label>
-                                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      id="contactsID"
-                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() */ ?>"
-                                                      name="ContactsDetail"
-                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() */ ?></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
-                                    </div>
-                                    <div class="assessment-wrap mx-35">
-                                        <h3>Personal Email</h3>
-                                        <div class="vertical-line"></div>
-                                        <div class=" textField-label-content w-full" id=" personalEmailWeightDivId">
-                                            <label for="personalEmailID"></label>
-                                            <textarea class="textarea-h textField" type="text" placeholder=" "
-                                                      id="personalEmailID"
-                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() */ ?>"
-                                                      name="PersonalEmailDetail"
-                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() */ ?></textarea>
-                                            <label class="textField-label">Detail</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="text-right mx-4">
-                                <button type="button" class="loginButton" name="profileContinue1st"
-                                        id="coursepContinuebtn-2">Continue
-                                </button>
-                            </div>
-
-                        </div>
-                    </section>-->
 
                     <section class="hidden bg-white rounded-t-md border-solid border-t-2 px-5 pt-4 pb-4
                     flex max-w-full mx-2 flex-col flex  mx-0 my-0 transition duration-700 ease-in-out" id="cpDetaillID">
@@ -924,59 +799,6 @@ print json_encode($courseProfileInstructorList);
         </div>
     </div>
 </div>
-<!--<div id="errorMessageDiv"
-     class="hidden fixed bottom-0 right-0 z-50 flex p-4 mb-4 text-md w-2/12 font-sm text-red-700 bg-red-100 rounded-lg">
-    <svg class="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-         xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0
-                     001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-    </svg>
-    <div id="errorID">
-        <span class="font-medium">missing field alert!</span><br>try submitting again.
-    </div>
-</div>-->
-<div class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div class="sm:flex sm:items-start">
-                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <!-- Heroicon name: outline/exclamation -->
-                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-                             viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                        </svg>
-                    </div>
-                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                            Deactivate account
-                        </h3>
-                        <div class="mt-2">
-                            <p class="text-sm text-gray-500">
-                                Are you sure you want to deactivate your account? All of your data will be permanently
-                                removed. This action cannot be undone.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button type="button"
-                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-                    Deactivate
-                </button>
-                <button type="button"
-                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                    Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-
-</div>
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
@@ -1093,3 +915,140 @@ function readInstructorDetail($counter, $getInstructorInfo)
 
 ?>
 </html>
+<!-- line 538     old design for course detail section  -->
+<!--<section id="cpDetaillID" class="hidden cprofile-content-box-border cprofile-content-division mx-0 my-0 transition duration-700 ease-in-out">
+                        <div class="cprofile-left-container mx-3 w-1/4">
+
+                            <div class="textField-label-content w-full" id="ReferenceBooksDivId">
+                                <label for="referenceBooksID"></label>
+                                <input class="textField" type="text" placeholder=" " id="referenceBooksID"
+                                       value="<?php /*echo $courseProfile->getCourseReferenceBook() */ ?>"
+                                       name="ReferenceBooks">
+                                <label class="textField-label">ReferenceBooks</label>
+                            </div>
+
+                            <div class="textField-label-content w-full" id="recommendedTextbooksDivId">
+                                <label for="recommendedTextbooksID"></label>
+                                <input class="textField" type="text" placeholder=" " id="recommendedTextbooksID"
+                                       value="<?php /*echo $courseProfile->getCourseTextBook() */ ?>"
+                                       name="RecommendedTextbooks">
+
+                                <label class="textField-label">RecommendedTextbooks</label>
+                            </div>
+
+                            <div class="textField-label-content w-full" id="courseDescriptionDivId">
+                                <label for="courseDescriptionID"></label>
+                                <textarea class="textarea-h textField" type="text" placeholder=" "
+                                          id="courseDescriptionID" name="assignmentDetail"
+                                          value="<?php /*echo $courseProfile->getCourseDescription() */ ?>"
+                                          style="height: 9em"><?php /*echo $courseProfile->getCourseDescription() */ ?></textarea>
+                                <label class="textField-label">Course Description</label>
+                            </div>
+
+                            <div class="textField-label-content w-full" id="otherRefDivId">
+                                <label for="otherReferenceId"></label>
+                                <textarea class="textarea-h textField" type="text" placeholder=" "
+                                          id="otherReferenceId" name="otherReference"
+                                          value="<?php /*echo $courseProfile->getCourseOtherReference() */ ?>"
+                                          style="height: 9em"><?php /*echo $courseProfile->getCourseOtherReference() */ ?></textarea>
+                                <label class="textField-label">Other reference Material</label>
+                            </div>
+                        </div>
+                        <div class="cprofile-right-container flex-1 ml-40 pb-5 mr-5">
+
+
+                            <div class="course-assessment-border border-t-2 shadow-sm mb-5"
+                                 style="background-color: #0284fc">
+                                <h2 class="text-center my-3 font-bold text-white">Course Instructor Details</h2>
+                                <div class="grid bg-white  border-solid border-t-2 py-3 -mx-0.5">
+
+                                    <div class="assessment-wrap mx-35">
+                                        <h3>Name</h3>
+                                        <div class="vertical-line"></div>
+                                        <div class="textField-label-content w-full" id="nameWeightDivId">
+                                            <label for="nameDetailID"></label>
+                                            <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorName() */ ?>"
+                                                      id="nameDetailID"
+                                                      name="nameDetail"
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorName() */ ?></textarea>
+                                            <label class="textField-label my-2 sm:my-4">Detail</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="assessment-wrap mx-35 ">
+                                        <h3>Designation</h3>
+                                        <div class="vertical-line"></div>
+                                        <div class="textField-label-content w-full" id="designationWeightDivId">
+                                            <label for="DesignationDetailID"></label>
+                                            <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      id="DesignationDetailID"
+                                                      name="DesignationDetail"
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorDesignation() */ ?></textarea>
+                                            <label class="textField-label">Detail</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="assessment-wrap mx-35">
+                                        <h3>Qualification</h3>
+                                        <div class="vertical-line"></div>
+                                        <div class="textField-label-content w-full" id=" qualificationWeightDivId">
+                                            <label for=" qualificationID"></label>
+                                            <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorQualification() */ ?>"
+                                                      id="qualificationID"
+                                                      name=" QualificationDetail"
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorQualification() */ ?></textarea>
+                                            <label class="textField-label">Detail</label>
+                                        </div>
+                                    </div>
+                                    <div class="assessment-wrap mx-35">
+                                        <h3>Specialization</h3>
+                                        <div class="vertical-line"></div>
+                                        <div class="textField-label-content w-full" id=" SpecializationWeightDivId">
+                                            <label for="specializationID"></label>
+                                            <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() */ ?>"
+                                                      id="specializationID"
+                                                      name="SpecializationDetail"
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorSpecialization() */ ?></textarea>
+                                            <label class="textField-label">Detail</label>
+                                        </div>
+                                    </div>
+                                    <div class="assessment-wrap mx-35">
+                                        <h3>Contacts</h3>
+                                        <div class="vertical-line"></div>
+                                        <div class="textField-label-content w-full" id=" contactsWeightDivId">
+                                            <label for="contactsID"></label>
+                                            <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      id="contactsID"
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() */ ?>"
+                                                      name="ContactsDetail"
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorContactNumber() */ ?></textarea>
+                                            <label class="textField-label">Detail</label>
+                                        </div>
+                                    </div>
+                                    <div class="assessment-wrap mx-35">
+                                        <h3>Personal Email</h3>
+                                        <div class="vertical-line"></div>
+                                        <div class=" textField-label-content w-full" id=" personalEmailWeightDivId">
+                                            <label for="personalEmailID"></label>
+                                            <textarea class="textarea-h textField" type="text" placeholder=" "
+                                                      id="personalEmailID"
+                                                      value="<?php /*echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() */ ?>"
+                                                      name="PersonalEmailDetail"
+                                                      style="height: 6em"><?php /*echo $courseProfile->getInstructorInfo()->getInstructorPersonalEmail() */ ?></textarea>
+                                            <label class="textField-label">Detail</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="text-right mx-4">
+                                <button type="button" class="loginButton" name="profileContinue1st"
+                                        id="coursepContinuebtn-2">Continue
+                                </button>
+                            </div>
+
+                        </div>
+                    </section>-->

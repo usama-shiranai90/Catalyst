@@ -1,10 +1,10 @@
 <?php
+/*include 'AssessmentWeight.php';
+include 'CourseInstructor.php';
+include 'Persistable.php';
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
+include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";*/
 
-//include 'AssessmentWeight.php';
-//include 'CourseInstructor.php';
-//include 'Persistable.php';
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\Course.php";
-//include $_SERVER['DOCUMENT_ROOT'] . "\Backend\Packages\OfferingAndAllocations\CLO.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 
 class CourseProfile implements Persistable
@@ -33,6 +33,7 @@ class CourseProfile implements Persistable
     private string $courseDescription = '';
     private string $courseOtherReference = '';
     private string $coursePreReq = '';
+    private $HasWeightedAssessment;
 
 //    private $coursePreRequisites;
 
@@ -47,7 +48,7 @@ class CourseProfile implements Persistable
 
     public function setCourseInfo($courseTitle, $courseCode, $courseCreditHr, $coursePreReq, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
                                   $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook,
-                                  $courseDescription, $courseOtherReference, $pcode, $bcode)
+                                  $courseDescription, $courseOtherReference, $weightagedAssessment, $programCode, $batchCode)
     {
         $this->courseTitle = $courseTitle;
         $this->courseCode = $courseCode;
@@ -65,8 +66,9 @@ class CourseProfile implements Persistable
         $this->courseTextBook = $courseTextBook;
         $this->courseDescription = $courseDescription;
         $this->courseOtherReference = $courseOtherReference;
-        $this->programCode = $pcode;
-        $this->batchCode = $bcode;
+        $this->programCode = $programCode;
+        $this->batchCode = $batchCode;
+        $this->HasWeightedAssessment = $weightagedAssessment;
     }
 
     public function isCourseProfileExist($currentProgramCode, $currentBatchCode, $currentCourseCode): bool
@@ -76,86 +78,94 @@ class CourseProfile implements Persistable
         $this->setBatchCode($currentBatchCode);
         $this->course->getCreditHourAndTitle($currentCourseCode);
         $this->course->setCourseCode($currentCourseCode);
-        /*        $sql =
-            "select batchCode from batch where curriculumCode = \"$currentCurriculumCode\" and programCode = \"$currentProgramCode\"";
 
-        $result = $this->databaseConnection->query($sql);
-        if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $currentBatchCode = (int)$row['batchCode'];
-                $this->setBatchCode($currentBatchCode);
-            }
-        } else
-            echo sprintf("\n<br> Can not fetch batchCode: %s\n<br>%s\n<br>", mysqli_error(), $this->databaseConnection->error);*/
-        $sql = /** @lang text */
-            "select courseProfileCode
-        from courseprofile join batch b on b.batchCode = courseprofile.batchCode where
-        courseprofile.batchCode =" . $this->getBatchCode() . " and courseCode ='" . $currentCourseCode . "' and courseprofile.programCode =" . $currentProgramCode . "";
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare(query: 'select courseProfileCode, weightagedAssessment from courseprofile join batch b on b.batchCode = courseprofile.batchCode where
+        courseprofile.programCode = ? and courseprofile.batchCode = ? and  courseCode = ?');
 
-        $result = $this->databaseConnection->query($sql);
-        if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $cp_id = (int)$row['courseProfileCode'];
-                $this->setCourseProfileCode($cp_id);
+        $sanitizeProgramCode = FormValidator::sanitizeUserInput($currentProgramCode, 'int');
+        $sanitizeBatchCode = FormValidator::sanitizeUserInput($currentBatchCode, 'int');
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($currentCourseCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('iis', $sanitizeProgramCode, $sanitizeBatchCode, $sanitizeCourseCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $cp_id = (int)$row['courseProfileCode'];
+                    $this->setHasWeightedAssessment($row['weightagedAssessment']);
+                    $this->setCourseProfileCode($cp_id);
+                    return true;
 //                echo sprintf("\n<br> CourseProfile Code got successfully: %d\n<br>", $cp_id);
-                return true;
+                }
             }
-        } else {
-            echo sprintf("\n<br> Error while fetching CourseProfile Code: %s\n<br>", $this->databaseConnection->error);
-            return false;
         }
+        $this->setHasWeightedAssessment(0);
+        $this->setCourseProfileCode(-1);
         return false;
     }
 
-    public function getBatchCode(): mixed
-    {
-        return $this->batchCode;
-    }
 
-    /**
-     * @param int $batchCode
-     */
-    public function setBatchCode(int $batchCode): void
+    // TODO: Implement saveCourseProfileData() method.  will save data in database and temporary in session variable.
+    public function saveCourseProfileData($CLOsPerCourseList, $CLOToPLOMapping, $ploArray, $courseInstructorList)
     {
-        $this->batchCode = $batchCode;
-    }
-
-    public function saveCourseProfileData($CLOsPerCourseList, $CLOToPLOMapping, $ploArray, $courseInstructorList)       // TODO: Implement saveCourseProfileData() method.  will save data in database and temporary in session variable.
-    {
-        $courseID = $this->saveEssential();
-        $this->saveAssessment($courseID);
-        $this->saveCourseInstructor($courseID);
+        $courseProfileCode = $this->saveEssential();
+        $this->saveAssessment($courseProfileCode);
+        $this->saveCourseInstructor($courseProfileCode);
         $this->createCourseCLOs($CLOsPerCourseList, $CLOToPLOMapping, $ploArray);
     }
 
     private function saveEssential(): int
     {
-        $sql_statement = /** @lang text */
-            "INSERT INTO courseprofile(courseCode, programCode, batchCode, courseTitle, creditHours,preReq ,semester,
-                          programName, programLevel, courseEffective, coordinatingUnit, teachingMethodology, courseModel, recommendedBooks,
-                          referenceBooks, courseDescription, otherReferences) VALUES 
-                          (\"$this->courseCode\",\"$this->programCode\",\"$this->batchCode\",\"$this->courseTitle\",\"$this->courseCreditHr\",\"$this->coursePreReq\"
-                          ,\"$this->courseSemester\",\"$this->courseProgram\",\"$this->courseProgramLevel\",\"$this->courseCourseEffective\",\"$this->courseCoordination\",\"$this->courseTeachingMythology\",
-                          \"$this->courseModel\",\"$this->courseTextBook\",\"$this->courseOtherReference\",\"$this->courseDescription\",\"$this->courseOtherReference\")";
+        /*        $sql_statement = "INSERT INTO courseprofile(courseCode, programCode, batchCode, courseTitle, creditHours,preReq ,semester,
+                                  programName, programLevel, courseEffective, coordinatingUnit, teachingMethodology, courseModel, recommendedBooks,
+                                  referenceBooks, courseDescription, otherReferences) VALUES
+                                  (\"$this->courseCode\",\"$this->programCode\",\"$this->batchCode\",\"$this->courseTitle\",\"$this->courseCreditHr\",\"$this->coursePreReq\"
+                                  ,\"$this->courseSemester\",\"$this->courseProgram\",\"$this->courseProgramLevel\",\"$this->courseCourseEffective\",\"$this->courseCoordination\",\"$this->courseTeachingMythology\",
+                                  \"$this->courseModel\",\"$this->courseTextBook\",\"$this->courseOtherReference\",\"$this->courseDescription\",\"$this->courseOtherReference\")";*/
+        $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "INSERT INTO courseprofile(courseCode, programCode, batchCode, courseTitle, creditHours,preReq ,
+                          semester, programName, programLevel, courseEffective, coordinatingUnit, teachingMethodology, courseModel, recommendedBooks, referenceBooks, 
+                          courseDescription, otherReferences , weightagedAssessment) VALUES ( ? ,? ,? ,? ,? ,?,?,?,?,?,?,?,?,?,?,?,? , ? );");
 
-        $result = $this->databaseConnection->query($sql_statement);
-        if ($result) {
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($this->courseCode, 'string'));
+        $sanitizeProgramCode = FormValidator::sanitizeUserInput($this->programCode, 'int');
+        $sanitizeBatchCode = FormValidator::sanitizeUserInput($this->batchCode, 'int');
+
+        $sanitizeCourseTitle = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($this->courseTitle, 'string'));
+        $sanitizeCourseCreditHour = FormValidator::sanitizeUserInput($this->courseCreditHr, 'int');
+        $sanitizeCoursePreRequisite = FormValidator::sanitizeUserInput($this->coursePreReq, 'string');
+        $sanitizeCourseSemester = FormValidator::sanitizeUserInput($this->courseSemester, 'int');
+        $sanitizeCourseProgram = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($this->courseProgram, 'string'));
+        $sanitizeCourseProgramLevel = FormValidator::sanitizeUserInput($this->courseProgramLevel, 'string');
+        $sanitizeCourseEffective = FormValidator::sanitizeUserInput($this->courseCourseEffective, 'string');
+        $sanitizeCourseCoordinator = FormValidator::sanitizeUserInput($this->courseCoordination, 'string');
+        $sanitizeCourseTeachingMythology = FormValidator::sanitizeUserInput($this->courseTeachingMythology, 'string');
+        $sanitizeCourseModel = FormValidator::sanitizeUserInput($this->courseModel, 'string');
+        $sanitizeCourseTextBook = FormValidator::sanitizeUserInput($this->courseTextBook, 'string');
+        $sanitizeCourseReferenceBook = FormValidator::sanitizeUserInput($this->courseReferenceBook, 'string');
+        $sanitizeCourseDescription = FormValidator::sanitizeUserInput($this->courseDescription, 'string');
+        $sanitizeCourseOtherReference = FormValidator::sanitizeUserInput($this->courseOtherReference, 'string');
+
+        $prepareStatementInsertionQuery->bind_param('siisisissssssssssi', $sanitizeCourseCode, $sanitizeProgramCode, $sanitizeBatchCode,
+            $sanitizeCourseTitle, $sanitizeCourseCreditHour, $sanitizeCoursePreRequisite, $sanitizeCourseSemester, $sanitizeCourseProgram,
+            $sanitizeCourseProgramLevel, $sanitizeCourseEffective, $sanitizeCourseCoordinator, $sanitizeCourseTeachingMythology,
+            $sanitizeCourseModel, $sanitizeCourseTextBook, $sanitizeCourseReferenceBook, $sanitizeCourseDescription, $sanitizeCourseOtherReference, $this->HasWeightedAssessment);
+
+        $courseProfileCode = 0;
+        if ($prepareStatementInsertionQuery->execute()) {
             $this->setCourseProfileCode((int)$this->databaseConnection->insert_id);
             echo sprintf("\n<br>Course Profile record has been added successfully: %s\n<br>", (string)$this->getCourseProfileCode());
-        } else
-            echo sprintf("\n<br>Error, can not create CourseProfile : %s\n<br>", $this->databaseConnection->error);
 
-        $sql2 = /** @lang text */
-            "select courseProfileCode from courseprofile order by courseProfileCode desc limit 1;";
-        $result = $this->databaseConnection->query($sql2);
-        $courseID = 0;
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $courseID = $row['courseProfileCode'];
+            $prepareStatementSearchQuery = $this->databaseConnection->prepare('select courseProfileCode from courseprofile order by courseProfileCode desc limit 1;');
+            if ($prepareStatementSearchQuery->execute()) {
+                $result = $prepareStatementSearchQuery->get_result();
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = $result->fetch_assoc())
+                        $courseProfileCode = $row['courseProfileCode'];
+                }
             }
         } else
-            echo sprintf("\n<br>Error, No Course profile code found: %s\n<br>", $this->databaseConnection->error);
-        return $courseID;
+            echo sprintf("\n<br>Error, can not create CourseProfile : %s\n<br>", $this->databaseConnection->error);
+        return $courseProfileCode;
     }
 
     public function getCourseProfileCode()
@@ -168,7 +178,7 @@ class CourseProfile implements Persistable
         $this->courseProfileCode = $courseProfileCode;
     }
 
-    private function saveAssessment($cCourseCode)
+    private function saveAssessment($courseProfileCode)
     {
         $c_quiz_weight = $this->assessmentInfo->getQuizWeightage();
         $c_assignment_weight = $this->assessmentInfo->getAssignmentWeightage();
@@ -176,20 +186,27 @@ class CourseProfile implements Persistable
         $c_mid_weight = $this->assessmentInfo->getMidWeightage();
         $c_final_weight = $this->assessmentInfo->getFinalWeightage();
 
-        $sql_statement = /** @lang text */
-            "INSERT INTO courseprofileassessmentinstruments (courseProfileCode, quizWeightage, assignmentWeightage, projectWeightage, midtermWeightage, finalExamWeightage)
-                VALUES (\"$cCourseCode\",\"$c_quiz_weight\", \"$c_assignment_weight\", \"$c_project_weight\", \"$c_mid_weight\", \"$c_final_weight\")";
+        $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "INSERT INTO courseprofileassessmentinstruments 
+    (courseProfileCode, quizWeightage, assignmentWeightage, projectWeightage, midtermWeightage, finalExamWeightage)  VALUES ( ? ,? ,? ,? ,? ,?);");
 
-        if ($this->databaseConnection->query($sql_statement) === TRUE) {
+        $sanitizeCourseProfileCode = FormValidator::sanitizeUserInput($courseProfileCode, 'int');
+        $sanitizeAssignmentWeightage = FormValidator::sanitizeUserInput($c_assignment_weight, 'int');
+        $sanitizeQuizzWeightage = FormValidator::sanitizeUserInput($c_quiz_weight, 'int');
+        $sanitizeProjectWeightage = FormValidator::sanitizeUserInput($c_project_weight, 'int');
+        $sanitizeMidWeightage = FormValidator::sanitizeUserInput($c_mid_weight, 'int');
+        $sanitizeFinalWeightage = FormValidator::sanitizeUserInput($c_final_weight, 'int');
+
+        $prepareStatementInsertionQuery->bind_param('iiiiii', $sanitizeCourseProfileCode, $sanitizeAssignmentWeightage, $sanitizeQuizzWeightage,
+            $sanitizeProjectWeightage, $sanitizeMidWeightage, $sanitizeFinalWeightage);
+        if ($prepareStatementInsertionQuery->execute() === TRUE) {
             echo "\n<br> Assessment Record created successfully.\n<br>";
         } else {
             echo sprintf("\n<br>Error, Error, can not create assessment questions: %s.\n<br>", $this->databaseConnection->error);
         }
     }
 
-    private function saveCourseInstructor($cCourseCode)
+    private function saveCourseInstructor($courseProfileCode)
     {
-
         if (!empty($courseInstructorList) and count($courseInstructorList) > 0)
             foreach ($courseInstructorList as $key => $faculty) {
                 self::setInstructorInfo($faculty['_name'], $faculty['_designation'], $faculty['_qualification'], $faculty['_specialization'], $faculty['_contactNumber'], $faculty['_personalEmail']);
@@ -201,16 +218,28 @@ class CourseProfile implements Persistable
                 $instructor_email = $this->instructorInfo->getInstructorPersonalEmail();
                 $instructorFacultyCode = $faculty['_fkey'];
 
-                $sql_statement = /** @lang text */
-                    "INSERT INTO courseprofileinstructordetail(courseProfileCode ,facultyCode , instructorName, designation, qualification, specialization, contactNumber, personalEmail)
-                 VALUES  (\"$cCourseCode\", $instructorFacultyCode ,\"$instructor_name\",\"$instructor_designation\", \"$instructor_qualification\",
-                  \"$instructor_spec\", \"$instructor_contact\", \"$instructor_email\")";
+                $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "INSERT INTO courseprofileinstructordetail(courseProfileCode ,facultyCode , instructorName, 
+                        designation, qualification, specialization, contactNumber, personalEmail)  VALUES ( ?, ?, ?, ?, ?, ?, ? )");
 
-//                if ($this->databaseConnection->query($sql_statement) !== TRUE)
-//                    array_push($failedToPerformUpdation, -2);
+                $sanitizeCourseProfileCode = FormValidator::sanitizeUserInput($courseProfileCode, 'int');
+                $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($instructorFacultyCode, 'string'));
+
+                $sanitizeInstructorName = FormValidator::sanitizeUserInput($instructor_name, 'string');
+                $sanitizeInstructorDesignation = FormValidator::sanitizeUserInput($instructor_designation, 'string');
+                $sanitizeInstructorQualification = FormValidator::sanitizeUserInput($instructor_qualification, 'string');
+                $sanitizeInstructorSpecification = FormValidator::sanitizeUserInput($instructor_spec, 'string');
+                $sanitizeInstructorContact = FormValidator::sanitizeUserInput($instructor_contact, 'string');
+                $sanitizeInstructorEmail = FormValidator::sanitizeUserInput($instructor_email, 'email');
+
+                $prepareStatementInsertionQuery->bind_param('isssssss', $sanitizeCourseProfileCode, $sanitizeFacultyCode, $sanitizeInstructorName, $sanitizeInstructorDesignation, $sanitizeInstructorQualification,
+                    $sanitizeInstructorSpecification, $sanitizeInstructorContact, $sanitizeInstructorEmail);
+                if ($prepareStatementInsertionQuery->execute() === TRUE) {
+                    echo "\n<br> Assessment Record created successfully.\n<br>";
+                } else {
+                    echo sprintf("\n<br>Error, Error, can not create assessment questions: %s.\n<br>", $this->databaseConnection->error);
+                }
+
             }
-
-        
     }
 
     public function createCourseCLOs($CLOsPerCourseList, $CLOToPLOMapping, $ploArray, $cloIDList = array())
@@ -223,27 +252,25 @@ class CourseProfile implements Persistable
                 $cloObject = new CLO();
                 $cloObject->creation(0, $row[0], $row[1], $row[2], $row[3]);
 
-                $sql_statement = /** @lang text */
-                    "INSERT INTO clo(curriculumCode, programCode,batchCode ,courseCode, cloName, description, domain, btLevel)
-                values(\"$ongoingCurriculum\",\"$this->programCode\",\"$this->batchCode\",\"$this->courseCode\", \"$cloObject->cloName\",
-                 \"$cloObject->cloDescription\", \"$cloObject->cloDomain\", \"$cloObject->cloBtLevel\")";
+                $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "INSERT INTO clo(curriculumCode, programCode,batchCode ,courseCode, cloName, description, domain, btLevel)
+                values (? ,?,?,?,?,?,?,?)");
 
-                if ($this->databaseConnection->query($sql_statement) === TRUE) {
-                    $cloIDList [] = (int)$this->databaseConnection->insert_id;
-                } else {
-                    echo sprintf("\n<br>Error clo description: %s\n<br>%s", $sql_statement, $this->databaseConnection->error);
+                $prepareStatementInsertionQuery->bind_param('iiissss', $ongoingCurriculum, $this->programCode, $this->batchCode, $cloObject->cloName,
+                    $cloObject->cloDescription, $cloObject->cloDomain, $cloObject->cloBtLevel);
+
+                if ($prepareStatementInsertionQuery->execute())
+                    $this->setCourseProfileCode((int)$this->databaseConnection->insert_id);
+                else {
+                    echo sprintf("\n<br>Error clo description: %s\n<br>", $this->databaseConnection->error);
                 }
             }
-            echo "\n<br>New CLO-ID List : " . json_encode($cloIDList) . "\n<br>";
-
+            /*echo "\n<br>New CLO-ID List : " . json_encode($cloIDList) . "\n<br>";
             foreach ($cloIDList as $row) {
                 echo "\n" . "CLO-ID is :" . $row . "\n<br>";
-            }
+            }*/
+
         }
 
-        /*        foreach ($ploArray as $row) {
-                    echo "\n" . implode("|", $row);
-                }*/
         foreach ($CLOToPLOMapping as $row) {
             echo "\n" . implode("#", $row);
         }
@@ -261,9 +288,12 @@ class CourseProfile implements Persistable
                         echo "Current-CLO-ID:" . $cloIDList[$cloCounter] . '   and PLO-ID: ' . $plo[0] . "\n";
 
                         $sql_statement = /** @lang text */
-                            "INSERT INTO clotoplomapping(PLOCode, CLOCode) VALUES (\"$plo[0]\", \"$cloIDList[$cloCounter]\")";
-                        $result = $this->databaseConnection->query($sql_statement);
-                        if ($result)
+                            "() VALUES (\"\", \"\")";
+
+                        $prepareStatementInsertionQuery = $this->databaseConnection->prepare(query: "INSERT INTO clotoplomapping(PLOCode, CLOCode) VALUES (? , ?) ;");
+                        $prepareStatementInsertionQuery->bind_param('ii', $plo[0], $cloIDList[$cloCounter]);
+
+                        if ($prepareStatementInsertionQuery->execute())
                             echo sprintf("\n<br> CLO to PLO Mapping Successfully for %s.\n<br>", $cloIDList[$cloCounter]);
                         else
                             echo sprintf("\n<br>Error while Mapping Relation btw CLO-PLO: %s.\n<br>", $this->databaseConnection->error);
@@ -276,7 +306,7 @@ class CourseProfile implements Persistable
 
     }
 
-    public function updateCourseProfileCLODescription($cloCode, $curriculumCode, $rowData)
+    public function updateCourseProfileCLODescription($cloCode, $curriculumCode, $rowData): bool
     {
         $cloName = $rowData[0];
         $cldescription = $rowData[1];
@@ -300,82 +330,96 @@ class CourseProfile implements Persistable
     {
         // TODO: Implement loadCourseProfileData() method.
 
-        $sql = /** @lang text */
-            "select * from courseprofile as cp inner join courseprofileassessmentinstruments c on cp.courseProfileCode = c.courseProfileCode
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from courseprofile as cp inner join courseprofileassessmentinstruments c on cp.courseProfileCode = c.courseProfileCode
             inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
-            where cp.courseProfileCode =\"$courseProfileID\" and facultyCode =  \"$facultyCode\" ";
+            where cp.courseProfileCode = ? and facultyCode = ? ;');
 
+        $sanitizeCourseProfileID = FormValidator::sanitizeUserInput($courseProfileID, 'int');
+        $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($facultyCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('is', $sanitizeCourseProfileID, $sanitizeFacultyCode);
 
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $this->courseCode = $row['courseCode'];
-                $this->courseTitle = $row['courseTitle'];
-                $this->courseCreditHr = $row['creditHours'];
-                $this->coursePreReq = $row['preReq'];
-                $this->courseSemester = $row['semester'];
-                $this->courseProgram = $row['programName'];
-                $this->courseProgramLevel = $row['programLevel'];
-                $this->courseCourseEffective = $row['courseEffective'];
-                $this->courseCoordination = $row['coordinatingUnit'];
-                $this->courseTeachingMythology = $row['teachingMethodology'];
-                $this->courseModel = $row['courseModel'];
-                $this->courseTextBook = $row['recommendedBooks'];
-                $this->courseReferenceBook = $row['referenceBooks'];
-                $this->courseOtherReference = $row['otherReferences'];
-                $this->courseDescription = $row['courseDescription'];
-                $this->setAssessmentInfo($row['quizWeightage'], $row['assignmentWeightage'], $row['projectWeightage'], $row['midtermWeightage'], $row['finalExamWeightage']);
-                $this->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
-            }
-        } else
-            echo sprintf("\n<br>Error , can not find CourseProfile Information : %s\n<br>Server Error:%s\n<br>", $courseProfileID, $this->databaseConnection->error);
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0)
+                while ($row = $result->fetch_assoc()) {
+                    $this->courseCode = $row['courseCode'];
+                    $this->courseTitle = $row['courseTitle'];
+                    $this->courseCreditHr = $row['creditHours'];
+                    $this->coursePreReq = $row['preReq'];
+                    $this->courseSemester = $row['semester'];
+                    $this->courseProgram = $row['programName'];
+                    $this->courseProgramLevel = $row['programLevel'];
+                    $this->courseCourseEffective = $row['courseEffective'];
+                    $this->courseCoordination = $row['coordinatingUnit'];
+                    $this->courseTeachingMythology = $row['teachingMethodology'];
+                    $this->courseModel = $row['courseModel'];
+                    $this->courseTextBook = $row['recommendedBooks'];
+                    $this->courseReferenceBook = $row['referenceBooks'];
+                    $this->courseOtherReference = $row['otherReferences'];
+                    $this->courseDescription = $row['courseDescription'];
+                    $this->HasWeightedAssessment = $row['weightagedAssessment'];
+                    $this->setAssessmentInfo($row['quizWeightage'], $row['assignmentWeightage'], $row['projectWeightage'], $row['midtermWeightage'], $row['finalExamWeightage']);
+                    $this->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
+                }
+            else
+                echo sprintf("\n<br>Error , can not find CourseProfile Information : %s\n<br>Server Error:%s\n<br>", $courseProfileID, $this->databaseConnection->error);
+        }
+
     }
 
-    public function deleteCourseProfileDistributionRecord($currentCLOID, $programID, $batchCode): bool
+    public function deleteCourseProfileDistributionRecord($currentCLOID, $programCode, $batchCode): bool
     {
-        $sql = /** @lang text */
-            "delete from clo where CLOCode = \"$currentCLOID\" and programCode =\"$programID\" and batchCode = \"$batchCode\"";
-        $result = $this->databaseConnection->query($sql);
-        //        if ($result === TRUE) {
-        //            echo sprintf("\n<br>Record Deleted successfully for CourseProfile ID:%s .\n<br>", (string)$currentCLOID);
-        //        } else {
-        //            echo sprintf("\n<br>Error while deleting record from CLO-Description Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($currentCLOID, $programID, $batchCode)), $this->databaseConnection->error);
-        //        }
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "delete from clo where CLOCode = ? and programCode = ? and batchCode = ?");
 
-        return $result == TRUE;
+        $sanitizeCLOCode = FormValidator::sanitizeUserInput($currentCLOID, 'int');
+        $sanitizeProgramCode = FormValidator::sanitizeUserInput($programCode, 'int');
+        $sanitizeBatchCode = FormValidator::sanitizeUserInput($batchCode, 'int');
+
+        $prepareStatementDeleteQuery->bind_param('iii', $sanitizeCLOCode, $sanitizeProgramCode, $sanitizeBatchCode);
+        return $prepareStatementDeleteQuery->execute() === TRUE;
     }
 
     public function deleteCourseProfileCLOPLOMapping($CLOCode): bool
     {
-        $sql = /** @lang text */
-            "DELETE FROM clotoplomapping WHERE CLOCode = \"$CLOCode\"";
+        $prepareStatementDeleteQuery = $this->databaseConnection->prepare(query: "DELETE FROM clotoplomapping WHERE CLOCode= ? ");
+        $sanitizeCLOCode = FormValidator::sanitizeUserInput($CLOCode, 'int');
 
-        $result = $this->databaseConnection->query($sql);
-
-//        if ($result === TRUE) {
-//            echo "Mapping deleted form Database successfully for CLOCode " . $CLOCode . "\n";
-//        } else {
-//            echo sprintf("\n<br>Error while deleting record from CLO-TO-PLO Mapping Table : %s\n<br>Server Error:%s\n<br>", json_encode(array($CLOCode)), $this->databaseConnection->error);
-//        }
-
-        return $result == TRUE;
+        $prepareStatementDeleteQuery->bind_param('i', $sanitizeCLOCode);
+        return $prepareStatementDeleteQuery->execute() === TRUE;
     }
 
-    public function modifyCourseProfileData($courseProfileID, $courseInstructorList): array
+    public function modifyCourseProfileData($courseProfileCode, $courseInstructorList): array
     {
         $failedToPerformUpdation = array();
 
-        $sql1 = /** @lang text */
-            "UPDATE courseprofile SET courseTitle = \"$this->courseTitle\", creditHours = \"$this->courseCreditHr\", semester = \"$this->courseSemester\",
-                          programName = \"$this->courseProgram\", programLevel = \"$this->courseProgramLevel\", courseEffective = \"$this->courseCourseEffective\", 
-                          coordinatingUnit = \"$this->courseCoordination\", teachingMethodology = \"$this->courseTeachingMythology\", courseModel = \"$this->courseModel\",
-                           recommendedBooks = \"$this->courseTextBook\",
-                          preReq =  \"$this->coursePreReq\",
-                          referenceBooks = \"$this->courseReferenceBook\", courseDescription = \"$this->courseDescription\", otherReferences = \"$this->courseOtherReference\"
-                           WHERE courseProfileCode = \"$courseProfileID\"";
+        $prepareStatementUpdateQuery = $this->databaseConnection->prepare(query: "UPDATE courseprofile SET courseTitle = ?, creditHours = ?, semester =?,
+                          programName = ?, programLevel = ?, courseEffective =? , 
+                          coordinatingUnit = ?, teachingMethodology = ?, courseModel =? ,  recommendedBooks =? ,  preReq = ? ,
+                          referenceBooks = ?, courseDescription = ?, otherReferences =  ? , weightagedAssessment = ?
+                           WHERE courseProfileCode = ? ");
 
-        if ($this->databaseConnection->query($sql1) !== TRUE)
-            array_push($failedToPerformUpdation, -1);
+        $sanitizeCourseTitle = FormValidator::sanitizeStringWithSpace(FormValidator::sanitizeUserInput($this->courseTitle, 'string'));
+        $sanitizeCourseCreditHour = FormValidator::sanitizeUserInput($this->courseCreditHr, 'int');
+        $sanitizeCoursePreRequisite = FormValidator::sanitizeUserInput($this->coursePreReq, 'string');
+        $sanitizeCourseSemester = FormValidator::sanitizeUserInput($this->courseSemester, 'int');
+        $sanitizeCourseProgram = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($this->courseProgram, 'string'));
+        $sanitizeCourseProgramLevel = FormValidator::sanitizeUserInput($this->courseProgramLevel, 'string');
+        $sanitizeCourseEffective = FormValidator::sanitizeUserInput($this->courseCourseEffective, 'string');
+        $sanitizeCourseCoordinator = FormValidator::sanitizeUserInput($this->courseCoordination, 'string');
+        $sanitizeCourseTeachingMythology = FormValidator::sanitizeUserInput($this->courseTeachingMythology, 'string');
+        $sanitizeCourseModel = FormValidator::sanitizeUserInput($this->courseModel, 'string');
+        $sanitizeCourseTextBook = FormValidator::sanitizeUserInput($this->courseTextBook, 'string');
+        $sanitizeCourseReferenceBook = FormValidator::sanitizeUserInput($this->courseReferenceBook, 'string');
+        $sanitizeCourseDescription = FormValidator::sanitizeUserInput($this->courseDescription, 'string');
+        $sanitizeCourseOtherReference = FormValidator::sanitizeUserInput($this->courseOtherReference, 'string');
+
+        $prepareStatementUpdateQuery->bind_param('siissssssssssssi', $sanitizeCourseTitle, $sanitizeCourseCreditHour, $sanitizeCourseSemester, $sanitizeCourseProgram,
+            $sanitizeCourseProgramLevel, $sanitizeCourseEffective, $sanitizeCourseCoordinator, $sanitizeCourseTeachingMythology,
+            $sanitizeCourseModel, $sanitizeCourseTextBook, $sanitizeCoursePreRequisite, $sanitizeCourseReferenceBook, $sanitizeCourseDescription, $sanitizeCourseOtherReference, $this->HasWeightedAssessment,
+            $courseProfileCode);
+
+        if ($prepareStatementUpdateQuery->execute() !== TRUE)
+            $failedToPerformUpdation[] = -1;
 //              echo sprintf("\n<br>Error while updating Course Profile Basic Info : %s\n<br>Server Error:%s\n<br>", json_encode(array($courseProfileID)), $this->databaseConnection->error);
 
         if (!empty($courseInstructorList) and count($courseInstructorList) > 0) {
@@ -390,15 +434,24 @@ class CourseProfile implements Persistable
                 $instructor_email = $this->instructorInfo->getInstructorPersonalEmail();
                 $instructorFacultyCode = $faculty['_fkey'];
 
-                print "ajeeb Faculty Key is : " . $instructorFacultyCode . "\n";
+                $prepareStatementUpdateQuery_2 = $this->databaseConnection->prepare(query: "update courseprofileinstructordetail SET instructorName = ?, designation =?, 
+                qualification = ?, specialization = ?, contactNumber = ?,  personalEmail = ? WHERE courseProfileCode = ? and facultyCode = ? ");
 
-                $sql2 = /** @lang text */
-                    "update courseprofileinstructordetail SET instructorName = \"$instructor_name\", designation = \"$instructor_designation\", 
-            qualification = \"$instructor_qualification\", specialization = \"$instructor_spec\", contactNumber = \"$instructor_contact\", 
-            personalEmail = \"$instructor_email\" WHERE courseProfileCode = \"$courseProfileID\" and facultyCode = \"$instructorFacultyCode\" ";
+                $sanitizeCourseProfileCode = FormValidator::sanitizeUserInput($courseProfileCode, 'int');
+                $sanitizeFacultyCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($instructorFacultyCode, 'string'));
 
-                if ($this->databaseConnection->query($sql2) !== TRUE)
-                    array_push($failedToPerformUpdation, -2);
+                $sanitizeInstructorName = FormValidator::sanitizeUserInput($instructor_name, 'string');
+                $sanitizeInstructorDesignation = FormValidator::sanitizeUserInput($instructor_designation, 'string');
+                $sanitizeInstructorQualification = FormValidator::sanitizeUserInput($instructor_qualification, 'string');
+                $sanitizeInstructorSpecification = FormValidator::sanitizeUserInput($instructor_spec, 'string');
+                $sanitizeInstructorContact = FormValidator::sanitizeUserInput($instructor_contact, 'string');
+                $sanitizeInstructorEmail = FormValidator::sanitizeUserInput($instructor_email, 'email');
+
+                $prepareStatementUpdateQuery_2->bind_param('ssssssis',  $sanitizeInstructorName, $sanitizeInstructorDesignation, $sanitizeInstructorQualification,
+                    $sanitizeInstructorSpecification, $sanitizeInstructorContact, $sanitizeInstructorEmail , $sanitizeCourseProfileCode, $sanitizeFacultyCode);
+
+                if ($prepareStatementUpdateQuery_2->execute() !== TRUE)
+                    $failedToPerformUpdation[] = -2;
 //                        echo sprintf("\n<br>Error while Updating Course Profile Instructor Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
             }
         }
@@ -410,13 +463,21 @@ class CourseProfile implements Persistable
         $c_mid_weight = $this->assessmentInfo->getMidWeightage();
         $c_final_weight = $this->assessmentInfo->getFinalWeightage();
 
-        $sql2 = /** @lang text */
-            "update courseprofileassessmentinstruments SET quizWeightage = \"$c_quiz_weight\", assignmentWeightage = \"$c_assignment_weight\", 
-            projectWeightage = \"$c_project_weight\", midtermWeightage = \"$c_mid_weight\", finalExamWeightage = \"$c_final_weight\" 
-            WHERE courseProfileCode = \"$courseProfileID\";";
+        $prepareStatementUpdateQuery_3 = $this->databaseConnection->prepare(query: "update courseprofileassessmentinstruments SET quizWeightage = ?, assignmentWeightage = ?, 
+            projectWeightage = ?, midtermWeightage = ?, finalExamWeightage = ? WHERE courseProfileCode =  ? ");
 
-        if ($this->databaseConnection->query($sql2) !== TRUE)
-            array_push($failedToPerformUpdation, -3);
+        $sanitizeCourseProfileCode = FormValidator::sanitizeUserInput($courseProfileCode, 'int');
+        $sanitizeAssignmentWeightage = FormValidator::sanitizeUserInput($c_assignment_weight, 'int');
+        $sanitizeQuizzWeightage = FormValidator::sanitizeUserInput($c_quiz_weight, 'int');
+        $sanitizeProjectWeightage = FormValidator::sanitizeUserInput($c_project_weight, 'int');
+        $sanitizeMidWeightage = FormValidator::sanitizeUserInput($c_mid_weight, 'int');
+        $sanitizeFinalWeightage = FormValidator::sanitizeUserInput($c_final_weight, 'int');
+
+        $prepareStatementUpdateQuery_3->bind_param('iiiiii', $sanitizeQuizzWeightage, $sanitizeAssignmentWeightage,
+            $sanitizeProjectWeightage, $sanitizeMidWeightage, $sanitizeFinalWeightage , $sanitizeCourseProfileCode);
+
+        if ($prepareStatementUpdateQuery_3->execute() !== TRUE)
+            $failedToPerformUpdation[] = -3;
 //            echo sprintf("\n<br>Error while Updating Course Profile Assessment Info : %s\n<br>Server Error:%s\n<br>", json_encode(array()), $this->databaseConnection->error);
         return $failedToPerformUpdation;
     }
@@ -440,46 +501,36 @@ class CourseProfile implements Persistable
         if (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0 and !$noIterate and (count($affiliatedFacultyList) == count($filterFacultyList)))
             foreach ($affiliatedFacultyList as $faculty) {
                 $facultyCode = $faculty['facultyCode'];
-                $sql = /** @lang text */
-                    "select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
-                     where cp.courseProfileCode =\"$courseProfileCode\" and facultyCode = \"$facultyCode\" ";
 
-                $result = $this->databaseConnection->query($sql);
-                if (mysqli_num_rows($result) > 0) {
-                    while ($row = $result->fetch_assoc()) {
+                $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
+                     where cp.courseProfileCode  = ? and facultyCode = ?  ;');
+                $prepareStatementSearchQuery->bind_param('is', $courseProfileCode, $facultyCode);
+
+                if ($prepareStatementSearchQuery->execute()) {
+                    $result = $prepareStatementSearchQuery->get_result();
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = $result->fetch_assoc()) {
 //                        print "running time :" . $row['instructorName'] . "<br>";
-                        $newCourseProfile = new self();
-                        $newCourseProfile->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
-                        $professorList[] = $newCourseProfile;
-                    }
-                } else
-                    echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
+                            $newCourseProfile = new self();
+                            $newCourseProfile->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
+                            $professorList[] = $newCourseProfile;
+                        }
+                    } else
+                        echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
+                }
+
+
             }
         /** IF ALL SECTION HAS SAME FACULTY MEMBER  */
         elseif (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0 and $noIterate and count($filterFacultyList) == 1) {
             $facultyCode = $filterFacultyList[0];
-            $sql = /** @lang text */
-                "select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
-                     where cp.courseProfileCode =\"$courseProfileCode\" and facultyCode = \"$facultyCode\" ";
 
-            $result = $this->databaseConnection->query($sql);
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $newCourseProfile = new self();
-                    $newCourseProfile->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
-                    $professorList[] = $newCourseProfile;
-                }
-            } else
-                echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
-        } /** IF SOME SECTION HAS SAME AND SOME HAS DIFFERENT FACULTY MEMBER  */
-        elseif (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0 and $noIterate and (count($filterFacultyList) > 1 and count($affiliatedFacultyList) > count($filterFacultyList))) {
-            foreach ($filterFacultyList as $faculty) {
-                $facultyCode = $faculty;
-                $sql = /** @lang text */
-                    "select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
-                     where cp.courseProfileCode =\"$courseProfileCode\" and facultyCode = \"$facultyCode\" ";
+            $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
+                     where cp.courseProfileCode = ? and facultyCode = ?  ;');
+            $prepareStatementSearchQuery->bind_param('is', $courseProfileCode, $facultyCode);
 
-                $result = $this->databaseConnection->query($sql);
+            if ($prepareStatementSearchQuery->execute()) {
+                $result = $prepareStatementSearchQuery->get_result();
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $newCourseProfile = new self();
@@ -489,47 +540,65 @@ class CourseProfile implements Persistable
                 } else
                     echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
             }
-        }
 
+        } /** IF SOME SECTION HAS SAME AND SOME HAS DIFFERENT FACULTY MEMBER  */
+        elseif (!empty($affiliatedFacultyList) and count($affiliatedFacultyList) > 0 and $noIterate and (count($filterFacultyList) > 1 and count($affiliatedFacultyList) > count($filterFacultyList))) {
+            foreach ($filterFacultyList as $faculty) {
+                $facultyCode = $faculty;
+
+                $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from courseprofile as cp inner join courseprofileinstructordetail c2 on cp.courseProfileCode = c2.courseProfileCode
+                     where cp.courseProfileCode = ? and facultyCode = ?  ;');
+                $prepareStatementSearchQuery->bind_param('is', $courseProfileCode, $facultyCode);
+                if ($prepareStatementSearchQuery->execute()) {
+                    $result = $prepareStatementSearchQuery->get_result();
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $newCourseProfile = new self();
+                            $newCourseProfile->setInstructorInfo($row['instructorName'], $row['designation'], $row['qualification'], $row['specialization'], $row['contactNumber'], $row['personalEmail']);
+                            $professorList[] = $newCourseProfile;
+                        }
+                    } else
+                        echo sprintf("\n<br>Error , can not find CourseProfile Instructor Information : %s\n<br>Server Error:%s\n<br>", $this->databaseConnection->error);
+                }
+            }
+        }
 
         return $professorList;
     }
 
-    /**
-     * @return Course
-     */
+    public function getBatchCode(): mixed
+    {
+        return $this->batchCode;
+    }
+
+    public function setBatchCode(int $batchCode): void
+    {
+        $this->batchCode = $batchCode;
+    }
+
     public function getCourse(): Course
     {
         return $this->course;
     }
 
-    /**
-     * @return string
-     */
+
     public function getCourseCode(): string
     {
         return $this->courseCode;
     }
 
-    /**
-     * @param string $courseCode
-     */
+
     public function setCourseCode(string $courseCode): void
     {
         $this->courseCode = $courseCode;
     }
 
-    /**
-     * @return string
-     */
+
     public function getCourseTitle(): string
     {
         return $this->courseTitle;
     }
 
-    /**
-     * @param string $courseTitle
-     */
     public function setCourseTitle(string $courseTitle): void
     {
         $this->courseTitle = $courseTitle;
@@ -540,9 +609,7 @@ class CourseProfile implements Persistable
         return $this->courseCreditHr;
     }
 
-    /**
-     * @param int $courseCreditHr
-     */
+
     public function setCourseCreditHr(int $courseCreditHr): void
     {
         $this->courseCreditHr = $courseCreditHr;
@@ -558,81 +625,52 @@ class CourseProfile implements Persistable
         $this->courseSemester = $courseSemester;
     }
 
-    /**
-     * @return string
-     */
+
     public function getCourseProgram(): string
     {
         return $this->courseProgram;
     }
 
-    /**
-     * @param string $courseProgram
-     */
     public function setCourseProgram(string $courseProgram): void
     {
         $this->courseProgram = $courseProgram;
     }
 
-    /**
-     * @return string
-     */
     public function getCourseProgramLevel(): string
     {
         return $this->courseProgramLevel;
     }
 
-    /**
-     * @param string $courseProgramLevel
-     */
     public function setCourseProgramLevel(string $courseProgramLevel): void
     {
         $this->courseProgramLevel = $courseProgramLevel;
     }
 
-    /**
-     * @return string
-     */
     public function getCourseCourseEffective(): string
     {
         return $this->courseCourseEffective;
     }
 
-    /**
-     * @param string $courseCourseEffective
-     */
     public function setCourseCourseEffective(string $courseCourseEffective): void
     {
         $this->courseCourseEffective = $courseCourseEffective;
     }
 
-    /**
-     * @return string
-     */
     public function getCourseCoordination(): string
     {
         return $this->courseCoordination;
     }
 
-    /**
-     * @param string $courseCoordination
-     */
     public function setCourseCoordination(string $courseCoordination): void
     {
         $this->courseCoordination = $courseCoordination;
     }
 
-    /**
-     * @return string
-     */
     public function getCourseTeachingMythology(): string
     {
         return $this->courseTeachingMythology;
     }
 
-    /**
-     * @param string $courseTeachingMythology
-     */
     public function setCourseTeachingMythology(string $courseTeachingMythology): void
     {
         $this->courseTeachingMythology = $courseTeachingMythology;
@@ -648,105 +686,63 @@ class CourseProfile implements Persistable
         $this->courseModel = $courseModel;
     }
 
-    /**
-     * @return string
-     */
     public function getCourseReferenceBook(): string
     {
         return $this->courseReferenceBook;
     }
 
-    /**
-     * @param string $courseReferenceBook
-     */
     public function setCourseReferenceBook(string $courseReferenceBook): void
     {
         $this->courseReferenceBook = $courseReferenceBook;
     }
 
-    /**
-     * @return string
-     */
+
     public function getCourseTextBook(): string
     {
         return $this->courseTextBook;
     }
 
-    /**
-     * @param string $courseTextBook
-     */
     public function setCourseTextBook(string $courseTextBook): void
     {
         $this->courseTextBook = $courseTextBook;
     }
 
-    /**
-     * @return string
-     */
+
     public function getCourseDescription(): string
     {
         return $this->courseDescription;
     }
 
-    /**
-     * @param string $courseDescription
-     */
     public function setCourseDescription(string $courseDescription): void
     {
         $this->courseDescription = $courseDescription;
     }
 
-    /**
-     * @return string
-     */
     public function getCourseOtherReference(): string
     {
         return $this->courseOtherReference;
     }
 
-    /**
-     * @param string $courseOtherReference
-     */
     public function setCourseOtherReference(string $courseOtherReference): void
     {
         $this->courseOtherReference = $courseOtherReference;
     }
-
-    /*
-    public function getCoursePreRequisites()
-    {
-        return $this->coursePreRequisites;
-    }
-
-    public function setCoursePreRequisites($coursePreRequisites): void
-    {
-        $this->coursePreRequisites = $coursePreRequisites;
-    }*/
 
     public function getProgramCode(): mixed
     {
         return $this->programCode;
     }
 
-    /**
-     * @param mixed $programCode
-     */
     public function setProgramCode($programCode): void
     {
         $this->programCode = $programCode;
     }
 
-    /**
-     * @return string
-     */
     public function getCoursePreReq(): string
     {
         return $this->coursePreReq;
     }
 
-    /**
-     * @param string $coursePreReq
-     */
     public function setCoursePreReq(string $coursePreReq): void
     {
         $this->coursePreReq = $coursePreReq;
@@ -773,6 +769,23 @@ class CourseProfile implements Persistable
     public function setAssessmentInfo($quizWeight, $assignmentWeight, $projectWeight, $midsWeight, $finalWeight)
     {
         $this->assessmentInfo->setAll($quizWeight, $assignmentWeight, $projectWeight, $midsWeight, $finalWeight);
+    }
+
+
+    public function getHasWeightedAssessment()
+    {
+        return $this->HasWeightedAssessment;
+    }
+
+    public function setHasWeightedAssessment($HasWeightedAssessment): void
+    {
+        $this->HasWeightedAssessment = $HasWeightedAssessment;
+    }
+
+
+    public function getDatabaseConnection(): ?mysqli
+    {
+        return $this->databaseConnection;
     }
 
 }

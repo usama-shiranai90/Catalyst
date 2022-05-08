@@ -14,27 +14,25 @@ $listOfAllocations = $faculty->retrieveAllocations($facultyCode);
 
 //print sprintf("Program Code : %s <br> Curriculum Code : %s <br> batchCode : %s <br> sectionCode : %s <br> courseCode %s \n<br>", $programCode, $curriculumCode, $batchCode, $sectionCode, $courseCode);
 //print "Allocation LIST :" .json_encode($listOfAllocations)."<br>";
+//print json_encode( $_SESSION['ploList']);
 
 $courseProfile = new CourseProfile();
-$courseLearningOutcome = new CLO();
 $activity = new ClassActivity();
 
-$courseOutcomeList = $courseLearningOutcome->retrieveCLOlist($programCode, $curriculumCode, $batchCode, $courseCode); // 1 , 1  ,4, SEN-28
-//print json_encode($courseOutcomeList);
+$courseOutcomeList = (new CLO())->retrieveCLOlist($programCode, $curriculumCode, $batchCode, $courseCode); // 1 , 1  ,4, SEN-28
 
 /** the following function may change depending on our current scenario (for coordinator) */
 $isProfileCreated = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);  //$_SESSION['selectedCourse'], $_SESSION['selectedProgram'], $_SESSION['selectedBatch']        //  ,$_SESSION['selectedCurriculum']
 
-$allottedCourseNames = array();
-$courseNamesBeingShown = array();
+$assignedCourseNameList = array();
+$nonDuplicateCourseNameList = array();
 for ($x = 0; $x < sizeof($listOfAllocations); $x++) {
-    $allottedCourseNames[] = $listOfAllocations[$x]->getCourse()->getCourseTitle();
-    if (!in_array($allottedCourseNames[$x], $courseNamesBeingShown))
-        $courseNamesBeingShown[] = $allottedCourseNames[$x];
+    $assignedCourseNameList[] = $listOfAllocations[$x]->getCourse()->getCourseTitle();
+    if (!in_array($assignedCourseNameList[$x], $nonDuplicateCourseNameList))
+        $nonDuplicateCourseNameList[] = $assignedCourseNameList[$x];
 }
-$allottedCourseNames = $courseNamesBeingShown;
-unset($courseNamesBeingShown);
-//print "allotted course name :".json_encode($allottedCourseNames);
+$assignedCourseNameList = $nonDuplicateCourseNameList;
+unset($nonDuplicateCourseNameList);
 
 $fetchWeeklyTopic = null;
 if ($isProfileCreated === TRUE) {
@@ -237,9 +235,6 @@ if ($assessmentObject != null)
 
                                                         </td>
                     -->
-                                <!--                                <tr class="text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight" data-assessment="4"></tr>-->
-
-
                                 </tbody>
                             </table>
 
@@ -338,7 +333,6 @@ if ($assessmentObject != null)
                                                     </table>
                                                 </div>
                                         </div>-->
-
                 </div>
             </div>
         </section>

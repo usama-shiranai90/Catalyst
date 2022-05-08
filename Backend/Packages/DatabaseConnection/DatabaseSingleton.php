@@ -2,7 +2,7 @@
 
 class DatabaseSingleton
 {
-    private static $dbName = 'catalyst_dataset_final';
+    private static $dbName = 'catalyst_dataset_3';
     private static $dbHost = 'localhost';
     private static $dbUsername = 'root';
     private static $dbUserPassword = '';

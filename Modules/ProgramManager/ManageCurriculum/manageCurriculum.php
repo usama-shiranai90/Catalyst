@@ -43,6 +43,7 @@ print json_encode($curriculumList);
                                 class="capitalize font-semibold"> assigned year</span> and <span
                                 class="capitalize font-semibold">Program Name</span>
                 </div>
+
                 <div class="inline-flex rounded-lg" style="background-color: #F4F8F9">
                     <h2 class="font-semibold text-lg text-gray-700 flex justify-center items-center w-1/4">Top
                         Filter</h2>
@@ -169,7 +170,7 @@ print json_encode($curriculumList);
                                 </button>
                             </div>
                             </td>
-                        </tr>', $counter, "BCSE", $curriculum['year'], $curriculum['code'], $curriculum['code'], $curriculum['code']);
+                        </tr>', $counter, $curriculum['programSName'], $curriculum['year'], $curriculum['code'], $curriculum['code'], $curriculum['code']);
                             $counter++;
                         }
                         ?>
@@ -184,7 +185,7 @@ print json_encode($curriculumList);
 
                         <div class="border-2 border-gray-200 rounded">
                             <div class="learning-outcome-head row-flex w-full mx-0">
-                                <div class="cprofile-column h-10 w-24 border-0 border-r-2">
+                                <div class="cprofile-column h-10 w-24 border-0 border-r-2 text-left font-semibold border-0">
                                     <span class="cprofile-cell-data">PLO #</span>
                                 </div>
                                 <div class="cprofile-column h-10 w-3/4 border-0">

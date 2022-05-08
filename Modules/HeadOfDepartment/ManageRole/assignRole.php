@@ -28,7 +28,6 @@ foreach ($facultyObjectList as $faculty) {
     );
 }
 //echo json_encode($facultyList)."<br>";
-
 /*echo filter_var($facultyCode, FILTER_SANITIZE_ADD_SLASHES)."<br>";
 echo filter_var($facultyCode, FILTER_SANITIZE_FULL_SPECIAL_CHARS , FILTER_FLAG_NO_ENCODE_QUOTES)."<br>";
 echo filter_var($facultyCode, FILTER_SANITIZE_STRING , FILTER_FLAG_NO_ENCODE_QUOTES)."<br>";
@@ -57,7 +56,7 @@ setcookie("loggedUser", json_encode($personalDetails['facultyCode']), time() + 3
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script src="../../../Assets/Scripts/Master.js" rel="script"></script>
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
-    <script src="asset/js/adminstrationRoleAssign.js"></script>
+    <script src="asset/js/administrationRoleAssign.js"></script>
 
     <style>
         /*.tabs * {z-index: 20;}*/

@@ -220,6 +220,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
+$resultBackServer = array("status" => -1, "message" => 'no message', "errors" => 'no error');
 
 //$studentsAssessment = new StudentAssessmentAverage();
 $activity = new ClassActivity();
@@ -230,9 +231,10 @@ if (isset($_POST['summaryReport']) and $_POST['summaryReport']) {
         $assessmentID = $_POST['assessmentTypeID'];
         $courseCode = $_SESSION['selectedCourse'];
         $sectionCode = $_SESSION['selectedSection'];
-
         $studentArray = $activity->getSelectedAssessment($assessmentID, $sectionCode, $courseCode);
-        echo json_encode($studentArray);
+
+        $resultBackServer = updateServer(200, $studentArray, SERVER_STATUS_CODES[200] . " " . SERVER_STATUS_CODES[201]);
+        die(json_encode($resultBackServer));
     }
 
 }

@@ -236,17 +236,21 @@ class Course implements JsonSerializable
 
     public function retrieveCoursePrerequisite($courseCode): ?array
     {
-        $sql = /** @lang text */
-            "select p.courseCode, courseTitle, creditHours, curriculumCode, preRequisiteName
-            from course join prerequisites p on course.courseCode = p.courseCode where p.courseCode = \"$courseCode\" ";
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select p.courseCode, courseTitle, creditHours, curriculumCode, preRequisiteName
+            from course join prerequisites p on course.courseCode = p.courseCode where p.courseCode = ?');
 
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $this->preReqList[] = $row['preRequisiteName'];
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('s', $sanitizeCourseCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $this->preReqList[] = $row['preRequisiteName'];
+                }
+                return $this->preReqList;
             }
-            return $this->preReqList;
-        } else
-            return null;
+        }
+        return null;
     }
 }

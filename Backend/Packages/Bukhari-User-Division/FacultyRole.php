@@ -32,7 +32,7 @@ class FacultyRole extends UserRole implements JsonSerializable
     }
 
     /** retrieve all faculty list with respect to department. */
-    public function FetchFacultyListDepartment($departmentCode): ?array
+    public function FetchFacultyListDepartment($departmentCode): array
     {
         $facultyList = array();
         $prepareStatementWithQuery = $this->databaseConnection->prepare(query: 'select facultyCode, name, CNIC, officialEmail, personalEmail, address, contactNumber, 
@@ -51,10 +51,9 @@ class FacultyRole extends UserRole implements JsonSerializable
                       $facultyObject->setUserDataInstance("select * from faculty where facultyCode = '$facultyObject->facultyCode'", $facultyObject->facultyCode);
                       print_r(json_encode($facultyList)."<br><br>");*/
                 }
-                return $facultyList;
             }
         }
-        return null;
+        return $facultyList;
     }
 
 

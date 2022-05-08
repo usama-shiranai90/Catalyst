@@ -18,7 +18,7 @@ window.onload = function () {
 
         $(refreshBtn).on('click', function (event) {
 
-            if (containsEmptyField([administrativeDesignationField, administrativeRoleField])) {
+            if (containsEmptyField([administrativeDesignationField, administrativeRoleField] )) {
                 let designation = administrativeDesignationField.value;
                 let role = administrativeRoleField.value;
                 callAjaxToReloadData(designation, role);
@@ -171,6 +171,8 @@ window.onload = function () {
             success: function (serverResponse, status) {
                 const refreshIntervalId = setInterval(function () {
                     let responseText = JSON.parse(serverResponse)
+                    console.log(responseText.message); // text format. php -> loadAdminData function.
+
                     $("tbody").children().slice(0).remove();
                     $("tbody").append(responseText.message);
                     $(refreshBtn).addClass("transform").removeClass("animate-spin")

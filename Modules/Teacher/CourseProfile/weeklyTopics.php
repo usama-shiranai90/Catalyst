@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."\Modules\autoloader.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION)) {
     session_start();
 }
@@ -18,19 +18,20 @@ $cloObject = new CLO();
 
 $profileExist = $courseProfile->isCourseProfileExist($programCode, $batchCode, $courseCode);
 
-$CLOList = '';
+$courseLearningOutcomeList = '';
 $viewWeeklyTopics = '';
 
 if ($profileExist) {
     $curriculum->fetchCurriculumID($sectionCode);   // provide with ongoing section code.
 
-    if ($curriculum->getCurriculumCode() === $curriculumCode){
-        $CLOList = $cloObject->retrieveCLOlist($programCode , $curriculumCode , $batchCode , $courseCode); // array of clo-code and name.
-        foreach ($CLOList as $key => $value) {
-            $CLOList[$key][1] = removeCloDash($value[1]);;
+    if ($curriculum->getCurriculumCode() == $curriculumCode) {
+        $courseLearningOutcomeList = $cloObject->retrieveCLOlist($programCode, $curriculumCode, $batchCode, $courseCode); // array of clo-code and name.
+        foreach ($courseLearningOutcomeList as $key => $value) {
+            print $key."  ".json_encode($value)."<br>";
+            $courseLearningOutcomeList[$key][1] = removeCloDash($value[1]);
         }
     }
-
+    print json_encode($courseLearningOutcomeList);
     $_SESSION['courseProfileCode'] = $courseProfile->getCourseProfileCode();
     $viewWeeklyTopics = $weeklyInfo->retrieveWeeklyTopic($_SESSION['courseProfileCode']);
 
@@ -71,7 +72,8 @@ if ($profileExist) {
                             <label for="assessment-clo-<?php echo $counter ?>">
             <textarea type="text" class="pt-4 cell-input w-full font-medium text-sm" value=""
                       placeholder="Write week assessment here..."
-                      id="assessment-clo-<?php echo $counter ?>" readonly="readonly"><?php echo $rowData[4]; ?></textarea></label>
+                      id="assessment-clo-<?php echo $counter ?>"
+                      readonly="readonly"><?php echo $rowData[4]; ?></textarea></label>
 
                         </div>
                         <div class="lweek-column ">
@@ -168,8 +170,8 @@ function callStaticData($viewWeeklyTopics)
     <link href="../../../Assets/Stylesheets/Master.css" rel="stylesheet">
     <script rel="script" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
     <link href="CourseProfileAssets/css/courseProfileStyle.css" rel="stylesheet">
-<!--    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>-->
-<!--    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>-->
+    <!--    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>-->
+    <!--    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>-->
 
     <script src="../../../Assets/Scripts/InterfaceUtil.js"></script>
 </head>
@@ -191,12 +193,10 @@ function callStaticData($viewWeeklyTopics)
                     <div class="clo-table-border rounded-md shadow-sm bg-catalystBlue-l8">
                         <h2 class="table-head font-semibold">Weekly Covered Topics</h2>
 
-                        <div id="courseweekParentDivID" class="flex flex-col p-0"> <!--flex flex-wrap p-0-->
+                        <div id="courseweekParentDivID" class="flex flex-col p-0">
                             <div id="courseLearningHeaderID"
-                                 class="learning-outcome-head learning-week-header-dp overflow-hidden">
-                                <!--  text-md row-flex w-full mx-0-->
-                                <div class="lweek-column bg-catalystBlue-l61 text-white col-start-1 col-end-2">
-                                    <!--   flex justify-center items-center min-h-full min-w-full  -->
+                                 class="learning-outcome-head learning-week-header-dp overflow-hidden m-0">
+                                <div class="lweek-column bg-catalystBlue-l6 text-white col-start-1 col-end-2 border-b-2 border-black">
                                     <span class="wlearn-cell-data">Week</span>
                                 </div>
                                 <div class="lweek-column col-start-2 col-end-7">
@@ -214,7 +214,7 @@ function callStaticData($viewWeeklyTopics)
                             </div>
                             <?php
                             if ($profileExist and sizeof($viewWeeklyTopics) != 0 and !empty($viewWeeklyTopics)) {
-                                setExistingWeeklyRow($viewWeeklyTopics, $CLOList);
+                                setExistingWeeklyRow($viewWeeklyTopics, $courseLearningOutcomeList);
                             }
                             ?>
                         </div>
@@ -285,7 +285,7 @@ function callStaticData($viewWeeklyTopics)
 
 </body>
 <script>
-    let courseCLOList = <?php echo json_encode($CLOList, JSON_HEX_TAG) ?>;
+    let courseCLOList = <?php echo json_encode($courseLearningOutcomeList, JSON_HEX_TAG) ?>;
     let courseWeeklyTopicList = <?php echo json_encode($viewWeeklyTopics, JSON_HEX_TAG)  ?>;
     console.log(courseCLOList, courseWeeklyTopicList)
     // $('#courseweekParentDivID').load('CourseProfileAssets/record.php');

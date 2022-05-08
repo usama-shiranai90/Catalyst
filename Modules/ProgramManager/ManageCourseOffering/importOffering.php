@@ -16,10 +16,18 @@ $seasonList = $season->retrieveLatestSeasonForAllocation();
 $program = new Program();
 $programInstance = $programList = $program->retrieveProgram($programCode);
 
+$faculty = new FacultyRole();
+$facultyInstanceList = $faculty->FetchFacultyListDepartment($departmentCode);
+//print json_encode($facultyInstanceList);
+$facultyList = array();
+if (sizeof($facultyInstanceList) > 0)
+    foreach ($facultyInstanceList as $faculty)
+        $facultyList[] = array('facultyCode' => $faculty->getInstance()['facultyCode'], 'name' => $faculty->getInstance()['name']);
+
+
 /*$curriculum = new Curriculum();
 $curriculumList = $curriculum->retrieveCurriculumList($programInstance->getProgramCode());
 print json_encode($curriculumList) . "<br>";*/
-
 ?>
 
 <!doctype html>
@@ -204,12 +212,43 @@ print json_encode($curriculumList) . "<br>";*/
 
                 <div class="db-table-header-topic items-center border-b-0 rounded-b-none pb-0"
                      style="background-color: #F4F8F9">
-                    <div class="flex flex-row justify-center items-center">
-                        <img class="mx-2 h-6 transition duration-800 ease-in-out hidden" width="25" height="20"
+                    <div class="inline-flex flex-row justify-between items-center w-full">
+                        <img class="mx-2 h-6 transform transition duration-800 ease-in-out hover:scale-90 cursor-pointer invisible"
+                             width="25" height="20"
                              src="../../../Assets/Images/arrow-back.svg" alt="arrow-back-section">
                         <h2 class="flex items-center justify-center text-lg text-center font-semibold  text-gray-700 tracking-wide text-center capitalize">
                             Imported Program Courses and allocation information will be shown here.
                         </h2>
+
+                        <div id="totalCreditHourTabID" class="mix-blend-normal opacity-70 rounded invisible"
+                             style="background: linear-gradient(113.91deg, #FFFFFF 0%, rgba(11, 152, 197, 0.0001) 82.9%); ">
+                            <div class="flex flex-row gap-2">
+                                <svg class="h-8 w-8" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M33 11H11V33H33V11ZM8.25 8.25V30.25H9.625V9.625H30.25V8.25H8.25ZM5.5 5.5V27.5H6.875V6.875H27.5V5.5H5.5ZM2.75 2.75V24.75H4.125V4.125H24.75V2.75H2.75ZM0 0V22H1.375V1.375H22V0H0Z"
+                                          fill="#3C8CE8"></path>
+                                </svg>
+                                <h2 class="capitalize flex items-center justify-center text-xs text-center font-semibold  text-gray-400 tracking-wide">
+                                    Total Credits
+                                </h2>
+                                <div class="flex flex-col items-center justify-center">
+                                    <label id="totalCreditHourLabelID" class="total-credit-hour text-lg text-gray-600">18</label>
+                                    <svg width="68" height="11" viewBox="0 0 68 11" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M66.9287 9.50146C66.9287 9.50146 64.2465 -0.809079 54.9376 1.50157C45.6286 3.81223 47.0176 10.0379 32.796 3.03184C18.5744 -3.97423 17.0708 21.0013 1.29302 1.50157"
+                                              stroke="url(#paint0_linear_394_7253)" stroke-width="2"
+                                              stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <defs>
+                                            <linearGradient id="paint0_linear_394_7253" x1="-2.79819" y1="-5.31072"
+                                                            x2="2.6407" y2="26.4766" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#A330FF" stop-opacity="0.01"></stop>
+                                                <stop offset="1" stop-color="#F97298"></stop>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div id="sheetNoId" class="flex mx-auto flex-wrap justify-center work-sheet-container">
@@ -271,6 +310,7 @@ print json_encode($curriculumList) . "<br>";*/
 </body>
 <script>
     let programInstance = <?php echo json_encode($programInstance);?>;
+    let facultyList = <?php echo json_encode($facultyList);?>;
 </script>
 <script src="assets/js/FileUploadScript.js"></script>
 </html>

@@ -72,7 +72,7 @@ class PLO implements JsonSerializable
                 $newPLO->setPloCode($row["PLOCode"]);
                 $newPLO->setPloName($row["ploName"]);
                 $newPLO->setPloDescription($row["ploDescription"]);
-                array_push($PLOList , $newPLO);
+                array_push($PLOList, $newPLO);
             }
             return $PLOList;
         } else
@@ -107,7 +107,7 @@ class PLO implements JsonSerializable
     }
 
 
-    public function removeProgramOutcome($ploCode, $programCode, $curriculumCode): bool
+    public function removeProgramOutcome($programCode, $curriculumCode, $ploCode): bool
     {
 
         $sql = /** @lang text */
@@ -121,11 +121,12 @@ class PLO implements JsonSerializable
         return false;
     }
 
-    public function updateProgramOutcome($ploCode, $curriculumCode, $currentPlo): bool
+    public function updateProgramOutcome($curriculumCode , $ploCode, $currentPlo): bool
     {
-
         $ploName = $currentPlo['plo_number'];
         $ploDescription = $currentPlo['plo_description'];
+
+//        print "PLO-NO :".$ploName."  ".$ploDescription."\n<br>";
 
         $sql1 = /** @lang text */
             "update plo set ploName =  \"$ploName\", ploDescription = \"$ploDescription\" 

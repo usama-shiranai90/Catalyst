@@ -497,51 +497,63 @@ class ClassActivity
     /** OneEyeOwl */
     public function getSelectedAssessment($assessmentCode, $sectionCode, $courseCode): array
     {
-        $sql = /** @lang text */
-            "select a2.studentRegCode , a.topic , a.totalMarks , a2.totalObtainedMarks from assessment as a join assessmentstudentmarks 
-            a2 on a.assessmentCode = a2.assessmentCode where a.assessmentCode= \"$assessmentCode\" and a.sectionCode = \"$sectionCode\" and a.courseCode = \"$courseCode\" ";
-
         $studentsAssessmentArrayList = array();
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
 
-            while ($row = $result->fetch_assoc()) {
-                $studentRegCode = $row['studentRegCode'];
-                $studentsAssessment = new StudentAssessmentAverage();
-                $studentsAssessment->setStudentRegistrationNo($studentRegCode);
-                $studentsAssessment->setTopicDescription($row['topic']);
-                $studentsAssessment->setAssessmentTotalMarks($row['totalMarks']);
-                $studentsAssessment->setAssessmentObtainMarks($row['totalObtainedMarks']);
-                $studentsAssessment->setAssessmentQuestionsList(array());
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select a2.studentRegCode , a.topic , a.totalMarks , a2.totalObtainedMarks from assessment as a join assessmentstudentmarks 
+            a2 on a.assessmentCode = a2.assessmentCode where a.assessmentCode= ? and a.sectionCode = ? and a.courseCode = ?');
 
-                // for each Student respective questions with marks.
-                $sql_statement_second = /** @lang text */
-                    "select * from assessmentquestion as aq join assessmentquestionstudentmarks a on aq.questionCode = a.questionCode 
-                    where a.studentRegCode = \"$studentRegCode\" and aq.assessmentCode = \"$assessmentCode\";";
-                $result_second = $this->databaseConnection->query($sql_statement_second);
-                if (mysqli_num_rows($result_second) > 0) {
-                    $counter = 1;
-                    while ($innerRow = $result_second->fetch_assoc()) {
-                        $questions = new AssessmentQuestion();
-                        $questions->setQuestionCode($innerRow['questionCode']);
-                        $questions->setQuestionNo('Question ' . $counter); // generate order of sequence.
-                        $questions->setQuestionDetail($innerRow['detail']);
-                        $questions->setQuestionTotalMarks($innerRow['totalQuestionMarks']);
-                        $questions->setRespectiveCLO($innerRow['cloCode']);
-                        $questions->setQuestionAchieveMarks($innerRow['obtainedMarks']);
-                        $percentage = number_format((float)($innerRow['obtainedMarks'] / $innerRow['totalQuestionMarks'] * 100), 2, '.', '');  // Outputs -> 105.00
-                        $questions->setQuestionAchievePercentage($percentage . " %");
-                        $studentsAssessment->assessmentQuestionsList[] = $questions;
-                        ++$counter;
+        $sanitizeAssessmentCode = FormValidator::sanitizeUserInput($assessmentCode, 'int');
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+
+        $prepareStatementSearchQuery->bind_param('iis', $sanitizeAssessmentCode , $sanitizeSectionCode , $sanitizeCourseCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+
+                while ($row = $result->fetch_assoc()) {
+                    $studentRegCode = $row['studentRegCode'];
+                    $studentsAssessment = new StudentAssessmentAverage();
+                    $studentsAssessment->setStudentRegistrationNo($studentRegCode);
+                    $studentsAssessment->setTopicDescription($row['topic']);
+                    $studentsAssessment->setAssessmentTotalMarks($row['totalMarks']);
+                    $studentsAssessment->setAssessmentObtainMarks($row['totalObtainedMarks']);
+                    $studentsAssessment->setAssessmentQuestionsList(array());
+
+                    // for each Student respective questions with marks.
+                    $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from assessmentquestion as aq join assessmentquestionstudentmarks a on aq.questionCode = a.questionCode 
+                    where a.studentRegCode  = ? and aq.assessmentCode =  ?');
+
+                    $sanitizeStudentRegCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($studentRegCode, 'string'));
+                    $prepareStatementSearchQuery->bind_param('si', $sanitizeStudentRegCode ,$assessmentCode );
+
+                    if ($prepareStatementSearchQuery->execute()) {
+                        $result_second = $prepareStatementSearchQuery->get_result();
+                        if (mysqli_num_rows($result_second) > 0) {
+                            $counter = 1;
+                            while ($innerRow = $result_second->fetch_assoc()) {
+                                $questions = new AssessmentQuestion();
+                                $questions->setQuestionCode($innerRow['questionCode']);
+                                $questions->setQuestionNo('Question ' . $counter); // generate order of sequence.
+                                $questions->setQuestionDetail($innerRow['detail']);
+                                $questions->setQuestionTotalMarks($innerRow['totalQuestionMarks']);
+                                $questions->setRespectiveCLO($innerRow['cloCode']);
+                                $questions->setQuestionAchieveMarks($innerRow['obtainedMarks']);
+                                $percentage = number_format((float)($innerRow['obtainedMarks'] / $innerRow['totalQuestionMarks'] * 100), 2, '.', '');  // Outputs -> 105.00
+                                $questions->setQuestionAchievePercentage($percentage . " %");
+                                $studentsAssessment->assessmentQuestionsList[] = $questions;
+                                ++$counter;
 //                        return array($studentsAssessment->getAssessmentQuestionsList() ,  $studentsAssessment ,  $questions);
+                            }
+                        }
+                        $studentsAssessmentArrayList[] = $studentsAssessment;
                     }
                 }
-                /*                else{
-                                    return array($studentRegCode , $assessmentCode , mysqli_num_rows($result_second));
-                                }*/
-                $studentsAssessmentArrayList[] = $studentsAssessment;
             }
+
         }
+
 
         return $studentsAssessmentArrayList;
     }
@@ -551,46 +563,54 @@ class ClassActivity
         $storeAssessmentCode = 0;
         $counter = 1;
         $activity = new ClassActivity();
-        $sql = /** @lang text */
-            "select * from assessment where sectionCode = \"$sectionCode\"  and courseCode = \"$courseCode\" order by assessmentCode desc limit 1;";
 
-        $result = $this->databaseConnection->query($sql);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $storeAssessmentCode = $row['assessmentCode'];
-                $activity->setActivityType($row['assessmentType']);
-                $activity->setActivitySubType($row['assessmentSubType']);
-                $activity->setTitle($row['title']);
-                $activity->setWeightage($row['weightage']);
-                $activity->setTopic($row['topic']);
-                $activity->setListOfQuestions(array());
+        $prepareStatementSearchQuery = $this->databaseConnection->prepare('select * from assessment where sectionCode = ? 
+            and courseCode = ? order by assessmentCode desc limit 1;');
 
-                $statement_second = /** @lang text */
-                    "select questionCode , c.cloName , detail , totalMarks
+        $sanitizeSectionCode = FormValidator::sanitizeUserInput($sectionCode, 'int');
+        $sanitizeCourseCode = FormValidator::sanitizeStringWithNoSpace(FormValidator::sanitizeUserInput($courseCode, 'string'));
+        $prepareStatementSearchQuery->bind_param('is', $sanitizeSectionCode ,  $sanitizeCourseCode);
+
+        if ($prepareStatementSearchQuery->execute()) {
+            $result = $prepareStatementSearchQuery->get_result();
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $storeAssessmentCode = $row['assessmentCode'];
+                    $activity->setActivityType($row['assessmentType']);
+                    $activity->setActivitySubType($row['assessmentSubType']);
+                    $activity->setTitle($row['title']);
+                    $activity->setWeightage($row['weightage']);
+                    $activity->setTopic($row['topic']);
+                    $activity->setListOfQuestions(array());
+
+                    $statement_second = /** @lang text */
+                        "select questionCode , c.cloName , detail , totalMarks
                      from assessment as a join assessmentquestion a2 on a.assessmentCode = a2.assessmentCode join clo c on a2.cloCode = c.CLOCode where
                      sectionCode = \"$sectionCode\" and a.courseCode = \"$courseCode\" and a.assessmentCode = \"$storeAssessmentCode\" ";
 
-                $result_second = $this->databaseConnection->query($statement_second);
-                if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
-                    while ($r = $result_second->fetch_assoc()) {
-                        $temp = array(
-                            "questionNo" => 'Question ' . $counter,
-                            "questionDetail" => $r['detail'],
-                            "questionClo" => $r['cloName']
-                        );
-                        $activity->listOfQuestions[] = $temp;
-                        $counter++;
+                    $result_second = $this->databaseConnection->query($statement_second);
+                    if (!empty(mysqli_num_rows($result)) && mysqli_num_rows($result) > 0) {
+                        while ($r = $result_second->fetch_assoc()) {
+                            $temp = array(
+                                "questionNo" => 'Question ' . $counter,
+                                "questionDetail" => $r['detail'],
+                                "questionClo" => $r['cloName']
+                            );
+                            $activity->listOfQuestions[] = $temp;
+                            $counter++;
+                        }
+                    } else {
+                        echo "ERROR " . $sectionCode . "    " . $courseCode . "      " . $storeAssessmentCode;
                     }
-                } else {
-                    echo "exuse me " . $sectionCode . "    " . $courseCode . "      " . $storeAssessmentCode;
+                    break;
                 }
-                break;
+                return $activity;
+            } else {
+                echo "No assessmentCode found with sectionCode: " . $sectionCode . " and courseCode: " . $courseCode;
+                return null;
             }
-            return $activity;
-        } else {
-            echo "No assessmentCode found with sectionCode: " . $sectionCode . " and courseCode: " . $courseCode;
-            return null;
         }
+        return null;
     }
 
     public function getListOfQuestions(): array

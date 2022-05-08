@@ -41,37 +41,51 @@ if (isset($_POST['refreshSelectedRole']) and $_POST['refreshSelectedRole']) {
 
 function loadAdminData($listOfAllocatedAdministratorRolesList, $toStore = 'none'): string
 {
-    $temp = '';
+    $returnTagFormat = '';
     $counter = 1;
-    foreach ($listOfAllocatedAdministratorRolesList as $index => $role) {
+    foreach ($listOfAllocatedAdministratorRolesList as $KEY => $role) {
         foreach ($role as $selectedFaculty) {
-            $typeOfRole = $selectedFaculty['roleName'];
+            $typeOfRole = $selectedFaculty['roleName']; // head of department /  program manager  / course advisor.
+
+            /**
+             *  if a specific user exist ( role ) us ki custom-attribute ->  e.g. data-program-state (programCode)
+             *  HOD -> data-role-state-hod= departmentCode
+             *  PM -> data-role-state-pm = (programCode)
+             *  CA -> data-role-state-ca = (sectionCode)
+             */
             $CUSTOM_ROLE_TAG = '';
+            $CUSTOM_TAG_PARAGRAPH = ''; // agr HOD - Faculty member #name has been appointed as the #department-name.
 
-            $CUSTOM_TAG_PARAGRAPH = '';
-
-            if (preg_match('/\bHead Of Department\b/i', $typeOfRole, $matchSet) === 1) {
+            if (preg_match('/\bHead Of Department\b/i', $typeOfRole) === 1) {
                 $depCode = $selectedFaculty['departmentCode'];
                 $CUSTOM_ROLE_TAG = "data-role-state-hod=" . "\"$depCode\"";
+
                 $CUSTOM_TAG_PARAGRAPH = sprintf('<p class="text-gray-500 leading-6  text-sm">
                     👁️‍🗨️ Faculty member <span class="font-medium text-gray-700"> %s </span> has been appointed as the <span class="font-medium decoration-slice text-gray-700"> %s.</span>
                     </p>', $selectedFaculty['name'], $selectedFaculty['ofOther']);
 
-            } elseif (preg_match('/\bProgram manager\b/i', $typeOfRole, $matchSet) === 1) {
+            }
+            elseif (preg_match('/\bProgram manager\b/i', $typeOfRole) === 1) {
                 $programCode = $selectedFaculty['programCode'];
                 $CUSTOM_ROLE_TAG = "data-role-state-pm=" . "\"$programCode\"";
+
+
                 $CUSTOM_TAG_PARAGRAPH = sprintf('<p class="text-gray-500 leading-6  text-sm">
                     👁️‍🗨 Faculty member <span class="font-medium text-gray-700"> %s </span> has been appointed as the <span class="font-medium decoration-slice text-gray-700"> %s for %s</span>
                     </p>', $selectedFaculty['name'], $selectedFaculty['roleName'], $selectedFaculty['ofOther']);
 
-            } elseif (preg_match('/\bCourse Advisor\b/i', $typeOfRole, $matchSet) === 1) {
+            }
+            elseif (preg_match('/\bCourse Advisor\b/i', $typeOfRole) === 1) {
                 $sectionCode = $selectedFaculty['sectionCode'];
                 $CUSTOM_ROLE_TAG = "data-role-state-ca=" . "\"$sectionCode\"";
+
                 $CUSTOM_TAG_PARAGRAPH = sprintf('<p class="text-gray-500 leading-6  text-sm">
                     👁️‍ Faculty member <span class="font-medium text-gray-700"> %s </span> has been appointed as the <span class="font-medium decoration-slice text-gray-700"> %s for %s</span>
                     </p>', $selectedFaculty['name'], $selectedFaculty['roleName'], $selectedFaculty['ofOther']);
 
             }
+
+
             $print = sprintf(
                 '<tr data-record-target = "#admin-record-%d"  aria-expanded="false" 
    class="cursor-default text-sm tracking-tight transition-all transform hover:bg-catalystLight-89 accordion-toggle collapsed" %s>
@@ -99,8 +113,8 @@ function loadAdminData($listOfAllocatedAdministratorRolesList, $toStore = 'none'
                                 </div>
                             </td>        
                 </tr>
+                
             <tr>
-            
             <td colspan="5" class="hidden py-5 text-center" id="admin-record-%d" >
                     %s
             </td>
@@ -108,14 +122,15 @@ function loadAdminData($listOfAllocatedAdministratorRolesList, $toStore = 'none'
         
         ', ($counter), $CUSTOM_ROLE_TAG, $selectedFaculty['facultyID'], $selectedFaculty['name'], $selectedFaculty['officialEmail'], $selectedFaculty['roleName'],
                 $counter, $counter, $CUSTOM_TAG_PARAGRAPH);
+
             if ($toStore !== 'none')
-                $temp .= $print;
+                $returnTagFormat .= $print;
             else
                 print $print;
             $counter++;
         }
     }
-    return $temp;
+    return $returnTagFormat;
 }
 
 ?>

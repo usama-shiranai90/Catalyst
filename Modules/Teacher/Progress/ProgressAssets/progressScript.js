@@ -4,115 +4,14 @@ let averageScorePercent = 0;
 let totalMarks = 0;
 window.onload = function (e) {
 
-    const selectSessionalTab = document.querySelector(".py-0.assessment-type-bg");
-    const sessionalAllAssessmentTable = document.getElementById("sessionalTableDivID");
+    const selectSessionalTab = document.querySelector(".py-0.assessment-type-bg"); // Container of Sessional/ Mid-Term / Final-Term.
+    const sessionalAllAssessmentTable = document.getElementById("sessionalTableDivID"); // Sub Assessment Type Container.
     const courseSessionalInfoDiv = document.getElementById("courseSessionalInfoDivID"); // assessment Table.
     const studentListTable = document.getElementById('studentTableID'); // bottom left side student table list.
 
-    const selectStudentAssessmentTable = document.getElementById('selectedStudentTableInfoID'); // right side student assessment table list.
     const assessmentTypeHeaderTable = document.getElementById('assessmentTypeHeaderID'); // right side student assessment table list header.
+    const selectStudentAssessmentTable = document.getElementById('selectedStudentTableInfoID'); // right side student assessment table list.
     const selectedStudentAssessmentBodyTable = document.getElementById('studentSelectedAssessmentBodyID'); // right side student assessment table list body.
-
-    fetchSessionalInfo(sessionalAssessmentsArray, courseSessionalInfoDiv);  // for creating all assignment quiz and project box .
-
-    // sessional
-    document.querySelectorAll("div.transition.transform.relative span , div.py-0.assessment-type-bg.mx-0").forEach((value, key) => { //   span.h-10.py-2
-
-        // request ajax for current selected (sessional) assessment list for all students.
-        value.addEventListener("click", event => {
-            let settingID;
-            if (!isNum(value.id)) {
-                if (value.id === 'spmiddivID')
-                    settingID = Object.keys(midAssessmentsArray)[0];
-                else if (value.id === 'spfinaldivID')
-                    settingID = Object.keys(finalAssessmentsArray)[0];
-            } else
-                settingID = value.id;
-
-            selectedAssessmentValue = value.innerText;
-
-            let studentTableBody = document.getElementById('studentTableBodyID');
-            studentTableBody.innerHTML = '';
-            $(studentTableBody).css({display: 'none'});
-
-            console.log(settingID);
-
-            $.ajax({
-                type: "POST",
-                url: 'progressAjax.php',
-                data: {
-                    assessmentTypeID: settingID,
-                    summaryReport: true
-                },
-                success: function (studentsList) {
-                    const studentsArray = JSON.parse(studentsList)
-                    console.log("Data set is :", studentsArray)
-                    if (Array.isArray(studentsArray)) {
-                        let rowID = "";
-                        for (let i = 0; i < studentsArray.length; i++) {
-                            rowID = studentsArray[i]['regNumber'];
-                            let tableRow = document.createElement('tr');
-                            tableRow.setAttribute("class", "text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight");
-                            tableRow.setAttribute("id", rowID);
-                            tableRow.setAttribute("data-assessment", value.id);
-
-                            Object.values(studentsArray[i]).forEach((studentIndexRecord, index) => {
-
-                                console.log(studentIndexRecord, index)
-
-                                let td = document.createElement('td');
-                                td.setAttribute("class", "px-1 py-3 w-full") // py-3
-                                switch (index) {
-                                    case 0:
-                                        td.innerText = studentIndexRecord.toString();
-                                        break;
-                                    case 1:
-                                        td.innerText = studentIndexRecord.toString();
-                                        break;
-                                    case 3:
-                                        td.innerText = studentIndexRecord.toString();
-                                        averageScorePercent = parseInt(studentIndexRecord.toString());
-                                        break;
-                                    case 2:
-                                        td.innerText = studentIndexRecord.toString()
-                                        totalMarks = parseInt(studentIndexRecord.toString())
-                                        break;
-                                    case 4:
-                                        averageScorePercent = (averageScorePercent / totalMarks * 100).toFixed(2);
-                                        tableAverageMarksColor(td, averageScorePercent);
-                                        td.innerText = averageScorePercent + " %";
-                                        break;
-                                }
-                                tableRow.appendChild(td)
-                            });
-                            studentTableBody.appendChild(tableRow);
-                        }
-                        /*                        setInterval(function () {
-                            // $(studentTableBody).fadeIn(function(){});
-                            //     $(studentTableBody).css({display:'table-row-group'}).slideDown();
-                        }, 500);*/
-
-                        $(studentTableBody).animate({right: 0}, "slow").css({display: 'table-row-group'}).slideDown();
-
-                        document.querySelectorAll("tr.text-center.text-sm.font-base").forEach((v, k, p) => {
-                            v.addEventListener("click", evt => {
-                                selectStudentAssessmentTable.classList.remove("hidden");
-                                const getRowID = v.id;
-                                let studentAssessmentRecord = studentsArray.find(o => o.regNumber === getRowID);
-
-                                setAssessmentRecordIntoTable(studentAssessmentRecord.assessmentQuestions, selectStudentAssessmentTable
-                                    , assessmentTypeHeaderTable, selectedStudentAssessmentBodyTable);
-                            });
-                        });
-                    }
-                }
-            });
-            if (!selectStudentAssessmentTable.classList.contains("hidden"))
-                selectStudentAssessmentTable.classList.add("hidden");
-            studentListTable.classList.remove("hidden");
-        });
-    });
-
 
     $(document).ready(function (e) {
         $(selectSessionalTab).on('click', function () {
@@ -131,8 +30,113 @@ window.onload = function (e) {
                 return "";
             }
         });
+
+        fetchSessionalInfo(sessionalAssessmentsArray, courseSessionalInfoDiv);  // for creating all assignment quiz and project box .
+
+        document.querySelectorAll("div.transition.transform.relative span , div.py-0.assessment-type-bg.mx-0").forEach((value, key) => { //   span.h-10.py-2
+
+            // request ajax for current selected (sessional) assessment list for all students.
+
+            $(value).on('click', function (e) {
+                let settingID;
+                if (!isNum(value.id)) {
+                    if (value.id === 'spmiddivID')
+                        settingID = Object.keys(midAssessmentsArray)[0];
+                    else if (value.id === 'spfinaldivID')
+                        settingID = Object.keys(finalAssessmentsArray)[0];
+                } else
+                    settingID = value.id;
+
+                selectedAssessmentValue = value.innerText;
+                let studentTableBody = document.getElementById('studentTableBodyID'); // Bottom left side selected user assessment.
+                studentTableBody.innerHTML = '';
+                $(studentTableBody).css({display: 'none'});
+
+                callAjaxForUserAssessment(settingID , studentTableBody);
+
+                if (!selectStudentAssessmentTable.classList.contains("hidden"))
+                    selectStudentAssessmentTable.classList.add("hidden");
+                studentListTable.classList.remove("hidden");
+
+            })
+
+
+        });
     });
+
+    function callAjaxForUserAssessment(settingID, studentTableBody) {
+        $.ajax({
+            type: "POST",
+            url: 'progressAjax.php',
+            cache: false,
+            timeout:700,
+            data: {
+                assessmentTypeID: settingID,
+                summaryReport: true
+            },
+            success: function (studentsList) {
+                const studentsArray = JSON.parse(studentsList)
+                console.log("Data set is :", studentsArray)
+                if (Array.isArray(studentsArray)) {
+                    let rowID = "";
+                    for (let i = 0; i < studentsArray.length; i++) {
+                        rowID = studentsArray[i]['regNumber'];
+                        let tableRow = document.createElement('tr');
+                        tableRow.setAttribute("class", "text-center hover:bg-catalystLight-e3 text-sm font-base tracking-tight");
+                        tableRow.setAttribute("id", rowID);
+                        tableRow.setAttribute("data-assessment", value.id);
+
+                        Object.values(studentsArray[i]).forEach((studentIndexRecord, index) => {
+
+                            console.log(studentIndexRecord, index)
+
+                            let td = document.createElement('td');
+                            td.setAttribute("class", "px-1 py-3 w-full") // py-3
+                            switch (index) {
+                                case 0:
+                                    td.innerText = studentIndexRecord.toString();
+                                    break;
+                                case 1:
+                                    td.innerText = studentIndexRecord.toString();
+                                    break;
+                                case 3:
+                                    td.innerText = studentIndexRecord.toString();
+                                    averageScorePercent = parseInt(studentIndexRecord.toString());
+                                    break;
+                                case 2:
+                                    td.innerText = studentIndexRecord.toString()
+                                    totalMarks = parseInt(studentIndexRecord.toString())
+                                    break;
+                                case 4:
+                                    averageScorePercent = (averageScorePercent / totalMarks * 100).toFixed(2);
+                                    tableAverageMarksColor(td, averageScorePercent);
+                                    td.innerText = averageScorePercent + " %";
+                                    break;
+                            }
+                            tableRow.appendChild(td)
+                        });
+                        studentTableBody.appendChild(tableRow);
+                    }
+
+                    $(studentTableBody).animate({right: 0}, "slow").css({display: 'table-row-group'}).slideDown();
+
+                    document.querySelectorAll("tr.text-center.text-sm.font-base").forEach((v, k, p) => {
+                        v.addEventListener("click", evt => {
+                            selectStudentAssessmentTable.classList.remove("hidden");
+                            const getRowID = v.id;
+                            let studentAssessmentRecord = studentsArray.find(o => o['regNumber'] === getRowID);
+
+                            setAssessmentRecordIntoTable(studentAssessmentRecord['assessmentQuestions'], selectStudentAssessmentTable
+                                , assessmentTypeHeaderTable, selectedStudentAssessmentBodyTable);
+                        });
+                    });
+                }
+            }
+        });
+    }
+
 }
+
 
 function setAssessmentRecordIntoTable(studentAssessmentRecord, table, tableHeader, tableBody) {
 
