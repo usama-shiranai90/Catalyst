@@ -143,12 +143,11 @@ window.onload = function () {
 
     /** function is used for controlling the selection and disable of a field. */
     function visibilityOfProgramField() {
-        if (radioBtnHod.checked)
-            $(programField).prop("disabled", true).css({cursor: 'no-drop'}).attr('value', "");
+        if (radioBtnHod.check)
+            $(programField).prop("disabled", false).css({cursor: 'no-drop'}).attr('value', "");
         else
-            $(programField).prop("disabled", false).css({cursor: 'pointer'}).attr('value', "all");
+            $(programField).prop("disabled", true).css({cursor: 'pointer'}).attr('value', "all");
     }
-
     /** function is used to change the view container according to selected tab. */
     function changeRoleViewContainer(selectedTab) {
         $("input[type=radio]").each(function (index, currentNode) { // for all radio button available iterate.
@@ -168,12 +167,14 @@ window.onload = function () {
                     $(hodFormContainer).children(":first-child").children(":last-child").append(appearGeneratePasswordBtn()); // to add password generate button.
                     removeGeneratePasswordBtn(pmFormContainer); // to remove any alternative generate password icon if exist.
                     removeGeneratePasswordBtn(caFormContainer);
-                } else if (index === 1) {
+                }
+                else if (index === 1) {
                     $("#roleCreationHeader").html("program manager role creation")
                     $(pmFormContainer).children(":last-child").children(":last-child").append(appearGeneratePasswordBtn());
                     removeGeneratePasswordBtn(hodFormContainer);
                     removeGeneratePasswordBtn(caFormContainer);
-                } else {
+                }
+                else {
                     $("#roleCreationHeader").html("course advisor role creation")
                     $(caFormContainer).children(":last-child").children(":last-child").append(appearGeneratePasswordBtn());
                     removeGeneratePasswordBtn(hodFormContainer);
@@ -700,7 +701,6 @@ window.onload = function () {
         if ($(lastMostChild).attr("id") === "roleCreationPasswordGeneratorID")
             $(lastMostChild).remove();
     }
-
     /** To generate email according to respective role*/
     function generateUserEmail() {
         /*        console.log("pm".match(/^([a-z0-9]{pm,})$/));

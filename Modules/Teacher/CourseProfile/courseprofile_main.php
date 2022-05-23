@@ -7,7 +7,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "\Modules\autoloader.php";
 if (session_status() === PHP_SESSION_NONE || !isset($_SESSION))
     session_start();
 
-$personalDetails = array();
+$personalDetails =array();
 $facultyInstance = unserialize($_SESSION['facultyInstance']);
 //$personalDetails = $facultyInstance->getInstance();
 

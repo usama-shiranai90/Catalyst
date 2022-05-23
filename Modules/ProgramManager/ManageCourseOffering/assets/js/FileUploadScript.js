@@ -171,10 +171,10 @@ function sheetToJson(work_book) {
         }
         let offeringJsonFormatList = XLSX.utils.sheet_to_json(sheetCode, excelFormatParameter);
         let tableHeaderFormatter = work_book.Sheets[sheetName]['A1']['v'];
-        console.log("offeringJsonFormatList : ", offeringJsonFormatList, tableHeaderFormatter)
-
-        createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJsonFormatList, sheetName, counter);
+        console.log("offeringJsonFormatList : ", offeringJsonFormatList, tableHeaderFormatter, "counter : " + counter)
+     createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJsonFormatList, sheetName, counter);
         createDifferentSheetWorkSection(sheetName, counter++);
+        saveCourseOfferingBtn.classList.remove("hidden");
     });
 }
 
@@ -201,7 +201,7 @@ function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJso
         let programName = extractFirstString(convertorOfHeader[0]);
         let semesterNumber = extractFirstNumeric(convertorOfHeader[0]);
         let batchYear = removeBrackets(convertorOfHeader[1]);
-        console.log(programName, semesterNumber, batchYear);
+        // console.log(programName, semesterNumber, batchYear);
 
         /** Header Content */
             // const tableSectionDivision = document.createElement('div');
@@ -209,7 +209,7 @@ function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJso
             // $(tableSectionDivision).append(`<h2 class="font-semibold text-2xl tracking-wider leading-relaxed p-2">Regular Course</h2>`);
 
         const table = document.createElement('table');
-        $(table).addClass("border-collapse table-auto whitespace-no-wrap table-striped");
+        $(table).addClass("table-auto border-collapse");
         const tableHeader = document.createElement('thead');
         table.append(tableHeader);
         let tableHeaderRow = document.createElement('tr');
@@ -219,104 +219,29 @@ function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJso
         table.setAttribute("id", tableID);
 
         let maxLengthPerRow = Object.entries(offeringJsonFormatList[3]).length; // where the header lies.
-        // console.log("header length : ", maxLengthPerRow);
-
         Object.entries(offeringJsonFormatList[3]).forEach(function (value, index) {
-            if (value[1] !== 'S.No') {
+            if (value[1].toLowerCase().localeCompare('S.No'.toLowerCase())) { // value[1] !== 'S.No'
                 $(tableHeaderRow).append(`<th class="capitalize px-4 py-3  tracking-wider font-medium text-sm">
                                 ${value[1]}
                             </th>`);
             }
             if (maxLengthPerRow === index + 1) { // adding buttons.
                 $(tableHeaderRow).append(`
-             <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs"> </td>`);
+             <td class="px-2 py-3 border-gray-200 text-center text-xs"> </td>`);
             }
         });
         // $(tableSectionDivision).append(table);
         $(courseOfferingTableContainer).append(table);
 
-        let tcIndex = -1;
         /** Data Set Content */
         const tableBody = document.createElement('tbody');
-        for (let row = 4; row < offeringJsonFormatList.length; row++) {
-            let tableHeaderRow = document.createElement('tr');
-            tableBody.append(tableHeaderRow);
-            let maxLengthPerRow = Object.entries(offeringJsonFormatList[row]).length;
+        let totalCHIndex = regularCourseOffering(table, tableBody, offeringJsonFormatList, counter)
+        // console.log("for total credit hour index : ", offeringJsonFormatList[totalCHIndex] , offeringJsonFormatList[totalCHIndex][2]);
 
-            let BreakException = {};
-            try {
-                let emptyCounter = 0;
-                offeringJsonFormatList[row].forEach(function (value, index) {
-                    // let relatedEvent = getRelatedKeyDownForTabularRow(index);
-                    // relatedEvent = (relatedEvent === undefined ? '' : relatedEvent)
-
-                    if ((index < (maxLengthPerRow / 2) && value.length === 0)) {
-                        emptyCounter++;
-                        if (emptyCounter === (index / maxLengthPerRow))
-                            throw BreakException;
-                    } else {
-                        if (value !== "__EMPTY" && maxLengthPerRow > index) { /** for creating allocation row. */
-
-                            if (index === 4) { // for course coordinator column
-                                $(tableHeaderRow).append(`
-                            <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs">
-                               <select class="select" name="t1" onclick="this.setAttribute('value', this.value);" 
-                                onchange="this.setAttribute('value', this.value);"  id="t1">
-                                <option value="" hidden=""></option>
-                                ${makeOptionsForCoordinator()}
-                                </select>
-                            </td>`);
-                            } else {
-
-
-
-                                if (index > 4) {
-                                    let color= '';
-                                    if (!isFacultyExist(value))
-                                        color = "bg-red-400";
-
-                                    $(tableHeaderRow).append(`
-                            <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs ${color} " contenteditable="true" data-faculty-id = "${fCode}">
-                                <span class="text-gray-700 flex justify-center items-center" >${value}</span>
-                            </td>`);
-
-
-
-                                } else {
-                                    $(tableHeaderRow).append(`
-                            <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="true">
-                                <span class="text-gray-700 flex justify-center items-center" >${value}</span>
-                            </td>`);
-                                }
-
-
-                            }
-                        }
-
-                        if (maxLengthPerRow === index + 1) // adding delete button.
-                            $(tableHeaderRow).append(`
-             <td class="border-dashed px-2 py-3 border-t border-gray-200 text-center text-xs" contenteditable="false">
-                                           <img class="h-10 w-6 cursor-pointer" alt="" 
-                        src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg" data-std-delete="remove">
-                                        </td>`);
-
-                    }
-                });
-            } catch (e) {
-                if (e !== BreakException) throw e;
-            }
-
-            // check next is Total Credits hour.
-            let nextRowFirstValue = offeringJsonFormatList[row + 1][0].toLowerCase();
-            console.log(nextRowFirstValue.match(/(Total|Credits|credit)+/ig))
-            //nextRowFirstValue.search("total credits".toLowerCase()) || nextRowFirstValue.match(/total credits/i)
-            if (nextRowFirstValue.match(/(Total|Credits|credit)+/ig)) {
-                tcIndex = row + 1;
-                break;
-            }
+        for (let i = totalCHIndex+1; i < offeringJsonFormatList.length; i++) {
+            console.log(i, "NEXT : " , offeringJsonFormatList[i]);
         }
-        $(table).append(tableBody);
-        $(table).append(createAddMoreBtn(counter));
+
 
         /** pagination Design */
         createPaginationBar(tableID);
@@ -326,12 +251,107 @@ function createTabularDataFormatCourseOffering(tableHeaderFormatter, offeringJso
             $("#" + tableID).removeAttr("style");
             $("#" + tableID).next().addClass('hidden');
         }
-
     }
 }
 
+function regularCourseOffering(table, tableBody, offeringJsonFormatList, counter) {
+    let totalCHIndex = -1;
+    let c = 0;
+    for (let row = 4; row < offeringJsonFormatList.length; row++) {
+        let tableBodyRow = document.createElement('tr');
+        // tableBodyRow.setAttribute("aria-valuetext", 'course-offered-t' + counter + "-" + Math.ceil(row / 4));
+        c++;
+        tableBodyRow.setAttribute("aria-valuetext", 'course-offered-t' + counter + "-" + c);
+        tableBodyRow.setAttribute("aria-expanded", 'true');
+        $(tableBodyRow).addClass("border-dashed border-b border-gray-200 text-center text-xs")
+        tableBody.append(tableBodyRow);
+        $(table).append(tableBody);
+        let maxLengthPerRow = Object.entries(offeringJsonFormatList[row]).length;
+
+        let BreakException = {};
+        try {
+            let emptyCounter = 0;
+            offeringJsonFormatList[row].forEach(function (value, index) {
+                // let relatedEvent = getRelatedKeyDownForTabularRow(index);
+                // relatedEvent = (relatedEvent === undefined ? '' : relatedEvent)
+
+                if ((index < (maxLengthPerRow / 2) && value.length === 0)) {
+                    emptyCounter++;
+                    if (emptyCounter === (index / maxLengthPerRow))
+                        throw BreakException;
+                } else {
+                    if (value !== "__EMPTY" && maxLengthPerRow > index) { /** for creating allocation row. */
+                        //border-dashed px-2 py-3 border-b border-gray-200 text-center text-xs
+                        if (index === 4) { // for course coordinator column
+                            $(tableBodyRow).append(`
+                               <td class="px-2 py-3  text-center text-xs">
+                               <select class="select" onclick="this.setAttribute('value', this.value);" 
+                                onchange="this.setAttribute('value', this.value);"  id="${tableBodyRow.getAttribute('aria-valuetext')}">
+                                <option value="" hidden=""></option>
+                                ${makeOptionsForCoordinator()}
+                                </select>
+                            </td>`);
+
+                        } else {
+
+                            if (index > 4) {
+                                let color = '';
+                                if (!isFacultyExist(value)) {
+                                    color = "text-red-600 font-semibold";
+                                    tableBodyRow.setAttribute("aria-expanded", 'false');
+                                }
+
+                                $(tableBodyRow).append(`
+                            <td class="px-2 py-3 text-center text-xs" contenteditable="true" data-faculty-id = "${fCode}">
+                                <span class="text-gray-700 flex justify-center items-center ${color}" >${value}</span>
+                            </td>`);
+
+                            } else {
+                                $(tableBodyRow).append(`
+                            <td class="px-2 py-3 text-center text-xs" contenteditable="true">
+                                <span class="text-gray-700 flex justify-center items-center" >${value}</span>
+                            </td>`);
+                            }
+
+                        }
+                    }
+
+                    if (maxLengthPerRow === index + 1) // adding delete button.
+                    {
+                        $(tableBodyRow).append(`
+                         <td class="px-2 py-3 text-center text-xs " contenteditable="false">
+                                           <img class="h-10 w-6 cursor-pointer" alt="" src="../../../../../Assets/Images/vectorFiles/Icons/remove_circle_outline.svg" 
+                                           data-std-delete="remove">
+                                        </td>`);
+
+                        let coordinatorOptionList = document.querySelector("#"+tableBodyRow.getAttribute('aria-valuetext'));
+
+                        if (!tableBodyRow.getAttribute("aria-expanded") === false){
+                            $(coordinatorOptionList).attr("disabled", true).css('cursor', 'not-allowed')
+                        }
+
+                    }
+                }
+            });
+        } catch (e) {
+            if (e !== BreakException) throw e;
+        }
+
+        // check next is Total Credits hour.
+        //nextRowFirstValue.search("total credits".toLowerCase()) || nextRowFirstValue.match(/total credits/i)
+        let nextRowFirstValue = offeringJsonFormatList[row + 1][0].toLowerCase();
+        if (nextRowFirstValue.match(/(Total|Credits|credit)+/ig)) {
+            totalCHIndex = row + 1;
+            break;
+        }
+    }
+    $(table).append(createAddMoreBtn(counter));
+
+    return totalCHIndex;
+}
+
+
 function createDifferentSheetWorkSection(sheetList, counter) {
-    console.log("working ?")
     if (counter !== 1)
         $("#sheetNoId").append(` <a id="importCourseOfferingSheetTabID-${counter}" class="non-selected-tab-section tab-context-header">
                             ${sheetList} </a>`);
@@ -409,7 +429,7 @@ function isFacultyExist(name) {
     if (facultyList.length > 0) {
         let isFaculty = false;
         for (let i = 0; i < facultyList.length; i++) {
-            console.log(name.toUpperCase() , facultyList[i].name.toUpperCase())
+            // console.log(name.toUpperCase() , facultyList[i].name.toUpperCase())
             if (name.toUpperCase() == facultyList[i].name.toUpperCase()) { // name.localeCompare(facultyList[i].name, undefined, { sensitivity: 'accent' })
                 isFaculty = true;
                 fCode = facultyList[i].facultyCode;

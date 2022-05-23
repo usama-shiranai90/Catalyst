@@ -60,7 +60,7 @@ $(document).ready(function () {
             let prefixedValue = $(this).val();
             let currentField = this;
             setTimeout(function () {
-                if (currentField.value.indexOf('Bachelors ') !== 0) {
+                if (currentField.value.indexOf('Bachelors in ') !== 0) {
                     $(currentField).val(prefixedValue);
                 }
             }, 1);
@@ -83,7 +83,6 @@ $(document).ready(function () {
             }
         },
     });
-
 
     /** Section for Program Management. */
     $(document).on('click', 'button[id^=performRoleEdit-]', function (e) {
@@ -130,16 +129,15 @@ $(document).ready(function () {
 
     $(saveBtn).on('click', function (e) {
         e.preventDefault();
-        updateMyProgramList(updateProgramList);
+        let keyValueUpdatedProgramList = updateMyProgramList(updateProgramList);
 
         if (deletedProgramList.length > 0 && Object.entries(updateProgramList).length > 0) {
-            console.log("inside both")
             callAjaxForProgramDeletion(deletedProgramList);
-            callAjaxForProgramModify(updateProgramList);
+            callAjaxForProgramModify(keyValueUpdatedProgramList);
         } else if (deletedProgramList.length > 0)
             callAjaxForProgramDeletion(deletedProgramList)
         else if (updateProgramList.length > 0)
-            callAjaxForProgramModify(updateProgramList);
+            callAjaxForProgramModify(keyValueUpdatedProgramList);
     });
 });
 
@@ -171,9 +169,8 @@ function updateMyProgramList(updateProgramList) {
                 });
             }
         });
-        updateProgramList = tempList;
-        // console.log("updateProgramList ", updateProgramList);
     }
+    return tempList
 }
 
 function callAjaxForProgramDeletion(deletedProgramList) {
@@ -224,11 +221,12 @@ function callAjaxForProgramModify(updateProgramList) {
             console.log("not working fine" + jqXHR + "\n" + textStatus + "\n" + errorThrown)
         },
         success: function (serverResponse, status) {
-
-        },
-        complete: function (response) {
-            let responseText = JSON.parse(response.responseText)
-
+            $("body").append(successfulMessageNotifier("Updated successfully", " Program Has been updated successfully."));
+            $("#successNotifiedId").toggle("hidden").animate(
+                {right: 0}, 4000, function () {
+                    window.location.reload();
+                    $(this).delay(5000).fadeOut().remove();
+                });
         }
     });
 }

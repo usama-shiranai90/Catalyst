@@ -3,12 +3,10 @@
 use JetBrains\PhpStorm\Pure;
 
 /**
- *
  * Example:
- *
- *  $validations = array('name' => 'anything','email' => 'email','alias' => 'anything','pwd'=>'anything','gsm' => 'phone','birthdate' => 'date');
+ *  $validations = array('name' => 'anything','email' => 'oneEyeOwl@mail.com','usama' => 'anything','pwd'=>'owlMol');
  *  $required = array('name', 'email', 'alias', 'pwd');
- *  $sanitize = array('alias');
+ *  $sanitize = array('usama');
  *  $validator = new FormValidator($validations, $required, $sanitize);
  *  if($validator->validate($_POST))
  *      $_POST = $validator->sanitize($_POST); // $_POST has been sanitized.

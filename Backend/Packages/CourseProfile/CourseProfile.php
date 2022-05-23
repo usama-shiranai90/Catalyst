@@ -48,7 +48,7 @@ class CourseProfile implements Persistable
 
     public function setCourseInfo($courseTitle, $courseCode, $courseCreditHr, $coursePreReq, $courseSemester, $courseProgramLevel, $courseProgram, $courseCourseEffective,
                                   $courseCoordination, $courseTeachingMythology, $courseModel, $courseReferenceBook, $courseTextBook,
-                                  $courseDescription, $courseOtherReference, $weightagedAssessment, $programCode, $batchCode)
+                                  $courseDescription, $courseOtherReference, $weightageAssessment, $programCode, $batchCode)
     {
         $this->courseTitle = $courseTitle;
         $this->courseCode = $courseCode;
@@ -68,7 +68,7 @@ class CourseProfile implements Persistable
         $this->courseOtherReference = $courseOtherReference;
         $this->programCode = $programCode;
         $this->batchCode = $batchCode;
-        $this->HasWeightedAssessment = $weightagedAssessment;
+        $this->HasWeightedAssessment = $weightageAssessment;
     }
 
     public function isCourseProfileExist($currentProgramCode, $currentBatchCode, $currentCourseCode): bool
@@ -447,8 +447,8 @@ class CourseProfile implements Persistable
                 $sanitizeInstructorContact = FormValidator::sanitizeUserInput($instructor_contact, 'string');
                 $sanitizeInstructorEmail = FormValidator::sanitizeUserInput($instructor_email, 'email');
 
-                $prepareStatementUpdateQuery_2->bind_param('ssssssis',  $sanitizeInstructorName, $sanitizeInstructorDesignation, $sanitizeInstructorQualification,
-                    $sanitizeInstructorSpecification, $sanitizeInstructorContact, $sanitizeInstructorEmail , $sanitizeCourseProfileCode, $sanitizeFacultyCode);
+                $prepareStatementUpdateQuery_2->bind_param('ssssssis', $sanitizeInstructorName, $sanitizeInstructorDesignation, $sanitizeInstructorQualification,
+                    $sanitizeInstructorSpecification, $sanitizeInstructorContact, $sanitizeInstructorEmail, $sanitizeCourseProfileCode, $sanitizeFacultyCode);
 
                 if ($prepareStatementUpdateQuery_2->execute() !== TRUE)
                     $failedToPerformUpdation[] = -2;
@@ -474,7 +474,7 @@ class CourseProfile implements Persistable
         $sanitizeFinalWeightage = FormValidator::sanitizeUserInput($c_final_weight, 'int');
 
         $prepareStatementUpdateQuery_3->bind_param('iiiiii', $sanitizeQuizzWeightage, $sanitizeAssignmentWeightage,
-            $sanitizeProjectWeightage, $sanitizeMidWeightage, $sanitizeFinalWeightage , $sanitizeCourseProfileCode);
+            $sanitizeProjectWeightage, $sanitizeMidWeightage, $sanitizeFinalWeightage, $sanitizeCourseProfileCode);
 
         if ($prepareStatementUpdateQuery_3->execute() !== TRUE)
             $failedToPerformUpdation[] = -3;

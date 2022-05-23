@@ -6,7 +6,8 @@ session_start();
 //$personalDetails = $admin->getInstance();
 
 $adminCode = $_SESSION['adminCode'];
-$departmentCode = $_SESSION['departmentCode'];
+//$departmentCode = $_SESSION['departmentCode'];
+$departmentCode = 1;
 $programCode = $_SESSION['programCode'];
 
 $season = new Season();
@@ -23,7 +24,6 @@ $facultyList = array();
 if (sizeof($facultyInstanceList) > 0)
     foreach ($facultyInstanceList as $faculty)
         $facultyList[] = array('facultyCode' => $faculty->getInstance()['facultyCode'], 'name' => $faculty->getInstance()['name']);
-
 
 /*$curriculum = new Curriculum();
 $curriculumList = $curriculum->retrieveCurriculumList($programInstance->getProgramCode());

@@ -55,11 +55,11 @@ window.onload = function () {
             // dischargedIndex = $(event.target).closest('.accordion-toggle.collapsed').attr("id").match(/\d+/)[0];
             event.stopImmediatePropagation();
             hId = -1;
-            pmId = -1;
             caId = -1;
+            pmId = -1;
 
-            facultyID = $(this).closest('.accordion-toggle.collapsed').children(":nth-child(1)").children(":first-child").text(); // FUI-FURC- Code.
-            toRemoveTag = $(this).closest('.accordion-toggle.collapsed');
+            facultyID = $(this).closest('.accordion-toggle.collapsed').children(":first-child").children(":first-child").text(); // FUI-FURC- Code.
+            toRemoveTag = $(this).closest('.accordion-toggle.collapsed'); // tr
 
             if (toRemoveTag.attr(`data-role-state-hod`) !== undefined) {
                 hId = $(this).closest('.accordion-toggle.collapsed').attr(`data-role-state-hod`); // departmentCode
@@ -82,7 +82,7 @@ window.onload = function () {
                 $("main").addClass("blur-filter");
             }
         });
-
+            /** AlertDialogue-Box */
         $(document).on('click', "#alertDeleteBtnId ,#alertCancelBtnId ", function (event) {
             event.preventDefault();
             event.stopImmediatePropagation();
@@ -182,7 +182,7 @@ window.onload = function () {
                     console.log(responseText.message); // text format. php -> loadAdminData function.
 
                     $("tbody").children().slice(0).remove();
-                    $("tbody").append(responseText.message);
+                    $("tbody").append(responseText.message);//<tr> and its format
                     $(refreshBtn).addClass("transform").removeClass("animate-spin")
                     clearInterval(refreshIntervalId);
                 }, 1000);
