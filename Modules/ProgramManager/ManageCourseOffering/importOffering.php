@@ -25,9 +25,6 @@ if (sizeof($facultyInstanceList) > 0)
     foreach ($facultyInstanceList as $faculty)
         $facultyList[] = array('facultyCode' => $faculty->getInstance()['facultyCode'], 'name' => $faculty->getInstance()['name']);
 
-/*$curriculum = new Curriculum();
-$curriculumList = $curriculum->retrieveCurriculumList($programInstance->getProgramCode());
-print json_encode($curriculumList) . "<br>";*/
 ?>
 
 <!doctype html>

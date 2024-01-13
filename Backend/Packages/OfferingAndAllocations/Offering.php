@@ -35,13 +35,33 @@ class Offering
 
     }
 
-
 //    Bukhari's
+
+    function retrieveLatestSeasons(): array
+    {
+        $sql1 = /** @lang text */
+            "select * from season where dateCreated between (select date(date_sub(curdate(), interval 6 MONTH ))) and curdate()";
+
+        $result = $this->databaseConnection->query($sql1);
+
+        $seasonsList = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $season = new Season();
+                $season->setSeasonCode($row['seasonCode']);
+                $season->setSeasonName($row['seasonName']);
+                $season->setDateCreated($row['dateCreated']);
+                array_push($seasonsList, $season);
+            }
+        }
+        return $seasonsList;
+    }
+    
     public function isOfferingMade($seasonCode, $batchCode, $semesterCode, $curriculumCode)
     {
         $sql1 = /** @lang text */
             "select * from courseoffering where seasonCode = \"$seasonCode\" and batchCode =\"$batchCode\" and 
-            seasonCode = \"$semesterCode\" and curriculumCode = \"$curriculumCode\";";
+            semesterCode = \"$semesterCode\" and curriculumCode = \"$curriculumCode\";";
 
         $result = $this->databaseConnection->query($sql1);
 
@@ -60,19 +80,17 @@ class Offering
         $result = $this->databaseConnection->query($sql1);
 
         if ($result === TRUE) {
-//            $this->createOfferedCourses($courseCodeList);
+            return true;
         }
         return false;
     }
 
-    public function createOfferedCourses($courseCodeList)
-    {
-        foreach ($courseCodeList as $courseCode){
 
+    public function createCourses($courseCode, $courseTitle, $programCode, $creditHours, $curriclumCode)
+    {
         $sql1 = /** @lang text */
-            "INSERT INTO courseoffered (offeringCode, courseCode)
-                VALUES ((select offeringCode from courseoffering order by offeringCode desc limit 1), \"$courseCode\");";
-        }
+            "INSERT IGNORE INTO course (courseCode, programCode, courseTitle, creditHours, curriculumCode) 
+            VALUES (\"$courseCode\", \"$programCode\", \"$courseTitle\", \"$creditHours\", \"$curriclumCode\");";
 
         $result = $this->databaseConnection->query($sql1);
 
@@ -80,6 +98,24 @@ class Offering
             return true;
         }
         return false;
+    }
+
+
+    public function createOfferedCourses($courseCodeList)
+    {
+        foreach ($courseCodeList as $courseCode) {
+
+            $sql1 = /** @lang text */
+                "INSERT IGNORE INTO courseoffered (offeringCode, courseCode)
+                VALUES ((select offeringCode from courseoffering order by offeringCode desc limit 1), \"$courseCode\");";
+
+            $result = $this->databaseConnection->query($sql1);
+
+            if ($result === FALSE) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

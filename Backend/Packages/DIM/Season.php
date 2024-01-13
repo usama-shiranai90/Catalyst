@@ -5,6 +5,7 @@ class Season implements JsonSerializable
 
     protected $seasonCode;
     protected $seasonName;
+    protected $dateCreated;
     protected $databaseConnection;
 
     public function __construct()
@@ -92,11 +93,22 @@ class Season implements JsonSerializable
         return $this->databaseConnection;
     }
 
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated($dateCreated): void
+    {
+        $this->dateCreated = $dateCreated;
+    }
+
     public function jsonSerialize()
     {
         return array(
             'seasonCode' => $this->seasonCode,
-            'seasonName' => $this->seasonName
+            'seasonName' => $this->seasonName,
+            'dateCreated' => $this->dateCreated
         );
     }
 }

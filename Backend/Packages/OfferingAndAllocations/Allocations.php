@@ -19,7 +19,7 @@ class Allocations
 
     public function retrieveAllocations($facultyCode): array
     {
-        print $facultyCode."<br>";
+        print $facultyCode . "<br>";
         $sql = /** @lang text */
             "select fa.sectionCode, ca.courseCode,ca.batchCode,ca.programCode, co.curriculumCode,isCoordinator from facultyallocations fa join courseallocation ca on 
             ca.allocationCode = fa.allocationCode join courseoffering co on co.offeringCode = ca.offeringCode where 
@@ -160,4 +160,78 @@ class Allocations
         }
         return $affiliatedFacultyList;
     }
+
+    private function isAllocationMade($batchCode, $courseCode, $seasonCode)
+    {
+        $sql1 = /** @lang text */
+            "select * from courseallocation where batchCode = \"$batchCode\" and courseCode = \"$courseCode\"
+            and offeringCode = (select offeringCode from courseoffering co where co.batchCode = \"$batchCode\" and co.seasonCode = \"$seasonCode\")";
+
+        $result = $this->databaseConnection->query($sql1);
+
+        if (mysqli_num_rows($result) == 1) {
+            $row = $result->fetch_assoc();
+            return $row['allocationCode'];
+//            return true;
+        }
+        return false;
+    }
+
+    public function createAllocation($batchCode, $courseCode, $curriculumCode, $programCode, $seasonCode, $facultyCodeList, $sectionCodeList,$isCoordinatorList)
+    {
+
+        $allocationCode = $this->isAllocationMade($batchCode, $courseCode, $seasonCode);
+        if ($allocationCode != false) {
+            $sql1 = /** @lang text */
+                "INSERT INTO courseallocation (batchCode, courseCode, curriculumCode, offeringCode, monthModified, programCode, seasonCode)
+            VALUES (\"$batchCode\", \"$courseCode\", \"$curriculumCode\", (select offeringCode from courseoffering co 
+            where co.batchCode = \"$batchCode\" and co.seasonCode = \"$seasonCode\"), curdate(), \"$programCode\", \"$seasonCode\")";
+
+            $result = $this->databaseConnection->query($sql1);
+
+            if ($result === TRUE) {
+                for ($i = 0; $i < sizeof($facultyCodeList); $i++) {
+//                    If faculty is NOT allocated to that section then perform the allocation
+                    if(!isFacultyAllocated($allocationCode, $facultyCodeList[$i], $sectionCodeList[$i])){
+                        allocateFaculty($allocationCode, $facultyCodeList[$i], $sectionCodeList[$i], $seasonCode, $isCoordinatorList[$i]);
+                    }
+                }
+
+                return true;
+            }
+        } else
+            return false;
+
+    }
+
+    private function isFacultyAllocated($allocationCode, $facultyCode, $sectionCode)
+    {
+        $sql1 = /** @lang text */
+            "select * from facultyallocations where  facultyCode = \"$facultyCode\" and 
+            allocationCode = \"$allocationCode\" and sectionCode = \"$sectionCode\"";
+
+        $result = $this->databaseConnection->query($sql1);
+
+        if (mysqli_num_rows($result) == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    private function allocateFaculty($allocationCode, $facultyCode, $sectionCode, $seasonCode, $isCoordinator)
+    {
+        $sql1 = /** @lang text */
+            "INSERT IGNORE INTO facultyallocations (facultyCode, allocationCode, monthModified, seasonCode, sectionCode, isCoordinator)
+                VALUES (\"$facultyCode\", \"$allocationCode\", curdate(), \"$seasonCode\", \"$sectionCode\", \"$isCoordinator\");";
+
+        $result = $this->databaseConnection->query($sql1);
+
+        if (mysqli_num_rows($result) == 1) {
+            return true;
+        }
+        return false;
+    }
+
+
+
 }

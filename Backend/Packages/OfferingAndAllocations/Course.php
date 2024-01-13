@@ -7,6 +7,7 @@ class Course implements JsonSerializable
     private $courseCode;
     private $courseName;
     private $courseCreditHour;
+    private $courseCurriculum;
     private $courseCLOList;
 
     public function __construct()
@@ -252,5 +253,15 @@ class Course implements JsonSerializable
             }
         }
         return null;
+    }
+
+    public function getCourseCurriculum()
+    {
+        return $this->courseCurriculum;
+    }
+
+    public function setCourseCurriculum($courseCurriculum): void
+    {
+        $this->courseCurriculum = $courseCurriculum;
     }
 }
